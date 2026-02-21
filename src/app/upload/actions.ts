@@ -18,10 +18,19 @@ export async function createListing(formData: FormData) {
     const category = formData.get("category") as string;
     const subcategory = formData.get("subcategory") as string;
     const location = formData.get("location") as string;
-    const contact_phone = formData.get("contact_phone") as string;
+    const contact_phone = formData.get("contact_phone") as string | null;
     const price_type = formData.get("price_type") as string;
     const imageUrlsString = formData.get("image_urls") as string;
     const image_urls = imageUrlsString ? JSON.parse(imageUrlsString) : [];
+
+    // Si el usuario puso un teléfono, lo guardamos en su perfil también
+    // (para no tener que volver a escribirlo en el siguiente anuncio)
+    if (contact_phone && contact_phone.trim().length > 0) {
+        await supabase
+            .from("users")
+            .update({ phone: contact_phone.trim() })
+            .eq("id", user.id);
+    }
 
     const { error } = await supabase.from("listings").insert({
         title,
@@ -30,7 +39,6 @@ export async function createListing(formData: FormData) {
         category,
         subcategory: subcategory || null,
         location,
-        contact_phone,
         price_type,
         image_urls,
         user_id: user.id,
