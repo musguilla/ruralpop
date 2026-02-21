@@ -1,0 +1,26 @@
+import { type NextRequest } from "next/server";
+import { updateSession } from "@/utils/supabase/middleware";
+
+export async function proxy(request: NextRequest) {
+    // Update user's auth session
+    return await updateSession(request);
+}
+
+export const config = {
+    matcher: [
+        /*
+         * Match all request paths except for the ones starting with:
+         * - _next/static (static files)
+         * - _next/image (image optimization files)
+         * - favicon.ico (favicon file)
+         * Feel free to modify this pattern to include more paths.
+         */
+        "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    ],
+};
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - El Middleware intercepta todas las peticiones (excluyendo estáticos)
+ *   para garantizar que la cookie de Supabase Auth está fresca antes del render SSR de las páginas de Next.
+ */

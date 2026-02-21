@@ -1,0 +1,101 @@
+import Link from "next/link";
+import { Tractor } from "lucide-react";
+import { signup } from "./actions";
+
+export default async function RegisterPage(props: {
+    searchParams: Promise<{ error?: string }>;
+}) {
+    const searchParams = await props.searchParams;
+
+    return (
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] w-full py-12 px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-md space-y-8 bg-[var(--ag-sys-color-surface)] p-8 rounded-2xl shadow-sm border border-[var(--ag-sys-color-border)]">
+
+                <div className="text-center flex flex-col items-center">
+                    <div className="bg-[var(--ag-sys-color-background)] p-3 rounded-full mb-4">
+                        <Tractor className="w-8 h-8 text-[var(--ag-sys-color-primary)]" />
+                    </div>
+                    <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
+                        Crea una Cuenta
+                    </h2>
+                    <p className="mt-2 text-sm text-[var(--ag-sys-color-text-muted)]">
+                        ¿Ya eres miembro?{" "}
+                        <Link
+                            href="/login"
+                            className="font-medium text-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary-hover)] transition-colors"
+                        >
+                            Inicia sesión aquí
+                        </Link>
+                    </p>
+                </div>
+
+                {searchParams?.error && (
+                    <div className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm p-3 rounded-md border border-red-200 dark:border-red-800 text-center">
+                        {searchParams.error}
+                    </div>
+                )}
+
+                <form className="mt-8 space-y-6" action={signup}>
+                    <div className="space-y-4">
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
+                                Nombre Completo o Empresa
+                            </label>
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                autoComplete="name"
+                                required
+                                className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
+                                placeholder="Finca los Romeros"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
+                                Correo Electrónico
+                            </label>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                required
+                                className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
+                                placeholder="tu@email.com"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
+                                Contraseña Segura
+                            </label>
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                autoComplete="new-password"
+                                required
+                                minLength={6}
+                                className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
+                                placeholder="••••••••"
+                            />
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)] transition-all shadow-sm"
+                    >
+                        Registrarme Ahora
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+}
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Se usa la metadata de Next.js (`raw_user_meta_data`) internamente pasando el 'name', para que el Trigger SQL insertará en la tabla final `public.users`.
+ * - Estética simétrica con el Login.
+ */
