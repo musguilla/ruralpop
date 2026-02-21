@@ -24,7 +24,9 @@ export default async function Home(props: {
       </div>
 
       {/* Barra de Filtros Interactiva (Client Component) */}
-      <FiltersBar />
+      <Suspense fallback={<div className="h-12 w-full bg-[var(--ag-sys-color-surface)] animate-pulse rounded-full mb-6" />}>
+        <FiltersBar />
+      </Suspense>
 
       {/* Grid Server-side */}
       <Suspense fallback={<GridSkeleton />}>

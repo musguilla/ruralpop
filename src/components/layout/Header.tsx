@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Tractor, UserCircle, LogOut, MessageSquare, LayoutDashboard } from "lucide-react";
 import { SearchInput } from "../ui/SearchInput";
+import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
 import { logout } from "@/app/auth/actions";
 
@@ -25,7 +26,9 @@ export async function Header() {
 
                 {/* Search Bar - Takes up remaining space gracefully */}
                 <div className="flex-1 max-w-2xl hidden md:flex mx-4 justify-center">
-                    <SearchInput />
+                    <Suspense fallback={<div className="w-full h-10 bg-[var(--ag-sys-color-background)] rounded-full animate-pulse" />}>
+                        <SearchInput />
+                    </Suspense>
                 </div>
 
                 {/* Actions Navigation */}
@@ -86,7 +89,9 @@ export async function Header() {
 
             {/* Mobile Search - Visible only on small screens below header */}
             <div className="md:hidden px-4 pb-3 pt-1">
-                <SearchInput />
+                <Suspense fallback={<div className="w-full h-10 bg-[var(--ag-sys-color-background)] rounded-full animate-pulse" />}>
+                    <SearchInput />
+                </Suspense>
             </div>
         </header>
     );
