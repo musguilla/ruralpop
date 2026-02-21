@@ -37,7 +37,12 @@ export async function updateSession(request: NextRequest) {
     );
 
     // refreshing the auth token
-    await supabase.auth.getUser();
+    // En fase de build o pre-renderizado, esto puede colgarse si la red no está disponible
+    try {
+        await supabase.auth.getUser();
+    } catch (e) {
+        // Ignorar fallos de red durante el build
+    }
 
     return supabaseResponse;
 }

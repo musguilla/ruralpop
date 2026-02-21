@@ -1,27 +1,42 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+/**
+ * Crea un mock ultra-robusto que no bloquea el build de Next.js.
+ * Debe ser 'Thenable' y 'Callable' recursivamente.
+ */
+function createBuildSafeProxy(): any {
+    const noop = () => createBuildSafeProxy();
+    return new Proxy(noop, {
+        get: (target, prop) => {
+            if (prop === 'auth') {
+                return {
+                    getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+                    getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+                    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => { } } } }),
+                };
+            }
+            if (prop === 'then') {
+                // Crucial: Si Next.js hace 'await', resolvemos la promesa inmediatamente
+                return (resolve: any) => resolve({ data: null, error: null, count: 0 });
+            }
+            // Para cualquier otra propiedad (from, select, eq...), devolvemos el mismo proxy recursivo
+            return createBuildSafeProxy();
+        },
+        apply: () => {
+            // Si el proxy se llama como función (ej: from('table')), devolvemos el mismo proxy
+            return createBuildSafeProxy();
+        }
+    });
+}
+
 export async function createClient() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-    // Agressive check for build/missing environment variables
+    // Si estamos en fase de build o faltan variables, devolvemos el Proxy blindado
     if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.length < 10) {
-        const mockHandler = {
-            get: (target: any, prop: string): any => {
-                if (prop === 'auth') {
-                    return {
-                        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-                        getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-                        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => { } } } }),
-                    };
-                }
-                const fn = () => new Proxy({}, mockHandler);
-                fn.then = (resolve: any) => resolve({ data: null, error: null, count: 0 });
-                return fn;
-            }
-        };
-        return new Proxy({}, mockHandler) as any;
+        return createBuildSafeProxy();
     }
 
     try {
@@ -40,35 +55,21 @@ export async function createClient() {
                                 cookieStore.set(name, value, options)
                             );
                         } catch {
-                            // Safe catch for server context
+                            // Safe catch para contextos de solo lectura
                         }
                     },
                 },
             }
         );
     } catch (e) {
-        // Fallback for static generation or build phase errors
-        const mockHandler = {
-            get: (target: any, prop: string): any => {
-                if (prop === 'auth') {
-                    return {
-                        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-                        getSession: () => Promise.resolve({ data: { session: null }, error: null }),
-                        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => { } } } }),
-                    };
-                }
-                const fn = () => new Proxy({}, mockHandler);
-                fn.then = (resolve: any) => resolve({ data: null, error: null, count: 0 });
-                return fn;
-            }
-        };
-        return new Proxy({}, mockHandler) as any;
+        // Fallback para fallos en cookies() durante generación estética
+        return createBuildSafeProxy();
     }
 }
 
 /**
  * Memory / Decisiones Técnicas:
- * - Se asume Next.js 15+ donde `cookies()` es asíncrono.
- * - Este cliente SSR maneja de forma segura las operaciones de autenticación.
- * - Blindaje total contra fallos en fase de build (Vercel) cuando las env vars o cookies no están disponibles.
+ * - El Proxy blindado soluciona el TIMEOUT de Vercel. 
+ * - El error anterior se debía a que 'await' sobre un Proxy sin un 'then' que llame a 'resolve'
+ *   dejaba la promesa pendiente indefinidamente, bloqueando el build worker.
  */

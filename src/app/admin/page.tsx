@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { formatCurrency } from "@/utils/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
     const supabase = await createClient();
 
@@ -110,9 +112,9 @@ function StatCard({ label, value, icon, color, trend }: { label: string; value: 
     return (
         <div className="bg-[var(--ag-sys-color-surface)] p-6 rounded-[2rem] border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-lg hover:shadow-[var(--ag-sys-color-primary)]/5 transition-all">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${color === 'blue' ? 'bg-blue-500/10 text-blue-500' :
-                    color === 'green' ? 'bg-green-500/10 text-green-500' :
-                        color === 'purple' ? 'bg-purple-500/10 text-purple-500' :
-                            'bg-amber-500/10 text-amber-500'
+                color === 'green' ? 'bg-green-500/10 text-green-500' :
+                    color === 'purple' ? 'bg-purple-500/10 text-purple-500' :
+                        'bg-amber-500/10 text-amber-500'
                 }`}>
                 {icon}
             </div>

@@ -12,6 +12,8 @@ import {
 import Image from "next/image";
 import { formatRelativeTime } from "@/utils/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminUsersPage() {
     const supabase = await createClient();
 

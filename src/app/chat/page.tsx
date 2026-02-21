@@ -5,6 +5,8 @@ import Image from "next/image";
 import { formatRelativeTime } from "@/utils/format";
 import { MessageSquare, User, Tractor, ChevronRight } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function ChatInboxPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
