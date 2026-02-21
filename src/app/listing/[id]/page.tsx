@@ -2,14 +2,18 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
-import { MapPin, Calendar, Phone, MessageCircle, User, ArrowLeft, ShieldCheck, Tractor } from "lucide-react";
+import { MapPin, Calendar, Phone, User, ArrowLeft, ShieldCheck, Tractor } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { ChatButton } from "@/components/chat/ChatButton";
 
 export default async function ListingDetailPage(props: {
     params: Promise<{ id: string }>;
 }) {
     const { id } = await props.params;
     const supabase = await createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
 
     // Obtenemos el anuncio con los datos del vendedor (join con la tabla users)
     const { data: listing, error } = await supabase
@@ -96,7 +100,7 @@ export default async function ListingDetailPage(props: {
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="relative w-16 h-16 rounded-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] overflow-hidden flex items-center justify-center text-[var(--ag-sys-color-primary)]">
                                     {listing.seller?.avatar_url ? (
-                                        <img src={listing.seller.avatar_url} alt={sellerName} className="w-full h-full object-cover" />
+                                        <Image src={listing.seller.avatar_url} alt={sellerName} fill className="object-cover" sizes="64px" />
                                     ) : (
                                         <User className="w-8 h-8" />
                                     )}
@@ -110,10 +114,10 @@ export default async function ListingDetailPage(props: {
                             </div>
 
                             <div className="space-y-3">
-                                <button className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-lg shadow-[var(--ag-sys-color-primary)]/20 active:scale-95">
-                                    <MessageCircle className="w-5 h-5" />
-                                    Chat con el vendedor
-                                </button>
+                                <ChatButton
+                                    listingId={listing.id}
+                                    isLoggedIn={!!user}
+                                />
 
                                 {listing.contact_phone && (
                                     <a

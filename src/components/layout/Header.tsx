@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Tractor, UserCircle, LogOut } from "lucide-react";
+import { Tractor, UserCircle, LogOut, MessageSquare, LayoutDashboard } from "lucide-react";
 import { SearchInput } from "../ui/SearchInput";
 import { createClient } from "@/utils/supabase/server";
 import { logout } from "@/app/auth/actions";
@@ -42,6 +42,24 @@ export async function Header() {
                             <span className="hidden md:inline-block text-sm font-medium text-[var(--ag-sys-color-text-muted)]">
                                 Hola, {user.user_metadata?.name?.split(' ')[0] || 'Usuario'}
                             </span>
+                            <div className="flex items-center gap-1">
+                                <Link
+                                    href="/dashboard"
+                                    className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full"
+                                    aria-label="Mi Panel"
+                                    title="Mi Panel"
+                                >
+                                    <LayoutDashboard className="w-6 h-6" />
+                                </Link>
+                                <Link
+                                    href="/chat"
+                                    className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full relative"
+                                    aria-label="Mis Mensajes"
+                                    title="Mis Mensajes"
+                                >
+                                    <MessageSquare className="w-6 h-6" />
+                                </Link>
+                            </div>
                             <form action={logout}>
                                 <button
                                     type="submit"

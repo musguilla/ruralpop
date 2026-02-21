@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import React, { useState } from "react";
 import { CATEGORIES, PRICE_TYPES } from "@/constants/categories";
 import { ImageUploader } from "@/components/ui/ImageUploader";

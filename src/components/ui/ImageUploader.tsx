@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
@@ -10,36 +10,39 @@ interface ImageUploaderProps {
 }
 
 export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderProps) {
-    const [files, setFiles] = useState<{ file: File; url: string; uploading: boolean }[]>([]);
+    const [files, setFiles] = useState<{ id: string; url: string; uploading: boolean }[]>([]);
     const supabase = createClient();
 
-    const uploadFile = async (file: File, index: number) => {
+    // Notificar al componente padre solo cuando las URLs cambien
+    useEffect(() => {
+        const allUrls = files.filter(f => !f.uploading && f.url).map(f => f.url);
+        onImagesChange(allUrls);
+    }, [files, onImagesChange]);
+
+    const uploadFile = async (file: File, tempId: string) => {
         try {
             const fileExt = file.name.split(".").pop();
             const fileName = `${Math.random()}.${fileExt}`;
             const filePath = `listings/${fileName}`;
 
+            // IMPORTANTE: Asegúrate de que el bucket se llame 'listings' en Supabase
             const { error: uploadError } = await supabase.storage
-                .from("listing-images")
+                .from("listings")
                 .upload(filePath, file);
 
             if (uploadError) throw uploadError;
 
             const { data: { publicUrl } } = supabase.storage
-                .from("listing-images")
+                .from("listings")
                 .getPublicUrl(filePath);
 
-            setFiles((prev) => {
-                const newFiles = [...prev];
-                newFiles[index] = { ...newFiles[index], uploading: false, url: publicUrl };
-                const allUrls = newFiles.filter(f => f.url).map(f => f.url);
-                onImagesChange(allUrls);
-                return newFiles;
-            });
+            setFiles((prev) =>
+                prev.map(f => f.id === tempId ? { ...f, uploading: false, url: publicUrl } : f)
+            );
         } catch (error) {
             console.error("Error uploading image:", error);
-            alert("Error al subir la imagen");
-            removeFile(index);
+            alert("Error al subir la imagen. Verifica que el bucket 'listings' existe y es público.");
+            setFiles((prev) => prev.filter(f => f.id !== tempId));
         }
     };
 
@@ -52,32 +55,22 @@ export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderPr
             return;
         }
 
-        const startIdx = files.length;
-        const incoming = newFiles.map((file) => {
-            const localUrl = URL.createObjectURL(file);
-            return { file, url: "", uploading: true, localUrl };
-        });
-
-        setFiles((prev) => [...prev, ...incoming.map(f => ({ file: f.file, url: "", uploading: true }))]);
-
-        newFiles.forEach((file, i) => {
-            uploadFile(file, startIdx + i);
+        newFiles.forEach((file) => {
+            const tempId = Math.random().toString(36).substring(7);
+            setFiles((prev) => [...prev, { id: tempId, url: "", uploading: true }]);
+            uploadFile(file, tempId);
         });
     };
 
-    const removeFile = (index: number) => {
-        setFiles((prev) => {
-            const filtered = prev.filter((_, i) => i !== index);
-            onImagesChange(filtered.filter(f => f.url).map(f => f.url));
-            return filtered;
-        });
+    const removeFile = (id: string) => {
+        setFiles((prev) => prev.filter((f) => f.id !== id));
     };
 
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                {files.map((fileObj, index) => (
-                    <div key={index} className="relative aspect-square rounded-xl overflow-hidden bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] group">
+                {files.map((fileObj) => (
+                    <div key={fileObj.id} className="relative aspect-square rounded-xl overflow-hidden bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] group">
                         {fileObj.uploading ? (
                             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5">
                                 <Loader2 className="w-6 h-6 animate-spin text-[var(--ag-sys-color-primary)]" />
@@ -88,8 +81,8 @@ export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderPr
                         )}
                         <button
                             type="button"
-                            onClick={() => removeFile(index)}
-                            className="absolute top-1 right-1 p-1 bg-white/80 rounded-full text-red-500 hover:bg-white transition-opacity"
+                            onClick={() => removeFile(fileObj.id)}
+                            className="absolute top-1 right-1 p-1 bg-white/80 rounded-full text-red-500 hover:bg-white transition-opacity shadow-sm"
                         >
                             <X className="w-4 h-4" />
                         </button>
@@ -105,8 +98,9 @@ export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderPr
                 )}
             </div>
             <p className="text-xs text-[var(--ag-sys-color-text-muted)]">
-                Sube hasta {maxFiles} fotos. La primera será la imagen principal.
+                Sube hasta {maxFiles} fotos. La primera será la principal.
             </p>
         </div>
     );
 }
+

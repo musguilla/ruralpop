@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { ListingCard, ListingCardSkeleton } from "@/components/ui/ListingCard";
+import { ListingCard, ListingCardSkeleton, type Listing } from "@/components/ui/ListingCard";
 import { FiltersBar } from "@/components/ui/FiltersBar";
 import { Suspense } from "react";
 import { Tractor } from "lucide-react";
@@ -60,6 +60,12 @@ async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: s
     query = query.eq("category", categoryFilter);
   }
 
+  const subcategoryFilter = searchParams.subcategory as string;
+  if (subcategoryFilter) {
+    // Uso de ilike para resiliencia ante variaciones de casing en URLs en producción
+    query = query.ilike("subcategory", subcategoryFilter);
+  }
+
   const textQuery = searchParams.q as string;
   if (textQuery) {
     // ILIKE %text% para título o descripción
@@ -93,7 +99,7 @@ async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: s
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {listings.map((listing) => (
+      {listings.map((listing: Listing) => (
         <ListingCard key={listing.id} listing={listing} />
       ))}
     </div>
