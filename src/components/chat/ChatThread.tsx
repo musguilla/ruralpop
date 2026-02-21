@@ -48,8 +48,8 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
                     table: "messages",
                     filter: `listing_id=eq.${listing.id}`,
                 },
-                (payload) => {
-                    const newMessage = payload.new as Message;
+                (payload: { new: Message & { receiver_id: string } }) => {
+                    const newMessage = payload.new;
                     // Verificar si el mensaje pertenece a esta conversación específica
                     if (
                         (newMessage.sender_id === currentUser.id && payload.new.receiver_id === otherUser.id) ||
