@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { CATEGORIES, PRICE_TYPES } from "@/constants/categories";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import { createListing } from "./actions";
-import { Tractor, MapPin, Euro, Phone, Info } from "lucide-react";
+import { Tractor, MapPin, Euro, Phone, Info, Loader2 } from "lucide-react";
 
 export default function UploadPage() {
     const [selectedCategory, setSelectedCategory] = useState("");

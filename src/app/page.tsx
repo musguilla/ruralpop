@@ -1,31 +1,108 @@
-export default function Home() {
-  return (
-    <div className="flex flex-col items-center justify-center w-full py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl text-center space-y-8">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-          Bienvenido a <span className="text-[var(--ag-sys-color-primary)]">Ruralpop</span>
-        </h1>
-        <p className="text-xl text-[var(--ag-sys-color-text-muted)]">
-          El portal de anuncios clasificados diseñado exclusivamente para el sector agrícola y ganadero.
-          Encuentra animales, maquinaria, y forraje al instante.
-        </p>
+import { createClient } from "@/utils/supabase/server";
+import { ListingCard, ListingCardSkeleton } from "@/components/ui/ListingCard";
+import { FiltersBar } from "@/components/ui/FiltersBar";
+import { Suspense } from "react";
+import { Tractor } from "lucide-react";
 
-        <div className="flex justify-center gap-4 pt-4">
-          <button className="px-6 py-3 bg-[var(--ag-sys-color-primary)] text-white font-medium rounded-full hover:bg-[var(--ag-sys-color-primary-hover)] transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)]">
-            Explorar Anuncios
-          </button>
-          <button className="px-6 py-3 bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] font-medium rounded-full hover:border-[var(--ag-sys-color-primary)] transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)]">
-            Vende tus productos
-          </button>
-        </div>
+export default async function Home(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+
+  // Pasamos los searchParams como Server Component prop.
+  return (
+    <div className="container mx-auto px-4 py-8 min-h-screen">
+
+      {/* Hero Header para contexto de página inicial */}
+      <div className="mb-8">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
+          Encuentra lo que necesitas
+        </h1>
+        <p className="mt-2 text-lg text-[var(--ag-sys-color-text-muted)]">
+          Descubre anuncios recientes de animales, maquinaria y productos de la zona.
+        </p>
       </div>
+
+      {/* Barra de Filtros Interactiva (Client Component) */}
+      <FiltersBar />
+
+      {/* Grid Server-side */}
+      <Suspense fallback={<GridSkeleton />}>
+        <ListingsGrid searchParams={searchParams} />
+      </Suspense>
+
+    </div>
+  );
+}
+
+function GridSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <ListingCardSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
+
+async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("listings")
+    .select("id, title, price, location, image_urls, created_at, category, price_type")
+    .eq("status", "active")
+    .order("created_at", { ascending: false });
+
+  // Filter based on search params
+  const categoryFilter = searchParams.category as string;
+  if (categoryFilter) {
+    query = query.eq("category", categoryFilter);
+  }
+
+  const textQuery = searchParams.q as string;
+  if (textQuery) {
+    // ILIKE %text% para título o descripción
+    query = query.or(`title.ilike.%${textQuery}%,description.ilike.%${textQuery}%`);
+  }
+
+  const { data: listings, error } = await query.limit(20); // Inicial 20 elementos
+
+  if (error) {
+    console.error("Supabase Error fetching listings:", error);
+    return (
+      <div className="p-8 text-center bg-red-50 text-red-600 rounded-2xl border border-red-200">
+        Error al cargar los anuncios. Inténtelo de nuevo más tarde.
+      </div>
+    );
+  }
+
+  if (!listings || listings.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center p-16 text-center bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl">
+        <Tractor className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4" />
+        <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-2">
+          No hay resultados
+        </h3>
+        <p className="text-[var(--ag-sys-color-text-muted)]">
+          No hemos encontrado ningún anuncio que coincida con tus filtros.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {listings.map((listing) => (
+        <ListingCard key={listing.id} listing={listing} />
+      ))}
     </div>
   );
 }
 
 /**
  * Memory / Decisiones Técnicas:
- * - Página de inicio limpia (Hero section).
- * - Uso estricto de tokens CSS vía variables de entorno.
- * - Sin uso de imágenes externas por el momento hasta la Fase 4.
+ * - Next.js App Router (SSR): Home pre-renderiza Grid Skeleton en lo que resuelve el DB Fetch.
+ * - 'q' search param está pensado para enlazarse en el Header (SearchInput)
+ * - `Suspense` wraps `ListingsGrid` making it extremely fast, initial HTML layout gets delivered instantly.
  */

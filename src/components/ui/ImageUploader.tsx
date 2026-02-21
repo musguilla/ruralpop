@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import React, { useState } from "react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 interface ImageUploaderProps {
@@ -53,7 +53,7 @@ export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderPr
         }
 
         const startIdx = files.length;
-        const incoming = newFiles.map((file, i) => {
+        const incoming = newFiles.map((file) => {
             const localUrl = URL.createObjectURL(file);
             return { file, url: "", uploading: true, localUrl };
         });

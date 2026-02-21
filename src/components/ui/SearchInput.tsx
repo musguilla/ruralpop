@@ -1,37 +1,41 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React from "react";
 import { Search } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface SearchInputProps {
   placeholder?: string;
-  onSearch?: (query: string) => void;
   className?: string;
+  onSearch?: (query: string) => void;
 }
 
 export function SearchInput({
   placeholder = "Buscar anuncios, categorías...",
-  onSearch,
   className = "",
+  onSearch
 }: SearchInputProps) {
-  const [query, setQuery] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setQuery(e.target.value);
-    },
-    []
-  );
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const query = formData.get("q") as string;
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      if (onSearch) {
-        onSearch(query);
+    if (onSearch) {
+      onSearch(query);
+    } else {
+      const params = new URLSearchParams(searchParams.toString());
+      if (query.trim()) {
+        params.set("q", query.trim());
+      } else {
+        params.delete("q");
       }
-    },
-    [onSearch, query]
-  );
+
+      router.push(`/?${params.toString()}`);
+    }
+  };
 
   return (
     <form
@@ -40,8 +44,8 @@ export function SearchInput({
     >
       <input
         type="text"
-        value={query}
-        onChange={handleChange}
+        name="q"
+        defaultValue={searchParams.get("q") || ""}
         placeholder={placeholder}
         className="w-full h-10 pl-4 pr-10 rounded-full border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition-all"
         aria-label="Caja de búsqueda"
@@ -59,9 +63,7 @@ export function SearchInput({
 
 /**
  * Memory / Decisiones Técnicas:
- * - Se usa 'use client' porque maneja el estado del input (`query`).
- * - Se prefiere un HTML form nativo para manejar submit con la tecla 'Enter' fácilmente.
- * - Soporte de accesibilidad (aria-label).
- * - Uso exclusivo de tokens CSS a través de variables var(--ag-sys-color-...) para estilos.
- * - useCallback para optimizar pasajes de funciones si este componente se vuelve pesado en el DOM.
+ * - Se integra `useRouter` y `useSearchParams` de next/navigation.
+ * - Al hacer submit, navega hacia `/?q=query` activando el SSR del Home para buscar los anuncios.
+ * - Sincroniza el Input con la URL para que no parezca vacío al entrar por link directo.
  */
