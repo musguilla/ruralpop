@@ -64,11 +64,11 @@ export async function getUserFavorites() {
                     id,
                     title,
                     price,
-                    province_id,
-                    municipality_id,
+                    location,
+                    image_urls,
+                    created_at,
                     category,
-                    subcategory,
-                    images,
+                    price_type,
                     status
                 )
             `)
