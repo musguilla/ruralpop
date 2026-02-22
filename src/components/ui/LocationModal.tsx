@@ -2,12 +2,12 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { X, Search, MapPin, Check } from "lucide-react";
-import { PROVINCES } from "@/constants/provinces";
+import { LOCATIONS, LocationItem } from "@/constants/locations";
 
 interface LocationModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSelect: (provinceId: string, name: string) => void;
+    onSelect: (locationId: string, name: string) => void;
     selectedLocationId?: string;
 }
 
@@ -26,18 +26,19 @@ export function LocationModal({
         }
     }, [isOpen]);
 
-    const filteredProvinces = useMemo(() => {
-        if (!searchTerm.trim()) return PROVINCES;
+    const filteredLocations = useMemo(() => {
+        if (!searchTerm.trim()) return LOCATIONS.filter(l => l.type === 'province');
         const term = searchTerm.toLowerCase();
-        return PROVINCES.filter(p =>
-            p.name.toLowerCase().includes(term)
+        return LOCATIONS.filter(l =>
+            l.name.toLowerCase().includes(term)
         );
     }, [searchTerm]);
 
     if (!isOpen) return null;
 
-    const handleSelect = (id: string, name: string) => {
-        onSelect(id, name);
+    const handleSelect = (loc: LocationItem) => {
+        const displayName = loc.type === 'province' ? loc.name : `${loc.name}, ${loc.province}`;
+        onSelect(loc.id, displayName);
         onClose();
     };
 
@@ -83,7 +84,7 @@ export function LocationModal({
                     <div className="flex flex-col gap-1">
                         {!searchTerm && (
                             <button
-                                onClick={() => handleSelect("", "Toda España")}
+                                onClick={() => { onSelect("", "Toda España"); onClose(); }}
                                 className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all ${!selectedLocationId ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
                                     }`}
                             >
@@ -95,15 +96,15 @@ export function LocationModal({
                             </button>
                         )}
 
-                        {filteredProvinces.map((province) => {
+                        {filteredLocations.map((loc) => {
                             const term = searchTerm.toLowerCase();
-                            const index = province.name.toLowerCase().indexOf(term);
+                            const index = loc.name.toLowerCase().indexOf(term);
 
                             const renderName = () => {
-                                if (index === -1 || !searchTerm) return province.name;
-                                const before = province.name.substring(0, index);
-                                const match = province.name.substring(index, index + searchTerm.length);
-                                const after = province.name.substring(index + searchTerm.length);
+                                if (index === -1 || !searchTerm) return loc.name;
+                                const before = loc.name.substring(0, index);
+                                const match = loc.name.substring(index, index + searchTerm.length);
+                                const after = loc.name.substring(index + searchTerm.length);
                                 return (
                                     <>
                                         {before}<span className="font-bold text-gray-900">{match}</span>{after}
@@ -113,24 +114,30 @@ export function LocationModal({
 
                             return (
                                 <button
-                                    key={province.id}
-                                    onClick={() => handleSelect(province.id, province.name)}
-                                    className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all group ${selectedLocationId === province.id ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
+                                    key={loc.id}
+                                    onClick={() => handleSelect(loc)}
+                                    className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all group ${selectedLocationId === loc.id ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
                                         }`}
                                 >
-                                    <div className={`p-2 rounded-lg transition-colors ${selectedLocationId === province.id ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200'}`}>
+                                    <div className={`p-2 rounded-lg transition-colors ${selectedLocationId === loc.id ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200'}`}>
                                         <MapPin className="w-5 h-5" />
                                     </div>
                                     <div className="flex-1 text-left flex flex-col">
-                                        <span className="text-sm sm:text-base">{renderName()}</span>
-                                        <span className="text-xs text-gray-400">Provincia</span>
+                                        <span className="text-sm sm:text-base">
+                                            {renderName()}
+                                            {loc.type === 'province' ? (
+                                                <span className="text-gray-400 ml-1">(Provincia)</span>
+                                            ) : (
+                                                <span className="text-gray-400 ml-1">, {loc.province}</span>
+                                            )}
+                                        </span>
                                     </div>
-                                    {selectedLocationId === province.id && <Check className="w-5 h-5 text-emerald-600" />}
+                                    {selectedLocationId === loc.id && <Check className="w-5 h-5 text-emerald-600" />}
                                 </button>
                             );
                         })}
 
-                        {filteredProvinces.length === 0 && (
+                        {filteredLocations.length === 0 && (
                             <div className="py-10 text-center text-gray-500">
                                 <p>No se encontraron resultados para "{searchTerm}"</p>
                             </div>
@@ -154,9 +161,10 @@ export function LocationModal({
 
 /**
  * Memory / Decisiones Técnicas:
- * - Se elimina la funcionalidad de geolocalización ("Cerca de mí") temporalmente por requerimiento del usuario.
- * - Se simplifica la UI eliminando las pestañas y dejando el campo de búsqueda como elemento principal.
- * - Se mantiene el sistema dinámico de filtrado y resaltado de texto para las provincias.
- * - Estética "premium" mantenida con desenfoque de fondo y micro-interacciones.
+ * - Se integra la funcionalidad de búsqueda de localidades junto con las provincias.
+ * - Formato de visualización mejorado: 'Localidad, Provincia' para municipios y 'Provincia (Provincia)' para las capitales/provincias.
+ * - Se ha centralizado la gestión de localizaciones en `locations.ts` para permitir una base de datos más extensa.
+ * - El sistema de resaltado dinámico ahora aplica a todas las localizaciones encontradas.
  */
+
 

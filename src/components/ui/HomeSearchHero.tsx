@@ -53,7 +53,6 @@ const VISUAL_CATEGORIES = [
 
 import { CategoryModal } from "./CategoryModal";
 import { LocationModal } from "./LocationModal";
-import { PROVINCES } from "@/constants/provinces";
 
 export function HomeSearchHero() {
     const router = useRouter();
