@@ -1,8 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
 import { ListingCard, ListingCardSkeleton, type Listing } from "@/components/ui/ListingCard";
-import { FiltersBar } from "@/components/ui/FiltersBar";
 import { Suspense } from "react";
 import { Tractor } from "lucide-react";
+import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
+import { FiltersBar } from "@/components/ui/FiltersBar";
+import { HomeSearchHero } from "@/components/ui/HomeSearchHero";
 
 export default async function Home(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -13,20 +15,31 @@ export default async function Home(props: {
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen">
 
-      {/* Hero Header para contexto de página inicial */}
-      <div className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-          Encuentra lo que necesitas
-        </h1>
-        <p className="mt-2 text-lg text-[var(--ag-sys-color-text-muted)]">
-          Descubre anuncios recientes de animales, maquinaria y productos de la zona.
-        </p>
-      </div>
+      {/* Conditionally render Search Hero or Active Search Bar */}
+      {Object.keys(searchParams).length === 0 ? (
+        <>
+          <HomeSearchHero />
 
-      {/* Barra de Filtros Interactiva (Client Component) */}
-      <Suspense fallback={<div className="h-12 w-full bg-[var(--ag-sys-color-surface)] animate-pulse rounded-full mb-6" />}>
-        <FiltersBar />
-      </Suspense>
+          {/* Hero Header for Listing Grid context */}
+          <div className="mt-8 mb-6">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
+              Encuentra lo que necesitas
+            </h2>
+            <p className="mt-1 text-base text-[var(--ag-sys-color-text-muted)]">
+              Descubre anuncios recientes de animales, maquinaria y productos de la zona.
+            </p>
+          </div>
+
+          {/* Category Badges (Client Component) */}
+          <Suspense fallback={<div className="h-12 w-full bg-[var(--ag-sys-color-surface)] animate-pulse rounded-full mb-6" />}>
+            <FiltersBar />
+          </Suspense>
+        </>
+      ) : (
+        <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
+          <ActiveSearchBar />
+        </Suspense>
+      )}
 
       {/* Grid Server-side */}
       <Suspense fallback={<GridSkeleton />}>
@@ -77,6 +90,27 @@ async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: s
   if (textQuery) {
     query = query.or(`title.ilike.%${textQuery}%,description.ilike.%${textQuery}%`);
   }
+
+  const priceMin = searchParams.price_min as string;
+  if (priceMin) {
+    query = query.gte("price", priceMin);
+  }
+
+  const priceMax = searchParams.price_max as string;
+  if (priceMax) {
+    query = query.lte("price", priceMax);
+  }
+
+  const locationFilter = searchParams.province_id as string;
+  if (locationFilter) {
+    query = query.eq("province_id", locationFilter);
+  }
+
+  // Seller type logic could be added if you have a seller_type column
+  // const sellerType = searchParams.seller_type as string;
+  // if(sellerType && sellerType !== 'all') {
+  //    query = query.eq('seller_type', sellerType);
+  // }
 
   // Ejecutar query con rango para paginación
   const { data: listings, error, count } = await query.range(from, to);

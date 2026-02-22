@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { UserCircle, LogOut, MessageSquare, LayoutDashboard, Plus } from "lucide-react";
-import { SearchInput } from "../ui/SearchInput";
 import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
 import { logout } from "@/app/auth/actions";
@@ -30,12 +29,8 @@ export async function Header() {
                     <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain" priority />
                 </Link>
 
-                {/* Search Bar - Takes up remaining space gracefully */}
-                <div className="flex-1 max-w-2xl hidden md:flex mx-4 justify-center">
-                    <Suspense fallback={<div className="w-full h-10 bg-[var(--ag-sys-color-background)] rounded-full animate-pulse" />}>
-                        <SearchInput />
-                    </Suspense>
-                </div>
+                {/* Empty flex-1 to push actions to the right */}
+                <div className="flex-1 mx-4" />
 
                 {/* Actions Navigation */}
                 <nav className="flex items-center gap-4">
@@ -94,12 +89,6 @@ export async function Header() {
                 </nav>
             </div>
 
-            {/* Mobile Search - Visible only on small screens below header */}
-            <div className="md:hidden px-4 pb-3 pt-1">
-                <Suspense fallback={<div className="w-full h-10 bg-[var(--ag-sys-color-background)] rounded-full animate-pulse" />}>
-                    <SearchInput />
-                </Suspense>
-            </div>
         </header>
     );
 }

@@ -5,6 +5,7 @@ import { CATEGORIES, PRICE_TYPES } from "@/constants/categories";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import { createListing, getMunicipalities } from "./actions";
 import { Tractor, MapPin, Euro, Phone, Info, Loader2 } from "lucide-react";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 
 import { useRouter } from "next/navigation";
 import { useNotification } from "@/context/NotificationContext";
@@ -26,6 +27,16 @@ export default function UploadForm({ savedPhone, initialProvinces }: UploadFormP
     const [municipalities, setMunicipalities] = useState<{ id: number; name: string }[]>([]);
     const [selectedMunicipality, setSelectedMunicipality] = useState<number | "">("");
     const [isLoadingMunicipalities, setIsLoadingMunicipalities] = useState(false);
+
+    // Form data state for non-native inputs
+    const [formDataState, setFormDataState] = useState({
+        subcategory: "",
+        priceType: PRICE_TYPES[0].id
+    });
+
+    useEffect(() => {
+        setFormDataState(prev => ({ ...prev, subcategory: "" }));
+    }, [selectedCategory]);
 
     useEffect(() => {
         let isMounted = true;
@@ -139,30 +150,30 @@ export default function UploadForm({ savedPhone, initialProvinces }: UploadFormP
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1.5">Categoría *</label>
-                            <select
+                            <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Categoría *</label>
+                            <SearchableSelect
                                 name="category"
                                 required
                                 value={selectedCategory}
-                                onChange={(e) => setSelectedCategory(e.target.value)}
-                                className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
-                            >
-                                <option value="">Selecciona...</option>
-                                {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-                            </select>
+                                onChange={(val) => setSelectedCategory(val as string)}
+                                options={CATEGORIES.map(c => ({ id: c.id, name: c.label }))}
+                                placeholder="Selecciona categoría..."
+                                searchPlaceholder="Buscar categoría..."
+                            />
                         </div>
 
                         {categoryData && categoryData.subcategories.length > 0 && (
                             <div>
-                                <label className="block text-sm font-medium mb-1.5">Subcategoría *</label>
-                                <select
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Subcategoría *</label>
+                                <SearchableSelect
                                     name="subcategory"
                                     required
-                                    className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
-                                >
-                                    <option value="">Selecciona...</option>
-                                    {categoryData.subcategories.map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
+                                    options={categoryData.subcategories.map(s => ({ id: s, name: s }))}
+                                    value={formDataState.subcategory}
+                                    onChange={(val) => setFormDataState(prev => ({ ...prev, subcategory: val as string }))}
+                                    placeholder="Selecciona subcategoría..."
+                                    searchPlaceholder="Buscar subcategoría..."
+                                />
                             </div>
                         )}
 
@@ -196,50 +207,46 @@ export default function UploadForm({ savedPhone, initialProvinces }: UploadFormP
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1.5">Tipo de precio</label>
-                            <select
+                            <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Tipo de precio</label>
+                            <SearchableSelect
                                 name="price_type"
-                                className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
-                            >
-                                {PRICE_TYPES.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
-                            </select>
+                                value={formDataState.priceType}
+                                onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
+                                options={PRICE_TYPES.map(p => ({ id: p.id, name: p.label }))}
+                                placeholder="Selecciona tipo..."
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
-                                <MapPin className="w-4 h-4" /> Provincia *
+                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
+                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Provincia *
                             </label>
-                            <select
+                            <SearchableSelect
                                 name="province_id"
                                 required
                                 value={selectedProvince}
-                                onChange={(e) => setSelectedProvince(e.target.value ? Number(e.target.value) : "")}
-                                className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
-                            >
-                                <option value="">Selecciona provincia...</option>
-                                {initialProvinces.map(p => (
-                                    <option key={p.id} value={p.id}>{p.name}</option>
-                                ))}
-                            </select>
+                                onChange={(val) => setSelectedProvince(val as number | "")}
+                                options={initialProvinces}
+                                placeholder="Selecciona provincia..."
+                                searchPlaceholder="Ej: Salamanca, Asturias..."
+                            />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
-                                <MapPin className="w-4 h-4" /> Localidad *
+                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
+                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Localidad *
                             </label>
-                            <select
+                            <SearchableSelect
                                 name="municipality_id"
                                 required
                                 value={selectedMunicipality}
-                                onChange={(e) => setSelectedMunicipality(e.target.value ? Number(e.target.value) : "")}
-                                disabled={selectedProvince === "" || isLoadingMunicipalities}
-                                className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all disabled:opacity-50"
-                            >
-                                <option value="">{isLoadingMunicipalities ? "Cargando..." : "Selecciona localidad..."}</option>
-                                {municipalities.map(m => (
-                                    <option key={m.id} value={m.id}>{m.name}</option>
-                                ))}
-                            </select>
+                                onChange={(val) => setSelectedMunicipality(val as number | "")}
+                                options={municipalities}
+                                placeholder={selectedProvince === "" ? "Selecciona primero provincia" : "Selecciona localidad..."}
+                                searchPlaceholder="Ej: Suances, Tineo..."
+                                disabled={selectedProvince === ""}
+                                isLoading={isLoadingMunicipalities}
+                            />
                         </div>
 
                         <div className="md:col-span-3">
