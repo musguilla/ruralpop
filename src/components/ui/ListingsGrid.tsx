@@ -30,7 +30,7 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     const textQuery = searchParams.q as string;
     if (textQuery) {
-        query = query.or(`title.ilike.%${textQuery}%,description.ilike.%${textQuery}%`);
+        query = query.or(`title.ilike.%${textQuery}%,description.ilike.%${textQuery}%,location.ilike.%${textQuery}%`);
     }
 
     const priceMin = searchParams.price_min as string;
@@ -46,8 +46,16 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
     const locationFilter = searchParams.province_id as string;
     if (locationFilter) {
         if (locationFilter.startsWith('m')) {
-            const muniId = locationFilter.substring(1);
-            query = query.eq("municipality_id", muniId);
+            // Find the location's real name from constants
+            const muni = require("@/constants/locations").LOCATIONS.find((l: any) => l.id === locationFilter);
+            if (muni) {
+                // ILIKE on location column (e.g. location ilike '%Córdoba%')
+                query = query.ilike("location", `%${muni.name}%`);
+            } else {
+                // Fallback to ID stripping just in case
+                const muniId = locationFilter.substring(1);
+                query = query.eq("municipality_id", muniId);
+            }
         } else {
             query = query.eq("province_id", locationFilter);
         }
