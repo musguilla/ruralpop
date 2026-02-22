@@ -3,7 +3,6 @@ import { ListingCard, ListingCardSkeleton, type Listing } from "@/components/ui/
 import { Suspense } from "react";
 import { Tractor } from "lucide-react";
 import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
-import { FiltersBar } from "@/components/ui/FiltersBar";
 import { HomeSearchHero } from "@/components/ui/HomeSearchHero";
 
 export default async function Home(props: {
@@ -17,24 +16,7 @@ export default async function Home(props: {
 
       {/* Conditionally render Search Hero or Active Search Bar */}
       {Object.keys(searchParams).length === 0 ? (
-        <>
-          <HomeSearchHero />
-
-          {/* Hero Header for Listing Grid context */}
-          <div className="mt-8 mb-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-              Encuentra lo que necesitas
-            </h2>
-            <p className="mt-1 text-base text-[var(--ag-sys-color-text-muted)]">
-              Descubre anuncios recientes de animales, maquinaria y productos de la zona.
-            </p>
-          </div>
-
-          {/* Category Badges (Client Component) */}
-          <Suspense fallback={<div className="h-12 w-full bg-[var(--ag-sys-color-surface)] animate-pulse rounded-full mb-6" />}>
-            <FiltersBar />
-          </Suspense>
-        </>
+        <HomeSearchHero />
       ) : (
         <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
           <ActiveSearchBar />
