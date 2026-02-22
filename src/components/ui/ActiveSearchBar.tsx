@@ -124,12 +124,11 @@ export function ActiveSearchBar() {
 
     // Calculate Active Badges
     const activeBadges = [];
-    if (category && category.trim() !== "") {
-        const catObj = CATEGORIES.find(c => c.id === category);
-        activeBadges.push({ type: 'category', label: catObj ? catObj.label : category });
-    }
     if (subcategory && subcategory.trim() !== "") {
         activeBadges.push({ type: 'subcategory', label: subcategory });
+    } else if (category && category.trim() !== "") {
+        const catObj = CATEGORIES.find(c => c.id === category);
+        activeBadges.push({ type: 'category', label: catObj ? catObj.label : category });
     }
     if (location && location.trim() !== "" && location !== "all" && location !== "Toda España") {
         const locObj = LOCATIONS.find(l => l.id === location);
