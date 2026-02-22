@@ -19,7 +19,6 @@ export function ChatBadge({ initialCount, userId }: ChatBadgeProps) {
 
     useEffect(() => {
         // Suscribirse a inserciones para subir el contador de no leídos
-        // y a actualizaciones (cuando se lee el mensaje) para bajarlo.
         const channel = supabase
             .channel("realtime-badge")
             .on(
@@ -45,8 +44,8 @@ export function ChatBadge({ initialCount, userId }: ChatBadgeProps) {
                     filter: `receiver_id=eq.${userId}`,
                 },
                 (payload: any) => {
-                    // Al no tener REPLICA IDENTITY FULL en Postgres por defecto, old suele venir vacío salvo el ID.
-                    // Si recibimos un update donde viene is_read a true, asumimos que acaba de leerse.
+                    // Si recibimos un update donde viene is_read a true, bajamos el contador.
+                    // Nota: Si no hay REPLICA IDENTITY FULL, este evento podría no dispararse si el filtro falla.
                     if (payload.new && payload.new.is_read === true) {
                         setUnreadCount((prev) => Math.max(0, prev - 1));
                     }
@@ -54,8 +53,21 @@ export function ChatBadge({ initialCount, userId }: ChatBadgeProps) {
             )
             .subscribe();
 
+        // Escuchar evento personalizado para limpiezas manuales (cuando entramos a un chat)
+        const handleManualRead = (e: any) => {
+            if (e.detail?.count !== undefined) {
+                setUnreadCount((prev) => Math.max(0, prev - e.detail.count));
+            } else {
+                // Si no sabemos cuántos, podemos forzar un refresh o asumir 1
+                setUnreadCount((prev) => Math.max(0, prev - 1));
+            }
+        };
+
+        window.addEventListener("chat-read", handleManualRead);
+
         return () => {
             supabase.removeChannel(channel);
+            window.removeEventListener("chat-read", handleManualRead);
         };
     }, [supabase, userId]);
 

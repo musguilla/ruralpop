@@ -19,17 +19,29 @@ import {
 import Image from "next/image";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 
-export default async function AdminListingsPage() {
-    const supabase = await createClient();
+import { Pagination } from "@/components/ui/Pagination";
 
-    const { data: listings, error } = await supabase
+export default async function AdminListingsPage(props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+    const searchParams = await props.searchParams;
+    const supabase = await createClient();
+    const PAGE_SIZE = 40;
+    const currentPage = Number(searchParams.page) || 1;
+    const from = (currentPage - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+
+    const { data: listings, error, count } = await supabase
         .from("listings")
-        .select("*, seller:users(*)")
-        .order("created_at", { ascending: false });
+        .select("*, seller:users(*)", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
     if (error) {
         console.error("Error fetching listings:", error);
     }
+
+    const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
 
     return (
         <div className="space-y-8">
@@ -120,6 +132,8 @@ export default async function AdminListingsPage() {
                     </div>
                 ))}
             </div>
+
+            <Pagination currentPage={currentPage} totalPages={totalPages} />
         </div>
     );
 }

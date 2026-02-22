@@ -38,21 +38,32 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
     }, [messages]);
 
     useEffect(() => {
-        // Marcar como leído al entrar o al recibir nuevos mensajes si estamos en este hilo
         const markAsRead = async () => {
             try {
-                await markMessagesAsRead(listing.id, otherUser.id);
+                const unreadFromOther = messages.filter(
+                    (m) => m.sender_id === otherUser.id && m.is_read !== true
+                );
+
+                if (unreadFromOther.length > 0) {
+                    await markMessagesAsRead(listing.id, otherUser.id);
+                    // Disparar evento para que el Badge (global) se entere inmediatamente
+                    window.dispatchEvent(new CustomEvent("chat-read", {
+                        detail: { count: unreadFromOther.length }
+                    }));
+
+                    // Actualizar estado local para que no vuelva a dispararse este efecto
+                    setMessages(prev => prev.map(m =>
+                        (m.sender_id === otherUser.id && m.is_read !== true)
+                            ? { ...m, is_read: true }
+                            : m
+                    ));
+                }
             } catch (err) {
                 console.error("Error al marcar como leídos:", err);
             }
         };
 
-        const hasUnreadFromOther = messages.some(
-            (m) => m.sender_id === otherUser.id && m.is_read !== true
-        );
-        if (hasUnreadFromOther) {
-            markAsRead();
-        }
+        markAsRead();
     }, [messages, listing.id, otherUser.id]);
 
     useEffect(() => {

@@ -47,12 +47,18 @@ function GridSkeleton() {
   );
 }
 
+import { Pagination } from "@/components/ui/Pagination";
+
 async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const supabase = await createClient();
+  const PAGE_SIZE = 40;
+  const currentPage = Number(searchParams.page) || 1;
+  const from = (currentPage - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
 
   let query = supabase
     .from("listings")
-    .select("id, title, price, location, image_urls, created_at, category, price_type")
+    .select("id, title, price, location, image_urls, created_at, category, price_type", { count: "exact" })
     .eq("status", "active")
     .order("created_at", { ascending: false });
 
@@ -64,17 +70,16 @@ async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: s
 
   const subcategoryFilter = searchParams.subcategory as string;
   if (subcategoryFilter) {
-    // Uso de ilike para resiliencia ante variaciones de casing en URLs en producción
     query = query.ilike("subcategory", subcategoryFilter);
   }
 
   const textQuery = searchParams.q as string;
   if (textQuery) {
-    // ILIKE %text% para título o descripción
     query = query.or(`title.ilike.%${textQuery}%,description.ilike.%${textQuery}%`);
   }
 
-  const { data: listings, error } = await query.limit(20); // Inicial 20 elementos
+  // Ejecutar query con rango para paginación
+  const { data: listings, error, count } = await query.range(from, to);
 
   if (error) {
     console.error("Supabase Error fetching listings:", error);
@@ -99,12 +104,18 @@ async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: s
     );
   }
 
+  const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {listings.map((listing: Listing) => (
-        <ListingCard key={listing.id} listing={listing} />
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {listings.map((listing: Listing) => (
+          <ListingCard key={listing.id} listing={listing} />
+        ))}
+      </div>
+
+      <Pagination currentPage={currentPage} totalPages={totalPages} />
+    </>
   );
 }
 
