@@ -2,11 +2,16 @@
 
 import React, { useState } from "react";
 import { Loader2, DownloadCloud, CheckCircle } from "lucide-react";
+import { CATEGORIES } from "@/constants/categories";
 
 export function ImportForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState<string>("");
     const [logs, setLogs] = useState<string[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0].id);
+    const [selectedSubcategory, setSelectedSubcategory] = useState("");
+
+    const currentSubcategories = CATEGORIES.find(c => c.id === selectedCategory)?.subcategories || [];
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -54,7 +59,7 @@ export function ImportForm() {
                     const adRes = await fetch("/api/scrape/milanuncios/ad", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ url: adUrl, cookie }),
+                        body: JSON.stringify({ url: adUrl, cookie, category: selectedCategory, subcategory: selectedSubcategory }),
                     });
 
                     const adData = await adRes.json();
@@ -88,6 +93,39 @@ export function ImportForm() {
                     <option value="milanuncios">Milanuncios (Premium Scraper)</option>
                     <option value="wallapop" disabled>Wallapop (Próximamente)</option>
                 </select>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Categoría Destino</label>
+                    <select
+                        value={selectedCategory}
+                        onChange={(e) => {
+                            setSelectedCategory(e.target.value);
+                            setSelectedSubcategory("");
+                        }}
+                        className="w-full h-12 px-4 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition-all"
+                    >
+                        {CATEGORIES.map(c => (
+                            <option key={c.id} value={c.id}>{c.label}</option>
+                        ))}
+                    </select>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Subcategoría (Opcional)</label>
+                    <select
+                        value={selectedSubcategory}
+                        onChange={(e) => setSelectedSubcategory(e.target.value)}
+                        className="w-full h-12 px-4 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition-all disabled:opacity-50"
+                        disabled={currentSubcategories.length === 0}
+                    >
+                        <option value="">-- Sin subcategoría --</option>
+                        {currentSubcategories.map(sub => (
+                            <option key={sub} value={sub}>{sub}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             <div>

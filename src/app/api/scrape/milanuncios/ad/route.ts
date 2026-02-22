@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 
 export async function POST(req: Request) {
     try {
-        const { url, cookie } = await req.json();
+        const { url, cookie, category, subcategory } = await req.json();
 
         if (!url) {
             return NextResponse.json({ error: "Falta proporcionar la URL" }, { status: 400 });
@@ -122,7 +122,8 @@ export async function POST(req: Request) {
                 description: finalDescription,
                 price,
                 location: locationText,
-                category: "Importados", // Categoría por defecto
+                category: category || "Importados",
+                subcategory: subcategory || null,
                 price_type: "fixed",
                 image_urls: finalImageUrls,
                 user_id: user.id, // Asignar al admin que importa
