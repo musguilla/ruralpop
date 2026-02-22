@@ -135,12 +135,9 @@ export function ActiveSearchBar() {
         activeBadges.push({ type: 'location', label: locObj ? locObj.name : location });
     }
     const currentPriceMin = searchParams.get("price_min");
-    if (currentPriceMin) {
-        activeBadges.push({ type: 'price_min', label: `Mín: ${currentPriceMin}€` });
-    }
     const currentPriceMax = searchParams.get("price_max");
-    if (currentPriceMax) {
-        activeBadges.push({ type: 'price_max', label: `Máx: ${currentPriceMax}€` });
+    if (currentPriceMin || currentPriceMax) {
+        activeBadges.push({ type: 'price', label: 'Precio' });
     }
     const currentSellerType = searchParams.get("seller_type");
     if (currentSellerType && currentSellerType !== "all") {
