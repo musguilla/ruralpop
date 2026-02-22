@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
     Search, List, MapPin, Tractor, Leaf, Apple, Hammer,
     Cloud, PiggyBank, Bird, Dog, Rabbit, Milk,
@@ -9,35 +10,13 @@ import {
 } from "lucide-react";
 import { CATEGORIES } from "@/constants/categories";
 
-// Custom SVG to replace Cow (Bovino)
-const CowIcon = ({ className }: { className?: string }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M4 10v4c0 3.3 2.7 6 6 6h4c3.3 0 6-2.7 6-6v-4" />
-        <path d="M3 10c0-2.8 2.2-5 5-5" />
-        <path d="M21 10c0-2.8-2.2-5-5-5" />
-        <path d="M8 5v1" />
-        <path d="M16 5v1" />
-        <path d="M9 14h6" />
-    </svg>
-);
-
-// Custom SVG to replace Horse (Equino)
-const HorseIcon = ({ className }: { className?: string }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M18 10l-3-6-3 4-4-2-2 4 4 6" />
-        <path d="M10 16h6l2-2" />
-        <path d="M14 8l-2 3" />
-        <path d="M8 12l2-1" />
-    </svg>
-);
-
 // Define a unified list for the slider
 const VISUAL_CATEGORIES = [
     { id: "ganaderia", type: "category", label: "Ganadería", icon: <Tractor className="w-8 h-8 text-emerald-700" /> },
-    { id: "Bovino", type: "subcategory", label: "Bovino", icon: <CowIcon className="w-8 h-8 text-emerald-700" /> },
-    { id: "Equino", type: "subcategory", label: "Equino", icon: <HorseIcon className="w-8 h-8 text-emerald-700" /> },
-    { id: "Caprino", type: "subcategory", label: "Caprino", icon: <Milk className="w-8 h-8 text-emerald-700" /> },
-    { id: "Ovino", type: "subcategory", label: "Ovino", icon: <Cloud className="w-8 h-8 text-emerald-700" /> },
+    { id: "Bovino", type: "subcategory", label: "Bovino", icon: <Image src="/icon-bovino.png" alt="Bovino" width={36} height={36} /> },
+    { id: "Equino", type: "subcategory", label: "Equino", icon: <Image src="/icon-equino.png" alt="Equino" width={36} height={36} /> },
+    { id: "Caprino", type: "subcategory", label: "Caprino", icon: <Image src="/icon-caprino.png" alt="Caprino" width={36} height={36} /> },
+    { id: "Ovino", type: "subcategory", label: "Ovino", icon: <Image src="/icon-ovino.png" alt="Ovino" width={36} height={36} /> },
     { id: "Porcino", type: "subcategory", label: "Porcino", icon: <PiggyBank className="w-8 h-8 text-emerald-700" /> },
     { id: "Avicultura", type: "subcategory", label: "Avicultura", icon: <Bird className="w-8 h-8 text-emerald-700" /> },
     { id: "Perros", type: "subcategory", label: "Perros", icon: <Dog className="w-8 h-8 text-emerald-700" /> },
@@ -237,17 +216,17 @@ export function HomeSearchHero() {
                 <div className="flex items-center justify-between w-full px-2">
                     <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">Todas las categorías</h2>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                         <button
                             onClick={scrollLeft}
-                            className="w-10 h-10 bg-white border border-[var(--ag-sys-color-border)] rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
+                            className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors"
                             aria-label="Scroll left"
                         >
                             <ChevronLeft className="w-5 h-5 text-gray-700" />
                         </button>
                         <button
                             onClick={scrollRight}
-                            className="w-10 h-10 bg-white border border-[var(--ag-sys-color-border)] rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
+                            className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors"
                             aria-label="Scroll right"
                         >
                             <ChevronRight className="w-5 h-5 text-gray-700" />
@@ -258,17 +237,17 @@ export function HomeSearchHero() {
                 {/* Slider Container */}
                 <div
                     ref={sliderRef}
-                    className="flex overflow-x-auto gap-8 pb-4 hide-scrollbar w-full px-2"
+                    className="flex overflow-x-auto gap-1 pb-4 hide-scrollbar w-full px-2"
                     style={{ touchAction: 'pan-y' }}
                 >
                     {VISUAL_CATEGORIES.map(cat => (
                         <button
                             key={cat.id}
                             onClick={() => handleCategoryClick(cat)}
-                            className="flex flex-col items-center gap-3 shrink-0 group/btn transition-transform hover:-translate-y-1"
-                            style={{ minWidth: '90px' }}
+                            className="flex flex-col items-center gap-2 shrink-0 group/btn transition-all p-3 rounded-2xl hover:bg-gray-50 active:scale-95"
+                            style={{ minWidth: '100px' }}
                         >
-                            <div className="w-16 h-16 rounded-full border border-[var(--ag-sys-color-border)] group-hover/btn:border-[var(--ag-sys-color-primary)] bg-white flex items-center justify-center transition-colors shadow-sm">
+                            <div className="w-14 h-14 flex items-center justify-center transition-transform group-hover/btn:scale-105">
                                 {cat.icon}
                             </div>
                             <span className="text-sm font-semibold text-[var(--ag-sys-color-text)] text-center w-full">
