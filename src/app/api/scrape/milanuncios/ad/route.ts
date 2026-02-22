@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
         // 1. Fetch de la URL pública del anuncio
         console.log("Fetching MA AD:", url);
-        const response = await fetch(url, { headers });
+        const response = await fetch(url, { headers, method: 'GET' });
         if (!response.ok) {
             return NextResponse.json({ error: `Milanuncios respondió con HTTP ${response.status} en el anuncio` }, { status: 500 });
         }

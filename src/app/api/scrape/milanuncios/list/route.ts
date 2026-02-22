@@ -3,21 +3,25 @@ import * as cheerio from "cheerio";
 
 export async function POST(req: Request) {
     try {
-        const { url } = await req.json();
+        const { url, cookie } = await req.json();
 
         if (!url) {
             return NextResponse.json({ error: "Falta proporcionar la URL" }, { status: 400 });
         }
 
         // Simular headers de navegador real para evitar bloqueos
-        const headers = {
+        const headers: Record<string, string> = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
             "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
             "Cache-Control": "max-age=0",
         };
 
-        const response = await fetch(url, { headers });
+        if (cookie) {
+            headers["Cookie"] = cookie;
+        }
+
+        const response = await fetch(url, { headers, method: "GET" });
         if (!response.ok) {
             return NextResponse.json({ error: `Milanuncios respondió con HTTP ${response.status}` }, { status: 500 });
         }
