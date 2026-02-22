@@ -32,7 +32,7 @@ const HorseIcon = ({ className }: { className?: string }) => (
 
 // Map icons to categories and subcategories
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-    "animales": <Tractor className="w-5 h-5" />,
+    "ganaderia": <Tractor className="w-5 h-5" />,
     "maquinaria": <Hammer className="w-5 h-5" />,
     "forraje": <Leaf className="w-5 h-5" />,
     "alimentos": <Apple className="w-5 h-5" />,

@@ -34,7 +34,7 @@ export default function PrivacyPage() {
 
                     <h3 className="text-xl font-bold mt-8 mb-4 text-[var(--ag-sys-color-text)]">Tratamiento de las Imágenes y Anuncios</h3>
                     <p>
-                        Las imágenes que subas de tus maquinaria, animales, o fincas, al igual que las descripciones y precios, se considerarán de dominio público en lo que respecta al alcance de la plataforma, y podrán ser indexadas por buscadores (ej. Google) para ayudarte a llegar a más posibles compradores.
+                        Las imágenes que subas de tus maquinaria, ganadería, o fincas, al igual que las descripciones y precios, se considerarán de dominio público en lo que respecta al alcance de la plataforma, y podrán ser indexadas por buscadores (ej. Google) para ayudarte a llegar a más posibles compradores.
                     </p>
 
                     <h3 className="text-xl font-bold mt-8 mb-4 text-[var(--ag-sys-color-text)]">Tus Derechos (RGPD)</h3>

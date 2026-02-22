@@ -114,10 +114,10 @@ export default function UploadForm({ savedPhone, initialProvinces }: UploadFormP
             <div className="mb-8 border-b border-[var(--ag-sys-color-border)] pb-6">
                 <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] flex items-center gap-3">
                     <Tractor className="text-[var(--ag-sys-color-primary)] w-8 h-8" />
-                    Publicar nuevo anuncio
+                    Sube tu anuncio gratis
                 </h1>
-                <p className="text-[var(--ag-sys-color-text-muted)] mt-2">
-                    Vende animales, maquinaria y productos del campo de forma segura en Ruralpop.
+                <p className="text-[var(--ag-sys-color-text-secondary)] text-sm sm:text-base mt-2">
+                    Vende ganadería, maquinaria y productos del campo de forma segura en Ruralpop.
                 </p>
             </div>
 

@@ -15,11 +15,9 @@ export function Footer() {
                     >
                         <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain" />
                     </Link>
-                    <p className="text-sm text-[var(--ag-sys-color-text-muted)] text-center md:text-left max-w-sm mt-2">
-                        El mercado líder en compra y venta de animales, maquinaria y productos del campo.{" "}
-                        <Link href="/about" className="text-[var(--ag-sys-color-primary)] hover:underline font-medium">
-                            Conócenos
-                        </Link>
+                    <p className="text-gray-400 text-sm max-w-sm">
+                        El mercado líder en compra y venta de ganadería, maquinaria y productos del campo.{" "}
+                        Para el entorno rural.
                     </p>
                 </div>
 

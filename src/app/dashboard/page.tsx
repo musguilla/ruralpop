@@ -46,7 +46,7 @@ export default async function DashboardPage() {
                         </div>
                         <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-3">Aún no has publicado nada</h3>
                         <p className="text-[var(--ag-sys-color-text-muted)] mb-8 max-w-md mx-auto">
-                            Empieza a vender tus productos, animales o maquinaria ahora mismo.
+                            Empieza a vender tus productos, ganadería o maquinaria ahora mismo.
                         </p>
                         <Link
                             href="/upload"

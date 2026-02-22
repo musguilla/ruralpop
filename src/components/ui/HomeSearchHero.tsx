@@ -33,7 +33,7 @@ const HorseIcon = ({ className }: { className?: string }) => (
 
 // Define a unified list for the slider
 const VISUAL_CATEGORIES = [
-    { id: "animales", type: "category", label: "Animales", icon: <Tractor className="w-8 h-8 text-emerald-700" /> },
+    { id: "ganaderia", type: "category", label: "Ganadería", icon: <Tractor className="w-8 h-8 text-emerald-700" /> },
     { id: "Bovino", type: "subcategory", label: "Bovino", icon: <CowIcon className="w-8 h-8 text-emerald-700" /> },
     { id: "Equino", type: "subcategory", label: "Equino", icon: <HorseIcon className="w-8 h-8 text-emerald-700" /> },
     { id: "Caprino", type: "subcategory", label: "Caprino", icon: <Milk className="w-8 h-8 text-emerald-700" /> },
@@ -103,7 +103,7 @@ export function HomeSearchHero() {
             if (["Transporte", "Veterinarios", "Herradores"].includes(item.id)) {
                 params.set("category", "servicios");
             } else {
-                params.set("category", "animales");
+                params.set("category", "ganaderia");
             }
             params.set("subcategory", item.id);
         }

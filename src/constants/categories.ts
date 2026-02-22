@@ -1,7 +1,7 @@
 export const CATEGORIES = [
     {
-        id: "animales",
-        label: "Animales",
+        id: "ganaderia",
+        label: "Ganadería",
         subcategories: [
             "Bovino",
             "Equino",
