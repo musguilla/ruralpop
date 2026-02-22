@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { MapPin, Image as ImageIcon } from "lucide-react";
+import { slugify } from "@/utils/seoUtils";
+import { encodeId } from "@/utils/idUtils";
 
 export interface Listing {
     id: string;
@@ -18,8 +20,11 @@ export interface Listing {
 export function ListingCard({ listing }: { listing: Listing }) {
     const mainImage = listing.image_urls?.[0];
 
+    const listingSlug = slugify(listing.title);
+    const shortId = encodeId(listing.id);
+
     return (
-        <Link href={`/listing/${listing.id}`} className="block group">
+        <Link href={`/anuncio/${listingSlug}-${shortId}`} className="block group">
             <article className="flex flex-col bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-[var(--ag-sys-color-primary)] transition-all duration-300 transform hover:-translate-y-1 h-full">
                 {/* Aspect Ratio 4:3 for Main Image */}
                 <div className="relative aspect-[4/3] w-full bg-[var(--ag-sys-color-background)] overflow-hidden border-b border-[var(--ag-sys-color-border)]">

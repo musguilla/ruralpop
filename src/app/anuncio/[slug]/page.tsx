@@ -6,11 +6,18 @@ import { MapPin, Calendar, Phone, User, ArrowLeft, ShieldCheck, Tractor } from "
 import Image from "next/image";
 import Link from "next/link";
 import { ChatButton } from "@/components/chat/ChatButton";
+import { decodeId } from "@/utils/idUtils";
 
 export default async function ListingDetailPage(props: {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }) {
-    const { id } = await props.params;
+    const { slug } = await props.params;
+
+    // The slug format is [title]-[shortId]
+    const slugParts = slug.split('-');
+    const shortId = slugParts.pop() || '';
+    const id = decodeId(shortId);
+
     const supabase = await createClient();
 
     const { data: { user } } = await supabase.auth.getUser();

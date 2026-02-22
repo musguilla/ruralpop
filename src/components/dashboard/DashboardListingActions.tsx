@@ -5,6 +5,7 @@ import { Eye, Trash2, CheckCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { deleteListing, toggleListingStatus } from "@/app/dashboard/actions";
 import { useNotification } from "@/context/NotificationContext";
+import { encodeId } from "@/utils/idUtils";
 
 interface DashboardListingActionsProps {
     listingId: string;
@@ -57,7 +58,7 @@ export function DashboardListingActions({ listingId, status }: DashboardListingA
         <div className="flex flex-wrap items-center justify-between gap-4 mt-8 pt-6 border-t border-[var(--ag-sys-color-border)]">
             <div className="flex gap-2">
                 <Link
-                    href={`/listing/${listingId}`}
+                    href={`/anuncio/anuncio-${encodeId(listingId)}`}
                     className="flex items-center gap-2 px-4 py-2.5 bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] font-semibold rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all text-sm"
                 >
                     <Eye className="w-4 h-4" />
