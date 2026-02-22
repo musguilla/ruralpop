@@ -1,19 +1,25 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { createClient as createServerClient } from "@/utils/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { isAdmin } from "@/utils/auth-check";
 import { revalidatePath } from "next/cache";
 
 export async function deleteListing(listingId: string) {
-    // 1. Verificar permisos de admin
+    // 1. Verificar permisos de admin a través de la sesión del usuario
     if (!await isAdmin()) {
         throw new Error("No autorizado");
     }
 
-    const supabase = await createClient();
+    // Usar SERVICE_ROLE_KEY para ignorar RLS en el borrado, ya que un administrador 
+    // debe poder borrar anuncios independientemente de la política `auth.uid() = user_id`
+    const supabaseAdmin = createAdminClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     // 2. Obtener los datos del anuncio antes de borrar (para las fotos)
-    const { data: listing, error: fetchError } = await supabase
+    const { data: listing, error: fetchError } = await supabaseAdmin
         .from("listings")
         .select("image_urls")
         .eq("id", listingId)
@@ -24,9 +30,8 @@ export async function deleteListing(listingId: string) {
         return { success: false, error: "Anuncio no encontrado" };
     }
 
-    // 3. Borrar de la base de datos
-    // Usamos delete real como pidió el usuario
-    const { error: deleteError } = await supabase
+    // 3. Borrar de la base de datos (con admin client)
+    const { error: deleteError } = await supabaseAdmin
         .from("listings")
         .delete()
         .eq("id", listingId);
@@ -40,20 +45,17 @@ export async function deleteListing(listingId: string) {
     if (listing.image_urls && listing.image_urls.length > 0) {
         const filePaths = listing.image_urls.map((url: string) => {
             // Extraer el path relativo al bucket 'listings'
-            // Ejemplo URL: .../public/listings/folder/uuid.jpg -> folder/uuid.jpg
             const parts = url.split('/public/listings/');
             return parts.length > 1 ? parts[1] : null;
         }).filter(Boolean) as string[];
 
         if (filePaths.length > 0) {
-            const { error: storageError } = await supabase.storage
+            const { error: storageError } = await supabaseAdmin.storage
                 .from("listings")
                 .remove(filePaths);
 
             if (storageError) {
                 console.error("Error al limpiar Storage:", storageError);
-                // No lanzamos error aquí para no confundir al usuario, 
-                // ya que el anuncio ya no existe en la DB
             } else {
                 console.log(`🧹 Limpieza de storage exitosa: ${filePaths.length} archivos eliminados.`);
             }
