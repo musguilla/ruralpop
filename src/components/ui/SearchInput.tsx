@@ -2,7 +2,8 @@
 
 import React from "react";
 import { Search } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, useParams } from "next/navigation";
+import { parseSeoUrl, buildSeoUrl } from "@/utils/seoUtils";
 
 interface SearchInputProps {
   placeholder?: string;
@@ -17,6 +18,12 @@ export function SearchInput({
 }: SearchInputProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const params = useParams();
+
+  // Try to parse from slug if we are on a search route
+  const slug = params?.slug as string | undefined;
+  const parsedSlug = slug ? parseSeoUrl(slug) : null;
+  const initialQ = parsedSlug ? parsedSlug.q : (searchParams.get("q") || "");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,14 +33,27 @@ export function SearchInput({
     if (onSearch) {
       onSearch(query);
     } else {
-      const params = new URLSearchParams(searchParams.toString());
-      if (query.trim()) {
-        params.set("q", query.trim());
-      } else {
-        params.delete("q");
-      }
+      // If we are already on a search route, keep the current category/location but update the textual query
+      const category = parsedSlug ? parsedSlug.category : searchParams.get("category");
+      const subcategory = parsedSlug ? parsedSlug.subcategory : searchParams.get("subcategory");
+      const location = parsedSlug ? parsedSlug.province_id : searchParams.get("province_id");
 
-      router.push(`/?${params.toString()}`);
+      const url = buildSeoUrl({
+        q: query || undefined,
+        category: category || undefined,
+        subcategory: subcategory || undefined,
+        province_id: location || undefined
+      });
+
+      // Maintain any extra query params like price max/min
+      const urlParams = new URLSearchParams(searchParams.toString());
+      urlParams.delete("q");
+      urlParams.delete("category");
+      urlParams.delete("subcategory");
+      urlParams.delete("province_id");
+
+      const queryStr = urlParams.toString();
+      router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
     }
   };
 
@@ -45,7 +65,7 @@ export function SearchInput({
       <input
         type="text"
         name="q"
-        defaultValue={searchParams.get("q") || ""}
+        defaultValue={initialQ}
         placeholder={placeholder}
         className="w-full h-10 pl-4 pr-10 rounded-full border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition-all"
         aria-label="Caja de búsqueda"

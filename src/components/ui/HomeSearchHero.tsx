@@ -53,6 +53,7 @@ const VISUAL_CATEGORIES = [
 
 import { CategoryModal } from "./CategoryModal";
 import { LocationModal } from "./LocationModal";
+import { buildSeoUrl } from "@/utils/seoUtils";
 
 export function HomeSearchHero() {
     const router = useRouter();
@@ -68,12 +69,13 @@ export function HomeSearchHero() {
 
     const handleSearch = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        const params = new URLSearchParams();
-        if (query.trim()) params.set("q", query.trim());
-        if (category) params.set("category", category);
-        if (subcategory) params.set("subcategory", subcategory);
-        if (location) params.set("province_id", location);
-        router.push(`/?${params.toString()}`);
+        const url = buildSeoUrl({
+            q: query.trim(),
+            category: category,
+            subcategory: subcategory,
+            province_id: location
+        });
+        router.push(url);
     };
 
     const handleCategorySelect = (catId: string, subId?: string) => {
@@ -95,19 +97,20 @@ export function HomeSearchHero() {
     };
 
     const handleCategoryClick = (item: typeof VISUAL_CATEGORIES[0]) => {
-        const params = new URLSearchParams();
-        if (item.type === "category") {
-            params.set("category", item.id);
-        } else {
+        let cat = item.type === "category" ? item.id : undefined;
+        let subcat = item.type === "subcategory" ? item.id : undefined;
+
+        if (subcat) {
             // Dynamically set correct parent category
-            if (["Transporte", "Veterinarios", "Herradores"].includes(item.id)) {
-                params.set("category", "servicios");
+            if (["Transporte", "Veterinarios", "Herradores"].includes(subcat)) {
+                cat = "servicios";
             } else {
-                params.set("category", "ganaderia");
+                cat = "ganaderia";
             }
-            params.set("subcategory", item.id);
         }
-        router.push(`/?${params.toString()}`);
+
+        const url = buildSeoUrl({ category: cat, subcategory: subcat });
+        router.push(url);
     };
 
     const scrollLeft = () => {

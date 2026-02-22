@@ -1,14 +1,24 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useRouter, useSearchParams, usePathname, useParams } from "next/navigation";
 import { Search, X, SlidersHorizontal, MapPin } from "lucide-react";
 import { CATEGORIES } from "@/constants/categories";
+import { parseSeoUrl, buildSeoUrl } from "@/utils/seoUtils";
 
 export function ActiveSearchBar() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
+    const urlParams = useParams();
+
+    const slug = urlParams?.slug as string | undefined;
+    const parsedSlug = slug ? parseSeoUrl(slug) : null;
+
+    const query = parsedSlug ? parsedSlug.q : searchParams.get("q");
+    const category = parsedSlug ? parsedSlug.category : searchParams.get("category");
+    const subcategory = parsedSlug ? parsedSlug.subcategory : searchParams.get("subcategory");
+    const location = parsedSlug ? parsedSlug.province_id : searchParams.get("province_id");
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
@@ -16,16 +26,13 @@ export function ActiveSearchBar() {
     const [priceMin, setPriceMin] = useState(searchParams.get("price_min") || "");
     const [priceMax, setPriceMax] = useState(searchParams.get("price_max") || "");
     const [sellerType, setSellerType] = useState(searchParams.get("seller_type") || "all");
-    const [modalCategory, setModalCategory] = useState(searchParams.get("category") || "");
-    const [modalLocation, setModalLocation] = useState(searchParams.get("province_id") || "");
-
-    const query = searchParams.get("q");
-    const category = searchParams.get("category");
-    const location = searchParams.get("province_id");
+    const [modalCategory, setModalCategory] = useState(category || "");
+    const [modalLocation, setModalLocation] = useState(location || "");
 
     // What is displayed in the active search pill
     let pillText = "Busqueda activa";
     if (query) pillText = query;
+    else if (subcategory) pillText = subcategory;
     else if (category) {
         const cat = CATEGORIES.find(c => c.id === category);
         pillText = cat ? cat.label : category;
@@ -34,7 +41,7 @@ export function ActiveSearchBar() {
     }
 
     const clearSearch = () => {
-        router.push(pathname);
+        router.push("/");
     };
 
     const applyFilters = () => {
@@ -49,14 +56,22 @@ export function ActiveSearchBar() {
         if (sellerType !== "all") params.set("seller_type", sellerType);
         else params.delete("seller_type");
 
-        if (modalCategory) params.set("category", modalCategory);
-        else params.delete("category");
-
-        if (modalLocation) params.set("province_id", modalLocation);
-        else params.delete("province_id");
-
         setIsFiltersOpen(false);
-        router.push(`/?${params.toString()}`);
+
+        const baseUrl = buildSeoUrl({
+            q: query ?? undefined,
+            category: modalCategory || undefined,
+            subcategory: (category === modalCategory && subcategory) ? subcategory : undefined,
+            province_id: modalLocation || undefined
+        });
+
+        params.delete("q");
+        params.delete("category");
+        params.delete("subcategory");
+        params.delete("province_id");
+
+        const queryStr = params.toString();
+        router.push(`${baseUrl}${queryStr ? '?' + queryStr : ''}`);
     };
 
     const clearFilters = () => {
@@ -65,7 +80,15 @@ export function ActiveSearchBar() {
         setSellerType("all");
         setModalCategory("");
         setModalLocation("");
-        router.push(pathname);
+
+        const baseUrl = buildSeoUrl({
+            q: query || undefined,
+            category: undefined,
+            subcategory: undefined,
+            province_id: undefined
+        });
+
+        router.push(baseUrl);
         setIsFiltersOpen(false);
     };
 
