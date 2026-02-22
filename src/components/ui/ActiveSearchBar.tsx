@@ -4,7 +4,9 @@ import React, { useState } from "react";
 import { useRouter, useSearchParams, usePathname, useParams } from "next/navigation";
 import { Search, X, SlidersHorizontal, MapPin } from "lucide-react";
 import { CATEGORIES } from "@/constants/categories";
+import { LOCATIONS } from "@/constants/locations";
 import { parseSeoUrl, buildSeoUrl } from "@/utils/seoUtils";
+import { SearchableSelect } from "@/components/ui/SearchableSelect";
 
 export function ActiveSearchBar() {
     const router = useRouter();
@@ -139,37 +141,40 @@ export function ActiveSearchBar() {
                         <div className="flex-1 overflow-y-auto p-4 space-y-6">
 
                             {/* Categories */}
-                            <div className="space-y-2">
+                            <div className="space-y-2 flex flex-col">
                                 <label className="flex items-center justify-between cursor-pointer w-full text-left py-2 hover:opacity-80">
                                     <span className="font-semibold text-gray-900 text-sm">Categoría</span>
                                 </label>
-                                <select
-                                    className="w-full border border-[var(--ag-sys-color-border)] rounded-lg p-3 text-sm focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none"
+                                <SearchableSelect
+                                    name="modalCategory"
                                     value={modalCategory}
-                                    onChange={(e) => setModalCategory(e.target.value)}
-                                >
-                                    <option value="">Todas las categorías</option>
-                                    {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-                                </select>
+                                    onChange={(val) => setModalCategory(val as string)}
+                                    options={[
+                                        { id: "", name: "Todas las categorías" },
+                                        ...CATEGORIES.map(c => ({ id: c.id, name: c.label }))
+                                    ]}
+                                    placeholder="Todas las categorías"
+                                    searchPlaceholder="Buscar categoría..."
+                                />
                             </div>
 
                             {/* Location */}
-                            <div className="space-y-2">
-                                <label className="flex items-center justify-between cursor-pointer w-full text-left py-2 hover:opacity-80">
+                            <div className="space-y-2 flex flex-col">
+                                <label className="flex items-center gap-1.5 cursor-pointer w-full text-left py-2 hover:opacity-80">
+                                    <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
                                     <span className="font-semibold text-gray-900 text-sm">Localización</span>
                                 </label>
-                                <div className="relative">
-                                    <MapPin className="w-5 h-5 absolute left-3 top-3 text-gray-400" />
-                                    <select
-                                        className="w-full border border-[var(--ag-sys-color-border)] rounded-lg p-3 pl-10 text-sm focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none"
-                                        value={modalLocation}
-                                        onChange={(e) => setModalLocation(e.target.value)}
-                                    >
-                                        <option value="">Toda España</option>
-                                        <option value="15">A Coruña</option>
-                                        <option value="33">Asturias</option>
-                                    </select>
-                                </div>
+                                <SearchableSelect
+                                    name="modalLocation"
+                                    value={modalLocation}
+                                    onChange={(val) => setModalLocation(val as string)}
+                                    options={[
+                                        { id: "", name: "Toda España" },
+                                        ...LOCATIONS.filter(loc => loc.type === 'province').map(loc => ({ id: loc.id, name: loc.name }))
+                                    ]}
+                                    placeholder="Toda España"
+                                    searchPlaceholder="Buscar provincia..."
+                                />
                             </div>
 
                             {/* Price */}
