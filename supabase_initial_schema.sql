@@ -48,6 +48,7 @@ CREATE TABLE public.messages (
   receiver_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
   listing_id UUID REFERENCES public.listings(id) ON DELETE CASCADE NOT NULL,
   content TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 

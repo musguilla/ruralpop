@@ -6,10 +6,18 @@ import { SearchInput } from "../ui/SearchInput";
 import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
 import { logout } from "@/app/auth/actions";
+import { ChatBadge } from "@/components/chat/ChatBadge";
 
 export async function Header() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+
+    // Fetch initial unread count
+    const { count: unreadCount } = user ? await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('receiver_id', user.id)
+        .eq('is_read', false) : { count: 0 };
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] shadow-sm">
@@ -59,7 +67,7 @@ export async function Header() {
                                     aria-label="Mis Mensajes"
                                     title="Mis Mensajes"
                                 >
-                                    <MessageSquare className="w-6 h-6" />
+                                    <ChatBadge initialCount={unreadCount || 0} userId={user.id} />
                                 </Link>
                             </div>
                             <form action={logout}>

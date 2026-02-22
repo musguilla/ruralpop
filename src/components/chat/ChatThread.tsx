@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Send, Tractor, ArrowLeft } from "lucide-react";
-import { sendMessage } from "@/app/chat/actions";
+import { sendMessage, markMessagesAsRead } from "@/app/chat/actions";
 import Link from "next/link";
 import Image from "next/image";
 import { formatRelativeTime } from "@/utils/format";
@@ -12,6 +12,7 @@ interface Message {
     id: string;
     sender_id: string;
     content: string;
+    is_read?: boolean;
     created_at: string;
 }
 
@@ -35,6 +36,24 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    useEffect(() => {
+        // Marcar como leído al entrar o al recibir nuevos mensajes si estamos en este hilo
+        const markAsRead = async () => {
+            try {
+                await markMessagesAsRead(listing.id, otherUser.id);
+            } catch (err) {
+                console.error("Error al marcar como leídos:", err);
+            }
+        };
+
+        const hasUnreadFromOther = messages.some(
+            (m) => m.sender_id === otherUser.id && m.is_read !== true
+        );
+        if (hasUnreadFromOther) {
+            markAsRead();
+        }
+    }, [messages, listing.id, otherUser.id]);
 
     useEffect(() => {
         // Configurar canal de Supabase Realtime para mensajes nuevos

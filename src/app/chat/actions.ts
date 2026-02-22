@@ -29,3 +29,26 @@ export async function sendMessage(formData: FormData) {
 
     revalidatePath(`/chat/${listing_id}`);
 }
+
+export async function markMessagesAsRead(listingId: string, otherUserId: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { success: false };
+
+    const { error } = await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('listing_id', listingId)
+        .eq('receiver_id', user.id)
+        .eq('sender_id', otherUserId)
+        .eq('is_read', false);
+
+    if (error) {
+        console.error("Error marking messages as read:", error);
+        return { success: false };
+    }
+
+    revalidatePath('/chat');
+    return { success: true };
+}
