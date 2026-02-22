@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import { optimizeImage } from "@/utils/image-optimization";
 
 interface ImageUploaderProps {
     onImagesChange: (urls: string[]) => void;
@@ -21,14 +22,18 @@ export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderPr
 
     const uploadFile = async (file: File, tempId: string) => {
         try {
-            const fileExt = file.name.split(".").pop();
+            // Optimizar imagen antes de subir (Redimensionar y comprimir)
+            console.log(`📸 Optimizando imagen original: ${(file.size / 1024).toFixed(2)} KB`);
+            const optimizedBlob = await optimizeImage(file);
+            console.log(`✅ Imagen optimizada: ${(optimizedBlob.size / 1024).toFixed(2)} KB`);
+
+            const fileExt = "jpg"; // Forzamos jpg tras la optimización
             const fileName = `${Math.random()}.${fileExt}`;
             const filePath = `listings/${fileName}`;
 
-            // IMPORTANTE: Asegúrate de que el bucket se llame 'listings' en Supabase
             const { error: uploadError } = await supabase.storage
                 .from("listings")
-                .upload(filePath, file);
+                .upload(filePath, optimizedBlob);
 
             if (uploadError) throw uploadError;
 

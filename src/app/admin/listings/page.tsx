@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { DeleteButton } from "./DeleteButton";
 
 export const dynamic = "force-dynamic";
 
@@ -111,9 +112,7 @@ export default async function AdminListingsPage() {
                                         <button className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-600 text-xs font-bold rounded-xl hover:bg-amber-500/20 transition-all">
                                             <AlertTriangle className="w-3.5 h-3.5" /> Moderar
                                         </button>
-                                        <button className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 text-xs font-bold rounded-xl hover:bg-red-500/20 transition-all">
-                                            <XCircle className="w-3.5 h-3.5" /> Borrar
-                                        </button>
+                                        <DeleteButton listingId={l.id} title={l.title} />
                                     </div>
                                 </div>
                             </div>
