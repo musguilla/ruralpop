@@ -10,7 +10,7 @@ export default function MarketingImportPage() {
                 Configura fuentes de datos externas para scrapear y rellenar Ruralpop con contenido inicial.
             </p>
 
-            <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 md:p-8 max-w-3xl">
+            <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 md:p-8 w-full">
                 <form className="space-y-6">
                     <div>
                         <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Fuente de Datos</label>

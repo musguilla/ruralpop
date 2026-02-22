@@ -10,7 +10,7 @@ export default function MarketingSocialPage() {
                 Publica y programa posts en las redes sociales de Ruralpop.
             </p>
 
-            <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-16 text-center text-[var(--ag-sys-color-text-muted)]">
+            <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-16 text-center text-[var(--ag-sys-color-text-muted)] w-full">
                 <p className="font-bold text-lg mb-2">Integración en Desarrollo</p>
                 <p>Próximamente podrás conectar cuentas de Instagram, Facebook y automatizar tus listados aquí.</p>
             </div>

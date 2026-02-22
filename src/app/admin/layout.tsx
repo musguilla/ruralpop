@@ -27,7 +27,7 @@ export default async function AdminLayout({
     }
 
     return (
-        <div className="flex min-h-screen bg-[var(--ag-sys-color-background)]">
+        <div className="flex min-h-screen w-full bg-[var(--ag-sys-color-background)]">
             {/* Sidebar */}
             <AdminSidebar />
 
