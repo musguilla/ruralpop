@@ -103,7 +103,7 @@ export function ActiveSearchBar() {
                 >
                     <div className="flex items-center gap-3 text-[var(--ag-sys-color-text)]">
                         <Search className="w-5 h-5 text-gray-400" />
-                        <span className="font-semibold text-base truncate">{pillText}</span>
+                        <span className="text-base truncate">{pillText}</span>
                     </div>
                     <button
                         className="p-1 rounded-full border-2 border-black transition-colors hover:bg-gray-100 flex items-center justify-center shrink-0"
