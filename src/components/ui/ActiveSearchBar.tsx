@@ -28,7 +28,14 @@ export function ActiveSearchBar() {
     const [priceMin, setPriceMin] = useState(searchParams.get("price_min") || "");
     const [priceMax, setPriceMax] = useState(searchParams.get("price_max") || "");
     const [sellerType, setSellerType] = useState(searchParams.get("seller_type") || "all");
-    const [modalCategory, setModalCategory] = useState(category || "");
+
+    // Unified category/subcategory state
+    const [modalCategoryValue, setModalCategoryValue] = useState(() => {
+        if (subcategory) return `sub_${subcategory}`;
+        if (category) return `cat_${category}`;
+        return "";
+    });
+
     const [modalLocation, setModalLocation] = useState(location || "");
 
     // What is displayed in the active search pill
@@ -60,10 +67,21 @@ export function ActiveSearchBar() {
 
         setIsFiltersOpen(false);
 
+        let newCat = undefined;
+        let newSub = undefined;
+
+        if (modalCategoryValue.startsWith("cat_")) {
+            newCat = modalCategoryValue.replace("cat_", "");
+        } else if (modalCategoryValue.startsWith("sub_")) {
+            newSub = modalCategoryValue.replace("sub_", "");
+            // Find parent category to generate SEO URL properly
+            newCat = CATEGORIES.find(c => c.subcategories.includes(newSub!))?.id;
+        }
+
         const baseUrl = buildSeoUrl({
             q: query ?? undefined,
-            category: modalCategory || undefined,
-            subcategory: (category === modalCategory && subcategory) ? subcategory : undefined,
+            category: newCat || undefined,
+            subcategory: newSub || undefined,
             province_id: modalLocation || undefined
         });
 
@@ -80,7 +98,7 @@ export function ActiveSearchBar() {
         setPriceMin("");
         setPriceMax("");
         setSellerType("all");
-        setModalCategory("");
+        setModalCategoryValue("");
         setModalLocation("");
 
         const baseUrl = buildSeoUrl({
@@ -147,14 +165,17 @@ export function ActiveSearchBar() {
                                 </label>
                                 <SearchableSelect
                                     name="modalCategory"
-                                    value={modalCategory}
-                                    onChange={(val) => setModalCategory(val as string)}
+                                    value={modalCategoryValue}
+                                    onChange={(val) => setModalCategoryValue(val as string)}
                                     options={[
                                         { id: "", name: "Todas las categorías" },
-                                        ...CATEGORIES.map(c => ({ id: c.id, name: c.label }))
+                                        ...CATEGORIES.flatMap(c => [
+                                            { id: `cat_${c.id}`, name: c.label },
+                                            ...c.subcategories.map(sub => ({ id: `sub_${sub}`, name: `↳ ${sub}` }))
+                                        ])
                                     ]}
                                     placeholder="Todas las categorías"
-                                    searchPlaceholder="Buscar categoría..."
+                                    searchPlaceholder="Buscar categoría o subcategoría..."
                                 />
                             </div>
 
@@ -170,10 +191,10 @@ export function ActiveSearchBar() {
                                     onChange={(val) => setModalLocation(val as string)}
                                     options={[
                                         { id: "", name: "Toda España" },
-                                        ...LOCATIONS.filter(loc => loc.type === 'province').map(loc => ({ id: loc.id, name: loc.name }))
+                                        ...LOCATIONS.map(loc => ({ id: loc.id, name: loc.type === 'municipality' ? `↳ ${loc.name} (${loc.province})` : loc.name }))
                                     ]}
                                     placeholder="Toda España"
-                                    searchPlaceholder="Buscar provincia..."
+                                    searchPlaceholder="Buscar provincia o localidad..."
                                 />
                             </div>
 

@@ -44,7 +44,12 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     const locationFilter = searchParams.province_id as string;
     if (locationFilter) {
-        query = query.eq("province_id", locationFilter);
+        if (locationFilter.startsWith('m')) {
+            const muniId = locationFilter.substring(1);
+            query = query.eq("municipality_id", muniId);
+        } else {
+            query = query.eq("province_id", locationFilter);
+        }
     }
 
     // Ejecutar query con rango para paginación
