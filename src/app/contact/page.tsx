@@ -22,7 +22,7 @@ export default function ContactPage() {
                         ¿Tienes problemas técnicos, alertas sobre anuncios fraudulentos o dudas sobre cómo funciona Ruralpop? Ponte en contacto con nosotros para un soporte directo.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 max-w-md">
                         <div className="flex flex-col gap-4 p-6 bg-[var(--ag-sys-color-background)] rounded-2xl border border-[var(--ag-sys-color-border)]">
                             <div className="flex items-center gap-3">
                                 <div className="p-3 bg-blue-500/10 text-blue-600 rounded-xl">
@@ -33,24 +33,9 @@ export default function ContactPage() {
                                     <p className="text-sm text-[var(--ag-sys-color-text-muted)]">Respuesta en 24h</p>
                                 </div>
                             </div>
-                            <a href="mailto:soporte@ruralpop.com" className="text-[var(--ag-sys-color-primary)] font-bold hover:underline">
-                                soporte@ruralpop.com
+                            <a href="mailto:hola@ruralpop.com" className="text-[var(--ag-sys-color-primary)] font-bold hover:underline">
+                                hola@ruralpop.com
                             </a>
-                        </div>
-
-                        <div className="flex flex-col gap-4 p-6 bg-[var(--ag-sys-color-background)] rounded-2xl border border-[var(--ag-sys-color-border)]">
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-red-500/10 text-red-600 rounded-xl">
-                                    <Phone className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-[var(--ag-sys-color-text)]">Problemas Urgentes</h3>
-                                    <p className="text-sm text-[var(--ag-sys-color-text-muted)]">Lun-Vie 9:00 - 18:00</p>
-                                </div>
-                            </div>
-                            <span className="text-[var(--ag-sys-color-text)] font-bold">
-                                +34 900 000 000
-                            </span>
                         </div>
                     </div>
 

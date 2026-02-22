@@ -15,20 +15,26 @@ export function Footer() {
                     >
                         <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain" />
                     </Link>
-                    <p className="text-sm text-[var(--ag-sys-color-text-muted)] text-center md:text-left max-w-sm">
-                        El mercado líder en compra y venta de animales, maquinaria y productos del campo.
+                    <p className="text-sm text-[var(--ag-sys-color-text-muted)] text-center md:text-left max-w-sm mt-2">
+                        El mercado líder en compra y venta de animales, maquinaria y productos del campo.{" "}
+                        <Link href="/about" className="text-[var(--ag-sys-color-primary)] hover:underline font-medium">
+                            Conócenos
+                        </Link>
                     </p>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-6 text-sm text-[var(--ag-sys-color-text-muted)]">
-                    <Link href="/about" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Sobre Nosotros
-                    </Link>
-                    <Link href="/terms" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Términos y Condiciones
+                    <Link href="/legal" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        Aviso legal
                     </Link>
                     <Link href="/privacy" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Privacidad
+                        Política de privacidad
+                    </Link>
+                    <Link href="/cookies" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        Cookies
+                    </Link>
+                    <Link href="/terms" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        Términos y condiciones
                     </Link>
                     <Link href="/contact" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Contacto
