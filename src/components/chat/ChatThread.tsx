@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Send, Tractor, ArrowLeft } from "lucide-react";
 import { sendMessage, markMessagesAsRead } from "@/app/chat/actions";
+import { useNotification } from "@/context/NotificationContext";
 import Link from "next/link";
 import Image from "next/image";
 import { formatRelativeTime } from "@/utils/format";
@@ -24,6 +25,7 @@ interface ChatThreadProps {
 }
 
 export function ChatThread({ listing, initialMessages, currentUser, otherUser }: ChatThreadProps) {
+    const { showAlert } = useNotification();
     const [messages, setMessages] = useState<Message[]>(initialMessages);
     const [content, setContent] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -139,7 +141,11 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
             await sendMessage(formData);
         } catch (err) {
             console.error(err);
-            alert("Error al enviar el mensaje");
+            showAlert({
+                title: "Error al enviar",
+                message: "No se ha podido enviar tu mensaje. Revisa tu conexión e inténtalo de nuevo.",
+                type: "error"
+            });
             setContent(tempContent);
             // Revertir optimismo en caso de caída
             setMessages((prev) => prev.filter(m => m.id !== optimisticMessage.id));

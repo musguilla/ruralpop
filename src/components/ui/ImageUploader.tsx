@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { optimizeImage } from "@/utils/image-optimization";
+import { useNotification } from "@/context/NotificationContext";
 
 interface ImageUploaderProps {
     onImagesChange: (urls: string[]) => void;
@@ -11,6 +12,7 @@ interface ImageUploaderProps {
 }
 
 export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderProps) {
+    const { showAlert } = useNotification();
     const [files, setFiles] = useState<{ id: string; url: string; uploading: boolean }[]>([]);
     const supabase = createClient();
 
@@ -46,7 +48,11 @@ export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderPr
             );
         } catch (error) {
             console.error("Error uploading image:", error);
-            alert("Error al subir la imagen. Verifica que el bucket 'listings' existe y es público.");
+            showAlert({
+                title: "Error de subida",
+                message: "No se ha podido subir la imagen. Inténtalo con un archivo más pequeño o de otro formato.",
+                type: "error"
+            });
             setFiles((prev) => prev.filter(f => f.id !== tempId));
         }
     };
@@ -56,7 +62,11 @@ export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderPr
         const newFiles = Array.from(e.target.files);
 
         if (files.length + newFiles.length > maxFiles) {
-            alert(`Máximo ${maxFiles} imágenes permitidas`);
+            showAlert({
+                title: "Límite alcanzado",
+                message: `Solo puedes subir un máximo de ${maxFiles} imágenes por anuncio.`,
+                type: "warning"
+            });
             return;
         }
 

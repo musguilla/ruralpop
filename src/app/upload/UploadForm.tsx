@@ -7,6 +7,7 @@ import { createListing } from "./actions";
 import { Tractor, MapPin, Euro, Phone, Info, Loader2 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
+import { useNotification } from "@/context/NotificationContext";
 
 interface UploadFormProps {
     savedPhone: string | null;
@@ -14,6 +15,7 @@ interface UploadFormProps {
 
 export default function UploadForm({ savedPhone }: UploadFormProps) {
     const router = useRouter();
+    const { showAlert } = useNotification();
     const [selectedCategory, setSelectedCategory] = useState("");
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const [isPending, setIsPending] = useState(false);
@@ -30,7 +32,11 @@ export default function UploadForm({ savedPhone }: UploadFormProps) {
         try {
             const res = await createListing(formData);
             if (res?.error) {
-                alert("Error al publicar el anuncio: " + res.error);
+                showAlert({
+                    title: "Error al publicar",
+                    message: res.error,
+                    type: "error"
+                });
                 setIsPending(false);
             } else if (res?.success) {
                 router.push("/");
@@ -38,7 +44,11 @@ export default function UploadForm({ savedPhone }: UploadFormProps) {
             }
         } catch (err) {
             console.error(err);
-            alert("Error al publicar el anuncio");
+            showAlert({
+                title: "Error inesperado",
+                message: "Hubo un problema al conectar con el servidor. Inténtalo de nuevo más tarde.",
+                type: "error"
+            });
             setIsPending(false);
         }
     }

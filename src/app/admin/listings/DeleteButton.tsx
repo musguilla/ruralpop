@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { XCircle, Loader2 } from "lucide-react";
 import { deleteListing } from "./actions";
+import { useNotification } from "@/context/NotificationContext";
 
 interface DeleteButtonProps {
     listingId: string;
@@ -10,25 +11,39 @@ interface DeleteButtonProps {
 }
 
 export function DeleteButton({ listingId, title }: DeleteButtonProps) {
+    const { showAlert, showConfirm } = useNotification();
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const handleDelete = async () => {
-        if (!confirm(`¿Estás seguro de que quieres borrar permanentemente el anuncio "${title}"? Se eliminarán todas las imágenes asociadas.`)) {
-            return;
-        }
-
-        setIsDeleting(true);
-        try {
-            const result = await deleteListing(listingId);
-            if (!result.success) {
-                alert(`Error: ${result.error}`);
+    const handleDelete = () => {
+        showConfirm({
+            title: "¿Borrar permanentemente?",
+            message: `Vas a eliminar el anuncio "${title}". Esta acción es irreversible y borrará todas las imágenes del servidor.`,
+            type: "error",
+            confirmText: "Sí, borrar permanentemente",
+            cancelText: "No, cancelar",
+            onConfirm: async () => {
+                setIsDeleting(true);
+                try {
+                    const result = await deleteListing(listingId);
+                    if (!result.success) {
+                        showAlert({
+                            title: "Error de moderación",
+                            message: result.error || "No se ha podido borrar el anuncio.",
+                            type: "error"
+                        });
+                    }
+                } catch (error) {
+                    console.error(error);
+                    showAlert({
+                        title: "Error de conexión",
+                        message: "Hubo un fallo al intentar contactar con el servidor.",
+                        type: "error"
+                    });
+                } finally {
+                    setIsDeleting(false);
+                }
             }
-        } catch (error) {
-            console.error(error);
-            alert("Error al intentar borrar el anuncio.");
-        } finally {
-            setIsDeleting(false);
-        }
+        });
     };
 
     return (

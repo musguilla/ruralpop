@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Eye, Trash2, CheckCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { deleteListing, toggleListingStatus } from "@/app/dashboard/actions";
+import { useNotification } from "@/context/NotificationContext";
 
 interface DashboardListingActionsProps {
     listingId: string;
@@ -11,18 +12,30 @@ interface DashboardListingActionsProps {
 }
 
 export function DashboardListingActions({ listingId, status }: DashboardListingActionsProps) {
+    const { showAlert, showConfirm } = useNotification();
     const [isPending, setIsPending] = useState(false);
 
-    const handleDelete = async () => {
-        if (!confirm("¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.")) return;
-
-        setIsPending(true);
-        try {
-            await deleteListing(listingId);
-        } catch (err) {
-            alert("Error al eliminar el anuncio");
-            setIsPending(false);
-        }
+    const handleDelete = () => {
+        showConfirm({
+            title: "¿Eliminar anuncio?",
+            message: "Esta acción no se puede deshacer y el anuncio desaparecerá por completo de Ruralpop.",
+            type: "warning",
+            confirmText: "Sí, eliminar",
+            cancelText: "No, mantener",
+            onConfirm: async () => {
+                setIsPending(true);
+                try {
+                    await deleteListing(listingId);
+                } catch (err) {
+                    showAlert({
+                        title: "Error",
+                        message: "No se ha podido eliminar el anuncio en este momento.",
+                        type: "error"
+                    });
+                    setIsPending(false);
+                }
+            }
+        });
     };
 
     const handleToggleStatus = async () => {
@@ -31,7 +44,11 @@ export function DashboardListingActions({ listingId, status }: DashboardListingA
             await toggleListingStatus(listingId, status);
             setIsPending(false);
         } catch (err) {
-            alert("Error al actualizar el estado");
+            showAlert({
+                title: "Error",
+                message: "No se ha podido actualizar el estado del anuncio.",
+                type: "error"
+            });
             setIsPending(false);
         }
     };
@@ -51,8 +68,8 @@ export function DashboardListingActions({ listingId, status }: DashboardListingA
                     onClick={handleToggleStatus}
                     disabled={isPending}
                     className={`flex items-center gap-2 px-4 py-2.5 font-semibold rounded-xl transition-all text-sm disabled:opacity-50 ${status === 'active'
-                            ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'
-                            : 'bg-green-500/10 text-green-600 hover:bg-green-500/20'
+                        ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'
+                        : 'bg-green-500/10 text-green-600 hover:bg-green-500/20'
                         }`}
                 >
                     {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
