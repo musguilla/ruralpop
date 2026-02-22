@@ -70,25 +70,30 @@ export function ActiveSearchBar() {
     };
 
     return (
-        <div className="w-full flex justify-center py-4 border-b border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] mb-6">
-            <div className="flex gap-2 w-full max-w-4xl px-4">
+        <div className="w-full flex justify-center py-6 mb-6">
+            <div className="flex gap-3 w-full max-w-4xl px-4">
 
                 {/* Active Pill */}
-                <div className="flex-1 flex items-center justify-between border border-[var(--ag-sys-color-border)] rounded-full px-4 py-2 hover:border-[var(--ag-sys-color-primary)] transition-colors cursor-pointer" onClick={() => clearSearch()}>
-                    <div className="flex items-center gap-2 text-[var(--ag-sys-color-text)]">
-                        <Search className="w-4 h-4 text-emerald-700" />
-                        <span className="font-medium text-sm truncate">{pillText}</span>
+                <div
+                    className="flex-1 flex items-center justify-between bg-white border border-[var(--ag-sys-color-border)] rounded-full shadow-sm hover:shadow-md px-6 py-3 transition-all cursor-pointer"
+                    onClick={clearSearch}
+                >
+                    <div className="flex items-center gap-3 text-[var(--ag-sys-color-text)]">
+                        <Search className="w-5 h-5 text-gray-400" />
+                        <span className="font-semibold text-base truncate">{pillText}</span>
                     </div>
-                    <X className="w-4 h-4 text-[var(--ag-sys-color-text-muted)] hover:text-black" />
+                    <button className="p-1 rounded-full hover:bg-gray-100 transition-colors" aria-label="Limpiar búsqueda">
+                        <X className="w-5 h-5 text-gray-500 hover:text-gray-800" />
+                    </button>
                 </div>
 
                 {/* Filters Button */}
                 <button
                     onClick={() => setIsFiltersOpen(true)}
-                    className="flex items-center gap-2 border border-[var(--ag-sys-color-border)] rounded-full px-4 py-2 text-[var(--ag-sys-color-text)] font-medium text-sm hover:border-[var(--ag-sys-color-primary)] transition-colors shrink-0"
+                    className="flex items-center gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full px-6 py-3 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
                 >
-                    <SlidersHorizontal className="w-4 h-4" />
-                    Filtros
+                    <SlidersHorizontal className="w-5 h-5" />
+                    <span className="hidden sm:inline">Filtros</span>
                 </button>
             </div>
 
