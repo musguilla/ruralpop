@@ -31,7 +31,13 @@ interface ChatInboxListProps {
 
 export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
     const router = useRouter();
+    const [threads, setThreads] = React.useState<Thread[]>(initialThreads);
     const supabase = createClient();
+
+    // Sincronizar estado local cuando cambian las props del servidor
+    useEffect(() => {
+        setThreads(initialThreads);
+    }, [initialThreads]);
 
     useEffect(() => {
         // Suscribirse a cambios en mensajes para refrescar la lista en tiempo real
@@ -44,15 +50,31 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
                     schema: "public",
                     table: "messages",
                 },
-                () => {
-                    // Refrescamos los datos del servidor para que el Server Component vuelva a ejecutarse
-                    router.refresh();
+                (payload: any) => {
+                    // Si es un INSERT y somos el destinatario, refrescamos
+                    if (payload.eventType === 'INSERT' && payload.new.receiver_id === userId) {
+                        router.refresh();
+                    }
+                    // Si es un UPDATE y ha cambiado el estado de lectura, refrescamos
+                    if (payload.eventType === 'UPDATE') {
+                        router.refresh();
+                    }
                 }
             )
             .subscribe();
 
-        // También escuchamos el evento manual de lectura para ser instantáneos si venimos de un chat
-        const handleManualRead = () => {
+        // Escuchamos el evento manual de lectura para ser instantáneos y optimistas
+        const handleManualRead = (e: any) => {
+            const { listingId, otherUserId } = e.detail || {};
+            if (listingId && otherUserId) {
+                // Limpieza optimista local
+                setThreads(prev => prev.map(t =>
+                    (t.listingId === listingId && t.otherUserId === otherUserId)
+                        ? { ...t, unreadCount: 0 }
+                        : t
+                ));
+            }
+            // Y avisamos al servidor por si acaso
             router.refresh();
         };
 
@@ -62,9 +84,9 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
             supabase.removeChannel(channel);
             window.removeEventListener("chat-read", handleManualRead);
         };
-    }, [supabase, router]);
+    }, [supabase, router, userId]);
 
-    if (initialThreads.length === 0) {
+    if (threads.length === 0) {
         return (
             <div className="bg-[var(--ag-sys-color-surface)] rounded-[2rem] border border-[var(--ag-sys-color-border)] p-12 text-center">
                 <div className="mx-auto w-16 h-16 bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text-muted)] rounded-2xl flex items-center justify-center mb-4">
@@ -86,7 +108,7 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
 
     return (
         <div className="space-y-4">
-            {initialThreads.map((thread) => (
+            {threads.map((thread) => (
                 <Link
                     key={`${thread.listingId}-${thread.otherUserId}`}
                     href={`/chat/${thread.listingId}?u=${thread.otherUserId}`}

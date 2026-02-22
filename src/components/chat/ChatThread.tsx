@@ -46,9 +46,13 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
 
                 if (unreadFromOther.length > 0) {
                     await markMessagesAsRead(listing.id, otherUser.id);
-                    // Disparar evento para que el Badge (global) se entere inmediatamente
+                    // Disparar evento para que el Badge (global) y la bandeja se enteren inmediatamente
                     window.dispatchEvent(new CustomEvent("chat-read", {
-                        detail: { count: unreadFromOther.length }
+                        detail: {
+                            count: unreadFromOther.length,
+                            listingId: listing.id,
+                            otherUserId: otherUser.id
+                        }
                     }));
 
                     // Actualizar estado local para que no vuelva a dispararse este efecto

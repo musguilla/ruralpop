@@ -2,6 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { ChatInboxList } from "@/components/chat/ChatInboxList";
 
+export const dynamic = "force-dynamic";
+
 export default async function ChatInboxPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
