@@ -56,7 +56,17 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
                         (newMessage.sender_id === otherUser.id && payload.new.receiver_id === currentUser.id)
                     ) {
                         setMessages((prev) => {
+                            // Evitar duplicados nativos
                             if (prev.find(m => m.id === newMessage.id)) return prev;
+
+                            // Reemplazar mensaje optimista temporal que contenga este mismo texto (si fuera propio)
+                            const isMine = newMessage.sender_id === currentUser.id;
+                            if (isMine) {
+                                // Borramos el optimista y metemos el real de DB
+                                const withoutTemp = prev.filter(m => !(m.id.startsWith("temp-") && m.content === newMessage.content));
+                                return [...withoutTemp, newMessage];
+                            }
+
                             return [...prev, newMessage];
                         });
                     }
@@ -76,6 +86,16 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
         const tempContent = content;
         setContent("");
 
+        // Optimistic UI update: Mostramos el mensaje antes de que llegue a base de datos
+        const optimisticMessage: Message = {
+            id: `temp-${Date.now()}`,
+            sender_id: currentUser.id,
+            content: tempContent,
+            created_at: new Date().toISOString(),
+        };
+
+        setMessages((prev) => [...prev, optimisticMessage]);
+
         const formData = new FormData();
         formData.append("listing_id", listing.id);
         formData.append("receiver_id", otherUser.id);
@@ -87,6 +107,8 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
             console.error(err);
             alert("Error al enviar el mensaje");
             setContent(tempContent);
+            // Revertir optimismo en caso de caída
+            setMessages((prev) => prev.filter(m => m.id !== optimisticMessage.id));
         }
     };
 
