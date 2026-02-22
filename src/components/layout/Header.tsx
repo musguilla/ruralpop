@@ -36,9 +36,11 @@ export async function Header() {
                 <nav className="flex items-center gap-4">
                     <Link
                         href="/upload"
-                        className="group hidden sm:flex items-center justify-center gap-2 px-4 py-2 font-medium bg-[var(--ag-sys-color-primary)] text-white rounded-full hover:bg-[var(--ag-sys-color-primary-hover)] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)]"
+                        className="group hidden sm:flex items-center justify-center gap-2 px-4 py-2 font-medium bg-[#38daaa] text-white rounded-full hover:brightness-105 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#38daaa]"
                     >
-                        <Plus className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110" />
+                        <div className="bg-white/20 rounded-full p-0.5 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110">
+                            <Plus className="w-4 h-4" />
+                        </div>
                         Vender
                     </Link>
 
