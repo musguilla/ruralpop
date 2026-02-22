@@ -185,26 +185,47 @@ export function CategoryModal({
 
                             {/* Category Items */}
                             {filteredCategories.map((cat) => (
-                                <button
-                                    key={cat.id}
-                                    onClick={() => handleCategoryClick(cat)}
-                                    className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedCategory === cat.id && !selectedSubcategory ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className={`p-2 rounded-lg transition-colors ${selectedCategory === cat.id ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
-                                            <div className={selectedCategory === cat.id ? 'text-emerald-700' : 'text-emerald-800'}>
-                                                {CATEGORY_ICONS[cat.id] || <List className="w-5 h-5" />}
+                                <React.Fragment key={cat.id}>
+                                    <button
+                                        onClick={() => handleCategoryClick(cat)}
+                                        className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedCategory === cat.id && !selectedSubcategory ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className={`p-2 rounded-lg transition-colors ${selectedCategory === cat.id ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
+                                                <div className={selectedCategory === cat.id ? 'text-emerald-700' : 'text-emerald-800'}>
+                                                    {CATEGORY_ICONS[cat.id] || <List className="w-5 h-5" />}
+                                                </div>
                                             </div>
+                                            <span>{cat.label}</span>
                                         </div>
-                                        <span>{cat.label}</span>
-                                    </div>
-                                    {cat.subcategories.length > 0 ? (
-                                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
-                                    ) : (
-                                        selectedCategory === cat.id && !selectedSubcategory && <Check className="w-5 h-5 text-emerald-600" />
-                                    )}
-                                </button>
+                                        {cat.subcategories.length > 0 ? (
+                                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:translate-x-1 transition-transform" />
+                                        ) : (
+                                            selectedCategory === cat.id && !selectedSubcategory && <Check className="w-5 h-5 text-emerald-600" />
+                                        )}
+                                    </button>
+
+                                    {/* Mostrar subcategorías coincidentes si hay una búsqueda activa */}
+                                    {searchTerm.trim() !== "" && cat.subcategories.map(sub => (
+                                        <button
+                                            key={`${cat.id}-${sub}`}
+                                            onClick={() => handleSubcategoryClick(cat.id, sub)}
+                                            className={`flex items-center justify-between px-4 py-3 pl-14 rounded-xl transition-all group ${selectedSubcategory === sub ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
+                                                }`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className={`p-2 rounded-lg transition-colors ${selectedSubcategory === sub ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
+                                                    <div className={selectedSubcategory === sub ? 'text-emerald-700' : 'text-emerald-800'}>
+                                                        {SUBCATEGORY_ICONS[sub] || <List className="w-4 h-4" />}
+                                                    </div>
+                                                </div>
+                                                <span className="text-sm">{sub}</span>
+                                            </div>
+                                            {selectedSubcategory === sub && <Check className="w-5 h-5 text-emerald-600" />}
+                                        </button>
+                                    ))}
+                                </React.Fragment>
                             ))}
                         </div>
                     ) : (
