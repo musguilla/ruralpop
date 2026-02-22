@@ -38,19 +38,27 @@ export function ActiveSearchBar() {
 
     const [modalLocation, setModalLocation] = useState(location || "");
 
-    // What is displayed in the active search pill
-    let pillText = "Busqueda activa";
-    if (query) pillText = query;
-    else if (subcategory) pillText = subcategory;
-    else if (category) {
-        const cat = CATEGORIES.find(c => c.id === category);
-        pillText = cat ? cat.label : category;
-    } else if (location) {
-        pillText = `Provincia: ${location}`;
-    }
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const searchQuery = formData.get("q") as string;
 
-    const clearSearch = () => {
-        router.push("/");
+        const url = buildSeoUrl({
+            q: searchQuery || undefined,
+            category: category || undefined,
+            subcategory: subcategory || undefined,
+            province_id: location || undefined
+        });
+
+        // Maintain any extra query params like price max/min
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("q");
+        params.delete("category");
+        params.delete("subcategory");
+        params.delete("province_id");
+
+        const queryStr = params.toString();
+        router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
     };
 
     const applyFilters = () => {
@@ -112,36 +120,129 @@ export function ActiveSearchBar() {
         setIsFiltersOpen(false);
     };
 
-    return (
-        <div className="w-full flex justify-center py-6 mb-6">
-            <div className="flex gap-3 w-full max-w-4xl px-4">
+    const removeFilter = (filterType: string) => {
+        const params = new URLSearchParams(searchParams.toString());
 
-                {/* Active Pill */}
-                <div
-                    className="flex-1 flex items-center justify-between bg-white border border-[var(--ag-sys-color-border)] rounded-full shadow-sm hover:shadow-md px-6 py-3 transition-all cursor-pointer"
-                    onClick={clearSearch}
+        let newCat = category;
+        let newSub = subcategory;
+        let newLoc = location;
+
+        switch (filterType) {
+            case 'category':
+                newCat = undefined;
+                newSub = undefined;
+                setModalCategoryValue("");
+                break;
+            case 'subcategory':
+                newSub = undefined;
+                if (newCat) setModalCategoryValue(`cat_${newCat}`);
+                else setModalCategoryValue("");
+                break;
+            case 'location':
+                newLoc = undefined;
+                setModalLocation("");
+                break;
+            case 'price_min':
+                params.delete("price_min");
+                setPriceMin("");
+                break;
+            case 'price_max':
+                params.delete("price_max");
+                setPriceMax("");
+                break;
+            case 'seller_type':
+                params.delete("seller_type");
+                setSellerType("all");
+                break;
+        }
+
+        const baseUrl = buildSeoUrl({
+            q: query ?? undefined,
+            category: newCat ?? undefined,
+            subcategory: newSub ?? undefined,
+            province_id: newLoc ?? undefined
+        });
+
+        params.delete("q");
+        params.delete("category");
+        params.delete("subcategory");
+        params.delete("province_id");
+
+        const queryStr = params.toString();
+        router.push(`${baseUrl}${queryStr ? '?' + queryStr : ''}`);
+    };
+
+    // Calculate Active Badges
+    const activeBadges = [];
+    if (category) {
+        const catObj = CATEGORIES.find(c => c.id === category);
+        activeBadges.push({ type: 'category', label: catObj ? catObj.label : category });
+    }
+    if (subcategory) {
+        activeBadges.push({ type: 'subcategory', label: subcategory });
+    }
+    if (location) {
+        const locObj = LOCATIONS.find(l => l.id === location);
+        activeBadges.push({ type: 'location', label: locObj ? locObj.name : location });
+    }
+    const currentPriceMin = searchParams.get("price_min");
+    if (currentPriceMin) {
+        activeBadges.push({ type: 'price_min', label: `Mín: ${currentPriceMin}€` });
+    }
+    const currentPriceMax = searchParams.get("price_max");
+    if (currentPriceMax) {
+        activeBadges.push({ type: 'price_max', label: `Máx: ${currentPriceMax}€` });
+    }
+    const currentSellerType = searchParams.get("seller_type");
+    if (currentSellerType && currentSellerType !== "all") {
+        activeBadges.push({ type: 'seller_type', label: `Vendedor: ${currentSellerType}` });
+    }
+
+    return (
+        <div className="w-full flex flex-col items-center py-6 mb-2">
+            <div className="flex gap-3 w-full max-w-4xl px-4">
+                {/* Search Bar */}
+                <form
+                    onSubmit={handleSubmit}
+                    className="flex-1 relative flex items-center bg-white border border-[var(--ag-sys-color-border)] rounded-full shadow-sm focus-within:ring-2 focus-within:ring-[var(--ag-sys-color-primary)] transition-all overflow-hidden h-12"
                 >
-                    <div className="flex items-center gap-3 text-[var(--ag-sys-color-text)]">
-                        <Search className="w-5 h-5 text-gray-400" />
-                        <span className="text-base truncate">{pillText}</span>
-                    </div>
-                    <button
-                        className="p-1 rounded-full border-2 border-black transition-colors hover:bg-gray-100 flex items-center justify-center shrink-0"
-                        aria-label="Limpiar búsqueda"
-                    >
-                        <X className="w-4 h-4 text-black" strokeWidth={3} />
-                    </button>
-                </div>
+                    <Search className="w-5 h-5 text-gray-400 absolute left-4" />
+                    <input
+                        type="text"
+                        name="q"
+                        defaultValue={query || ""}
+                        placeholder="Buscar en anuncios..."
+                        className="w-full h-full pl-12 pr-4 bg-transparent outline-none text-[var(--ag-sys-color-text)] placeholder:text-gray-400"
+                    />
+                </form>
 
                 {/* Filters Button */}
                 <button
                     onClick={() => setIsFiltersOpen(true)}
-                    className="flex items-center gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full px-6 py-3 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
+                    className="flex items-center gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full px-6 h-12 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
                 >
                     <SlidersHorizontal className="w-5 h-5" />
                     <span className="hidden sm:inline">Filtros</span>
                 </button>
             </div>
+
+            {/* Active Filters Badges */}
+            {activeBadges.length > 0 && (
+                <div className="w-full max-w-4xl px-4 mt-4 flex flex-wrap gap-2 items-center">
+                    <span className="text-sm text-gray-500 font-medium mr-1">Filtros aplicados:</span>
+                    {activeBadges.map(badge => (
+                        <div key={badge.type} className="flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-sm">
+                            <span>{badge.label}</span>
+                            <button onClick={() => removeFilter(badge.type)} className="hover:bg-emerald-200 rounded-full p-0.5 ml-1 transition-colors">
+                                <X className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    ))}
+                    <button onClick={clearFilters} className="text-sm text-gray-500 hover:text-gray-800 hover:underline ml-2 transition-colors">
+                        Borrar todos
+                    </button>
+                </div>
+            )}
 
             {/* Backdrop & Modal */}
             {isFiltersOpen && (
