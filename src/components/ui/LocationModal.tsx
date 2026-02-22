@@ -4,6 +4,9 @@ import React, { useState, useMemo, useEffect } from "react";
 import { X, Search, MapPin, Check } from "lucide-react";
 import { LOCATIONS, LocationItem } from "@/constants/locations";
 
+const normalizeStr = (str: string) =>
+    str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
 interface LocationModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -28,9 +31,9 @@ export function LocationModal({
 
     const filteredLocations = useMemo(() => {
         if (!searchTerm.trim()) return LOCATIONS.filter(l => l.type === 'province');
-        const term = searchTerm.toLowerCase();
+        const term = normalizeStr(searchTerm);
         return LOCATIONS.filter(l =>
-            l.name.toLowerCase().includes(term)
+            normalizeStr(l.name).includes(term)
         );
     }, [searchTerm]);
 
@@ -97,8 +100,8 @@ export function LocationModal({
                         )}
 
                         {filteredLocations.map((loc) => {
-                            const term = searchTerm.toLowerCase();
-                            const index = loc.name.toLowerCase().indexOf(term);
+                            const term = normalizeStr(searchTerm);
+                            const index = normalizeStr(loc.name).indexOf(term);
 
                             const renderName = () => {
                                 if (index === -1 || !searchTerm) return loc.name;
