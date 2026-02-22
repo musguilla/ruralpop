@@ -216,17 +216,24 @@ export function ActiveSearchBar() {
                 {/* Sort Button */}
                 <button
                     onClick={() => setIsSortModalOpen(true)}
-                    className="flex items-center gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full px-4 sm:px-6 h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
+                    className="flex justify-center items-center w-14 sm:w-auto sm:px-6 sm:gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
                 >
                     <ArrowDownUp className="w-5 h-5" />
                     <span className="hidden sm:inline">Ordenar</span>
-                    {activeSort !== "relevance" && (
-                        <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full ml-1">
-                            {SORT_OPTIONS.find(s => s.id === activeSort)?.label}
-                        </span>
-                    )}
                 </button>
             </div>
+
+            {/* Active Sort Indicator Sub-bar */}
+            {activeSort !== "relevance" && (
+                <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto mt-2 flex justify-end">
+                    <div className="text-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-800 px-3 py-1 rounded-full border border-emerald-100 font-medium">
+                        <span className="opacity-80">Ordenación:</span> {SORT_OPTIONS.find(s => s.id === activeSort)?.label}
+                        <button onClick={() => applySort("relevance")} className="ml-1 hover:text-emerald-900 bg-emerald-200/60 rounded-full p-0.5 transition-colors">
+                            <X className="w-3.5 h-3.5" />
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Backdrop & Modal */}
             {isFiltersOpen && (

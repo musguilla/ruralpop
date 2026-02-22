@@ -20,6 +20,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Ruralpop - Compra y Venta del Campo",
   description: "El portal de clasificados líder en agricultura y ganadería",
+  applicationName: "Ruralpop",
+  appleWebApp: {
+    title: "Ruralpop",
+    statusBarStyle: "default",
+  }
 };
 
 export default function RootLayout({
