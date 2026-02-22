@@ -51,11 +51,19 @@ const VISUAL_CATEGORIES = [
     { id: "Herradores", type: "subcategory", label: "Herradores", icon: <Anvil className="w-8 h-8 text-emerald-700" /> },
 ];
 
+import { CategoryModal } from "./CategoryModal";
+import { LocationModal } from "./LocationModal";
+import { PROVINCES } from "@/constants/provinces";
+
 export function HomeSearchHero() {
     const router = useRouter();
     const [query, setQuery] = useState("");
     const [category, setCategory] = useState("");
-    const [location, setLocation] = useState(""); // For simplicity, province_id if available or just string
+    const [subcategory, setSubcategory] = useState("");
+    const [location, setLocation] = useState("");
+    const [locationName, setLocationName] = useState("Toda España");
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
     const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -64,8 +72,27 @@ export function HomeSearchHero() {
         const params = new URLSearchParams();
         if (query.trim()) params.set("q", query.trim());
         if (category) params.set("category", category);
-        if (location) params.set("province_id", location); // Mapping location string to province_id or leaving it flexible
+        if (subcategory) params.set("subcategory", subcategory);
+        if (location) params.set("province_id", location);
         router.push(`/?${params.toString()}`);
+    };
+
+    const handleCategorySelect = (catId: string, subId?: string) => {
+        setCategory(catId);
+        setSubcategory(subId || "");
+    };
+
+    const handleLocationSelect = (locId: string, name: string) => {
+        setLocation(locId);
+        setLocationName(name);
+    };
+
+    const getCategoryDisplayLabel = () => {
+        if (!category) return "Todas las categorías";
+        const cat = CATEGORIES.find(c => c.id === category);
+        if (!cat) return "Todas las categorías";
+        if (subcategory) return subcategory;
+        return cat.label;
     };
 
     const handleCategoryClick = (item: typeof VISUAL_CATEGORIES[0]) => {
@@ -119,32 +146,32 @@ export function HomeSearchHero() {
                     />
                 </div>
 
-                {/* Category */}
+                {/* Category Button Trigger */}
                 <div className="w-1/4 border-l border-gray-200 px-4 flex items-center gap-2">
-                    <List className="w-5 h-5 text-gray-400 shrink-0" />
-                    <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        className="w-full bg-transparent text-[var(--ag-sys-color-text)] outline-none cursor-pointer truncate"
+                    <button
+                        type="button"
+                        onClick={() => setIsCategoryModalOpen(true)}
+                        className="w-full flex items-center gap-2 bg-transparent text-[var(--ag-sys-color-text)] outline-none cursor-pointer group"
                     >
-                        <option value="">Todas las categorías</option>
-                        {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-                    </select>
+                        <List className="w-5 h-5 text-gray-400 shrink-0 group-hover:text-[var(--ag-sys-color-primary)] transition-colors" />
+                        <span className="truncate text-left flex-1">
+                            {getCategoryDisplayLabel()}
+                        </span>
+                    </button>
                 </div>
 
-                {/* Location */}
+                {/* Location Button Trigger */}
                 <div className="w-1/4 border-l border-gray-200 px-4 flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-gray-400 shrink-0" />
-                    <select
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        className="w-full bg-transparent text-[var(--ag-sys-color-text)] outline-none cursor-pointer truncate"
+                    <button
+                        type="button"
+                        onClick={() => setIsLocationModalOpen(true)}
+                        className="w-full flex items-center gap-2 bg-transparent text-[var(--ag-sys-color-text)] outline-none cursor-pointer group"
                     >
-                        <option value="">Toda España</option>
-                        <option value="15">A Coruña</option>
-                        <option value="33">Asturias</option>
-                        {/* Expandable with actual regions */}
-                    </select>
+                        <MapPin className="w-5 h-5 text-gray-400 shrink-0 group-hover:text-emerald-600 transition-colors" />
+                        <span className="truncate text-left flex-1">
+                            {locationName}
+                        </span>
+                    </button>
                 </div>
 
                 <button
@@ -158,15 +185,39 @@ export function HomeSearchHero() {
 
             {/* Mobile Search Bar */}
             <form onSubmit={handleSearch} className="md:hidden w-full flex flex-col gap-3">
-                <div className="flex items-center gap-2 bg-white border border-[var(--ag-sys-color-border)] rounded-full px-4 h-12">
-                    <Search className="w-5 h-5 text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Estoy buscando..."
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        className="w-full bg-transparent outline-none"
-                    />
+                <div className="flex flex-col gap-2 bg-white border border-[var(--ag-sys-color-border)] rounded-2xl p-2 shadow-sm">
+                    <div className="flex items-center gap-2 px-3 h-12 border-b border-gray-100">
+                        <Search className="w-5 h-5 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Estoy buscando..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            className="w-full bg-transparent outline-none"
+                        />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                        <button
+                            type="button"
+                            onClick={() => setIsCategoryModalOpen(true)}
+                            className="flex items-center gap-2 px-3 h-12 text-left bg-gray-50 rounded-xl"
+                        >
+                            <List className="w-4 h-4 text-gray-400 shrink-0" />
+                            <span className="flex-1 text-xs text-gray-600 truncate">
+                                {getCategoryDisplayLabel()}
+                            </span>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsLocationModalOpen(true)}
+                            className="flex items-center gap-2 px-3 h-12 text-left bg-gray-50 rounded-xl"
+                        >
+                            <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+                            <span className="flex-1 text-xs text-gray-600 truncate">
+                                {locationName}
+                            </span>
+                        </button>
+                    </div>
                 </div>
                 <button
                     type="submit"
@@ -206,7 +257,7 @@ export function HomeSearchHero() {
                 <div
                     ref={sliderRef}
                     className="flex overflow-x-auto gap-8 pb-4 hide-scrollbar w-full px-2"
-                    style={{ touchAction: 'pan-y' }} // Prevent browser back action on horizontal scroll
+                    style={{ touchAction: 'pan-y' }}
                 >
                     {VISUAL_CATEGORIES.map(cat => (
                         <button
@@ -225,13 +276,33 @@ export function HomeSearchHero() {
                     ))}
                 </div>
             </div>
+
+            {/* Category Modal */}
+            <CategoryModal
+                isOpen={isCategoryModalOpen}
+                onClose={() => setIsCategoryModalOpen(false)}
+                onSelect={handleCategorySelect}
+                selectedCategory={category}
+                selectedSubcategory={subcategory}
+            />
+
+            {/* Location Modal */}
+            <LocationModal
+                isOpen={isLocationModalOpen}
+                onClose={() => setIsLocationModalOpen(false)}
+                onSelect={handleLocationSelect}
+                selectedLocationId={location}
+            />
         </div>
     );
 }
 
 /**
  * Memory / Decisiones Técnicas:
- * - Se crean iconos SVG custom para Bovino y Equino ya que Lucide-React no cuenta con ellos en vanilla de forma precisa.
- * - Los controles del slider (flechas) se han movido independientemente en la parte superior (en conjunto con el título) para optimizar accesibilidad en móviles, proveyendo targets más amplios y consistentes.
- * - Categoría 'servicios' se maneja dinámicamente en 'handleCategoryClick' para redireccionar de forma correcta a sus correspondientes URLParams.
+ * - Se integran tanto el CategoryModal como el LocationModal para eliminar los selectores nativos.
+ * - En móvil se ha optimizado la UI usando un grid de dos columnas para categorías y localización, permitiendo más espacio vertical.
+ * - Se ha centralizado la gestión de provincias en un archivo de constantes para escalabilidad.
+ * - La lógica de búsqueda sincroniza los IDs de provincia mientras muestra los nombres legibles al usuario.
  */
+
+
