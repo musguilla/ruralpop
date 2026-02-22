@@ -42,10 +42,10 @@ export default function MarketingImportPage() {
 
                     <button
                         type="button"
-                        className="w-full h-12 mt-4 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all"
-                        onClick={() => alert("Función de scraping en desarrollo.")}
+                        className="w-full h-12 mt-4 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all opacity-50 cursor-not-allowed text-sm"
+                        disabled
                     >
-                        Iniciar Importación
+                        Iniciar Importación (Próximamente)
                     </button>
                 </form>
             </div>
