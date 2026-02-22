@@ -8,7 +8,10 @@ import {
     LogOut,
     Home,
     ShieldCheck,
-    AlertCircle
+    AlertCircle,
+    DownloadCloud,
+    Share2,
+    FileText
 } from "lucide-react";
 
 export function AdminSidebar() {
@@ -24,10 +27,18 @@ export function AdminSidebar() {
                 </div>
             </div>
 
-            <nav className="flex-1 p-4 space-y-2">
+            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 <AdminNavLink href="/admin" icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" />
                 <AdminNavLink href="/admin/users" icon={<Users className="w-5 h-5" />} label="Usuarios" />
                 <AdminNavLink href="/admin/listings" icon={<Package className="w-5 h-5" />} label="Anuncios" />
+
+                <div className="pt-4 pb-2">
+                    <p className="px-4 text-[10px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Marketing</p>
+                </div>
+                <AdminNavLink href="/admin/marketing/import" icon={<DownloadCloud className="w-5 h-5" />} label="Importación anuncios" />
+                <AdminNavLink href="/admin/marketing/social" icon={<Share2 className="w-5 h-5" />} label="Social Media" />
+                <AdminNavLink href="/admin/marketing/cms" icon={<FileText className="w-5 h-5" />} label="CMS" />
+
                 <div className="pt-4 pb-2">
                     <p className="px-4 text-[10px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Sistema</p>
                 </div>
