@@ -12,22 +12,22 @@ import { CATEGORIES } from "@/constants/categories";
 
 // Define a unified list for the slider
 const VISUAL_CATEGORIES = [
-    { id: "ganaderia", type: "category", label: "Ganadería", icon: <Tractor className="w-8 h-8 text-emerald-700" /> },
-    { id: "Bovino", type: "subcategory", label: "Bovino", icon: <Image src="/icon-bovino.png" alt="Bovino" width={36} height={36} /> },
-    { id: "Equino", type: "subcategory", label: "Equino", icon: <Image src="/icon-equino.png" alt="Equino" width={36} height={36} /> },
-    { id: "Caprino", type: "subcategory", label: "Caprino", icon: <Image src="/icon-caprino.png" alt="Caprino" width={36} height={36} /> },
-    { id: "Ovino", type: "subcategory", label: "Ovino", icon: <Image src="/icon-ovino.png" alt="Ovino" width={36} height={36} /> },
-    { id: "Porcino", type: "subcategory", label: "Porcino", icon: <PiggyBank className="w-8 h-8 text-emerald-700" /> },
-    { id: "Avicultura", type: "subcategory", label: "Avicultura", icon: <Bird className="w-8 h-8 text-emerald-700" /> },
-    { id: "Perros", type: "subcategory", label: "Perros", icon: <Dog className="w-8 h-8 text-emerald-700" /> },
-    { id: "Conejos", type: "subcategory", label: "Conejos", icon: <Rabbit className="w-8 h-8 text-emerald-700" /> },
-    { id: "maquinaria", type: "category", label: "Maquinaria", icon: <Hammer className="w-8 h-8 text-emerald-700" /> },
-    { id: "forraje", type: "category", label: "Forraje", icon: <Leaf className="w-8 h-8 text-emerald-700" /> },
-    { id: "alimentos", type: "category", label: "Alimentos Km0", icon: <Apple className="w-8 h-8 text-emerald-700" /> },
-    { id: "servicios", type: "category", label: "Servicios", icon: <Briefcase className="w-8 h-8 text-emerald-700" /> },
-    { id: "Transporte", type: "subcategory", label: "Transporte", icon: <Truck className="w-8 h-8 text-emerald-700" /> },
-    { id: "Veterinarios", type: "subcategory", label: "Veterinarios", icon: <Stethoscope className="w-8 h-8 text-emerald-700" /> },
-    { id: "Herradores", type: "subcategory", label: "Herradores", icon: <Anvil className="w-8 h-8 text-emerald-700" /> },
+    { id: "ganaderia", type: "category", label: "Ganadería", icon: <Tractor className="w-10 h-10 text-emerald-700" /> },
+    { id: "Bovino", type: "subcategory", label: "Bovino", icon: <Image src="/icon-bovino.png" alt="Bovino" width={48} height={48} className="object-contain" /> },
+    { id: "Equino", type: "subcategory", label: "Equino", icon: <Image src="/icon-equino.png" alt="Equino" width={48} height={48} className="object-contain" /> },
+    { id: "Caprino", type: "subcategory", label: "Caprino", icon: <Image src="/icon-caprino.png" alt="Caprino" width={48} height={48} className="object-contain" /> },
+    { id: "Ovino", type: "subcategory", label: "Ovino", icon: <Image src="/icon-ovino.png" alt="Ovino" width={48} height={48} className="object-contain" /> },
+    { id: "Porcino", type: "subcategory", label: "Porcino", icon: <PiggyBank className="w-10 h-10 text-emerald-700" /> },
+    { id: "Avicultura", type: "subcategory", label: "Avicultura", icon: <Bird className="w-10 h-10 text-emerald-700" /> },
+    { id: "Perros", type: "subcategory", label: "Perros", icon: <Dog className="w-10 h-10 text-emerald-700" /> },
+    { id: "Conejos", type: "subcategory", label: "Conejos", icon: <Rabbit className="w-10 h-10 text-emerald-700" /> },
+    { id: "maquinaria", type: "category", label: "Maquinaria", icon: <Hammer className="w-10 h-10 text-emerald-700" /> },
+    { id: "forraje", type: "category", label: "Forraje", icon: <Leaf className="w-10 h-10 text-emerald-700" /> },
+    { id: "alimentos", type: "category", label: "Alimentos Km0", icon: <Apple className="w-10 h-10 text-emerald-700" /> },
+    { id: "servicios", type: "category", label: "Servicios", icon: <Briefcase className="w-10 h-10 text-emerald-700" /> },
+    { id: "Transporte", type: "subcategory", label: "Transporte", icon: <Truck className="w-10 h-10 text-emerald-700" /> },
+    { id: "Veterinarios", type: "subcategory", label: "Veterinarios", icon: <Stethoscope className="w-10 h-10 text-emerald-700" /> },
+    { id: "Herradores", type: "subcategory", label: "Herradores", icon: <Anvil className="w-10 h-10 text-emerald-700" /> },
 ];
 
 import { CategoryModal } from "./CategoryModal";
@@ -244,13 +244,13 @@ export function HomeSearchHero() {
                         <button
                             key={cat.id}
                             onClick={() => handleCategoryClick(cat)}
-                            className="flex flex-col items-center gap-2 shrink-0 group/btn transition-all p-3 rounded-2xl hover:bg-gray-50 active:scale-95"
-                            style={{ minWidth: '100px' }}
+                            className="flex flex-col items-center gap-3 shrink-0 group/btn transition-all p-4 rounded-2xl hover:bg-[#f4f5f5] active:scale-95"
+                            style={{ minWidth: '110px' }}
                         >
-                            <div className="w-14 h-14 flex items-center justify-center transition-transform group-hover/btn:scale-105">
+                            <div className="w-16 h-16 flex items-center justify-center transition-transform group-hover/btn:scale-105">
                                 {cat.icon}
                             </div>
-                            <span className="text-sm font-semibold text-[var(--ag-sys-color-text)] text-center w-full">
+                            <span className="text-[15px] font-bold text-[var(--ag-sys-color-text)] text-center w-full">
                                 {cat.label}
                             </span>
                         </button>
