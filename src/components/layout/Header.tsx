@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { UserCircle, LogOut, MessageSquare, LayoutDashboard } from "lucide-react";
+import { UserCircle, LogOut, MessageSquare, LayoutDashboard, Plus } from "lucide-react";
 import { SearchInput } from "../ui/SearchInput";
 import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
@@ -33,9 +33,10 @@ export async function Header() {
                 <nav className="flex items-center gap-4">
                     <Link
                         href="/upload"
-                        className="hidden sm:flex items-center justify-center px-4 py-2 font-medium bg-[var(--ag-sys-color-primary)] text-white rounded-full hover:bg-[var(--ag-sys-color-primary-hover)] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)]"
+                        className="group hidden sm:flex items-center justify-center gap-2 px-4 py-2 font-medium bg-[var(--ag-sys-color-primary)] text-white rounded-full hover:bg-[var(--ag-sys-color-primary-hover)] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)]"
                     >
-                        Subir Anuncio
+                        <Plus className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110" />
+                        Vender
                     </Link>
 
                     {user ? (
