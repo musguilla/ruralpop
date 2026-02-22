@@ -3,6 +3,8 @@ import { CATEGORIES } from '@/constants/categories';
 import { LOCATIONS } from '@/constants/locations';
 import { buildSeoUrl } from '@/utils/seoUtils';
 
+export const revalidate = 86400; // 24 horas
+
 export default function sitemap(): MetadataRoute.Sitemap {
     // Definimos la base URL, en producción debería ser una variable de entorno
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
