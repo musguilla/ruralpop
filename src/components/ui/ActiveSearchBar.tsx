@@ -82,8 +82,11 @@ export function ActiveSearchBar() {
                         <Search className="w-5 h-5 text-gray-400" />
                         <span className="font-semibold text-base truncate">{pillText}</span>
                     </div>
-                    <button className="p-1 rounded-full hover:bg-gray-100 transition-colors" aria-label="Limpiar búsqueda">
-                        <X className="w-5 h-5 text-gray-500 hover:text-gray-800" />
+                    <button
+                        className="p-1 rounded-full border-2 border-black transition-colors hover:bg-gray-100 flex items-center justify-center shrink-0"
+                        aria-label="Limpiar búsqueda"
+                    >
+                        <X className="w-4 h-4 text-black" strokeWidth={3} />
                     </button>
                 </div>
 
