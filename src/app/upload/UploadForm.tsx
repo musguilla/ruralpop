@@ -6,11 +6,14 @@ import { ImageUploader } from "@/components/ui/ImageUploader";
 import { createListing } from "./actions";
 import { Tractor, MapPin, Euro, Phone, Info, Loader2 } from "lucide-react";
 
+import { useRouter } from "next/navigation";
+
 interface UploadFormProps {
     savedPhone: string | null;
 }
 
 export default function UploadForm({ savedPhone }: UploadFormProps) {
+    const router = useRouter();
     const [selectedCategory, setSelectedCategory] = useState("");
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const [isPending, setIsPending] = useState(false);
@@ -25,7 +28,14 @@ export default function UploadForm({ savedPhone }: UploadFormProps) {
         formData.append("image_urls", JSON.stringify(imageUrls));
 
         try {
-            await createListing(formData);
+            const res = await createListing(formData);
+            if (res?.error) {
+                alert("Error al publicar el anuncio: " + res.error);
+                setIsPending(false);
+            } else if (res?.success) {
+                router.push("/");
+                router.refresh();
+            }
         } catch (err) {
             console.error(err);
             alert("Error al publicar el anuncio");

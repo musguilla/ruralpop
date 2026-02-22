@@ -2,7 +2,6 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 export async function createListing(formData: FormData) {
     const supabase = await createClient();
@@ -51,5 +50,5 @@ export async function createListing(formData: FormData) {
     }
 
     revalidatePath("/");
-    redirect("/");
+    return { success: true };
 }
