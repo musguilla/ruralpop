@@ -8,15 +8,26 @@ import { revalidatePath } from "next/cache";
 export async function deleteListing(listingId: string) {
     // 1. Verificar permisos de admin a través de la sesión del usuario
     if (!await isAdmin()) {
-        throw new Error("No autorizado");
+        return { success: false, error: "No estás autorizado para realizar esta acción." };
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+        console.error("Faltan variables de entorno para inicializar Supabase Admin.");
+        return { success: false, error: "Error de configuración de servidor." };
     }
 
     // Usar SERVICE_ROLE_KEY para ignorar RLS en el borrado, ya que un administrador 
     // debe poder borrar anuncios independientemente de la política `auth.uid() = user_id`
-    const supabaseAdmin = createAdminClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    let supabaseAdmin;
+    try {
+        supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey);
+    } catch (err) {
+        console.error("Error creando cliente supabaseAdmin:", err);
+        return { success: false, error: "Hubo un error inicializando cliente backend." };
+    }
 
     // 2. Obtener los datos del anuncio antes de borrar (para las fotos)
     const { data: listing, error: fetchError } = await supabaseAdmin
