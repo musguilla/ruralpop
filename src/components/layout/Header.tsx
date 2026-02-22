@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { UserCircle, LogOut, MessageSquare, LayoutDashboard, Plus } from "lucide-react";
+import { UserCircle, LogOut, MessageSquare, LayoutDashboard, Plus, Heart } from "lucide-react";
 import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
 import { logout } from "@/app/auth/actions";
@@ -48,6 +48,14 @@ export async function Header() {
                                 Hola, {user.user_metadata?.name?.split(' ')[0] || 'Usuario'}
                             </span>
                             <div className="flex items-center gap-1">
+                                <Link
+                                    href="/favoritos"
+                                    className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full"
+                                    aria-label="Mis Favoritos"
+                                    title="Mis Favoritos"
+                                >
+                                    <Heart className="w-6 h-6" />
+                                </Link>
                                 <Link
                                     href="/dashboard"
                                     className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full"

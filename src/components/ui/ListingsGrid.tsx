@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Pagination } from "@/components/ui/Pagination";
 import { ListingCard, type Listing } from "@/components/ui/ListingCard";
 import { Tractor } from "lucide-react";
+import { getUserFavoriteIds } from "@/app/favoritos/actions";
 
 export async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     const supabase = await createClient();
@@ -80,11 +81,13 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
 
+    const userFavs = await getUserFavoriteIds();
+
     return (
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {listings.map((listing: Listing) => (
-                    <ListingCard key={listing.id} listing={listing} />
+                    <ListingCard key={listing.id} listing={listing} isFavorited={userFavs.includes(listing.id)} />
                 ))}
             </div>
 

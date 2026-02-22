@@ -7,6 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChatButton } from "@/components/chat/ChatButton";
 import { decodeId } from "@/utils/idUtils";
+import { getUserFavoriteIds } from "@/app/favoritos/actions";
+import { FavoriteDetailButton } from "@/components/ui/FavoriteDetailButton";
 
 export default async function ListingDetailPage(props: {
     params: Promise<{ slug: string }>;
@@ -21,6 +23,10 @@ export default async function ListingDetailPage(props: {
     const supabase = await createClient();
 
     const { data: { user } } = await supabase.auth.getUser();
+
+    // Obtenemos los favoritos del usuario para saber si pintar el corazón relleno
+    const userFavs = await getUserFavoriteIds();
+    const isFavorited = userFavs.includes(id);
 
     // Obtenemos el anuncio con los datos del vendedor (join con la tabla users)
     const { data: listing, error } = await supabase
@@ -121,6 +127,11 @@ export default async function ListingDetailPage(props: {
                             </div>
 
                             <div className="space-y-3">
+                                <FavoriteDetailButton
+                                    listingId={listing.id}
+                                    initialIsFavorited={isFavorited}
+                                />
+
                                 <ChatButton
                                     listingId={listing.id}
                                     isLoggedIn={!!user}
