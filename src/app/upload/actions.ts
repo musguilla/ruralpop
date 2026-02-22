@@ -17,6 +17,13 @@ export async function createListing(formData: FormData) {
     const category = formData.get("category") as string;
     const subcategory = formData.get("subcategory") as string;
     const location = formData.get("location") as string;
+
+    // Convert to integers
+    const provStr = formData.get("province_id") as string;
+    const muniStr = formData.get("municipality_id") as string;
+    const province_id = provStr ? parseInt(provStr, 10) : null;
+    const municipality_id = muniStr ? parseInt(muniStr, 10) : null;
+
     const contact_phone = formData.get("contact_phone") as string | null;
     const price_type = formData.get("price_type") as string;
     const imageUrlsString = formData.get("image_urls") as string;
@@ -38,6 +45,8 @@ export async function createListing(formData: FormData) {
         category,
         subcategory: subcategory || null,
         location,
+        province_id,
+        municipality_id,
         price_type,
         image_urls,
         user_id: user.id,
@@ -51,4 +60,20 @@ export async function createListing(formData: FormData) {
 
     revalidatePath("/");
     return { success: true };
+}
+
+export async function getMunicipalities(provinceId: number) {
+    const supabase = await createClient();
+    const { data: municipalities, error } = await supabase
+        .from("municipalities")
+        .select("id, name")
+        .eq("province_id", provinceId)
+        .order("name");
+
+    if (error) {
+        console.error("Error fetching municipalities:", error);
+        return [];
+    }
+
+    return municipalities || [];
 }

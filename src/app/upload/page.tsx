@@ -21,5 +21,13 @@ export default async function UploadPage() {
 
     const savedPhone = profile?.phone ?? null;
 
-    return <UploadForm savedPhone={savedPhone} />;
+    // Fetch provinces to feed the first selector
+    const { data: provinces } = await supabase
+        .from("provinces")
+        .select("id, name")
+        .order("name");
+
+    const initialProvinces = provinces || [];
+
+    return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} />;
 }

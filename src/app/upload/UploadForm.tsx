@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CATEGORIES, PRICE_TYPES } from "@/constants/categories";
 import { ImageUploader } from "@/components/ui/ImageUploader";
-import { createListing } from "./actions";
+import { createListing, getMunicipalities } from "./actions";
 import { Tractor, MapPin, Euro, Phone, Info, Loader2 } from "lucide-react";
 
 import { useRouter } from "next/navigation";
@@ -11,14 +11,53 @@ import { useNotification } from "@/context/NotificationContext";
 
 interface UploadFormProps {
     savedPhone: string | null;
+    initialProvinces: { id: number; name: string }[];
 }
 
-export default function UploadForm({ savedPhone }: UploadFormProps) {
+export default function UploadForm({ savedPhone, initialProvinces }: UploadFormProps) {
     const router = useRouter();
     const { showAlert } = useNotification();
     const [selectedCategory, setSelectedCategory] = useState("");
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const [isPending, setIsPending] = useState(false);
+
+    // Location state
+    const [selectedProvince, setSelectedProvince] = useState<number | "">("");
+    const [municipalities, setMunicipalities] = useState<{ id: number; name: string }[]>([]);
+    const [selectedMunicipality, setSelectedMunicipality] = useState<number | "">("");
+    const [isLoadingMunicipalities, setIsLoadingMunicipalities] = useState(false);
+
+    useEffect(() => {
+        let isMounted = true;
+        if (selectedProvince === "") {
+            setMunicipalities([]);
+            setSelectedMunicipality("");
+            return;
+        }
+
+        async function fetchMuni() {
+            setIsLoadingMunicipalities(true);
+            try {
+                const data = await getMunicipalities(selectedProvince as number);
+                if (isMounted) {
+                    setMunicipalities(data);
+                    setSelectedMunicipality("");
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                if (isMounted) {
+                    setIsLoadingMunicipalities(false);
+                }
+            }
+        }
+
+        fetchMuni();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [selectedProvince]);
 
     const categoryData = CATEGORIES.find(c => c.id === selectedCategory);
 
@@ -28,6 +67,12 @@ export default function UploadForm({ savedPhone }: UploadFormProps) {
 
         const formData = new FormData(e.currentTarget);
         formData.append("image_urls", JSON.stringify(imageUrls));
+
+        // Append legacy location string
+        const provName = initialProvinces.find(p => p.id === Number(selectedProvince))?.name || "";
+        const muniName = municipalities.find(m => m.id === Number(selectedMunicipality))?.name || "";
+        const locationString = muniName ? `${muniName} (${provName})` : provName;
+        formData.append("location", locationString);
 
         try {
             const res = await createListing(formData);
@@ -136,7 +181,7 @@ export default function UploadForm({ savedPhone }: UploadFormProps) {
 
                 {/* Precio y Localización */}
                 <section className="bg-[var(--ag-sys-color-surface)] p-6 rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
                                 <Euro className="w-4 h-4" /> Precio (€) *
@@ -162,14 +207,39 @@ export default function UploadForm({ savedPhone }: UploadFormProps) {
 
                         <div>
                             <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
-                                <MapPin className="w-4 h-4" /> Localización *
+                                <MapPin className="w-4 h-4" /> Provincia *
                             </label>
-                            <input
-                                name="location"
+                            <select
+                                name="province_id"
                                 required
-                                placeholder="Ej: Salamanca, CP 37001"
+                                value={selectedProvince}
+                                onChange={(e) => setSelectedProvince(e.target.value ? Number(e.target.value) : "")}
                                 className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
-                            />
+                            >
+                                <option value="">Selecciona provincia...</option>
+                                {initialProvinces.map(p => (
+                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
+                                <MapPin className="w-4 h-4" /> Localidad *
+                            </label>
+                            <select
+                                name="municipality_id"
+                                required
+                                value={selectedMunicipality}
+                                onChange={(e) => setSelectedMunicipality(e.target.value ? Number(e.target.value) : "")}
+                                disabled={selectedProvince === "" || isLoadingMunicipalities}
+                                className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all disabled:opacity-50"
+                            >
+                                <option value="">{isLoadingMunicipalities ? "Cargando..." : "Selecciona localidad..."}</option>
+                                {municipalities.map(m => (
+                                    <option key={m.id} value={m.id}>{m.name}</option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="md:col-span-3">
