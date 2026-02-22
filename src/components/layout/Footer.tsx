@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Tractor } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
     const currentYear = new Date().getFullYear();
@@ -11,12 +11,9 @@ export function Footer() {
                 <div className="flex flex-col items-center md:items-start gap-2">
                     <Link
                         href="/"
-                        className="flex items-center gap-2 text-[var(--ag-sys-color-primary)]"
+                        className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                     >
-                        <Tractor className="w-6 h-6" />
-                        <span className="text-lg font-bold text-[var(--ag-sys-color-text)]">
-                            Ruralpop
-                        </span>
+                        <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain" />
                     </Link>
                     <p className="text-sm text-[var(--ag-sys-color-text-muted)] text-center md:text-left max-w-sm">
                         El mercado líder en compra y venta de animales, maquinaria y productos del campo.

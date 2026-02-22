@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Tractor } from "lucide-react";
+import Image from "next/image";
 import { login } from "./actions";
 
 export default async function LoginPage(props: {
@@ -12,8 +12,8 @@ export default async function LoginPage(props: {
             <div className="w-full max-w-md space-y-8 bg-[var(--ag-sys-color-surface)] p-8 rounded-2xl shadow-sm border border-[var(--ag-sys-color-border)]">
 
                 <div className="text-center flex flex-col items-center">
-                    <div className="bg-[var(--ag-sys-color-background)] p-3 rounded-full mb-4">
-                        <Tractor className="w-8 h-8 text-[var(--ag-sys-color-primary)]" />
+                    <div className="mb-4">
+                        <Image src="/ruralpop-logo.png" alt="Ruralpop" width={160} height={40} className="object-contain" priority />
                     </div>
                     <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
                         Inicia Sesión

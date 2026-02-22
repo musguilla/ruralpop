@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { Tractor, UserCircle, LogOut, MessageSquare, LayoutDashboard } from "lucide-react";
+import Image from "next/image";
+import { UserCircle, LogOut, MessageSquare, LayoutDashboard } from "lucide-react";
 import { SearchInput } from "../ui/SearchInput";
 import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
@@ -16,12 +17,9 @@ export async function Header() {
                 {/* Logo and Brand */}
                 <Link
                     href="/"
-                    className="flex items-center gap-2 text-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary-hover)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-md px-1"
+                    className="flex items-center hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-md px-1"
                 >
-                    <Tractor className="w-8 h-8" />
-                    <span className="text-xl font-bold tracking-tight hidden sm:inline-block text-[var(--ag-sys-color-text)]">
-                        Ruralpop
-                    </span>
+                    <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain" priority />
                 </Link>
 
                 {/* Search Bar - Takes up remaining space gracefully */}
