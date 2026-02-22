@@ -34,10 +34,13 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
     const [threads, setThreads] = React.useState<Thread[]>(initialThreads);
     const supabase = createClient();
 
-    // Sincronizar estado local cuando cambian las props del servidor
+    // Sincronizar estado local cuando cambian las props del servidor y forzar refresco al montar
     useEffect(() => {
         setThreads(initialThreads);
-    }, [initialThreads]);
+        // Forzamos un refresco al montar para asegurar que el cache de Next.js no nos juegue una mala pasada
+        // con los contadores de mensajes leídos en la navegación atrás/adelante.
+        router.refresh();
+    }, [initialThreads, router]);
 
     useEffect(() => {
         // Suscribirse a cambios en mensajes para refrescar la lista en tiempo real

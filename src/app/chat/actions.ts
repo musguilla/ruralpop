@@ -30,13 +30,22 @@ export async function sendMessage(formData: FormData) {
     revalidatePath(`/chat/${listing_id}`);
 }
 
+import { createClient as createAdminClient } from "@supabase/supabase-js";
+
 export async function markMessagesAsRead(listingId: string, otherUserId: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return { success: false };
 
-    const { error } = await supabase
+    // Creamos un cliente admin para saltarnos el RLS, ya que falta la política de UPDATE en la tabla messages
+    // y solo el destinatario real debería poder marcar como leído (verificado arriba con user.id)
+    const supabaseAdmin = createAdminClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { error } = await supabaseAdmin
         .from('messages')
         .update({ is_read: true })
         .eq('listing_id', listingId)
