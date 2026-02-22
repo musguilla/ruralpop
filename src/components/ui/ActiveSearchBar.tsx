@@ -124,14 +124,14 @@ export function ActiveSearchBar() {
 
     // Calculate Active Badges
     const activeBadges = [];
-    if (category) {
+    if (category && category.trim() !== "") {
         const catObj = CATEGORIES.find(c => c.id === category);
         activeBadges.push({ type: 'category', label: catObj ? catObj.label : category });
     }
-    if (subcategory) {
+    if (subcategory && subcategory.trim() !== "") {
         activeBadges.push({ type: 'subcategory', label: subcategory });
     }
-    if (location) {
+    if (location && location.trim() !== "" && location !== "all" && location !== "Toda España") {
         const locObj = LOCATIONS.find(l => l.id === location);
         activeBadges.push({ type: 'location', label: locObj ? locObj.name : location });
     }
