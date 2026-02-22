@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter, useSearchParams, usePathname, useParams } from "next/navigation";
-import { Search, X, SlidersHorizontal, MapPin } from "lucide-react";
+import { Search, X, SlidersHorizontal, MapPin, ArrowDownUp } from "lucide-react";
 import { CATEGORIES } from "@/constants/categories";
 import { LOCATIONS } from "@/constants/locations";
 import { parseSeoUrl, buildSeoUrl } from "@/utils/seoUtils";
@@ -23,6 +23,9 @@ export function ActiveSearchBar() {
     const location = parsedSlug ? parsedSlug.province_id : searchParams.get("province_id");
 
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+    const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+
+    const activeSort = searchParams.get("sort") || "relevance";
 
     // Local state for modal filters
     const [priceMin, setPriceMin] = useState(searchParams.get("price_min") || "");
@@ -144,6 +147,40 @@ export function ActiveSearchBar() {
         activeBadges.push({ type: 'seller_type', label: `Vendedor: ${currentSellerType}` });
     }
 
+    const applySort = (sortParam: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        if (sortParam === "relevance") {
+            params.delete("sort");
+        } else {
+            params.set("sort", sortParam);
+        }
+        setIsSortModalOpen(false);
+
+        // Keep current path and inject new params
+        const url = buildSeoUrl({
+            q: query ?? undefined,
+            category: category ?? undefined,
+            subcategory: subcategory ?? undefined,
+            province_id: location ?? undefined
+        });
+
+        // Remove SEO params from regular search params to avoid duplication
+        params.delete("q");
+        params.delete("category");
+        params.delete("subcategory");
+        params.delete("province_id");
+
+        const queryStr = params.toString();
+        router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+    };
+
+    const SORT_OPTIONS = [
+        { id: "relevance", label: "Relevancia" },
+        { id: "cheap", label: "Baratos primero" },
+        { id: "expensive", label: "Caro primero" },
+        { id: "recent", label: "Más recientes" },
+    ];
+
     return (
         <div className="w-full flex flex-col items-center py-6 mb-2">
             <div className="flex gap-3 w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
@@ -165,13 +202,27 @@ export function ActiveSearchBar() {
                 {/* Filters Button */}
                 <button
                     onClick={() => setIsFiltersOpen(true)}
-                    className="flex items-center gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full px-6 h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
+                    className="flex items-center gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full px-4 sm:px-6 h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
                 >
                     <SlidersHorizontal className="w-5 h-5" />
                     <span className="hidden sm:inline">Filtros</span>
                     {activeBadges.length > 0 && (
                         <span className="bg-[#1a7f5a] text-white text-sm font-bold w-6 h-6 flex items-center justify-center rounded-full ml-1">
                             {activeBadges.length}
+                        </span>
+                    )}
+                </button>
+
+                {/* Sort Button */}
+                <button
+                    onClick={() => setIsSortModalOpen(true)}
+                    className="flex items-center gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full px-4 sm:px-6 h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
+                >
+                    <ArrowDownUp className="w-5 h-5" />
+                    <span className="hidden sm:inline">Ordenar</span>
+                    {activeSort !== "relevance" && (
+                        <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full ml-1">
+                            {SORT_OPTIONS.find(s => s.id === activeSort)?.label}
                         </span>
                     )}
                 </button>
@@ -291,6 +342,31 @@ export function ActiveSearchBar() {
                             >
                                 Ver resultados
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Sort Modal */}
+            {isSortModalOpen && (
+                <div className="fixed inset-0 z-[100] flex justify-center bg-black/50 overflow-y-auto w-full transition-opacity">
+                    <div className="bg-white w-full max-w-sm min-h-screen sm:min-h-0 sm:h-fit sm:my-auto sm:rounded-2xl flex flex-col relative animate-in slide-in-from-bottom-5">
+                        <div className="flex justify-between items-center p-4 border-b border-[var(--ag-sys-color-border)]">
+                            <h2 className="text-xl font-bold text-gray-900">Ordenar por</h2>
+                            <button onClick={() => setIsSortModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
+                                <X className="w-6 h-6 text-gray-500" />
+                            </button>
+                        </div>
+                        <div className="flex flex-col p-2 space-y-1">
+                            {SORT_OPTIONS.map(opt => (
+                                <button
+                                    key={opt.id}
+                                    onClick={() => applySort(opt.id)}
+                                    className={`text-left px-4 py-4 rounded-xl font-medium transition-colors ${activeSort === opt.id ? 'bg-emerald-50 text-emerald-700' : 'text-gray-700 hover:bg-gray-50'}`}
+                                >
+                                    {opt.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>

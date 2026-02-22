@@ -11,11 +11,27 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
     const from = (currentPage - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
+    const sortParam = searchParams.sort as string || "relevance";
+
     let query = supabase
         .from("listings")
         .select("id, title, price, location, image_urls, created_at, category, price_type", { count: "exact" })
-        .eq("status", "active")
-        .order("created_at", { ascending: false });
+        .eq("status", "active");
+
+    // Apply Sorting
+    switch (sortParam) {
+        case "cheap":
+            query = query.order("price", { ascending: true });
+            break;
+        case "expensive":
+            query = query.order("price", { ascending: false });
+            break;
+        case "recent":
+        case "relevance":
+        default:
+            query = query.order("created_at", { ascending: false });
+            break;
+    }
 
     // Filter based on search params
     const categoryFilter = searchParams.category as string;
