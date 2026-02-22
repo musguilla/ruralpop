@@ -5,7 +5,7 @@ import { buildSeoUrl } from '@/utils/seoUtils';
 
 export default function sitemap(): MetadataRoute.Sitemap {
     // Definimos la base URL, en producción debería ser una variable de entorno
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ruralpop.es';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
 
     const sitemapEntries: MetadataRoute.Sitemap = [];
 
