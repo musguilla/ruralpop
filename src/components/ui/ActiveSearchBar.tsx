@@ -120,57 +120,7 @@ export function ActiveSearchBar() {
         setIsFiltersOpen(false);
     };
 
-    const removeFilter = (filterType: string) => {
-        const params = new URLSearchParams(searchParams.toString());
 
-        let newCat = category;
-        let newSub = subcategory;
-        let newLoc = location;
-
-        switch (filterType) {
-            case 'category':
-                newCat = undefined;
-                newSub = undefined;
-                setModalCategoryValue("");
-                break;
-            case 'subcategory':
-                newSub = undefined;
-                if (newCat) setModalCategoryValue(`cat_${newCat}`);
-                else setModalCategoryValue("");
-                break;
-            case 'location':
-                newLoc = undefined;
-                setModalLocation("");
-                break;
-            case 'price_min':
-                params.delete("price_min");
-                setPriceMin("");
-                break;
-            case 'price_max':
-                params.delete("price_max");
-                setPriceMax("");
-                break;
-            case 'seller_type':
-                params.delete("seller_type");
-                setSellerType("all");
-                break;
-        }
-
-        const baseUrl = buildSeoUrl({
-            q: query ?? undefined,
-            category: newCat ?? undefined,
-            subcategory: newSub ?? undefined,
-            province_id: newLoc ?? undefined
-        });
-
-        params.delete("q");
-        params.delete("category");
-        params.delete("subcategory");
-        params.delete("province_id");
-
-        const queryStr = params.toString();
-        router.push(`${baseUrl}${queryStr ? '?' + queryStr : ''}`);
-    };
 
     // Calculate Active Badges
     const activeBadges = [];
@@ -223,26 +173,13 @@ export function ActiveSearchBar() {
                 >
                     <SlidersHorizontal className="w-5 h-5" />
                     <span className="hidden sm:inline">Filtros</span>
+                    {activeBadges.length > 0 && (
+                        <span className="bg-[#1a7f5a] text-white text-sm font-bold w-6 h-6 flex items-center justify-center rounded-full ml-1">
+                            {activeBadges.length}
+                        </span>
+                    )}
                 </button>
             </div>
-
-            {/* Active Filters Badges */}
-            {activeBadges.length > 0 && (
-                <div className="w-full max-w-4xl px-4 mt-4 flex flex-wrap gap-2 items-center">
-                    <span className="text-sm text-gray-500 font-medium mr-1">Filtros aplicados:</span>
-                    {activeBadges.map(badge => (
-                        <div key={badge.type} className="flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-sm">
-                            <span>{badge.label}</span>
-                            <button onClick={() => removeFilter(badge.type)} className="hover:bg-emerald-200 rounded-full p-0.5 ml-1 transition-colors">
-                                <X className="w-3.5 h-3.5" />
-                            </button>
-                        </div>
-                    ))}
-                    <button onClick={clearFilters} className="text-sm text-gray-500 hover:text-gray-800 hover:underline ml-2 transition-colors">
-                        Borrar todos
-                    </button>
-                </div>
-            )}
 
             {/* Backdrop & Modal */}
             {isFiltersOpen && (
