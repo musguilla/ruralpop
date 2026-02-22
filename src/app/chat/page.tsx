@@ -26,6 +26,7 @@ export default async function ChatInboxPage() {
       listing_id,
       sender_id,
       receiver_id,
+      is_read,
       listing:listings(title, image_urls),
       sender:users!messages_sender_id_fkey(name, avatar_url),
       receiver:users!messages_receiver_id_fkey(name, avatar_url)
@@ -50,6 +51,7 @@ export default async function ChatInboxPage() {
         listing: { title: string; image_urls: string[] | null };
         listingId: string;
         otherUserId: string;
+        unreadCount: number;
     }
 
     // Lógica para agrupar mensajes en hilos de conversación únicos
@@ -57,6 +59,7 @@ export default async function ChatInboxPage() {
     messages?.forEach((msg: any) => {
         const otherUserId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
         const threadKey = `${msg.listing_id}-${otherUserId}`;
+        const isUnreadForMe = msg.receiver_id === user.id && msg.is_read === false;
 
         if (!threadsMap.has(threadKey)) {
             const otherUser = msg.sender_id === user.id ? msg.receiver : msg.sender;
@@ -65,8 +68,13 @@ export default async function ChatInboxPage() {
                 otherUser: otherUser as unknown as { name: string; avatar_url: string | null },
                 listing: msg.listing as unknown as { title: string; image_urls: string[] | null },
                 listingId: msg.listing_id,
-                otherUserId
+                otherUserId,
+                unreadCount: isUnreadForMe ? 1 : 0
             });
+        } else {
+            if (isUnreadForMe) {
+                threadsMap.get(threadKey)!.unreadCount += 1;
+            }
         }
     });
 
@@ -122,13 +130,20 @@ export default async function ChatInboxPage() {
 
                                     {/* Thread Info */}
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-start justify-between mb-1">
-                                            <h4 className="font-bold text-[var(--ag-sys-color-text)] truncate group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                                        <div className="flex items-start justify-between mb-1 gap-2">
+                                            <h4 className={`font-bold truncate group-hover:text-[var(--ag-sys-color-primary)] transition-colors ${thread.unreadCount > 0 ? "text-[var(--ag-sys-color-text)]" : "text-[var(--ag-sys-color-text)]"}`}>
                                                 {thread.listing?.title}
                                             </h4>
-                                            <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] whitespace-nowrap ml-2">
-                                                {formatRelativeTime(thread.lastMessage.created_at)}
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                {thread.unreadCount > 0 && (
+                                                    <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-bold text-white bg-red-500 rounded-full shadow-sm">
+                                                        {thread.unreadCount}
+                                                    </span>
+                                                )}
+                                                <span className={`text-[10px] whitespace-nowrap ${thread.unreadCount > 0 ? "text-[var(--ag-sys-color-primary)] font-bold" : "text-[var(--ag-sys-color-text-muted)]"}`}>
+                                                    {formatRelativeTime(thread.lastMessage.created_at)}
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div className="flex items-center gap-2 mb-2">
@@ -144,7 +159,7 @@ export default async function ChatInboxPage() {
                                             </span>
                                         </div>
 
-                                        <p className="text-sm text-[var(--ag-sys-color-text-muted)] line-clamp-1 italic">
+                                        <p className={`text-sm line-clamp-1 italic ${thread.unreadCount > 0 ? "text-[var(--ag-sys-color-text)] font-semibold" : "text-[var(--ag-sys-color-text-muted)]"}`}>
                                             {thread.lastMessage.sender_id === user.id ? "Tú: " : ""}
                                             {thread.lastMessage.content}
                                         </p>

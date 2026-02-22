@@ -45,12 +45,10 @@ export function ChatBadge({ initialCount, userId }: ChatBadgeProps) {
                     filter: `receiver_id=eq.${userId}`,
                 },
                 (payload: any) => {
-                    // Si el mensaje pasó a leído (estado real new.is_read === true)
-                    // y el viejo era false, restamos.
-                    if (payload.old && payload.new) {
-                        if (payload.old.is_read === false && payload.new.is_read === true) {
-                            setUnreadCount((prev) => Math.max(0, prev - 1));
-                        }
+                    // Al no tener REPLICA IDENTITY FULL en Postgres por defecto, old suele venir vacío salvo el ID.
+                    // Si recibimos un update donde viene is_read a true, asumimos que acaba de leerse.
+                    if (payload.new && payload.new.is_read === true) {
+                        setUnreadCount((prev) => Math.max(0, prev - 1));
                     }
                 }
             )
