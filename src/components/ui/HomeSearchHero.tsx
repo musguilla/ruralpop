@@ -3,17 +3,39 @@
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
-    Search, List, MapPin, Tractor, Leaf, Apple, Settings, Hammer,
-    Beef, PawPrint, Cloud, PiggyBank, Bird, Dog, Rabbit, Milk,
-    ChevronLeft, ChevronRight
+    Search, List, MapPin, Tractor, Leaf, Apple, Hammer,
+    Cloud, PiggyBank, Bird, Dog, Rabbit, Milk,
+    ChevronLeft, ChevronRight, Truck, Stethoscope, Anvil, Briefcase
 } from "lucide-react";
 import { CATEGORIES } from "@/constants/categories";
+
+// Custom SVG to replace Cow (Bovino)
+const CowIcon = ({ className }: { className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M4 10v4c0 3.3 2.7 6 6 6h4c3.3 0 6-2.7 6-6v-4" />
+        <path d="M3 10c0-2.8 2.2-5 5-5" />
+        <path d="M21 10c0-2.8-2.2-5-5-5" />
+        <path d="M8 5v1" />
+        <path d="M16 5v1" />
+        <path d="M9 14h6" />
+    </svg>
+);
+
+// Custom SVG to replace Horse (Equino)
+const HorseIcon = ({ className }: { className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M18 10l-3-6-3 4-4-2-2 4 4 6" />
+        <path d="M10 16h6l2-2" />
+        <path d="M14 8l-2 3" />
+        <path d="M8 12l2-1" />
+    </svg>
+);
 
 // Define a unified list for the slider
 const VISUAL_CATEGORIES = [
     { id: "animales", type: "category", label: "Animales", icon: <Tractor className="w-8 h-8 text-emerald-700" /> },
-    { id: "Bovino", type: "subcategory", label: "Bovino", icon: <Beef className="w-8 h-8 text-emerald-700" /> },
-    { id: "Equino", type: "subcategory", label: "Equino", icon: <PawPrint className="w-8 h-8 text-emerald-700" /> },
+    { id: "Bovino", type: "subcategory", label: "Bovino", icon: <CowIcon className="w-8 h-8 text-emerald-700" /> },
+    { id: "Equino", type: "subcategory", label: "Equino", icon: <HorseIcon className="w-8 h-8 text-emerald-700" /> },
     { id: "Caprino", type: "subcategory", label: "Caprino", icon: <Milk className="w-8 h-8 text-emerald-700" /> },
     { id: "Ovino", type: "subcategory", label: "Ovino", icon: <Cloud className="w-8 h-8 text-emerald-700" /> },
     { id: "Porcino", type: "subcategory", label: "Porcino", icon: <PiggyBank className="w-8 h-8 text-emerald-700" /> },
@@ -23,6 +45,10 @@ const VISUAL_CATEGORIES = [
     { id: "maquinaria", type: "category", label: "Maquinaria", icon: <Hammer className="w-8 h-8 text-emerald-700" /> },
     { id: "forraje", type: "category", label: "Forraje", icon: <Leaf className="w-8 h-8 text-emerald-700" /> },
     { id: "alimentos", type: "category", label: "Alimentos Km0", icon: <Apple className="w-8 h-8 text-emerald-700" /> },
+    { id: "servicios", type: "category", label: "Servicios", icon: <Briefcase className="w-8 h-8 text-emerald-700" /> },
+    { id: "Transporte", type: "subcategory", label: "Transporte", icon: <Truck className="w-8 h-8 text-emerald-700" /> },
+    { id: "Veterinarios", type: "subcategory", label: "Veterinarios", icon: <Stethoscope className="w-8 h-8 text-emerald-700" /> },
+    { id: "Herradores", type: "subcategory", label: "Herradores", icon: <Anvil className="w-8 h-8 text-emerald-700" /> },
 ];
 
 export function HomeSearchHero() {
@@ -47,8 +73,12 @@ export function HomeSearchHero() {
         if (item.type === "category") {
             params.set("category", item.id);
         } else {
-            // It's a subcategory of animals
-            params.set("category", "animales");
+            // Dynamically set correct parent category
+            if (["Transporte", "Veterinarios", "Herradores"].includes(item.id)) {
+                params.set("category", "servicios");
+            } else {
+                params.set("category", "animales");
+            }
             params.set("subcategory", item.id);
         }
         router.push(`/?${params.toString()}`);
@@ -56,13 +86,13 @@ export function HomeSearchHero() {
 
     const scrollLeft = () => {
         if (sliderRef.current) {
-            sliderRef.current.scrollBy({ left: -250, behavior: 'smooth' });
+            sliderRef.current.scrollBy({ left: -300, behavior: 'smooth' });
         }
     };
 
     const scrollRight = () => {
         if (sliderRef.current) {
-            sliderRef.current.scrollBy({ left: 250, behavior: 'smooth' });
+            sliderRef.current.scrollBy({ left: 300, behavior: 'smooth' });
         }
     };
 
@@ -148,20 +178,35 @@ export function HomeSearchHero() {
             </form>
 
             {/* Categories Slider */}
-            <div className="w-full max-w-5xl mt-12 relative flex items-center group">
-                {/* Left Arrow */}
-                <button
-                    onClick={scrollLeft}
-                    className="absolute left-0 z-10 w-10 h-10 bg-white shadow-md border border-[var(--ag-sys-color-border)] rounded-full flex items-center justify-center -ml-4 hidden md:group-hover:flex hover:bg-gray-50 transition-colors"
-                >
-                    <ChevronLeft className="w-5 h-5 text-gray-700" />
-                </button>
+            <div className="w-full max-w-5xl mt-12 flex flex-col gap-6">
+
+                {/* Header with Title and Arrows */}
+                <div className="flex items-center justify-between w-full px-2">
+                    <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">Todas las categorías</h2>
+
+                    <div className="flex gap-2">
+                        <button
+                            onClick={scrollLeft}
+                            className="w-10 h-10 bg-white border border-[var(--ag-sys-color-border)] rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
+                            aria-label="Scroll left"
+                        >
+                            <ChevronLeft className="w-5 h-5 text-gray-700" />
+                        </button>
+                        <button
+                            onClick={scrollRight}
+                            className="w-10 h-10 bg-white border border-[var(--ag-sys-color-border)] rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm"
+                            aria-label="Scroll right"
+                        >
+                            <ChevronRight className="w-5 h-5 text-gray-700" />
+                        </button>
+                    </div>
+                </div>
 
                 {/* Slider Container */}
                 <div
                     ref={sliderRef}
                     className="flex overflow-x-auto gap-8 pb-4 hide-scrollbar w-full px-2"
-                    style={{ scrollAction: 'none' }} // Prevent browser back action on scroll
+                    style={{ touchAction: 'pan-y' }} // Prevent browser back action on horizontal scroll
                 >
                     {VISUAL_CATEGORIES.map(cat => (
                         <button
@@ -179,15 +224,14 @@ export function HomeSearchHero() {
                         </button>
                     ))}
                 </div>
-
-                {/* Right Arrow */}
-                <button
-                    onClick={scrollRight}
-                    className="absolute right-0 z-10 w-10 h-10 bg-white shadow-md border border-[var(--ag-sys-color-border)] rounded-full flex items-center justify-center -mr-4 hidden md:group-hover:flex hover:bg-gray-50 transition-colors"
-                >
-                    <ChevronRight className="w-5 h-5 text-gray-700" />
-                </button>
             </div>
         </div>
     );
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Se crean iconos SVG custom para Bovino y Equino ya que Lucide-React no cuenta con ellos en vanilla de forma precisa.
+ * - Los controles del slider (flechas) se han movido independientemente en la parte superior (en conjunto con el título) para optimizar accesibilidad en móviles, proveyendo targets más amplios y consistentes.
+ * - Categoría 'servicios' se maneja dinámicamente en 'handleCategoryClick' para redireccionar de forma correcta a sus correspondientes URLParams.
+ */

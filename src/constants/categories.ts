@@ -24,6 +24,15 @@ export const CATEGORIES = [
         subcategories: [],
     },
     {
+        id: "servicios",
+        label: "Servicios",
+        subcategories: [
+            "Transporte",
+            "Veterinarios",
+            "Herradores"
+        ],
+    },
+    {
         id: "alimentos",
         label: "Alimentos Km0",
         subcategories: [],
