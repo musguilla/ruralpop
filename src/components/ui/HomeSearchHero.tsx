@@ -106,7 +106,7 @@ export function HomeSearchHero() {
 
     return (
         <div className="w-full flex flex-col items-center py-6 sm:py-10">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-8 text-center">
+            <h1 className="hidden md:block text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-8 text-center">
                 ¿Qué quieres encontrar?
             </h1>
 
@@ -184,7 +184,7 @@ export function HomeSearchHero() {
                             className="flex items-center gap-2 px-3 h-12 text-left bg-gray-50 rounded-xl"
                         >
                             <List className="w-4 h-4 text-gray-400 shrink-0" />
-                            <span className="flex-1 text-xs text-gray-600 truncate">
+                            <span className="flex-1 text-[15px] text-gray-500 truncate">
                                 {getCategoryDisplayLabel()}
                             </span>
                         </button>
@@ -194,7 +194,7 @@ export function HomeSearchHero() {
                             className="flex items-center gap-2 px-3 h-12 text-left bg-gray-50 rounded-xl"
                         >
                             <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
-                            <span className="flex-1 text-xs text-gray-600 truncate">
+                            <span className="flex-1 text-[15px] text-gray-500 truncate">
                                 {locationName}
                             </span>
                         </button>
