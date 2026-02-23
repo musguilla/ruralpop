@@ -24,7 +24,7 @@ export default async function SearchResultsPage(props: {
     if (parsedSlug.province_id) combinedParams.province_id = parsedSlug.province_id;
 
     return (
-        <div className="container mx-auto px-4 py-8 min-h-screen">
+        <div className="container mx-auto px-4 pt-0 pb-8 sm:py-8 min-h-screen">
             <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
                 <ActiveSearchBar />
             </Suspense>
