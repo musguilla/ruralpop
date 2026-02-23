@@ -64,7 +64,7 @@ export function ListingCard({ listing, isFavorited = false }: { listing: Listing
                                         {/* Prev Button */}
                                         <button
                                             onClick={prevImage}
-                                            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm opacity-100 md:opacity-0 md:group-hover/image:opacity-100 hover:bg-black/50 transition-all focus:outline-none z-20"
+                                            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 transition-all focus:outline-none z-20"
                                             aria-label="Imagen anterior"
                                         >
                                             <ChevronLeft className="w-5 h-5" />
@@ -73,20 +73,20 @@ export function ListingCard({ listing, isFavorited = false }: { listing: Listing
                                         {/* Next Button */}
                                         <button
                                             onClick={nextImage}
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm opacity-100 md:opacity-0 md:group-hover/image:opacity-100 hover:bg-black/50 transition-all focus:outline-none z-20"
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 transition-all focus:outline-none z-20"
                                             aria-label="Siguiente imagen"
                                         >
                                             <ChevronRight className="w-5 h-5" />
                                         </button>
 
                                         {/* Dots Indicator */}
-                                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 opacity-100 md:opacity-0 md:group-hover/image:opacity-100 transition-opacity z-20">
+                                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-20">
                                             {listing.image_urls.map((_, idx) => (
                                                 <div
                                                     key={idx}
                                                     className={`w-1.5 h-1.5 rounded-full shadow-sm transition-all ${idx === currentImageIndex
-                                                            ? 'bg-white scale-110'
-                                                            : 'bg-white/50'
+                                                        ? 'bg-white scale-110'
+                                                        : 'bg-white/50'
                                                         }`}
                                                 />
                                             ))}
