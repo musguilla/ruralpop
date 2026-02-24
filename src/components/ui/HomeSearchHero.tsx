@@ -12,22 +12,20 @@ import { CATEGORIES } from "@/constants/categories";
 
 // Define a unified list for the slider
 const VISUAL_CATEGORIES = [
-    { id: "ganaderia", type: "category", label: "Ganadería", icon: <Tractor className="w-10 h-10 text-emerald-700" /> },
     { id: "Bovino", type: "subcategory", label: "Bovino", icon: <Image src="/icon-bovino.png" alt="Bovino" width={48} height={48} className="object-contain" /> },
     { id: "Equino", type: "subcategory", label: "Equino", icon: <Image src="/icon-equino.png" alt="Equino" width={48} height={48} className="object-contain" /> },
     { id: "Caprino", type: "subcategory", label: "Caprino", icon: <Image src="/icon-caprino.png" alt="Caprino" width={48} height={48} className="object-contain" /> },
     { id: "Ovino", type: "subcategory", label: "Ovino", icon: <Image src="/icon-ovino.png" alt="Ovino" width={48} height={48} className="object-contain" /> },
-    { id: "Porcino", type: "subcategory", label: "Porcino", icon: <PiggyBank className="w-10 h-10 text-emerald-700" /> },
-    { id: "Avicultura", type: "subcategory", label: "Avicultura", icon: <Bird className="w-10 h-10 text-emerald-700" /> },
-    { id: "Perros", type: "subcategory", label: "Perros", icon: <Dog className="w-10 h-10 text-emerald-700" /> },
-    { id: "Conejos", type: "subcategory", label: "Conejos", icon: <Rabbit className="w-10 h-10 text-emerald-700" /> },
-    { id: "maquinaria", type: "category", label: "Maquinaria", icon: <Hammer className="w-10 h-10 text-emerald-700" /> },
-    { id: "forraje", type: "category", label: "Forraje", icon: <Leaf className="w-10 h-10 text-emerald-700" /> },
-    { id: "alimentos", type: "category", label: "Alimentos Km0", icon: <Apple className="w-10 h-10 text-emerald-700" /> },
-    { id: "servicios", type: "category", label: "Servicios", icon: <Briefcase className="w-10 h-10 text-emerald-700" /> },
-    { id: "Transporte", type: "subcategory", label: "Transporte", icon: <Truck className="w-10 h-10 text-emerald-700" /> },
-    { id: "Veterinarios", type: "subcategory", label: "Veterinarios", icon: <Stethoscope className="w-10 h-10 text-emerald-700" /> },
-    { id: "Herradores", type: "subcategory", label: "Herradores", icon: <Anvil className="w-10 h-10 text-emerald-700" /> },
+    { id: "Porcino", type: "subcategory", label: "Porcino", icon: <Image src="/icon-porcino.png" alt="Porcino" width={48} height={48} className="object-contain" /> },
+    { id: "Avicultura", type: "subcategory", label: "Avicultura", icon: <Image src="/icon-aves.png" alt="Avicultura" width={48} height={48} className="object-contain" /> },
+    { id: "Perros", type: "subcategory", label: "Perros", icon: <Image src="/icon-perro.png" alt="Perros" width={48} height={48} className="object-contain" /> },
+    { id: "Conejos", type: "subcategory", label: "Conejos", icon: <Image src="/icon-conejos.png" alt="Conejos" width={48} height={48} className="object-contain" /> },
+    { id: "maquinaria", type: "category", label: "Maquinaria", icon: <Image src="/icon-tractor.png" alt="Maquinaria" width={48} height={48} className="object-contain" /> },
+    { id: "forraje", type: "category", label: "Forraje", icon: <Image src="/icon-forraje.png" alt="Forraje" width={48} height={48} className="object-contain" /> },
+    { id: "alimentos", type: "category", label: "Km0", icon: <Image src="/icon-alimentos.png" alt="Km0" width={48} height={48} className="object-contain" /> },
+    { id: "Transporte", type: "subcategory", label: "Transporte", icon: <Image src="/icon-transportes.png" alt="Transporte" width={48} height={48} className="object-contain" /> },
+    { id: "Veterinarios", type: "subcategory", label: "Veterinarios", icon: <Image src="/icon-veterinarios.png" alt="Veterinarios" width={48} height={48} className="object-contain" /> },
+    { id: "Herradores", type: "subcategory", label: "Herradores", icon: <Image src="/icon-herradores.png" alt="Herradores" width={48} height={48} className="object-contain" /> },
 ];
 
 import { CategoryModal } from "./CategoryModal";

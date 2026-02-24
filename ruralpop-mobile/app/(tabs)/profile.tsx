@@ -1,0 +1,82 @@
+import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { useAuth } from "../../src/contexts/AuthContext";
+import { useRouter } from "expo-router";
+import { User, LogOut } from "lucide-react-native";
+import { supabase } from "../../src/lib/supabase";
+
+export default function ProfileScreen() {
+    const { session, user, isLoading } = useAuth();
+    const router = useRouter();
+
+    if (isLoading) return null;
+
+    async function handleSignOut() {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            Alert.alert("Error al cerrar sesión", error.message);
+        } else {
+            router.replace("/");
+        }
+    }
+
+    if (!session) {
+        return (
+            <View className="flex-1 items-center justify-center bg-surface px-6">
+                <View className="w-16 h-16 bg-primary-muted rounded-full items-center justify-center mb-6">
+                    <User className="text-primary" size={32} />
+                </View>
+                <Text className="text-xl font-bold text-center text-text mb-2">Tu perfil en Ruralpop</Text>
+                <Text className="text-center text-text-muted mb-8">
+                    Inicia sesión para editar tu perfil, gestionar tus anuncios y revisar tus mensajes.
+                </Text>
+                <TouchableOpacity
+                    onPress={() => router.push('/(auth)/login')}
+                    className="bg-primary px-8 py-3 rounded-full"
+                >
+                    <Text className="text-white font-bold text-base">Iniciar Sesión</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    return (
+        <View className="flex-1 bg-surface px-6 pt-12">
+            <Text className="text-3xl font-extrabold text-text mb-8">Mi Perfil</Text>
+
+            <View className="bg-surface-muted p-6 rounded-2xl border border-gray-100 mb-8 items-center">
+                <View className="w-20 h-20 bg-primary-muted rounded-full items-center justify-center mb-4">
+                    <User className="text-primary" size={40} />
+                </View>
+                <Text className="text-xl font-bold text-text mb-1">
+                    {user?.user_metadata?.full_name || 'Usuario Ruralpop'}
+                </Text>
+                <Text className="text-text-muted mb-4">{user?.email}</Text>
+            </View>
+
+            <View className="space-y-3 mb-8">
+                <TouchableOpacity
+                    onPress={() => router.push('/my-listings')}
+                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm"
+                >
+                    <Text className="text-base font-bold text-text">Mis Anuncios</Text>
+                    <Text className="text-primary font-bold">→</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm"
+                >
+                    <Text className="text-base font-bold text-text">Mis Datos Personales</Text>
+                    <Text className="text-primary font-bold">→</Text>
+                </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+                onPress={handleSignOut}
+                className="flex-row items-center justify-center bg-red-50 py-4 rounded-xl border border-red-100"
+            >
+                <LogOut className="text-red-500 mr-2" size={20} />
+                <Text className="text-red-600 font-bold text-base">Cerrar Sesión</Text>
+            </TouchableOpacity>
+        </View>
+    );
+}
