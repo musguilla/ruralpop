@@ -20,6 +20,24 @@ export function Footer() {
                     </p>
                 </div>
 
+                <div className="flex items-center gap-4 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300">
+                    <div className="relative w-[135px] h-[40px]">
+                        <Image
+                            src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+                            alt="Descargar en App Store"
+                            fill
+                            className="object-contain cursor-default"
+                        />
+                    </div>
+                    <div className="relative w-[135px] h-[40px]">
+                        <Image
+                            src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                            alt="Disponible en Google Play"
+                            fill
+                            className="object-contain cursor-default"
+                        />
+                    </div>
+                </div>
             </div>
 
             <div className="container mx-auto px-4 mt-8 pt-8 border-t border-[var(--ag-sys-color-border)] flex flex-col md:flex-row justify-between items-center gap-4">
