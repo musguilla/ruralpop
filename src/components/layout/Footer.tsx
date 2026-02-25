@@ -21,27 +21,30 @@ export function Footer() {
                     </p>
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-6 text-sm text-[var(--ag-sys-color-text-muted)]">
+            </div>
+
+            <div className="container mx-auto px-4 mt-8 pt-8 border-t border-[var(--ag-sys-color-border)] flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="text-sm text-[var(--ag-sys-color-text-muted)] order-2 md:order-1">
+                    &copy; 2026 Ruralpop. Todos los derechos reservados.
+                </div>
+
+                <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-[var(--ag-sys-color-text-muted)] order-1 md:order-2">
                     <Link href="/legal" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Aviso legal
                     </Link>
                     <Link href="/privacy" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Política de privacidad
+                        Privacidad
                     </Link>
                     <Link href="/cookies" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Cookies
                     </Link>
                     <Link href="/terms" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Términos y condiciones
+                        Condiciones
                     </Link>
                     <Link href="/contact" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Contacto
                     </Link>
                 </div>
-            </div>
-
-            <div className="container mx-auto px-4 mt-8 pt-4 border-t border-[var(--ag-sys-color-border)] text-center text-xs text-[var(--ag-sys-color-text-muted)]">
-                &copy; {currentYear} Ruralpop. Todos los derechos reservados.
             </div>
         </footer>
     );
