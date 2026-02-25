@@ -13,7 +13,7 @@ export async function GET() {
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    const { data: listings, error } = await supabase.from('listings').select('id, title, updated_at').eq('status', 'active');
+    const { data: listings, error } = await supabase.from('listings').select('id, title, created_at').eq('status', 'active');
 
     if (error) {
         xml += `  <!-- Error fetching: ${error.message} -->\n`;
@@ -30,7 +30,7 @@ export async function GET() {
             const shortId = encodeId(listing.id);
             const titleSlug = slugify(listing.title);
             const url = `${baseUrl}/anuncio/${titleSlug}-${shortId}`;
-            const lastMod = listing.updated_at ? new Date(listing.updated_at).toISOString() : new Date().toISOString();
+            const lastMod = listing.created_at ? new Date(listing.created_at).toISOString() : new Date().toISOString();
 
             xml += `  <url>\n`;
             xml += `    <loc>${url}</loc>\n`;
