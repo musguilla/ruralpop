@@ -11,11 +11,19 @@ export async function GET() {
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { data: listings } = await supabase.from('listings').select('id, title, updated_at').eq('status', 'active');
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    const { data: listings, error } = await supabase.from('listings').select('id, title, updated_at').eq('status', 'active');
+
+    if (error) {
+        xml += `  <!-- Error fetching: ${error.message} -->\n`;
+        xml += `  <!-- Url: ${supabaseUrl ? 'Present' : 'Missing'}, Key: ${supabaseKey ? 'Present' : 'Missing'} -->\n`;
+    } else if (!listings || listings.length === 0) {
+        xml += `  <!-- No listings found -->\n`;
+        xml += `  <!-- Url: ${supabaseUrl ? 'Present' : 'Missing'}, Key: ${supabaseKey ? 'Present' : 'Missing'} -->\n`;
+    }
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
-
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
     if (listings && listings.length > 0) {
         listings.forEach((listing: any) => {
