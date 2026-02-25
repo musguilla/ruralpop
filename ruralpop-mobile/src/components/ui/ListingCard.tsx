@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { MapPin, Heart, ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react-native';
 import { Listing } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
+import { useFavorites } from '../../contexts/FavoritesContext';
 
 interface ListingCardProps {
     listing: Listing;
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
+    const { user } = useAuth();
+    const { favorites, toggleFavorite } = useFavorites();
+    const router = useRouter();
+
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const hasImages = listing.image_urls && listing.image_urls.length > 0;
     const mainImage = hasImages ? listing.image_urls![currentImageIndex] : null;
+
+    const isFavorited = favorites.has(listing.id);
+
+    const handleFavoritePress = () => {
+        if (!user) {
+            router.push('/(auth)/login');
+            return;
+        }
+        toggleFavorite(listing.id);
+    };
 
     const nextImage = () => {
         if (listing.image_urls) {
@@ -82,11 +98,12 @@ export function ListingCard({ listing }: ListingCardProps) {
                 </View>
 
                 {/* Favorite Button Overlay on top-right of the image */}
-                <View
+                <TouchableOpacity
+                    onPress={handleFavoritePress}
                     style={{ position: 'absolute', top: 12, right: 12, zIndex: 20, backgroundColor: 'rgba(0,0,0,0.3)', padding: 6, borderRadius: 20 }}
                 >
-                    <Heart color="white" size={18} />
-                </View>
+                    <Heart color={isFavorited ? "#ef4444" : "white"} fill={isFavorited ? "#ef4444" : "transparent"} size={18} />
+                </TouchableOpacity>
 
                 {/* Content Section */}
                 <View className="p-4">
@@ -98,7 +115,7 @@ export function ListingCard({ listing }: ListingCardProps) {
                             </View>
                         )}
                     </View>
-                    <Text className="text-text font-medium text-base mb-3 leading-tight" numberOfLines={2}>
+                    <Text className="text-text font-bold text-lg mb-2 leading-tight" numberOfLines={2}>
                         {listing.title}
                     </Text>
 

@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { Listing, User } from '../../src/types';
 import { ChevronLeft, Share2, Heart, MapPin, Tag, Phone, Mail, ImageIcon } from 'lucide-react-native';
+import { useAuth } from '../../src/contexts/AuthContext';
+import { useFavorites } from '../../src/contexts/FavoritesContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
@@ -15,6 +17,18 @@ interface ExtendedListing extends Listing {
 export default function ListingDetailsScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
+    const { user } = useAuth();
+    const { favorites, toggleFavorite } = useFavorites();
+
+    const isFavorited = id ? favorites.has(id) : false;
+
+    const handleFavoritePress = () => {
+        if (!user) {
+            router.push('/(auth)/login');
+            return;
+        }
+        if (id) toggleFavorite(id);
+    };
 
     const [listing, setListing] = useState<ExtendedListing | null>(null);
     const [loading, setLoading] = useState(true);
@@ -122,8 +136,8 @@ export default function ListingDetailsScreen() {
                             <TouchableOpacity className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
                                 <Share2 color="white" size={20} />
                             </TouchableOpacity>
-                            <TouchableOpacity className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
-                                <Heart color="white" size={20} />
+                            <TouchableOpacity onPress={handleFavoritePress} className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
+                                <Heart color={isFavorited ? "#ef4444" : "white"} fill={isFavorited ? "#ef4444" : "transparent"} size={20} />
                             </TouchableOpacity>
                         </View>
                     </SafeAreaView>
@@ -185,13 +199,36 @@ export default function ListingDetailsScreen() {
                             {listing.description}
                         </Text>
                     </View>
+
+                    {/* Big Favorite Button */}
+                    <TouchableOpacity
+                        onPress={handleFavoritePress}
+                        className={`mt-8 mb-4 py-4 rounded-xl flex-row justify-center items-center border ${isFavorited ? 'bg-red-50 border-red-200' : 'bg-white border-red-200 shadow-sm'}`}
+                        activeOpacity={0.8}
+                    >
+                        <Heart color="#ef4444" fill={isFavorited ? "#ef4444" : "transparent"} size={20} className="mr-2" />
+                        <Text className="font-bold text-base text-red-500">
+                            {isFavorited ? "Quitar de Favoritos" : "Guardar como Favorito"}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
 
             {/* Fixed Bottom Contact Bar */}
             <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-8 flex-row justify-between items-center">
                 <TouchableOpacity
-                    onPress={() => router.push('/messages')}
+                    onPress={() => {
+                        if (!user) {
+                            router.push('/(auth)/login');
+                            return;
+                        }
+                        if (listing?.user_id) {
+                            router.push({
+                                pathname: '/messages/chat',
+                                params: { listingId: id, otherUserId: listing.user_id }
+                            });
+                        }
+                    }}
                     className="flex-1 bg-surface-muted border border-gray-300 py-3.5 rounded-xl flex-row justify-center items-center mr-3"
                     activeOpacity={0.8}
                 >

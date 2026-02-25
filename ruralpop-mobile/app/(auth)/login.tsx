@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
-import { User } from 'lucide-react-native';
+import { User, Eye, EyeOff } from 'lucide-react-native';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -52,14 +53,26 @@ export default function LoginScreen() {
 
                 <View className="mb-6">
                     <Text className="text-sm font-medium text-text mb-1 mt-4">Contraseña</Text>
-                    <TextInput
-                        onChangeText={(text) => setPassword(text)}
-                        value={password}
-                        secureTextEntry={true}
-                        placeholder="••••••••"
-                        autoCapitalize="none"
-                        className="w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl text-text"
-                    />
+                    <View className="flex-row items-center w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl">
+                        <TextInput
+                            onChangeText={(text) => setPassword(text)}
+                            value={password}
+                            secureTextEntry={!showPassword}
+                            placeholder="••••••••"
+                            autoCapitalize="none"
+                            className="flex-1 text-text h-full"
+                        />
+                        <TouchableOpacity
+                            onPress={() => setShowPassword(!showPassword)}
+                            className="p-2 -mr-2"
+                        >
+                            {showPassword ? (
+                                <EyeOff color="#9ca3af" size={20} />
+                            ) : (
+                                <Eye color="#9ca3af" size={20} />
+                            )}
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 <TouchableOpacity

@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, ActivityIndicator, Alert, SafeAreaView } from 'react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter } from 'expo-router';
-import { Key, Camera, X, CheckCircle2 } from 'lucide-react-native';
+import { Key, Camera, X, CheckCircle2, ChevronDown, Info } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../../src/lib/supabase';
-import { decode } from 'base64-arraybuffer';
+import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
+import { LocationModal } from '../../src/components/ui/modals/LocationModal';
+import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';
+import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
+import { LOCATIONS } from '../../src/constants/locations';
 
 export default function PublishScreen() {
     const { session, user, isLoading } = useAuth();
@@ -14,10 +18,29 @@ export default function PublishScreen() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
-    const [location, setLocation] = useState('');
+    const [priceType, setPriceType] = useState('fixed');
+    const [categoryId, setCategoryId] = useState<string | null>(null);
+    const [locationId, setLocationId] = useState<string | null>(null); // name of province
+    const [municipality, setMunicipality] = useState<{ id: number, name: string } | null>(null);
+    const [phone, setPhone] = useState('');
     const [images, setImages] = useState<string[]>([]);
+
+    const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+    const [isMunicipalityModalOpen, setIsMunicipalityModalOpen] = useState(false);
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
+
+    React.useEffect(() => {
+        if (user?.id && session) {
+            async function fetchPhone() {
+                const { data } = await supabase.from('users').select('phone').eq('id', user?.id).single();
+                if (data?.phone) setPhone(data.phone);
+            }
+            fetchPhone();
+        }
+    }, [user, session]);
 
     if (isLoading) return null;
 
@@ -33,9 +56,16 @@ export default function PublishScreen() {
                 </Text>
                 <TouchableOpacity
                     onPress={() => router.push('/(auth)/login')}
-                    className="bg-primary px-8 py-3 rounded-full"
+                    className="bg-primary px-8 py-3 rounded-full mb-2 w-full items-center"
                 >
-                    <Text className="text-white font-bold text-base">Iniciar Sesión</Text>
+                    <Text className="text-white font-bold text-base">Iniciar sesión</Text>
+                </TouchableOpacity>
+                <Text className="text-text-muted mt-4 mb-4">Si no tienes una cuenta</Text>
+                <TouchableOpacity
+                    onPress={() => router.push('/(auth)/register')}
+                    className="border-2 border-primary px-8 py-3 rounded-full w-full items-center"
+                >
+                    <Text className="text-primary font-bold text-base">Registrarme</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -96,7 +126,7 @@ export default function PublishScreen() {
     };
 
     const handlePublish = async () => {
-        if (!title || !description || !price || !location) {
+        if (!title || !description || !price || !locationId || !categoryId) {
             Alert.alert('Faltan datos', 'Por favor, rellena todos los campos obligatorios.');
             return;
         }
@@ -106,16 +136,47 @@ export default function PublishScreen() {
         try {
             const imageUrls = await uploadImages();
 
+            // Guardar el telefono si hay uno nuevo
+            if (phone && phone.trim().length > 0) {
+                await supabase.from('users').update({ phone: phone.trim() }).eq('id', user?.id);
+            }
+
+            // Derivar category y subcategory a raiz de categoryId
+            let finalCategory = categoryId;
+            let finalSubcategory: string | null = null;
+
+            for (const cat of CATEGORIES) {
+                if (cat.id === categoryId) {
+                    finalCategory = cat.id;
+                    break;
+                }
+                const foundSub = cat.subcategories?.find(s => s.toLowerCase() === categoryId.toLowerCase());
+                if (foundSub) {
+                    finalCategory = cat.id;
+                    finalSubcategory = foundSub;
+                    break;
+                }
+            }
+
+            const selectedProvinceObj = LOCATIONS.find(l => l.name === locationId);
+            const provinceNumericId = selectedProvinceObj ? parseInt(selectedProvinceObj.id, 10) : null;
+            const fullLocationString = municipality ? `${municipality.name}, ${locationId}` : locationId;
+
             const { data, error } = await supabase
                 .from('listings')
                 .insert({
                     title,
                     description,
                     price: parseFloat(price),
-                    location,
-                    seller_id: user?.id,
+                    price_type: priceType,
+                    location: fullLocationString,
+                    province_id: provinceNumericId,
+                    municipality_id: municipality?.id || null,
+                    user_id: user?.id,
                     image_urls: imageUrls,
-                    category: 'bovino', // Defaulting to bovino for this demo
+                    category: finalCategory,
+                    subcategory: finalSubcategory,
+                    contact_phone: phone,
                     status: 'active'
                 })
                 .select()
@@ -130,7 +191,9 @@ export default function PublishScreen() {
                 setTitle('');
                 setDescription('');
                 setPrice('');
-                setLocation('');
+                setLocationId(null);
+                setMunicipality(null);
+                setCategoryId(null);
                 setImages([]);
                 setSuccess(false);
                 router.push('/(tabs)/');
@@ -200,11 +263,24 @@ export default function PublishScreen() {
                     </View>
 
                     <View>
-                        <Text className="text-sm font-bold text-text mb-2">Descripción *</Text>
+                        <Text className="text-sm font-bold text-text mb-2">Categoría y Subcategoría *</Text>
+                        <TouchableOpacity
+                            onPress={() => setIsCategoryModalOpen(true)}
+                            className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 flex-row justify-between items-center"
+                        >
+                            <Text className={`text-base ${categoryId ? 'text-text' : 'text-gray-400'}`}>
+                                {categoryId ? (categoryId.charAt(0).toUpperCase() + categoryId.slice(1)) : 'Selecciona categoría...'}
+                            </Text>
+                            <ChevronDown color="#9ca3af" size={20} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View>
+                        <Text className="text-sm font-bold text-text mb-2">Descripción detallada *</Text>
                         <TextInput
                             value={description}
                             onChangeText={setDescription}
-                            placeholder="Describe el estado, año, características..."
+                            placeholder="Describe el estado, año, raza, mantenimiento..."
                             multiline
                             numberOfLines={4}
                             textAlignVertical="top"
@@ -212,8 +288,8 @@ export default function PublishScreen() {
                         />
                     </View>
 
-                    <View className="flex-row space-x-4">
-                        <View className="flex-1">
+                    <View className="flex-row space-x-3">
+                        <View className="flex-[0.8]">
                             <Text className="text-sm font-bold text-text mb-2">Precio (€) *</Text>
                             <TextInput
                                 value={price}
@@ -223,15 +299,62 @@ export default function PublishScreen() {
                                 className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text font-bold text-lg"
                             />
                         </View>
-                        <View className="flex-1">
-                            <Text className="text-sm font-bold text-text mb-2">Ubicación *</Text>
-                            <TextInput
-                                value={location}
-                                onChangeText={setLocation}
-                                placeholder="Ej. Asturias"
-                                className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text"
-                            />
+                        <View className="flex-[1.2]">
+                            <Text className="text-sm font-bold text-text mb-2">Tipo de precio</Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    const idx = PRICE_TYPES.findIndex(p => p.id === priceType);
+                                    const next = PRICE_TYPES[(idx + 1) % PRICE_TYPES.length];
+                                    setPriceType(next.id);
+                                }}
+                                className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-4 flex-row justify-between items-center"
+                            >
+                                <Text className="text-base text-text" numberOfLines={1}>
+                                    {PRICE_TYPES.find(p => p.id === priceType)?.label}
+                                </Text>
+                                <ChevronDown color="#9ca3af" size={20} />
+                            </TouchableOpacity>
                         </View>
+                    </View>
+
+                    <View>
+                        <Text className="text-sm font-bold text-text mb-2">Provincia *</Text>
+                        <TouchableOpacity
+                            onPress={() => setIsLocationModalOpen(true)}
+                            className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 flex-row justify-between items-center"
+                        >
+                            <Text className={`text-base ${locationId ? 'text-text' : 'text-gray-400'}`}>
+                                {locationId || 'Selecciona provincia...'}
+                            </Text>
+                            <ChevronDown color="#9ca3af" size={20} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View>
+                        <Text className="text-sm font-bold text-text mb-2">Localidad</Text>
+                        <TouchableOpacity
+                            onPress={() => locationId ? setIsMunicipalityModalOpen(true) : Alert.alert('Aviso', 'Selecciona primero una provincia')}
+                            className={`w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 flex-row justify-between items-center ${!locationId ? 'opacity-50' : ''}`}
+                        >
+                            <Text className={`text-base ${municipality ? 'text-text' : 'text-gray-400'}`}>
+                                {municipality ? municipality.name : 'Selecciona localidad...'}
+                            </Text>
+                            <ChevronDown color="#9ca3af" size={20} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View>
+                        <Text className="text-sm font-bold text-text mb-2">Teléfono de contacto</Text>
+                        <TextInput
+                            value={phone}
+                            onChangeText={setPhone}
+                            placeholder="Ej: 600 000 000"
+                            keyboardType="phone-pad"
+                            className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text"
+                        />
+                        <Text className="text-xs text-text-muted mt-2">
+                            Al publicar, este número se guardará en tu perfil para futuros anuncios.
+                        </Text>
                     </View>
 
                 </View>
@@ -250,6 +373,38 @@ export default function PublishScreen() {
                 </TouchableOpacity>
 
             </ScrollView>
+
+            <CategoryModal
+                visible={isCategoryModalOpen}
+                onClose={() => setIsCategoryModalOpen(false)}
+                selectedCategory={categoryId}
+                onSelect={(cat) => {
+                    setCategoryId(cat);
+                    setIsCategoryModalOpen(false);
+                }}
+            />
+
+            <LocationModal
+                visible={isLocationModalOpen}
+                onClose={() => setIsLocationModalOpen(false)}
+                selectedLocation={locationId}
+                onSelect={(loc) => {
+                    setLocationId(loc);
+                    setMunicipality(null);
+                    setIsLocationModalOpen(false);
+                }}
+            />
+
+            <MunicipalityModal
+                visible={isMunicipalityModalOpen}
+                onClose={() => setIsMunicipalityModalOpen(false)}
+                provinceId={LOCATIONS.find(l => l.name === locationId)?.id || null}
+                selectedMunicipality={municipality}
+                onSelect={(mun) => {
+                    setMunicipality(mun);
+                    setIsMunicipalityModalOpen(false);
+                }}
+            />
         </SafeAreaView>
     );
 }

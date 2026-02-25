@@ -41,43 +41,85 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const router = useRouter();
 
-    async function fetchListings() {
+    async function fetchListings(pageIndex = 0) {
+        if (pageIndex === 0) {
+            if (!refreshing) setLoading(true);
+        } else {
+            setLoadingMore(true);
+        }
+
         try {
+            const from = pageIndex * 30;
+            const to = from + 29;
+
             const { data, error } = await supabase
                 .from('listings')
                 .select(`
-          id,
-          title,
-          price,
-          price_type,
-          location,
-          image_urls,
-          created_at,
-          category
-        `)
+                  id,
+                  title,
+                  price,
+                  price_type,
+                  location,
+                  image_urls,
+                  created_at,
+                  category,
+                  description,
+                  user_id,
+                  status
+                `)
                 .eq('status', 'active')
                 .order('created_at', { ascending: false })
-                .limit(20);
+                .range(from, to);
 
             if (error) throw error;
-            setListings(data || []);
+
+            const fetchedData = data || [];
+            if (fetchedData.length < 30) {
+                setHasMore(false);
+            } else {
+                setHasMore(true);
+            }
+
+            if (pageIndex === 0) {
+                setListings(fetchedData);
+            } else {
+                setListings(prev => {
+                    const existingIds = new Set(prev.map(l => l.id));
+                    const uniqueNew = fetchedData.filter(l => !existingIds.has(l.id));
+                    return [...prev, ...uniqueNew];
+                });
+            }
         } catch (error) {
             console.error('Error fetching listings:', error);
         } finally {
             setLoading(false);
             setRefreshing(false);
+            setLoadingMore(false);
         }
     }
 
     useEffect(() => {
-        fetchListings();
+        setPage(0);
+        fetchListings(0);
     }, []);
 
     const onRefresh = () => {
+        setPage(0);
         setRefreshing(true);
-        fetchListings();
+        fetchListings(0);
+    };
+
+    const handleLoadMore = () => {
+        if (!loading && !loadingMore && hasMore) {
+            const nextPage = page + 1;
+            setPage(nextPage);
+            fetchListings(nextPage);
+        }
     };
 
     const handleSearchSubmit = () => {
@@ -116,8 +158,17 @@ export default function Home() {
                         />
                     }
                     contentContainerStyle={{ paddingBottom: 20 }}
+                    onEndReached={handleLoadMore}
+                    onEndReachedThreshold={0.5}
                     refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#059669']} />
+                    }
+                    ListFooterComponent={
+                        loadingMore ? (
+                            <View className="py-6 items-center justify-center">
+                                <ActivityIndicator size="small" color="#059669" />
+                            </View>
+                        ) : null
                     }
                     ListEmptyComponent={
                         <View className="items-center justify-center p-8">

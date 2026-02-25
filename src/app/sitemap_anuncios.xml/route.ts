@@ -1,11 +1,15 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 import { encodeId } from '@/utils/idUtils';
 import { slugify } from '@/utils/seoUtils';
 
 export const revalidate = 86400; // 24 horas
 
 export async function GET() {
-    const supabase = await createClient();
+    // Instanciamos Supabase directamente para la Caché Estática sin involucrar cookies de usuario
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const { data: listings } = await supabase.from('listings').select('id, title, updated_at').eq('status', 'active');
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';

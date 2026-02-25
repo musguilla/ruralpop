@@ -31,9 +31,16 @@ export default function ProfileScreen() {
                 </Text>
                 <TouchableOpacity
                     onPress={() => router.push('/(auth)/login')}
-                    className="bg-primary px-8 py-3 rounded-full"
+                    className="bg-primary px-8 py-3 rounded-full mb-2 w-full items-center"
                 >
-                    <Text className="text-white font-bold text-base">Iniciar Sesión</Text>
+                    <Text className="text-white font-bold text-base">Iniciar sesión</Text>
+                </TouchableOpacity>
+                <Text className="text-text-muted mt-4 mb-4">Si no tienes una cuenta</Text>
+                <TouchableOpacity
+                    onPress={() => router.push('/(auth)/register')}
+                    className="border-2 border-primary px-8 py-3 rounded-full w-full items-center"
+                >
+                    <Text className="text-primary font-bold text-base">Registrarme</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -53,19 +60,20 @@ export default function ProfileScreen() {
                 <Text className="text-text-muted mb-4">{user?.email}</Text>
             </View>
 
-            <View className="space-y-3 mb-8">
+            <View className="mb-8">
                 <TouchableOpacity
                     onPress={() => router.push('/my-listings')}
-                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm"
+                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
                 >
                     <Text className="text-base font-bold text-text">Mis Anuncios</Text>
                     <Text className="text-primary font-bold">→</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
+                    onPress={() => router.push('/personal-data')}
                     className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm"
                 >
-                    <Text className="text-base font-bold text-text">Mis Datos Personales</Text>
+                    <Text className="text-base font-bold text-text">Mis datos</Text>
                     <Text className="text-primary font-bold">→</Text>
                 </TouchableOpacity>
             </View>

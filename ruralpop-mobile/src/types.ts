@@ -8,7 +8,7 @@ export interface Listing {
     image_urls?: string[];
     created_at: string;
     category: string;
-    seller_id: string;
+    user_id: string;
     status: 'active' | 'sold' | 'draft';
     contact_phone?: string;
 }

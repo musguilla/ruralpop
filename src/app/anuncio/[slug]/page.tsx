@@ -10,9 +10,81 @@ import { decodeId } from "@/utils/idUtils";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { FavoriteDetailButton } from "@/components/ui/FavoriteDetailButton";
 
-export default async function ListingDetailPage(props: {
+import { Metadata, ResolvingMetadata } from "next";
+
+type Props = {
     params: Promise<{ slug: string }>;
-}) {
+};
+
+export async function generateMetadata(
+    { params }: Props,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const { slug } = await params;
+
+    // The slug format is [title]-[shortId]
+    const slugParts = slug.split('-');
+    const shortId = slugParts.pop() || '';
+    const id = decodeId(shortId);
+
+    // Evitamos cookies() aquí usando instancia plana para fetching estático
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data: listing } = await supabase
+        .from("listings")
+        .select("title, description, price, image_urls, location, category")
+        .eq("id", id)
+        .single();
+
+    if (!listing) {
+        return {
+            title: "Anuncio no encontrado - Ruralpop",
+            description: "No hemos podido localizar este anuncio."
+        };
+    }
+
+    const previousImages = (await parent).openGraph?.images || [];
+    const mainImage = listing.image_urls?.[0] || 'https://www.ruralpop.com/default-og.jpg';
+    // Formatear precio para el título (e.g. "Vendo Tractor - 12.000€")
+    const priceText = listing.price ? `${new Intl.NumberFormat('es-ES').format(listing.price)}€` : '';
+    const fullTitle = `${listing.title} ${priceText ? `por ${priceText} ` : ''}| Ruralpop`;
+
+    // Acortar descripción para SEO (160 caracteres típicos)
+    const shortDesc = listing.description?.slice(0, 150) + (listing.description?.length > 150 ? '...' : '');
+
+    return {
+        title: fullTitle,
+        description: `${shortDesc} - En ${listing.location} (${listing.category}).`,
+        openGraph: {
+            title: fullTitle,
+            description: shortDesc,
+            url: `https://www.ruralpop.com/anuncio/${slug}`,
+            siteName: 'Ruralpop',
+            images: [
+                {
+                    url: mainImage,
+                    width: 1200,
+                    height: 630,
+                    alt: listing.title,
+                },
+                ...previousImages,
+            ],
+            locale: 'es_ES',
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: fullTitle,
+            description: shortDesc,
+            images: [mainImage],
+        },
+    };
+}
+
+export default async function ListingDetailPage(props: Props) {
     const { slug } = await props.params;
 
     // The slug format is [title]-[shortId]

@@ -19,6 +19,8 @@ interface FiltersModalProps {
     setPriceMin: (val: string) => void;
     priceMax: string;
     setPriceMax: (val: string) => void;
+    sellerType: string;
+    setSellerType: (val: string) => void;
     // Apply
     onApply: () => void;
     onClear: () => void;
@@ -27,9 +29,8 @@ interface FiltersModalProps {
 export function FiltersModal({
     visible, onClose, categoryLabel, locationLabel,
     categoryId, setCategoryId, locationId, setLocationId,
-    priceMin, setPriceMin, priceMax, setPriceMax, onApply, onClear
+    priceMin, setPriceMin, priceMax, setPriceMax, sellerType, setSellerType, onApply, onClear
 }: FiltersModalProps) {
-    const [sellerType, setSellerType] = useState('Todos');
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
@@ -106,8 +107,8 @@ export function FiltersModal({
                             </View>
                         </View>
 
-                        {/* Tipo de vendedor */}
-                        <View className="mb-8">
+                        {/* Tipo de vendedor (Oculto temporalmente) */}
+                        {/* <View className="mb-8">
                             <Text className="text-[15px] font-bold text-gray-800 mb-2">Tipo de vendedor</Text>
                             <View className="flex-row items-center border border-gray-200 rounded-xl p-1 bg-white">
                                 {['Todos', 'Particular', 'Profesional'].map((type) => {
@@ -125,7 +126,7 @@ export function FiltersModal({
                                     );
                                 })}
                             </View>
-                        </View>
+                        </View> */}
                     </ScrollView>
                 </KeyboardAvoidingView>
 

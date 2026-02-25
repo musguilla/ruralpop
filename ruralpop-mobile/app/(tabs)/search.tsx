@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, Dimensions } from 'react-native';
-import { Search, MapPin, List, SlidersHorizontal, ArrowUpDown, ChevronLeft, X } from 'lucide-react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, Dimensions, RefreshControl, Modal } from 'react-native';
+import { Search, MapPin, List, SlidersHorizontal, ArrowUpDown, ChevronLeft, X, Check } from 'lucide-react-native';
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
 import { ListingCard } from '../../src/components/ui/ListingCard';
@@ -31,6 +31,7 @@ export default function SearchScreen() {
 
     const [priceMin, setPriceMin] = useState('');
     const [priceMax, setPriceMax] = useState('');
+    const [sellerType, setSellerType] = useState('Todos');
     const [filterTrigger, setFilterTrigger] = useState(0);
 
     const [listings, setListings] = useState<Listing[]>([]);
@@ -38,10 +39,19 @@ export default function SearchScreen() {
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+    const [isSortModalOpen, setIsSortModalOpen] = useState(false);
+    const [sortBy, setSortBy] = useState<'newest' | 'price_asc' | 'price_desc'>('newest');
+
+    const sortOptions = [
+        { id: 'newest', label: 'Más recientes' },
+        { id: 'price_asc', label: 'Precio: de menor a mayor' },
+        { id: 'price_desc', label: 'Precio: de mayor a menor' }
+    ];
 
     async function performSearch(pageIndex = 0) {
         if (pageIndex === 0) {
-            setLoading(true);
+            if (!refreshing) setLoading(true);
         } else {
             setLoadingMore(true);
         }
@@ -56,7 +66,10 @@ export default function SearchScreen() {
           location,
           image_urls,
           created_at,
-          category
+          category,
+          description,
+          user_id,
+          status
         `)
                 .eq('status', 'active');
 
@@ -87,7 +100,16 @@ export default function SearchScreen() {
 
             const from = pageIndex * 30;
             const to = from + 29;
-            supabaseQuery = supabaseQuery.order('created_at', { ascending: false }).range(from, to);
+
+            if (sortBy === 'newest') {
+                supabaseQuery = supabaseQuery.order('created_at', { ascending: false });
+            } else if (sortBy === 'price_asc') {
+                supabaseQuery = supabaseQuery.order('price', { ascending: true });
+            } else if (sortBy === 'price_desc') {
+                supabaseQuery = supabaseQuery.order('price', { ascending: false });
+            }
+
+            supabaseQuery = supabaseQuery.range(from, to);
 
             const { data, error } = await supabaseQuery;
 
@@ -103,20 +125,31 @@ export default function SearchScreen() {
             if (pageIndex === 0) {
                 setListings(fetchedData);
             } else {
-                setListings(prev => [...prev, ...fetchedData]);
+                setListings(prev => {
+                    const existingIds = new Set(prev.map(l => l.id));
+                    const uniqueNew = fetchedData.filter(l => !existingIds.has(l.id));
+                    return [...prev, ...uniqueNew];
+                });
             }
         } catch (error) {
             console.error("Search Error", error);
         } finally {
             setLoading(false);
             setLoadingMore(false);
+            setRefreshing(false);
         }
     }
+
+    const onRefresh = () => {
+        setPage(0);
+        setRefreshing(true);
+        performSearch(0);
+    };
 
     useEffect(() => {
         setPage(0);
         performSearch(0);
-    }, [activeQuery, categoryId, locationId, filterTrigger]);
+    }, [activeQuery, categoryId, locationId, filterTrigger, sortBy]);
 
     const handleLoadMore = () => {
         if (!loading && !loadingMore && hasMore) {
@@ -241,15 +274,20 @@ export default function SearchScreen() {
                 {/* Sort Button */}
                 <View className="flex-row justify-between items-center mt-4 px-1">
                     <Text className="text-gray-500 font-medium">{listings.length} resultados</Text>
-                    <TouchableOpacity className="flex-row items-center bg-white border border-gray-200 rounded-full px-3 py-1.5">
+                    <TouchableOpacity
+                        onPress={() => setIsSortModalOpen(true)}
+                        className="flex-row items-center bg-white border border-gray-200 rounded-full px-3 py-1.5"
+                    >
                         <ArrowUpDown className="text-gray-600 mr-1.5" size={14} />
-                        <Text className="text-sm font-bold text-gray-700">Relevancia</Text>
+                        <Text className="text-sm font-bold text-gray-700">
+                            {sortOptions.find(opt => opt.id === sortBy)?.label || 'Relevancia'}
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </View>
 
             {/* Results Grid */}
-            {loading ? (
+            {loading && !refreshing ? (
                 <View className="flex-1 justify-center items-center">
                     <ActivityIndicator size="large" color="#059669" />
                 </View>
@@ -267,6 +305,9 @@ export default function SearchScreen() {
                     contentContainerStyle={{ padding: 8, paddingBottom: 40 }}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0.5}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#059669']} />
+                    }
                     ListFooterComponent={
                         loadingMore ? (
                             <View className="py-6 items-center justify-center">
@@ -312,11 +353,14 @@ export default function SearchScreen() {
                 setPriceMin={setPriceMin}
                 priceMax={priceMax}
                 setPriceMax={setPriceMax}
+                sellerType={sellerType}
+                setSellerType={setSellerType}
                 onClear={() => {
                     setPriceMin('');
                     setPriceMax('');
                     setCategoryId(null);
                     setLocationId(null);
+                    setSellerType('Todos');
 
                     setFilterTrigger(f => f + 1);
                     setIsFiltersModalOpen(false);
@@ -326,6 +370,51 @@ export default function SearchScreen() {
                     setIsFiltersModalOpen(false);
                 }}
             />
+
+            {/* Sort Modal */}
+            <Modal
+                visible={isSortModalOpen}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setIsSortModalOpen(false)}
+            >
+                <TouchableOpacity
+                    className="flex-1 bg-black/50 justify-end"
+                    activeOpacity={1}
+                    onPress={() => setIsSortModalOpen(false)}
+                >
+                    <View className="bg-white rounded-t-3xl p-6">
+                        <View className="flex-row justify-between items-center mb-6">
+                            <Text className="text-xl font-bold text-text">Ordenar por</Text>
+                            <TouchableOpacity onPress={() => setIsSortModalOpen(false)}>
+                                <X color="#9ca3af" size={24} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View className="space-y-2">
+                            {sortOptions.map((option) => (
+                                <TouchableOpacity
+                                    key={option.id}
+                                    onPress={() => {
+                                        setSortBy(option.id as any);
+                                        setIsSortModalOpen(false);
+                                    }}
+                                    className={`flex-row justify-between items-center p-4 rounded-xl ${sortBy === option.id ? 'bg-primary-muted border border-primary/20' : 'bg-gray-50 border border-transparent'}`}
+                                >
+                                    <Text className={`text-base ${sortBy === option.id ? 'text-primary font-bold' : 'text-gray-700 font-medium'}`}>
+                                        {option.label}
+                                    </Text>
+                                    {sortBy === option.id && (
+                                        <Check color="#059669" size={20} />
+                                    )}
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+
+                        <SafeAreaView />
+                    </View>
+                </TouchableOpacity>
+            </Modal>
         </SafeAreaView>
     );
 }
