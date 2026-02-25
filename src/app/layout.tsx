@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { InstallBanner } from "@/components/layout/InstallBanner";
+import { SeoFooterTabs } from "@/components/layout/SeoFooterTabs";
 import Script from "next/script";
 
 const geistSans = Geist({
@@ -60,6 +61,7 @@ export default function RootLayout({
           <main className="flex-1 w-full flex flex-col items-center">
             {children}
           </main>
+          <SeoFooterTabs />
           <Footer />
         </NotificationProvider>
       </body>
