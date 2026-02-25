@@ -118,8 +118,34 @@ export default async function ListingDetailPage(props: Props) {
     const sellerName = listing.seller?.name || "Usuario de Ruralpop";
     const sellerJoinedDate = listing.seller?.created_at ? new Date(listing.seller.created_at).getFullYear() : "";
 
+    // Schema Markup for Google (JSON-LD)
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": listing.title,
+        "image": listing.image_urls,
+        "description": listing.description,
+        "sku": id,
+        "offers": {
+            "@type": "Offer",
+            "url": `https://www.ruralpop.com/anuncio/${slug}`,
+            "priceCurrency": "EUR",
+            "price": listing.price || 0,
+            "availability": listing.status === 'active' ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "itemCondition": "https://schema.org/UsedCondition",
+            "seller": {
+                "@type": "Person",
+                "name": sellerName
+            }
+        }
+    };
+
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <div className="container mx-auto px-4 py-8">
 
                 {/* Volver y Migas de pan */}
