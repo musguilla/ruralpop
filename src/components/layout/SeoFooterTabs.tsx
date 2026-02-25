@@ -12,52 +12,61 @@ export function SeoFooterTabs() {
     // Filtrar solo las provincias para la primera pestaña
     const provinces = LOCATIONS.filter(l => l.type === "province").sort((a, b) => a.province.localeCompare(b.province));
 
-    // Generar enlaces naturales para "Más buscado"
     const generatePopularSearches = () => {
         const searches: { label: string, url: string }[] = [];
-        const actionVerbs = ["Comprar", "Vender", "Alquilar", "Ofertas de"];
-        const customProvinces = ["Asturias", "Cantabria", "Lugo", "A Coruña", "Ourense", "Pontevedra", "León", "Zamora"];
 
-        // Mezclamos algunas subcategorías de ganadería
-        const topSubcats = ["Bovino", "Equino", "Ovino", "Porcino", "Caprino"];
+        const top15Provinces = [
+            "Madrid", "Barcelona", "Valencia", "Sevilla", "Alicante",
+            "Málaga", "Murcia", "Cádiz", "Baleares", "Las Palmas",
+            "A Coruña", "Santa Cruz de Tenerife", "Asturias", "Zaragoza", "Pontevedra"
+        ];
 
-        // 1. Ganado por provincia
-        topSubcats.forEach(sub => {
-            customProvinces.forEach(prov => {
-                const provObj = LOCATIONS.find(l => l.province === prov || l.name === prov);
-                if (provObj) {
+        const top10Localities = [
+            "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza",
+            "Málaga", "Murcia", "Palma de Mallorca", "Las Palmas de Gran Canaria", "Bilbao"
+        ];
+
+        const animals = ["Bovino", "Equino"];
+
+        // 1. Ganado (Bovino y Equino) por las 15 provincias top (Total: 30)
+        animals.forEach(animal => {
+            top15Provinces.forEach((provName, idx) => {
+                const loc = LOCATIONS.find(l => l.name === provName && l.type === 'province') || LOCATIONS.find(l => l.province === provName);
+                if (loc) {
+                    const verb = idx % 2 === 0 ? "Comprar" : "Vender";
                     searches.push({
-                        label: `Comprar ganado ${sub} en ${prov}`,
-                        url: buildSeoUrl({ category: "ganaderia", subcategory: sub, province_id: provObj.id })
+                        label: `${verb} ganado ${animal} en ${provName}`,
+                        url: buildSeoUrl({ category: "ganaderia", subcategory: animal, province_id: loc.id })
                     });
                 }
             });
         });
 
-        // 2. Otras categorías por provincia
-        CATEGORIES.forEach(cat => {
-            if (cat.id !== "ganaderia") {
-                ["Asturias", "Lugo", "A Coruña", "Madrid", "Cantabria"].forEach(prov => {
-                    const provObj = LOCATIONS.find(l => l.province === prov || l.name === prov);
-                    if (provObj) {
-                        searches.push({
-                            label: `${cat.label} en ${prov}`,
-                            url: buildSeoUrl({ category: cat.id, province_id: provObj.id })
-                        });
-                    }
+        // 2. Tractores en las 10 Localidades top (Total: 10)
+        top10Localities.forEach((locName, idx) => {
+            const loc = LOCATIONS.find(l => l.name === locName && l.type === 'municipality');
+            if (loc) {
+                const verb = idx % 2 !== 0 ? "Comprar" : "Vender";
+                searches.push({
+                    label: `${verb} Tractores en ${locName}`,
+                    url: buildSeoUrl({ q: "Tractores", category: "maquinaria", province_id: loc.id })
                 });
             }
         });
 
-        // 3. Vender animales
-        topSubcats.forEach(sub => {
-            searches.push({
-                label: `Vender ${sub} rápido`,
-                url: buildSeoUrl({ category: "ganaderia", subcategory: sub })
-            });
+        // 3. Tractores en las primeras 10 provincias top (Total: 10)
+        top15Provinces.slice(0, 10).forEach((provName, idx) => {
+            const loc = LOCATIONS.find(l => l.name === provName && l.type === 'province') || LOCATIONS.find(l => l.province === provName);
+            if (loc) {
+                const verb = idx % 2 === 0 ? "Vender" : "Comprar";
+                searches.push({
+                    label: `${verb} Tractores en ${provName}`,
+                    url: buildSeoUrl({ q: "Tractores", category: "maquinaria", province_id: loc.id })
+                });
+            }
         });
 
-        return searches.slice(0, 60); // Tomamos 60 exactos
+        return searches.slice(0, 50); // Garantizamos 50 enlaces (5 columnas x 10 enlaces)
     };
 
     const popularSearches = generatePopularSearches();
@@ -74,8 +83,8 @@ export function SeoFooterTabs() {
                     <button
                         onClick={() => setActiveTab("provinces")}
                         className={`py-3 px-6 font-bold text-sm tracking-wide transition-all ${activeTab === "provinces"
-                                ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
-                                : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
+                            ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
+                            : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
                             }`}
                     >
                         Por provincias
@@ -83,8 +92,8 @@ export function SeoFooterTabs() {
                     <button
                         onClick={() => setActiveTab("categories")}
                         className={`py-3 px-6 font-bold text-sm tracking-wide transition-all ${activeTab === "categories"
-                                ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
-                                : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
+                            ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
+                            : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
                             }`}
                     >
                         Por categorías
@@ -92,8 +101,8 @@ export function SeoFooterTabs() {
                     <button
                         onClick={() => setActiveTab("popular")}
                         className={`py-3 px-6 font-bold text-sm tracking-wide transition-all ${activeTab === "popular"
-                                ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
-                                : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
+                            ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
+                            : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
                             }`}
                     >
                         Más buscado
@@ -141,7 +150,7 @@ export function SeoFooterTabs() {
                     )}
 
                     {activeTab === "popular" && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-y-4 gap-x-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-4 gap-x-6">
                             {popularSearches.map((search, idx) => (
                                 <Link
                                     key={idx}
