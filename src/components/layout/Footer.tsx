@@ -16,8 +16,7 @@ export function Footer() {
                         <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain" />
                     </Link>
                     <p className="text-gray-400 text-sm max-w-sm">
-                        El mercado líder en compra y venta de ganadería, maquinaria y productos del campo.{" "}
-                        Para el entorno rural.
+                        La App gratuita para buscar, comprar y vender ganado, maquinaria y mucho más directamente entre ganaderos de toda España.
                     </p>
                 </div>
 
