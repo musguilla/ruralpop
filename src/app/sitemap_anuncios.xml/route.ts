@@ -2,7 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { encodeId } from '@/utils/idUtils';
 import { slugify } from '@/utils/seoUtils';
 
-export const revalidate = 86400; // 24 horas
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export async function GET() {
     // Instanciamos Supabase directamente para la Caché Estática sin involucrar cookies de usuario
