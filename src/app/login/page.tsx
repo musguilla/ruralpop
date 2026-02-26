@@ -65,6 +65,15 @@ export default async function LoginPage(props: {
                         Entrar
                     </button>
 
+                    <div className="text-center mt-4">
+                        <Link
+                            href="/forgot-password"
+                            className="text-sm font-medium text-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary-hover)] hover:underline transition-all"
+                        >
+                            ¿Olvidaste tu contraseña? Recordar contraseña
+                        </Link>
+                    </div>
+
                     <div className="pt-6 text-center border-t border-[var(--ag-sys-color-border)] mt-8">
                         <p className="text-sm text-[var(--ag-sys-color-text-muted)] mb-4">
                             ¿Aún no tienes cuenta?
