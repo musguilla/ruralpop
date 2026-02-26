@@ -214,7 +214,7 @@ export default function SearchScreen() {
                         <ChevronLeft color="#1f2937" size={32} />
                     </TouchableOpacity>
                     <View className="flex-1 flex-row items-center bg-gray-50 border border-gray-300 rounded-full h-12 px-4 shadow-sm">
-                        <Search className="text-gray-400 mr-2" size={20} />
+                        <Search color="#9ca3af" size={20} />
                         <TextInput
                             className="flex-1 text-base text-text"
                             style={{ paddingVertical: 0, height: '100%' }}
@@ -317,7 +317,7 @@ export default function SearchScreen() {
                     }
                     ListEmptyComponent={
                         <View className="items-center justify-center p-12 mt-10">
-                            <Search className="text-gray-300 mb-4" size={48} />
+                            <Search color="#d1d5db" style={{ marginBottom: 16 }} size={48} />
                             <Text className="text-xl font-bold text-text mb-2text-center">No hay resultados</Text>
                             <Text className="text-gray-500 text-center">Intenta ajustando los filtros o usando términos más generales.</Text>
                         </View>

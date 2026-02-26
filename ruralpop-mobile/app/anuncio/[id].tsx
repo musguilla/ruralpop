@@ -118,7 +118,7 @@ export default function ListingDetailsScreen() {
                         </ScrollView>
                     ) : (
                         <View className="flex-1 items-center justify-center">
-                            <ImageIcon size={64} className="text-gray-300 mb-4" />
+                            <ImageIcon size={64} color="#d1d5db" />
                             <Text className="text-gray-400 font-medium">Sin imágenes</Text>
                         </View>
                     )}
@@ -161,7 +161,7 @@ export default function ListingDetailsScreen() {
                         <Text className="text-3xl font-extrabold text-primary">{formattedPrice}</Text>
                         {listing.price_type === 'negotiable' && (
                             <View className="bg-gray-100 px-3 py-1.5 rounded flex-row items-center">
-                                <Tag className="text-gray-500 mr-1.5" size={14} />
+                                <Tag color="#6b7280" size={14} />
                                 <Text className="text-xs font-bold text-gray-500 uppercase tracking-wider">Negociable</Text>
                             </View>
                         )}
@@ -170,7 +170,7 @@ export default function ListingDetailsScreen() {
                     <Text className="text-2xl font-bold text-text mb-4 leading-tight">{listing.title}</Text>
 
                     <View className="flex-row items-center bg-surface-muted self-start px-3 py-2 rounded-xl mb-6 border border-gray-100">
-                        <MapPin className="text-gray-500 mr-2" size={18} />
+                        <MapPin color="#6b7280" size={18} />
                         <Text className="text-text-muted font-medium">
                             {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
                         </Text>
@@ -232,7 +232,7 @@ export default function ListingDetailsScreen() {
                     className="flex-1 bg-surface-muted border border-gray-300 py-3.5 rounded-xl flex-row justify-center items-center mr-3"
                     activeOpacity={0.8}
                 >
-                    <Mail className="text-text mr-2" size={20} />
+                    <Mail color="#111827" size={20} />
                     <Text className="text-text font-bold text-base">Mensaje</Text>
                 </TouchableOpacity>
 
@@ -241,7 +241,7 @@ export default function ListingDetailsScreen() {
                     className="flex-1 bg-primary py-3.5 rounded-xl flex-row justify-center items-center ml-3"
                     activeOpacity={0.8}
                 >
-                    <Phone className="text-white mr-2" size={20} />
+                    <Phone color="#ffffff" size={20} />
                     <Text className="text-white font-bold text-base">Llamar</Text>
                 </TouchableOpacity>
             </View>

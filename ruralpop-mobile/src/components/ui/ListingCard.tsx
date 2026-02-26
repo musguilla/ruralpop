@@ -59,7 +59,7 @@ export function ListingCard({ listing }: ListingCardProps) {
                         />
                     ) : (
                         <View className="items-center justify-center">
-                            <ImageIcon className="text-gray-400 mb-2" size={40} />
+                            <ImageIcon color="#9ca3af" size={40} style={{ marginBottom: 8 }} />
                             <Text className="text-gray-400 text-xs text-center font-medium">Sin imagen</Text>
                         </View>
                     )}
@@ -121,7 +121,7 @@ export function ListingCard({ listing }: ListingCardProps) {
 
                     <View className="flex-row items-center justify-between mt-auto">
                         <View className="flex-row items-center flex-1 mr-2">
-                            <MapPin className="text-gray-400 mr-1" size={14} />
+                            <MapPin color="#9ca3af" size={14} style={{ marginRight: 4 }} />
                             <Text className="text-sm text-text-muted truncate flex-1" numberOfLines={1}>
                                 {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
                             </Text>
