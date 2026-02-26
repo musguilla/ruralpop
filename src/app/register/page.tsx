@@ -48,7 +48,7 @@ export default async function RegisterPage(props: {
                                 autoComplete="name"
                                 required
                                 className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
-                                placeholder="Finca los Romeros"
+                                placeholder="Juan Prieto"
                             />
                         </div>
                         <div>
