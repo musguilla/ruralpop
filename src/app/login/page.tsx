@@ -18,15 +18,6 @@ export default async function LoginPage(props: {
                     <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
                         Inicia Sesión
                     </h2>
-                    <p className="mt-2 text-sm text-[var(--ag-sys-color-text-muted)]">
-                        ¿Aún no tienes cuenta?{" "}
-                        <Link
-                            href="/register"
-                            className="font-medium text-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary-hover)] transition-colors"
-                        >
-                            Regístrate aquí
-                        </Link>
-                    </p>
                 </div>
 
                 {searchParams?.error && (
@@ -39,7 +30,7 @@ export default async function LoginPage(props: {
                     <div className="space-y-4">
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Correo Electrónico
+                                Correo electrónico
                             </label>
                             <input
                                 id="email"
@@ -71,8 +62,20 @@ export default async function LoginPage(props: {
                         type="submit"
                         className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)] transition-all shadow-sm"
                     >
-                        Entrar a Ruralpop
+                        Entrar
                     </button>
+
+                    <div className="pt-6 text-center border-t border-[var(--ag-sys-color-border)] mt-8">
+                        <p className="text-sm text-[var(--ag-sys-color-text-muted)] mb-4">
+                            ¿Aún no tienes cuenta?
+                        </p>
+                        <Link
+                            href="/register"
+                            className="group relative w-full flex justify-center py-3 px-4 border border-[var(--ag-sys-color-primary)] text-sm font-medium rounded-xl text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all shadow-sm"
+                        >
+                            Regístrate gratis
+                        </Link>
+                    </div>
                 </form>
             </div>
         </div>
