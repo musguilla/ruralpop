@@ -47,8 +47,28 @@ const rawLandings = [
 export const SEO_LANDINGS: SeoLanding[] = rawLandings.map((item) => ({
     ...item,
     slug: slugify(item.title),
-    description: `Descubre los mejores anuncios de ${item.title.toLowerCase()} en Ruralpop. El gran mercado agrícola y ganadero de España. Encuentra las mejores opciones verificadas y contacta directamente con el vendedor sin intermediarios. Actualizado a diario con nuevos clasificados de ${item.title.toLowerCase()}.`,
+    description: `Descubre los mejores anuncios de ${item.title.toLowerCase()} en Ruralpop. El gran mercado agrícola y ganadero de España. Si estás interesado en comprar o vender, aquí encontrarás el mejor entorno de compraventa directo. Encuentra las mejores opciones verificadas y contacta con el vendedor sin intermediarios. Actualizado a diario con clasificados de ${item.title.toLowerCase()}.`,
     faqs: [
+        {
+            question: "¿Cómo me registro?",
+            answer: "Regístrate gratis y empieza a acceder a todas las funcionalidades de Ruralpop. Es muy sencillo sólo tienes que introducir tu número email y una contraseña e inmediatamente podrás acceder al mercado de Ruralpop."
+        },
+        {
+            question: "¿Tiene algún coste utilizar Ruralpop?",
+            answer: "Ninguno, puedes descargar la app de forma totalmente gratuita, registrarte y una vez seas miembro de Ruralpop puedes ponerte en contacto con otros ganaderos para comprar o vender."
+        },
+        {
+            question: "¿Como contacto con otro usuario de Ruralpop?",
+            answer: "Si te interesa algo de lo que ves, puedes contactar con el usuario que lo publica directamente desde el anuncio, a través del chat. Es totalmente seguro y confidencial. No tendrás que ofrecer ningún dato personal si no quieres."
+        },
+        {
+            question: "¿Es seguro usar Ruralpop?",
+            answer: "Totalmente seguro. No tienes que facilitar ningún dato tuyo personal si no quieres. Al configurar tu perfil solo introduces tu nombre, email y contraseña. Si luego conectas con otro miembro de la comunidad y quieres facilitarle más datos a través del chat será una decisión tuya."
+        },
+        {
+            question: "¿Eres un profesional o empresa del sector?",
+            answer: "Para ti como profesional tenemos diferentes espacios donde ofrecer tus productos y servicios a los ganaderos. Obtendrás la visibilidad que necesitas en el mejor lugar."
+        },
         {
             question: `¿Cómo encontrar los mejores anuncios de ${item.title.toLowerCase()}?`,
             answer: `En Ruralpop usamos un sistema de clasificación que muestra los anuncios más recientes y destacados de ${item.title.toLowerCase()}. Puedes usar los filtros superiores para ajustar el precio o la ubicación exacta.`

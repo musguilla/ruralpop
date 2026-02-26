@@ -67,20 +67,30 @@ export default async function SeoLandingPage(props: {
                 <ListingsGrid searchParams={combinedParams} />
             </Suspense>
 
-            {/* SEO Content & FAQs */}
-            <div className="max-w-4xl mx-auto mt-24 bg-[var(--ag-sys-color-surface)] p-8 sm:p-12 rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm">
+            {/* SEO Content & FAQs (Full Width to match grid) */}
+            <div className="w-full mt-24 bg-[var(--ag-sys-color-surface)] p-6 sm:p-10 rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm">
                 <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">Sobre {landing.title}</h2>
                 <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed text-lg mb-12">
                     {landing.description}
                 </p>
 
                 <h3 className="text-xl font-extrabold text-[var(--ag-sys-color-text)] mb-8">Preguntas frecuentes</h3>
-                <div className="space-y-6">
+                <div className="space-y-4">
                     {landing.faqs.map((faq, idx) => (
-                        <div key={idx} className="bg-[var(--ag-sys-color-surface-muted)] p-6 rounded-2xl border border-[var(--ag-sys-color-border)]">
-                            <h4 className="text-lg font-bold text-[var(--ag-sys-color-text)] mb-3">{faq.question}</h4>
-                            <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">{faq.answer}</p>
-                        </div>
+                        <details
+                            key={idx}
+                            className="group bg-[var(--ag-sys-color-surface-muted)] rounded-2xl border border-[var(--ag-sys-color-border)] overflow-hidden"
+                        >
+                            <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-6 text-[var(--ag-sys-color-text)] hover:bg-black/5 transition-colors">
+                                <span>{faq.question}</span>
+                                <span className="transition-transform duration-300 group-open:-rotate-180">
+                                    <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                                </span>
+                            </summary>
+                            <div className="p-6 pt-0 text-[var(--ag-sys-color-text-muted)] leading-relaxed">
+                                {faq.answer}
+                            </div>
+                        </details>
                     ))}
                 </div>
             </div>
