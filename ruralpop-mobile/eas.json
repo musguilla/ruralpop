@@ -13,8 +13,13 @@
     },
     "production": {
       "autoIncrement": true,
+      "ios": {
+        "image": "latest"
+      },
       "env": {
-        "npm_config_legacy_peer_deps": "true"
+        "npm_config_legacy_peer_deps": "true",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://zrpucbuvojskcwrhwevv.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_qRuIoHNLVeV3zaGW0Q7A-Q_aYdwNLtj"
       }
     }
   },
