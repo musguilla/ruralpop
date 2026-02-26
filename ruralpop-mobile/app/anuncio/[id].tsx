@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, Dimensions, Linking } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, Dimensions, Linking, Alert, Share as RNShare } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { Listing, User } from '../../src/types';
-import { ChevronLeft, Share2, Heart, MapPin, Tag, Phone, Mail, ImageIcon } from 'lucide-react-native';
+import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useFavorites } from '../../src/contexts/FavoritesContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -85,8 +85,27 @@ export default function ListingDetailsScreen() {
         : 'A consultar';
 
     const handleCall = () => {
-        if (listing.seller?.phone || listing.contact_phone) {
-            Linking.openURL(`tel:${listing.seller?.phone || listing.contact_phone}`);
+        const phone = listing.seller?.phone || listing.contact_phone;
+        if (phone) {
+            Linking.openURL(`tel:${phone}`).catch((err) => {
+                Alert.alert("Error", "No se pudo abrir la aplicación de teléfono.");
+            });
+        } else {
+            Alert.alert("Información", "Este vendedor no ha proporcionado un número de teléfono.");
+        }
+    };
+
+    const handleShare = async () => {
+        if (!listing) return;
+        try {
+            const url = `https://ruralpop.es/anuncio/${listing.id}`;
+            await RNShare.share({
+                message: `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`,
+                url,
+                title: listing.title,
+            });
+        } catch (error) {
+            console.error('Error sharing:', error);
         }
     };
 
@@ -133,8 +152,8 @@ export default function ListingDetailsScreen() {
                         </TouchableOpacity>
 
                         <View className="flex-row space-x-3">
-                            <TouchableOpacity className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
-                                <Share2 color="white" size={20} />
+                            <TouchableOpacity onPress={handleShare} className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
+                                <ShareIcon color="white" size={20} />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={handleFavoritePress} className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
                                 <Heart color={isFavorited ? "#ef4444" : "white"} fill={isFavorited ? "#ef4444" : "transparent"} size={20} />
