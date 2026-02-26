@@ -6,70 +6,18 @@ import { LOCATIONS } from "@/constants/locations";
 import { CATEGORIES } from "@/constants/categories";
 import { buildSeoUrl } from "@/utils/seoUtils";
 
+import { SEO_LANDINGS } from "@/constants/seoLandings";
+import { usePathname } from "next/navigation";
+
 export function SeoFooterTabs() {
+    const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<"provinces" | "categories" | "popular">("provinces");
+
+    // Ocultar si no estamos en la portada
+    if (pathname !== "/") return null;
 
     // Filtrar solo las provincias para la primera pestaña
     const provinces = LOCATIONS.filter(l => l.type === "province").sort((a, b) => a.province.localeCompare(b.province));
-
-    const generatePopularSearches = () => {
-        const searches: { label: string, url: string }[] = [];
-
-        const top15Provinces = [
-            "Madrid", "Barcelona", "Valencia", "Sevilla", "Alicante",
-            "Málaga", "Murcia", "Cádiz", "Baleares", "Las Palmas",
-            "A Coruña", "Santa Cruz de Tenerife", "Asturias", "Zaragoza", "Pontevedra"
-        ];
-
-        const top10Localities = [
-            "Madrid", "Barcelona", "Valencia", "Sevilla", "Zaragoza",
-            "Málaga", "Murcia", "Palma de Mallorca", "Las Palmas de Gran Canaria", "Bilbao"
-        ];
-
-        const animals = ["Bovino", "Equino"];
-
-        // 1. Ganado (Bovino y Equino) por las 15 provincias top (Total: 30)
-        animals.forEach(animal => {
-            top15Provinces.forEach((provName, idx) => {
-                const loc = LOCATIONS.find(l => l.name === provName && l.type === 'province') || LOCATIONS.find(l => l.province === provName);
-                if (loc) {
-                    const verb = idx % 2 === 0 ? "Comprar" : "Vender";
-                    searches.push({
-                        label: `${verb} ganado ${animal} en ${provName}`,
-                        url: buildSeoUrl({ category: "ganaderia", subcategory: animal, province_id: loc.id })
-                    });
-                }
-            });
-        });
-
-        // 2. Tractores en las 10 Localidades top (Total: 10)
-        top10Localities.forEach((locName, idx) => {
-            const loc = LOCATIONS.find(l => l.name === locName && l.type === 'municipality');
-            if (loc) {
-                const verb = idx % 2 !== 0 ? "Comprar" : "Vender";
-                searches.push({
-                    label: `${verb} Tractores en ${locName}`,
-                    url: buildSeoUrl({ q: "Tractores", category: "maquinaria", province_id: loc.id })
-                });
-            }
-        });
-
-        // 3. Tractores en las primeras 10 provincias top (Total: 10)
-        top15Provinces.slice(0, 10).forEach((provName, idx) => {
-            const loc = LOCATIONS.find(l => l.name === provName && l.type === 'province') || LOCATIONS.find(l => l.province === provName);
-            if (loc) {
-                const verb = idx % 2 === 0 ? "Vender" : "Comprar";
-                searches.push({
-                    label: `${verb} Tractores en ${provName}`,
-                    url: buildSeoUrl({ q: "Tractores", category: "maquinaria", province_id: loc.id })
-                });
-            }
-        });
-
-        return searches.slice(0, 50); // Garantizamos 50 enlaces (5 columnas x 10 enlaces)
-    };
-
-    const popularSearches = generatePopularSearches();
 
     return (
         <div className="bg-[var(--ag-sys-color-surface)] border-t border-[var(--ag-sys-color-border)] py-12 pb-24">
@@ -151,13 +99,13 @@ export function SeoFooterTabs() {
 
                     {activeTab === "popular" && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-4 gap-x-6">
-                            {popularSearches.map((search, idx) => (
+                            {SEO_LANDINGS.map((landing) => (
                                 <Link
-                                    key={idx}
-                                    href={search.url}
+                                    key={landing.slug}
+                                    href={`/s/${landing.slug}`}
                                     className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors"
                                 >
-                                    {search.label}
+                                    {landing.title}
                                 </Link>
                             ))}
                         </div>

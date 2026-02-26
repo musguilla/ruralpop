@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { CATEGORIES } from '@/constants/categories';
 import { LOCATIONS } from '@/constants/locations';
 import { buildSeoUrl } from '@/utils/seoUtils';
+import { SEO_LANDINGS } from '@/constants/seoLandings';
 
 export const revalidate = 86400; // 24 horas
 
@@ -22,6 +23,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // 1. Home Base
     addEntry('/', 1.0);
+
+    // 1.5 Landings SEO Long-Tail (Alta prioridad)
+    SEO_LANDINGS.forEach(landing => {
+        addEntry(`/s/${landing.slug}`, 0.95);
+    });
 
     // 2. Solo Categorías y Subcategorías
     CATEGORIES.forEach(cat => {
