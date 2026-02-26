@@ -17,18 +17,44 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     }
 
     const qLabel = parsed.q ? parsed.q.charAt(0).toUpperCase() + parsed.q.slice(1) : "";
-    const subLabel = parsed.subcategory ? parsed.subcategory : "";
+    const subLabel = parsed.subcategory ? parsed.subcategory.charAt(0).toUpperCase() + parsed.subcategory.slice(1) : "";
+    const catLabel = parsed.category ? parsed.category.charAt(0).toUpperCase() + parsed.category.slice(1) : "";
 
     const parts = [];
     if (qLabel) parts.push(qLabel);
     if (subLabel) parts.push(subLabel);
+    else if (catLabel && !qLabel) parts.push(catLabel);
+
     if (locationName) parts.push(`en ${locationName}`);
 
-    const pageTitle = parts.length > 0 ? `${parts.join(" ")} | Ruralpop` : "Mercado Agrícola y Ganadero | Ruralpop";
+    const baseSubject = parts.join(" ");
+
+    const seoVariations = [
+        "Comprar y vender ganado",
+        "Compraventa de animales ganaderos",
+        "App gratis compraventa ganado",
+        "Anuncios gratis del campo",
+        "Mercado rural de segunda mano",
+        "Compra venta ganadería"
+    ];
+
+    const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const suffix = seoVariations[charCodeSum % seoVariations.length];
+
+    let pageTitle = "Mercado Agrícola y Ganadero | Ruralpop";
+    if (baseSubject.trim()) {
+        const candidateTitle = `${baseSubject} - ${suffix} | Ruralpop`;
+        // Google usually displays up to ~65 characters. Only attach the suffix if it reasonably fits.
+        if (candidateTitle.length > 72) {
+            pageTitle = `${baseSubject} | Ruralpop`;
+        } else {
+            pageTitle = candidateTitle;
+        }
+    }
 
     return {
         title: pageTitle,
-        description: `Encuentra y compara ${parts.join(" ") || "las mejores oportunidades"} en nuestra nueva aplicación gratis. Descarga la mejor app para buscar, comprar y vender ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones.`,
+        description: `Aplicación gratis para ${parts.join(" ") || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`,
     };
 }
 
