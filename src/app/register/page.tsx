@@ -39,7 +39,7 @@ export default async function RegisterPage(props: {
                     <div className="space-y-4">
                         <div>
                             <label htmlFor="name" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Nombre Completo o Empresa
+                                Nombre completo
                             </label>
                             <input
                                 id="name"
@@ -53,7 +53,7 @@ export default async function RegisterPage(props: {
                         </div>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Correo Electrónico
+                                Correo electrónico
                             </label>
                             <input
                                 id="email"
@@ -67,11 +67,26 @@ export default async function RegisterPage(props: {
                         </div>
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Contraseña Segura
+                                Contraseña
                             </label>
                             <input
                                 id="password"
                                 name="password"
+                                type="password"
+                                autoComplete="new-password"
+                                required
+                                minLength={6}
+                                className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
+                                placeholder="••••••••"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password_confirm" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
+                                Repite la contraseña
+                            </label>
+                            <input
+                                id="password_confirm"
+                                name="password_confirm"
                                 type="password"
                                 autoComplete="new-password"
                                 required

@@ -10,9 +10,14 @@ export async function signup(formData: FormData) {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const passwordConfirm = formData.get("password_confirm") as string;
 
     if (!email || !password || !name) {
         redirect("/register?error=Todos los campos son obligatorios");
+    }
+
+    if (password !== passwordConfirm) {
+        redirect("/register?error=Las contraseñas no coinciden, por favor verifica.");
     }
 
     const { error } = await supabase.auth.signUp({
