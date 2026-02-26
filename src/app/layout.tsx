@@ -8,6 +8,8 @@ import { InstallBanner } from "@/components/layout/InstallBanner";
 import { SeoFooterTabs } from "@/components/layout/SeoFooterTabs";
 import Script from "next/script";
 
+import { CookieBanner } from "@/components/layout/CookieBanner";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -67,6 +69,7 @@ export default function RootLayout({
           </main>
           <SeoFooterTabs />
           <Footer />
+          <CookieBanner />
         </NotificationProvider>
       </body>
     </html>
