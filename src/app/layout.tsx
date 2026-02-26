@@ -21,8 +21,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ruralpop - Compra y Venta del Campo",
-  description: "El mercado líder en compra y venta de ganadería, maquinaria y productos del campo. Para el entorno rural de toda España.",
+  title: "Ruralpop - App gratis para comprar y vender ganado",
+  description: "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
   applicationName: "Ruralpop",
   icons: {
     icon: "/icon.png",

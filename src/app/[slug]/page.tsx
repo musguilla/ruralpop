@@ -1,8 +1,36 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { ListingCardSkeleton } from "@/components/ui/ListingCard";
 import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { parseSeoUrl } from "@/utils/seoUtils";
+import { LOCATIONS } from "@/constants/locations";
+
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const params = await props.params;
+    const parsed = parseSeoUrl(params.slug);
+
+    let locationName = "";
+    if (parsed.province_id) {
+        const loc = LOCATIONS.find(l => l.id === parsed.province_id);
+        if (loc) locationName = loc.name;
+    }
+
+    const qLabel = parsed.q ? parsed.q.charAt(0).toUpperCase() + parsed.q.slice(1) : "";
+    const subLabel = parsed.subcategory ? parsed.subcategory : "";
+
+    const parts = [];
+    if (qLabel) parts.push(qLabel);
+    if (subLabel) parts.push(subLabel);
+    if (locationName) parts.push(`en ${locationName}`);
+
+    const pageTitle = parts.length > 0 ? `${parts.join(" ")} | Ruralpop` : "Mercado Agrícola y Ganadero | Ruralpop";
+
+    return {
+        title: pageTitle,
+        description: `Encuentra y compara ${parts.join(" ") || "las mejores oportunidades"} en nuestra nueva aplicación gratis. Descarga la mejor app para buscar, comprar y vender ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones.`,
+    };
+}
 
 export default async function SearchResultsPage(props: {
     params: Promise<{ slug: string }>;
