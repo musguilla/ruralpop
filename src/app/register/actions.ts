@@ -35,7 +35,7 @@ export async function signup(formData: FormData) {
         let errorMsg = error.message;
 
         if (error.message.includes("User already registered") || error.code === "user_already_exists") {
-            errorMsg = "Este correo electrónico ya está registrado. Por favor, Inicia sesión o utiliza 'Recordar contraseña'.";
+            errorMsg = "user_exists";
         }
 
         redirect(`/register?error=${encodeURIComponent(errorMsg)}`);
