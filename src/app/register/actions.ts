@@ -32,7 +32,13 @@ export async function signup(formData: FormData) {
 
     if (error) {
         console.error("Signup error:", error);
-        redirect(`/register?error=${encodeURIComponent(error.message)}`);
+        let errorMsg = error.message;
+
+        if (error.message.includes("User already registered") || error.code === "user_already_exists") {
+            errorMsg = "Este correo electrónico ya está registrado. Por favor, Inicia sesión o utiliza 'Recordar contraseña'.";
+        }
+
+        redirect(`/register?error=${encodeURIComponent(errorMsg)}`);
     }
 
     // Notamos que la creación del perfil en DB se hace mediante el trigger SQL automatizado.
