@@ -13,12 +13,35 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
     if (!landing) return {};
 
+    const seoVariations = [
+        "Comprar y vender ganado",
+        "Compraventa de animales ganaderos",
+        "App gratis compraventa ganado",
+        "Anuncios gratis del campo",
+        "Mercado rural de segunda mano",
+        "Compra venta ganadería"
+    ];
+
+    const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const suffix = seoVariations[charCodeSum % seoVariations.length];
+
+    let pageTitle = `${landing.title} | Ruralpop`;
+    const candidateTitle = `${landing.title} - ${suffix} | Ruralpop`;
+
+    // Maximize title length for Google (usually up to ~65-70 chars)
+    if (candidateTitle.length <= 72) {
+        pageTitle = candidateTitle;
+    }
+
+    // Making the description even more punchy and keyword rich
+    const optimizedDescription = `Descubre los mejores anuncios de ${landing.title.toLowerCase()} en nuestra App gratis. El gran mercado agrícola de España para descargar y buscar, comprar y vender ganado, vacas, toros, caballos, maquinaria y más.`;
+
     return {
-        title: `${landing.title} | Ruralpop`,
-        description: landing.description,
+        title: pageTitle,
+        description: optimizedDescription,
         openGraph: {
-            title: landing.title,
-            description: landing.description,
+            title: pageTitle,
+            description: optimizedDescription,
             type: "website"
         }
     };
