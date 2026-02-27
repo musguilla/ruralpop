@@ -48,19 +48,40 @@ export async function generateMetadata(
 
     const previousImages = (await parent).openGraph?.images || [];
     const mainImage = listing.image_urls?.[0] || 'https://www.ruralpop.com/default-og.jpg';
-    // Formatear precio para el título (e.g. "Vendo Tractor - 12.000€")
-    const priceText = listing.price ? `${new Intl.NumberFormat('es-ES').format(listing.price)}€` : '';
-    const fullTitle = `${listing.title} ${priceText ? `por ${priceText} ` : ''}| Ruralpop`;
 
-    // Acortar descripción para SEO (160 caracteres típicos)
-    const shortDesc = listing.description?.slice(0, 150) + (listing.description?.length > 150 ? '...' : '');
+    const priceText = listing.price ? `${new Intl.NumberFormat('es-ES').format(listing.price)}€` : 'A convenir';
+    const baseTitle = `${listing.title} ${priceText}`.trim();
+
+    const seoVariations = [
+        "Comprar y vender",
+        "App gratis ganado",
+        "Anuncios del campo",
+        "Mercado rural",
+        "Compraventa"
+    ];
+
+    const charCodeSum = slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const suffix = seoVariations[charCodeSum % seoVariations.length];
+
+    let fullTitle = `${baseTitle} | Ruralpop`;
+    const candidateTitle = `${baseTitle} - ${suffix} | Ruralpop`;
+
+    if (candidateTitle.length <= 72) {
+        fullTitle = candidateTitle;
+    }
+
+    // Acortar base para dejar espacio a las keywords SEO
+    const rawDesc = listing.description?.replace(/\n/g, ' ') || "";
+    const shortDesc = rawDesc.slice(0, 60) + (rawDesc.length > 60 ? '...' : '');
+
+    const optimizedDescription = `${shortDesc} en ${listing.location}. Descarga la App gratis para buscar, vender y comprar ganado, vacas, caballos, maquinaria y servicios de campo.`;
 
     return {
         title: fullTitle,
-        description: `${shortDesc} - En ${listing.location} (${listing.category}).`,
+        description: optimizedDescription,
         openGraph: {
             title: fullTitle,
-            description: shortDesc,
+            description: optimizedDescription,
             url: `https://www.ruralpop.com/anuncio/${slug}`,
             siteName: 'Ruralpop',
             images: [
