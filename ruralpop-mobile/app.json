@@ -25,9 +25,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1D2422"
       },
-      "requireFullScreen": true,
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
       "package": "com.ruralpop.ruralpopapp"
     },
     "web": {
