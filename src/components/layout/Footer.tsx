@@ -8,16 +8,30 @@ export function Footer() {
     return (
         <footer className="w-full border-t border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] py-8 mt-auto">
             <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-                <div className="flex flex-col items-center md:items-start gap-2">
-                    <Link
-                        href="/"
-                        className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                    >
-                        <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain" />
-                    </Link>
-                    <p className="text-gray-400 text-sm max-w-sm">
-                        La App gratuita para buscar, comprar y vender ganado, maquinaria y mucho más directamente entre ganaderos de toda España.
-                    </p>
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                    <div className="flex flex-col items-center md:items-start gap-2">
+                        <Link
+                            href="/"
+                            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                        >
+                            <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain dark:invert" />
+                        </Link>
+                    </div>
+
+                    {/* Vertical line 1 */}
+                    <div className="hidden md:block w-px h-12 bg-[var(--ag-sys-color-border)]"></div>
+
+                    <div className="flex flex-col items-center md:items-start">
+                        <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
+                            Conexión Rural
+                        </span>
+                        <Link href="/magazine" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            Ruralpop Magazine
+                        </Link>
+                    </div>
+
+                    {/* Vertical line 2 */}
+                    <div className="hidden md:block w-px h-12 bg-[var(--ag-sys-color-border)]"></div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4">
