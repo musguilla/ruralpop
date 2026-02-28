@@ -16,6 +16,9 @@ export function Footer() {
                         >
                             <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain dark:invert" />
                         </Link>
+                        <p className="text-[var(--ag-sys-color-text-muted)] text-sm max-w-sm text-center md:text-left">
+                            La App gratuita para buscar, comprar y vender ganado, maquinaria y mucho más directamente entre ganaderos de toda España.
+                        </p>
                     </div>
 
                     {/* Vertical line 1 */}
