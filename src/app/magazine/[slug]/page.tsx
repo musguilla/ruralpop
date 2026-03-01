@@ -4,11 +4,18 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
 
-import { MAGAZINE_POSTS } from "@/content/magazine/posts";
+import { createClient } from "@/utils/supabase/server";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
-    const post = MAGAZINE_POSTS.find(p => p.id === slug);
+
+    // Server fetch
+    const supabase = await createClient();
+    const { data: post } = await supabase
+        .from("magazine_posts")
+        .select("title, excerpt")
+        .eq("slug", slug)
+        .single();
     if (!post) {
         return {
             title: "Artículo no encontrado | Ruralpop Magazine"
@@ -22,7 +29,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function MagazineArticlePage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const post = MAGAZINE_POSTS.find(p => p.id === slug);
+
+    // Server fetch
+    const supabase = await createClient();
+    const { data: postData } = await supabase
+        .from("magazine_posts")
+        .select("*")
+        .eq("slug", slug)
+        .single();
+
+    const post = postData ? {
+        id: postData.slug,
+        title: postData.title,
+        excerpt: postData.excerpt,
+        category: postData.category,
+        imageUrl: postData.image_url,
+        date: new Intl.DateTimeFormat('es-ES', {
+            day: 'numeric', month: 'short', year: 'numeric'
+        }).format(new Date(postData.published_at)),
+        content: postData.content
+    } : null;
 
     if (!post) {
         return (

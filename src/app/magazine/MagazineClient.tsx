@@ -3,7 +3,15 @@
 import React, { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import { StripeHeroSlider } from "@/components/magazine/StripeHeroSlider";
-import { BlogPost } from "@/content/magazine/posts";
+export interface BlogPost {
+    id: string; // Used as slug
+    title: string;
+    excerpt: string;
+    category: string;
+    imageUrl: string;
+    date: string;
+    content?: string;
+}
 import Image from "next/image";
 import Link from "next/link";
 
@@ -76,8 +84,8 @@ export function MagazineClient({ posts }: MagazineClientProps) {
                                 key={idx}
                                 onClick={() => setSelectedCategory(cat)}
                                 className={`whitespace-nowrap px-5 py-2.5 rounded-full border transition-colors font-medium text-sm ${selectedCategory === cat
-                                        ? "bg-[var(--ag-sys-color-primary)] text-white border-[var(--ag-sys-color-primary)]"
-                                        : "bg-[var(--ag-sys-color-surface-elevated)] border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)] hover:border-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary)]"
+                                    ? "bg-[var(--ag-sys-color-primary)] text-white border-[var(--ag-sys-color-primary)]"
+                                    : "bg-[var(--ag-sys-color-surface-elevated)] border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)] hover:border-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary)]"
                                     }`}
                             >
                                 {cat}
