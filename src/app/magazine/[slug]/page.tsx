@@ -61,6 +61,26 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
         );
     }
 
+    const { data: potentialRelated } = await supabase
+        .from("magazine_posts")
+        .select("slug, title, image_url, category, published_at")
+        .eq("is_published", true)
+        .neq("slug", slug)
+        .order("published_at", { ascending: false })
+        .limit(10);
+
+    const sameCat = (potentialRelated || []).filter((p: any) => p.category === postData.category);
+    const diffCat = (potentialRelated || []).filter((p: any) => p.category !== postData.category);
+    const relatedPosts = [...sameCat, ...diffCat].slice(0, 3).map((p: any) => ({
+        slug: p.slug,
+        title: p.title,
+        category: p.category,
+        imageUrl: p.image_url,
+        date: new Intl.DateTimeFormat('es-ES', {
+            day: 'numeric', month: 'short', year: 'numeric'
+        }).format(new Date(p.published_at))
+    }));
+
     const wordCount = (post.content || post.excerpt).split(/\s+/).length;
     const readingTime = Math.max(1, Math.ceil(wordCount / 200));
     return (
@@ -126,6 +146,38 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                     </div>
                 </div>
             </div>
+
+            {/* Artículos Relacionados */}
+            {relatedPosts.length > 0 && (
+                <div className="container mx-auto px-4 mt-20 max-w-5xl">
+                    <h3 className="text-2xl font-bold mb-8 text-[var(--ag-sys-color-text)] relative inline-block">
+                        Artículos que te pueden interesar
+                        <div className="absolute -bottom-2 left-0 w-1/3 h-1 bg-[var(--ag-sys-color-primary)] rounded-full"></div>
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {relatedPosts.map(related => (
+                            <Link href={`/magazine/${related.slug}`} key={related.slug} className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md transition-all">
+                                <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
+                                    <Image src={related.imageUrl} alt={related.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <div className="absolute top-4 left-4">
+                                        <span className="bg-[var(--ag-sys-color-primary)] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
+                                            {related.category}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="p-5 flex flex-col flex-grow">
+                                    <h4 className="font-bold text-lg text-[var(--ag-sys-color-text)] line-clamp-2 mb-3 group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                                        {related.title}
+                                    </h4>
+                                    <div className="mt-auto pt-4 border-t border-[var(--ag-sys-color-border)] text-sm text-[var(--ag-sys-color-text-muted)] font-medium">
+                                        {related.date}
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
         </article>
     );
 }
