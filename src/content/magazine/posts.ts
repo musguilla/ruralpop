@@ -257,9 +257,16 @@ export const MAGAZINE_POSTS: BlogPost[] = [
             <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
                 El mercado porcino arroja cifras récord históricas que blindan y protegen al ganadero integrado. Los cebaderos nunca antes habían visto tanta rentabilidad estable gracias al mercado exterior exótico.
             </p>
-            <h2>H2: Dinámica de precios de la mesa redonda del cerdo</h2>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1574519521319-38b4bcf7f8db?q=80&w=1200&auto=format&fit=crop" alt="Granja porcina" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Sistemas de alimentación automatizada en una granja de Aragón.</figcaption>
+            </figure>
+            <h2>La ventaja competitiva de la exportación a China</h2>
             <p>
-                A cierre del trimestre, es innegable que España ya pelea un valiente mano a mano comercial con Estados Unidos por coronarse como el salvavidas proteico de países como Filipinas o China imperial. Como resultado de esto histórico, si crías cerdos, en plataformas de sectorización como Ruralpop puedes conseguir grandiosos contactos explorando los <a href="/s/cerdos" class="text-[var(--ag-sys-color-primary)] font-bold underline">mercados locales de cebones e infraestructuras anexas</a>. "No damos a basto cargando camiones cisterna de alimento", celebra el sector del almacenaje logístico de materias primas blandas.
+                A cierre del trimestre, es innegable que España ya pelea un valiente mano a mano comercial con Estados Unidos por coronarse como el salvavidas proteico de países como Filipinas o China imperial. La calidad sanitaria de nuestro porcino es inmejorable.
+            </p>
+            <p>
+                Como resultado de esto histórico, si crías cerdos, en plataformas de sectorización como Ruralpop puedes conseguir grandiosos contactos explorando los <a href="/s/cerdos" class="text-[var(--ag-sys-color-primary)] font-bold underline">mercados locales de cebones e infraestructuras anexas</a>. "No damos a basto cargando camiones cisterna de alimento", celebra el sector del almacenaje logístico de materias primas blandas.
             </p>
         `
     },
@@ -272,9 +279,13 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         date: "25 Ene 2026",
         content: `
             <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
-                Las asociaciones animalistas que presionaron con fuerza a Bruselas van viendo victoria en el horizonte. Todas aquellas empresas dedicadas al confinamiento en jaulas tienen los días extremadamente contados; y no reconvertirse equivale irremediablemente al cierre patronal.
+                Las asociaciones animalistas que presionaron con fuerza a Bruselas van viendo victoria en el horizonte. Todas aquellas empresas dedicadas al confinamiento en jaulas tienen los días extremadamente contados.
             </p>
-            <h2>H2: Impacto macroeconómico en el Huevo Código 3 a nivel usuario</h2>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1548550023-2bf3c4980f53?q=80&w=1200&auto=format&fit=crop" alt="Avicultura libre" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Reconversión de naves industriales hacia sistemas de cría en suelo.</figcaption>
+            </figure>
+            <h2>El impacto en el coste del huevo</h2>
             <p>
                 Aunque en origen, modernizar los pabellones avícolas requiera arrancar hierros pesados a radial e invertir millones, el ticket de venta o precio en la repisa del supermercado de la docena de huevos se revaloriza tremendamente (el salto monetario al Huevo Código 1). Invertir hoy cerrando negocios en pro de renovar lotes sanos desde un portal de gran inmersión publicitaria de <a href="/s/gallinas" class="text-[var(--ag-sys-color-primary)] font-bold underline">venta de gallinas ponedoras certificadas</a> es el primer sabio gran paso que tu cooperativa debe acordar por juntas.
             </p>
@@ -289,9 +300,13 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         date: "20 Ene 2026",
         content: `
             <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
-                El estiaje profundo (o verano prolongadísimo por culpa del agujero climático del ozono) está causando que fabricar bloques de heno verde se cotice literalmente igual que si prensaran barras directas en oro fino.
+                El estiaje profundo (o verano prolongadísimo por culpa del cambio climático) está causando que fabricar bloques de heno verde se cotice literalmente igual que si prensaran barras directas en oro fino.
             </p>
-            <h2>H2: Aprovisionarse pronto antes de los picos especulativos de la campaña agrícola.</h2>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1589923188900-85dae523342b?q=80&w=1200&auto=format&fit=crop" alt="Campo de forraje" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Cosecha de alfalfa en época de sequía extrema.</figcaption>
+            </figure>
+            <h2>Anticipación ante los picos de mercado</h2>
             <p>
                 No dejes que diciembre llegue y que no tengas apilados y asegurados los rollos rústicos protectores y pacas para la dura alimentación a ración de tus queridas reses. Desde verano la tendencia es que los mayoristas ocultan material nutritivo ganadero inflando sus precios. Anticípate explorando remanentes excedentes en local y de granjeros humildes o honestos visitando el sector publicitario de nuestro bloque online para la <a href="/s/forraje" class="text-[var(--ag-sys-color-primary)] font-bold underline">compra directa de forrajes nacionales, silos y paja a granel pesada por báscula.</a> La clave está, más que nunca, en prever roturas del delicadísimo mercado de secano.
             </p>
@@ -306,9 +321,12 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         date: "18 Ene 2026",
         content: `
             <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
-                Lo que antiguamente servía para atar un mulo de labranza herrumbrosa, hoy recauda de manera activa ingentes sumas y altos dividendos gracias a cuotas mensuales y aficiones burguesas o de esparcimiento en familias adineradas metropolitanas españolas y europeas de retiro en nuestro país.
+                Lo que antiguamente servía para atar un mulo de labranza herrumbrosa, hoy recauda de manera activa ingentes sumas gracias a cuotas mensuales y aficiones de esparcimiento en fincas de retiro.
             </p>
-            <h2>H2: Negocios anexos al caballo español</h2>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1533649534241-15fe39a2b85e?q=80&w=1200&auto=format&fit=crop" alt="Club hípico" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Instalaciones ecuestres reformadas en el entorno rural.</figcaption>
+            </figure>
             <p>
                 Desde luego, comprar unas simples cuadras no hace ganar al caballo del rey la alta y bella doma clásica. Estas instalaciones periféricas con base al rural implican generar colateralmente ingresos espectaculares gracias al gran desembolso general por parte del jinete cliente: hospedaje de paja natural, revisiones veterinarias caras agendadas recurrentes, equipaciones técnicas y la obvia adquisición estelar buscando potros, yeguas sementales o fabulosos y dóciles purasangre en la categoría y listados supremos selectos de la <a href="/s/caballos" class="text-[var(--ag-sys-color-primary)] font-bold underline">venta pública de hermosos caballos de lidia de ocasión.</a> La economía rústica y tradicional ahora sonríe abrazando el lado glamuroso VIP de la cría deportiva equina elitista de club de nivel alto.
             </p>
@@ -323,11 +341,15 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         date: "15 Ene 2026",
         content: `
             <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
-                El zarpazo infame del gran lobo amenazante de montaña o la habitual y triste huida al monte asilvestrado de terneros asustados jóvenes se pueden corregir radicalmente cortando el paso con los simples hilitos naranja plásticos y pulsos voltios controlados artificiales.
+                El zarpazo infame del lobo amenazante de montaña o la habitual huida de terneros asustados se pueden corregir radicalmente con los sistemas de cerramiento inteligentes actuales.
             </p>
-            <h2>H2: Ahorrando drásticamente con Energía Solar</h2>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1596707323136-eeb522d10ea3?q=80&w=1200&auto=format&fit=crop" alt="Valla eléctrica" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Kits de energía solar para pastoreo rotativo.</figcaption>
+            </figure>
+            <h2>Independencia energética en el campo</h2>
             <p>
-                El pastor histórico a baterías de plomo grandes coche o zanjas inmensas se oxidó para no volver nunca más por su absurda pesadez anatómica. El nuevo paradigma global o solución ideal técnica radica en un panel policristalino superior alambre que recarga baterías de gel, aguantando noches negras cerradas muy tormentosas y largas emitiendo altos pulsos rítmicos picantes disuasorios continuados que resuelven tus disgustos o fatigas rurales del pastor moderno. Echa un buen y atento primer vistazo de ojo observador a todas nuestras subastas comunitarias exclusivas nacionales de los usuarios verificados activos sobre <a href="/s/material-ganadero" class="text-[var(--ag-sys-color-primary)] font-bold underline">utillaje diverso de trabajo material ganadero e higiene auxiliar granjera</a> a unos increíbles precios y con envíos o traslados baratos interprovinciales por agencias.
+                El pastor histórico a baterías de plomo grandes coche o zanjas inmensas se oxidó para no volver nunca más por su absurda pesadez anatómica. El nuevo paradigma global o solución ideal técnica radica en un panel policristalino superior alambre que recarga baterías de gel, aguantando noches negras cerradas muy tormentosas y largas emitiendo altos pulsos rítmicos picantes disuasorios continuados que resuelven tus disgustos o fatigas rurales del pastor moderno. Echa un buen y atento primer vistazo de ojo observador a todas nuestras subastas comunitarias exclusivas nacionales de los usuarios verificados activos sobre <a href="/s/material-ganadero" class="text-[var(--ag-sys-color-primary)] font-bold underline">utillaje diverso de trabajo material ganadero e higiene auxiliar granjera</a> a unos increíbles precios.
             </p>
         `
     },
@@ -340,11 +362,15 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         date: "12 Ene 2026",
         content: `
             <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
-                Elegir sabiamente de manera objetiva racional tu perro trabajador empleado indispensable rural perruno ahorra, te lo garantizamos de verdad absoluta, miles de terribles disgustos y litros de espeso sudor persiguiendo tu ganado enloquecido por barrancos al lado llano monte arisco.
+                Elegir sabiamente de manera objetiva racional tu perro trabajador empleado indispensable rural perruno ahorra, te lo garantizamos de verdad absoluta, miles de terribles disgustos persiguiendo tu ganado enloquecido por barrancos.
             </p>
-            <h2>H2: Especialización racial animal perruna o función canina estricta y ruda</h2>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1548625477-160de9756086?q=80&w=1200&auto=format&fit=crop" alt="Perro pastor" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Entrenamiento de Border Collie en granja piloto.</figcaption>
+            </figure>
+            <h2>Seleccionar la raza adecuada</h2>
             <p>
-                Si tienes por rutina que lidiar y encaminar o arrinconar nerviosas ovejas latxas rebeldes esquivas por los vericuetos valles o veredas estrechas en monte inclinado del País Vasco el <strong>Collie veloz perspicaz instintivo</strong> o Carea leonés autóctona escarpadora dominará tu rebaño por sí libre e inteligente magia asombrosa innata. Sin embargo, en caso contrario trágico de ataques del lobo feroz a los temerosos terneros de indefensas edades, el mastín imbatible colosal grande impondrá absoluto y serio e irremediable y mortífero y colmilloso respeto disuasorio letal al forastero cánido. Por ende fundamental, si buscas seriamente leales campeones astutos adiestrados de pedigrí excelente rústico en <a href="/s/perros-de-trabajo" class="text-[var(--ag-sys-color-primary)] font-bold underline">nuestra sección protectora canina rústica</a> podrás encontrar adopciones o criadores rigurosos nacionales que ofrecen camadas espectaculares sanas y vacunadas fuertemente y con un maravilloso chip veterinario al completo y certificado inmejorable.
+                Si tienes por rutina que lidiar y encaminar o arrinconar nerviosas ovejas latxas rebeldes esquivas por los vericuetos valles o veredas estrechas en monte inclinado del País Vasco el <strong>Collie veloz perspicaz instintivo</strong> o Carea leonés autóctona escarpadora dominará tu rebaño por sí libre e inteligente magia asombrosa innata. Sin embargo, en caso contrario trágico de ataques del lobo feroz a los temerosos terneros de indefensas edades, el mastín imbatible colosal grande impondrá absoluto y serio respeto. Por ende fundamental, si buscas seriamente leales campeones astutos adiestrados de pedigrí excelente rústico en <a href="/s/perros-de-trabajo" class="text-[var(--ag-sys-color-primary)] font-bold underline">nuestra sección protectora canina rústica</a> podrás encontrar adopciones o criadores rigurosos nacionales.
             </p>
         `
     },
@@ -357,11 +383,15 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         date: "09 Ene 2026",
         content: `
             <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
-                El consumidor moderno adinerado urbanita europeo y español exige cada domingo, sin fisuras de fallos, productos que se anuncien limpios virginales, llenos de vida rústica orgánica y cero letales venenos herbicidas. ¿Paga el mercado realmente el cruel y alto coste multiplicador granjero agrícola humano que cuesta a diario cosechar puro natural el buen fruto sin fallos externos?
+                El consumidor moderno adinerado urbanita europeo y español exige productos que se anuncien limpios virginales, llenos de vida rústica orgánica y cero letales venenos herbicidas. ¿Es posible rentabilizarlo?
             </p>
-            <h2>H2: La gran y terrible purga transicional fito-química y monetaria a afrontar valientemente</h2>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?q=80&w=1200&auto=format&fit=crop" alt="Huerto ecológico" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Producción artesanal de hortalizas sin pesticidas sistémicos.</figcaption>
+            </figure>
+            <h2>La transición hacia la etiqueta verde</h2>
             <p>
-                Transformar oficialmente tu polvoriento campo con arraigada antigua costumbre sulfatadora heredada a un puro jardín edénico biológico requiere sudor y certificar un período duro de limpieza oficial técnica desintoxicante "en barbecho intermedio", el cual asesta en ocasiones una durísima paliza a tus libros limpios contables empresariales antes del grandioso ansiado gran milagro monetario de poder oficialmente etiquetar legalmente a todo poder y lujo la ansiadísima <strong>Eurohoja mágica estrellada de gran sello verde y margen estelar en euros altísimos multiplicados</strong> sobre tu preciada jugosa sandía estival madrugadora. Por supuesto afortunado para compensarlo, encontrar maquinaria y útiles sembradoras directas arados o material agrícola auxiliar ligero no abrasivo o comprar aperos y aperitivos viejos robustísimos de escardar rascando en redes agrarias muy directas de tú al prójimo visitando tu apartado personal en la grandiosa enorme red comunera gran base <a href="/s/maquinaria-agricola" class="text-[var(--ag-sys-color-primary)] font-bold underline">de maquinaria tractora o herramienta</a> aliviará en muchísimos casos la gigante y abultada primera inicial factura e invertida o comprada.
+                Transformar oficialmente tu polvoriento campo con arraigada antigua costumbre sulfatadora heredada a un puro jardín edénico biológico requiere sudor y certificar un período duro de limpieza oficial técnica. Por supuesto afortunado para compensarlo, encontrar maquinaria y útiles sembradoras directas arados o material agrícola auxiliar ligero no abrasivo visitando <a href="/s/maquinaria-agricola" class="text-[var(--ag-sys-color-primary)] font-bold underline">maquinaria tractora o herramienta</a> aliviará en muchísimos casos la factura inicial.
             </p>
         `
     },
@@ -372,11 +402,19 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Tendencias",
         imageUrl: "https://images.unsplash.com/photo-1581403698064-ae2b81dff90e?q=80&w=600&auto=format&fit=crop",
         date: "05 Ene 2026",
-        content: `<p>
+        content: `
+            <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
+                Los drones aéreos son el presente absoluto de la cartografía y el ahorro milimétrico en fertilizantes y riego hidropónico de campo.
+            </p>
             <figure class="my-10">
-                <img src="https://images.unsplash.com/photo-1581403698064-ae2b81dff90e?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <img src="https://images.unsplash.com/photo-1581403698064-ae2b81dff90e?q=80&w=1200&auto=format&fit=crop" alt="Drone agrícola" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Vigilancia de estrés hídrico mediante cámaras multiespectrales.</figcaption>
             </figure>
-            Los drones aéreos son el presente absoluto de la cartografía y el ahorro milimétrico en fertilizantes y riego hidropónico de campo.</p>`
+            <h2>Monitoreo en tiempo real de maizales</h2>
+            <p>
+                Con el uso de drones, el agricultor moderno puede detectar plagas o falta de nitrógeno antes de que sea visible al ojo humano desde tierra. Esto permite intervenciones focalizadas que ahorran miles de euros en productos químicos innecesarios y protegen la salud del suelo a largo plazo.
+            </p>
+        `
     },
     {
         id: "grid-9-ferias-agrarias-2026",
@@ -385,11 +423,18 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Vida Rural",
         imageUrl: "https://images.unsplash.com/photo-1540673024843-ea40280eb4c6?q=80&w=600&auto=format&fit=crop",
         date: "02 Ene 2026",
-        content: `<p>
+        content: `
+            <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
+                Asistir a las ferias clave significa descubrir avances y conectarse con empresarios que lideran el cambio tecnológico en el sector.
+            </p>
             <figure class="my-10">
-                <img src="https://images.unsplash.com/photo-1540673024843-ea40280eb4c6?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <img src="https://images.unsplash.com/photo-1540673024843-ea40280eb4c6?q=80&w=1200&auto=format&fit=crop" alt="Feria agraria" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Novedades en maquinaria pesada presentadas en FIMA.</figcaption>
             </figure>
-            Asistir significa descubrir avances y conectarse con empresarios. <a href="/s/cosechadoras" class="text-[var(--ag-sys-color-primary)] font-bold underline">Cosechadoras</a> o maquinaria a mitad de precio ex-demo.</p>`
+            <p>
+                Desde la FIMA en Zaragoza hasta el Salón de Gourmets en Madrid, el calendario ferial de 2026 viene cargado de oportunidades para el networking. <a href="/s/cosechadoras" class="text-[var(--ag-sys-color-primary)] font-bold underline">Cosechadoras</a> de última generación y sistemas inteligentes de riego son las estrellas de este año.
+            </p>
+        `
     },
     {
         id: "grid-10-apicultura-moderna",
@@ -398,11 +443,18 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Inversión Rural",
         imageUrl: "https://images.unsplash.com/photo-1587049352847-81a56d773cae?q=80&w=600&auto=format&fit=crop",
         date: "28 Dic 2025",
-        content: `<p>
+        content: `
+            <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
+                Las colmenas y su mantenimiento proporcionan retornos ROI fantásticos y apoyan directamente el medio ambiente rústico del pueblo.
+            </p>
             <figure class="my-10">
-                <img src="https://images.unsplash.com/photo-1587049352847-81a56d773cae?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <img src="https://images.unsplash.com/photo-1587049352847-81a56d773cae?q=80&w=1200&auto=format&fit=crop" alt="Apicultura" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Producción de miel artesanal en el interior peninsular.</figcaption>
             </figure>
-            Las colmenas y su mantenimiento proporcionan retornos ROI fantásticos y seguros estacionales sin mucho sacrificio horas y apoyan directamente todo y grandioso buen y vital medio ambiente rústico del pueblo y los linderos perennifolios bellísimos florales.</p>`
+            <p>
+                La polinización extrema de bosques naturales se vuelve la segunda o tercera pata monetaria y columna firme vertebral más rentable para complementar la economía tradicional. La demanda de miel pura, sin aditivos, sigue creciendo en los mercados premium europeos.
+            </p>
+        `
     },
     {
         id: "grid-11-veterinaria-remota",
@@ -411,11 +463,18 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Tendencias",
         imageUrl: "https://images.unsplash.com/photo-1628009368231-7bb7cb1c4961?q=80&w=600&auto=format&fit=crop",
         date: "20 Dic 2025",
-        content: `<p>
+        content: `
+            <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
+                El 5G rural está solucionando graves problemas, introduciendo la telemedicina animal ganadera remota con inmensa capacidad de reacción.
+            </p>
             <figure class="my-10">
-                <img src="https://images.unsplash.com/photo-1628009368231-7bb7cb1c4961?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <img src="https://images.unsplash.com/photo-1628009368231-7bb7cb1c4961?q=80&w=1200&auto=format&fit=crop" alt="Veterinaria remota" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Diagnóstico mediante videoconsultas de alta definición.</figcaption>
             </figure>
-            El 5G rural está y viene por suerte solucionando a toda pastilla graves problemas, e introduciendo de sopetón la telemedicina animal ganadera remota moderna con inmensa gigante capacidad de reacción rapidísima y espectacular diagnóstico rápido por webcam para rebaños enormes o pequeños o aislados rebaños perdidos lejos entre pastoreos libres boscosos en sierras altísimas donde antes y atrás perdían tiempo infinito esperando que el doctor ganadero llegara y pisara e interviniera quirúrgicamente.</p>`
+            <p>
+                A través de aplicaciones de triage inmediato, los ganaderos pueden recibir asesoramiento veterinario en minutos, reduciendo drásticamente la mortalidad en partos complicados y optimizando el uso de medicamentos en la explotación.
+            </p>
+        `
     },
     {
         id: "grid-12-contratos-arrendamiento",
@@ -424,11 +483,18 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Guías Legales",
         imageUrl: "https://images.unsplash.com/photo-1509391366360-2e909ebdfadc?q=80&w=600&auto=format&fit=crop",
         date: "14 Dic 2025",
-        content: `<p>
+        content: `
+            <p class="lead text-xl md:text-2xl text-[var(--ag-sys-color-text-muted)] font-medium mb-8">
+                Protégete con una guía jurídica extensa antes de firmar cualquier arrendamiento energético que condicione el futuro de tus tierras.
+            </p>
             <figure class="my-10">
-                <img src="https://images.unsplash.com/photo-1509391366360-2e909ebdfadc?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <img src="https://images.unsplash.com/photo-1509391366360-2e909ebdfadc?q=80&w=1200&auto=format&fit=crop" alt="Placas solares" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+                <figcaption class="text-center text-sm text-[var(--ag-sys-color-text-muted)] mt-3">Instalación fotovoltaica en terreno agrícola arrendado.</figcaption>
             </figure>
-            Lee muy atenta y sumamente detalladamente los pequeños márgenes letras minúsculas minúsculitas del contrato e hipoteca subscrita antes de estampar legal y notarialmente dolorosamente tu firma vital vendiendo, y no, recalco no para nunca hipoteques locamente el buen sano brillante y limpio ecológico gran futuro hermoso fértil maravilloso biológico frutal y natural y sano sin poluciones de venenosos lixiviados de enormes placas solares de todos tus jóvenes grandes bisnietos o tiernos descendientes sin tener seguro aval un altísimo enorme seguro garantizado banco de pago o finiquito por adelantadísimo millonario.</p>`
+            <p>
+                Lee detalladamente las cláusulas de desmantelamiento y las garantías de pago por adelantado. No hipoteques el futuro fértil de tus descendientes sin tener un aval sólido de la firma inversora.
+            </p>
+        `
     },
     {
         id: "grid-13-motosierras-comparativa",

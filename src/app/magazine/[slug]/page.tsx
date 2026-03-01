@@ -6,8 +6,9 @@ import { Metadata } from "next";
 
 import { MAGAZINE_POSTS } from "@/content/magazine/posts";
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-    const post = MAGAZINE_POSTS.find(p => p.id === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const post = MAGAZINE_POSTS.find(p => p.id === slug);
     if (!post) {
         return {
             title: "Artículo no encontrado | Ruralpop Magazine"
@@ -19,8 +20,9 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
     };
 }
 
-export default function MagazineArticlePage({ params }: { params: { slug: string } }) {
-    const post = MAGAZINE_POSTS.find(p => p.id === params.slug);
+export default async function MagazineArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const post = MAGAZINE_POSTS.find(p => p.id === slug);
 
     if (!post) {
         return (
