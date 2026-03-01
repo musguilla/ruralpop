@@ -32,6 +32,7 @@ export function MagazineForm({ initialData, actionPromise }: MagazinePostProps) 
 
         try {
             await actionPromise(formData);
+            router.push("/admin/marketing/cms");
         } catch (err: any) {
             console.error(err);
             setError(err.message || "Error al procesar el artículo");

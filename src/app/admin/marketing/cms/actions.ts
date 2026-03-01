@@ -4,24 +4,37 @@ import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
+
 async function uploadImage(file: File | null): Promise<string | null> {
     if (!file || file.size === 0) return null;
-    const supabase = await createClient();
+
+    // We use the Service Role key to bypass RLS since the bucket was created manually by the user
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    const supabaseAdmin = createSupabaseAdmin(supabaseUrl, supabaseKey);
+
     const uuid = crypto.randomUUID();
     const fileExt = file.name.split('.').pop() || "jpg";
     const fileName = `${uuid}.${fileExt}`;
 
-    const { data, error } = await supabase.storage
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const { data, error } = await supabaseAdmin.storage
         .from("cms")
-        .upload(fileName, file);
+        .upload(fileName, buffer, {
+            contentType: file.type,
+            upsert: true
+        });
 
     if (error) {
         console.error("Storage upload error:", error);
-        throw new Error("Error al subir la imagen: " + error.message);
+        throw new Error("Error de permisos. ¿El bucket 'cms' existe en tu Supabase?: " + error.message);
     }
 
     // As 'cms' bucket must be public since it's used for blog images, we just construct publicUrl
-    const { data: publicUrlData } = supabase.storage
+    const { data: publicUrlData } = supabaseAdmin.storage
         .from("cms")
         .getPublicUrl(fileName);
 
@@ -62,7 +75,6 @@ export async function createMagazinePost(formData: FormData) {
 
     revalidatePath("/admin/marketing/cms");
     revalidatePath("/magazine");
-    redirect("/admin/marketing/cms");
 }
 
 export async function updateMagazinePost(id: string, formData: FormData) {
@@ -111,7 +123,6 @@ export async function updateMagazinePost(id: string, formData: FormData) {
     revalidatePath("/admin/marketing/cms");
     revalidatePath("/magazine");
     revalidatePath(`/magazine/${slug}`);
-    redirect("/admin/marketing/cms");
 }
 
 export async function deleteMagazinePost(id: string) {
