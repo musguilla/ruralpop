@@ -33,7 +33,7 @@ export function StripeHeroSlider({ posts }: { posts: BlogPost[] }) {
                         <div
                             key={post.id}
                             onClick={() => isActive ? router.push(`/magazine/${post.id}`) : setActiveIndex(idx)}
-                            className={`relative group overflow-hidden rounded-2xl cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? "flex-[15] shadow-xl" : "flex-[1] shadow-sm hover:flex-[5]"
+                            className={`relative group overflow-hidden rounded-2xl cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? "flex-[6] md:flex-[15] shadow-xl" : "flex-[1] md:flex-[1] shadow-sm hover:flex-[2] md:hover:flex-[5]"
                                 }`}
                         >
                             {/* Backdrop / Image */}
@@ -57,7 +57,7 @@ export function StripeHeroSlider({ posts }: { posts: BlogPost[] }) {
                                     <span className="text-white/80 font-semibold tracking-wider text-xs uppercase bg-black/40 w-fit px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
                                         {post.category}
                                     </span>
-                                    <h2 className="text-2xl md:text-5xl font-bold text-white leading-tight drop-shadow-md max-w-3xl">
+                                    <h2 className="hidden md:block text-5xl font-bold text-white leading-tight drop-shadow-md max-w-3xl">
                                         {post.title}
                                     </h2>
                                 </div>
@@ -71,8 +71,11 @@ export function StripeHeroSlider({ posts }: { posts: BlogPost[] }) {
 
             {/* Bottom Content Area (Title & Excerpt synchronized) */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-2">
-                <div className="flex flex-col max-w-2xl gap-2">
-                    <p className="text-lg md:text-xl text-[var(--ag-sys-color-text-muted)] leading-relaxed">
+                <div className="flex flex-col max-w-2xl gap-2 md:gap-3">
+                    <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] block md:hidden">
+                        {activePost.title}
+                    </h3>
+                    <p className="text-lg md:text-xl text-[var(--ag-sys-color-text-muted)] leading-relaxed line-clamp-3 md:line-clamp-none">
                         <strong className="text-[var(--ag-sys-color-text)] font-semibold mr-2">
                             {activePost.date}.
                         </strong>
