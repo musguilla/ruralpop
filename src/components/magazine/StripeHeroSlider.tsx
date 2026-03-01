@@ -33,7 +33,7 @@ export function StripeHeroSlider({ posts }: { posts: BlogPost[] }) {
                         <div
                             key={post.id}
                             onClick={() => isActive ? router.push(`/magazine/${post.id}`) : setActiveIndex(idx)}
-                            className={`relative group overflow-hidden rounded-2xl cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? "flex-[10] shadow-xl" : "flex-[1] shadow-sm hover:flex-[1.5]"
+                            className={`relative group overflow-hidden rounded-2xl cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? "flex-[15] shadow-xl" : "flex-[1] shadow-sm hover:flex-[5]"
                                 }`}
                         >
                             {/* Backdrop / Image */}

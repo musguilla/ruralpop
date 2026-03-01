@@ -25,7 +25,8 @@ const CATEGORIES = [
     "Guías Legales",
     "Historias Rurales",
     "Tendencias",
-    "Economía y Lonja"
+    "Economía y Lonja",
+    "Innovación"
 ];
 
 interface MagazineClientProps {
