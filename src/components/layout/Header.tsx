@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { createClient } from "@/utils/supabase/server";
 import { logout } from "@/app/auth/actions";
 import { ChatBadge } from "@/components/chat/ChatBadge";
+import { UserMenu } from "@/components/layout/UserMenu";
 
 export async function Header() {
     const supabase = await createClient();
@@ -46,9 +47,6 @@ export async function Header() {
 
                     {user ? (
                         <div className="flex items-center gap-3">
-                            <span className="hidden md:inline-block text-sm font-medium text-[var(--ag-sys-color-text-muted)]">
-                                Hola, {user.user_metadata?.name?.split(' ')[0] || 'Usuario'}
-                            </span>
                             <div className="flex items-center gap-1">
                                 <Link
                                     href="/favoritos"
@@ -59,14 +57,6 @@ export async function Header() {
                                     <Heart className="w-6 h-6" />
                                 </Link>
                                 <Link
-                                    href="/dashboard"
-                                    className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full"
-                                    aria-label="Mi Panel"
-                                    title="Mi Panel"
-                                >
-                                    <LayoutDashboard className="w-6 h-6" />
-                                </Link>
-                                <Link
                                     href="/chat"
                                     className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full relative"
                                     aria-label="Mis Mensajes"
@@ -75,16 +65,12 @@ export async function Header() {
                                     <ChatBadge initialCount={unreadCount || 0} userId={user.id} />
                                 </Link>
                             </div>
-                            <form action={logout}>
-                                <button
-                                    type="submit"
-                                    className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full"
-                                    aria-label="Cerrar Sesión"
-                                    title="Cerrar Sesión"
-                                >
-                                    <LogOut className="w-6 h-6" />
-                                </button>
-                            </form>
+
+                            {/* Componente Cliente para el Menú Desplegable */}
+                            <UserMenu
+                                userFullName={user.user_metadata?.name || ''}
+                                userId={user.id}
+                            />
                         </div>
                     ) : (
                         <Link
