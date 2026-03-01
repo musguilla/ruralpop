@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export interface BlogPost {
     id: string;
@@ -16,6 +17,7 @@ export interface BlogPost {
 
 export function StripeHeroSlider({ posts }: { posts: BlogPost[] }) {
     const [activeIndex, setActiveIndex] = useState(0);
+    const router = useRouter();
 
     if (!posts || posts.length === 0) return null;
 
@@ -30,7 +32,7 @@ export function StripeHeroSlider({ posts }: { posts: BlogPost[] }) {
                     return (
                         <div
                             key={post.id}
-                            onClick={() => setActiveIndex(idx)}
+                            onClick={() => isActive ? router.push(`/magazine/${post.id}`) : setActiveIndex(idx)}
                             className={`relative group overflow-hidden rounded-2xl cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${isActive ? "flex-[10] shadow-xl" : "flex-[1] shadow-sm hover:flex-[1.5]"
                                 }`}
                         >

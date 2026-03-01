@@ -372,7 +372,11 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Tendencias",
         imageUrl: "https://images.unsplash.com/photo-1581403698064-ae2b81dff90e?q=80&w=600&auto=format&fit=crop",
         date: "05 Ene 2026",
-        content: `<p>Los drones aéreos son el presente absoluto de la cartografía y el ahorro milimétrico en fertilizantes y riego hidropónico de campo.</p>`
+        content: `<p>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1581403698064-ae2b81dff90e?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+            </figure>
+            Los drones aéreos son el presente absoluto de la cartografía y el ahorro milimétrico en fertilizantes y riego hidropónico de campo.</p>`
     },
     {
         id: "grid-9-ferias-agrarias-2026",
@@ -381,7 +385,11 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Vida Rural",
         imageUrl: "https://images.unsplash.com/photo-1540673024843-ea40280eb4c6?q=80&w=600&auto=format&fit=crop",
         date: "02 Ene 2026",
-        content: `<p>Asistir significa descubrir avances y conectarse con empresarios. <a href="/s/cosechadoras" class="text-[var(--ag-sys-color-primary)] font-bold underline">Cosechadoras</a> o maquinaria a mitad de precio ex-demo.</p>`
+        content: `<p>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1540673024843-ea40280eb4c6?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+            </figure>
+            Asistir significa descubrir avances y conectarse con empresarios. <a href="/s/cosechadoras" class="text-[var(--ag-sys-color-primary)] font-bold underline">Cosechadoras</a> o maquinaria a mitad de precio ex-demo.</p>`
     },
     {
         id: "grid-10-apicultura-moderna",
@@ -390,7 +398,11 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Inversión Rural",
         imageUrl: "https://images.unsplash.com/photo-1587049352847-81a56d773cae?q=80&w=600&auto=format&fit=crop",
         date: "28 Dic 2025",
-        content: `<p>Las colmenas y su mantenimiento proporcionan retornos ROI fantásticos y seguros estacionales sin mucho sacrificio horas y apoyan directamente todo y grandioso buen y vital medio ambiente rústico del pueblo y los linderos perennifolios bellísimos florales.</p>`
+        content: `<p>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1587049352847-81a56d773cae?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+            </figure>
+            Las colmenas y su mantenimiento proporcionan retornos ROI fantásticos y seguros estacionales sin mucho sacrificio horas y apoyan directamente todo y grandioso buen y vital medio ambiente rústico del pueblo y los linderos perennifolios bellísimos florales.</p>`
     },
     {
         id: "grid-11-veterinaria-remota",
@@ -399,7 +411,11 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Tendencias",
         imageUrl: "https://images.unsplash.com/photo-1628009368231-7bb7cb1c4961?q=80&w=600&auto=format&fit=crop",
         date: "20 Dic 2025",
-        content: `<p>El 5G rural está y viene por suerte solucionando a toda pastilla graves problemas, e introduciendo de sopetón la telemedicina animal ganadera remota moderna con inmensa gigante capacidad de reacción rapidísima y espectacular diagnóstico rápido por webcam para rebaños enormes o pequeños o aislados rebaños perdidos lejos entre pastoreos libres boscosos en sierras altísimas donde antes y atrás perdían tiempo infinito esperando que el doctor ganadero llegara y pisara e interviniera quirúrgicamente.</p>`
+        content: `<p>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1628009368231-7bb7cb1c4961?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+            </figure>
+            El 5G rural está y viene por suerte solucionando a toda pastilla graves problemas, e introduciendo de sopetón la telemedicina animal ganadera remota moderna con inmensa gigante capacidad de reacción rapidísima y espectacular diagnóstico rápido por webcam para rebaños enormes o pequeños o aislados rebaños perdidos lejos entre pastoreos libres boscosos en sierras altísimas donde antes y atrás perdían tiempo infinito esperando que el doctor ganadero llegara y pisara e interviniera quirúrgicamente.</p>`
     },
     {
         id: "grid-12-contratos-arrendamiento",
@@ -408,7 +424,11 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         category: "Guías Legales",
         imageUrl: "https://images.unsplash.com/photo-1509391366360-2e909ebdfadc?q=80&w=600&auto=format&fit=crop",
         date: "14 Dic 2025",
-        content: `<p>Lee muy atenta y sumamente detalladamente los pequeños márgenes letras minúsculas minúsculitas del contrato e hipoteca subscrita antes de estampar legal y notarialmente dolorosamente tu firma vital vendiendo, y no, recalco no para nunca hipoteques locamente el buen sano brillante y limpio ecológico gran futuro hermoso fértil maravilloso biológico frutal y natural y sano sin poluciones de venenosos lixiviados de enormes placas solares de todos tus jóvenes grandes bisnietos o tiernos descendientes sin tener seguro aval un altísimo enorme seguro garantizado banco de pago o finiquito por adelantadísimo millonario.</p>`
+        content: `<p>
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1509391366360-2e909ebdfadc?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+            </figure>
+            Lee muy atenta y sumamente detalladamente los pequeños márgenes letras minúsculas minúsculitas del contrato e hipoteca subscrita antes de estampar legal y notarialmente dolorosamente tu firma vital vendiendo, y no, recalco no para nunca hipoteques locamente el buen sano brillante y limpio ecológico gran futuro hermoso fértil maravilloso biológico frutal y natural y sano sin poluciones de venenosos lixiviados de enormes placas solares de todos tus jóvenes grandes bisnietos o tiernos descendientes sin tener seguro aval un altísimo enorme seguro garantizado banco de pago o finiquito por adelantadísimo millonario.</p>`
     },
     {
         id: "grid-13-motosierras-comparativa",
@@ -418,6 +438,10 @@ export const MAGAZINE_POSTS: BlogPost[] = [
         imageUrl: "https://images.unsplash.com/photo-1582234372722-50d7ccc30ebd?q=80&w=600&auto=format&fit=crop",
         date: "05 Dic 2025",
         content: `
+            <figure class="my-10">
+                <img src="https://images.unsplash.com/photo-1582234372722-50d7ccc30ebd?q=80&w=600&auto=format&fit=crop" alt="Imagen del artículo" class="w-full rounded-2xl shadow-md object-cover max-h-[500px]" />
+            </figure>
+            
             <p>La bestial cilindrada bruta cortando maderos troncos pesados a dos duros tiempos nos desvela el misterio definitivo secular si una es realmente muy altamente mejor veloz fina y ruda y eficaz y limpia cortadora bestial letal que otra rival sueca teutona vecina contraria opuesta europea. Además de leer y formarte de veras no dejes bajo total gran ni ínfimo mínimo ningún concepto asustarte caro ni vaciar cuentas o vaciar de billetes de la tarjeta de cajero para conseguir y comprar o probar o palpar si entras hoy activo ahora por maravillosas grandes casualidades grandes mágicas y afortunadas de tu vida a rebuscar gangas estupendas entre loceros desguaces rústicos locales en las vastísimas secciones muy nutridas e hiperpobladas abundantes vivas grandes ricas extensas completas grandísimas infinitas rimbombantes y geniales gigantes rebosantes listas actualizadas rápidas gratis de la <a href="/s/material-ganadero" class="text-[var(--ag-sys-color-primary)] font-bold underline">ferretería maquinaria herramientas útiles usados descatalogados rústicos rurales online ganaderos</a>.</p>
         `
     }
