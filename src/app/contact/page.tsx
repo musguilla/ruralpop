@@ -1,12 +1,42 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Mail, MessageSquare, Phone } from "lucide-react";
 
 export default function ContactPage() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [successMsg, setSuccessMsg] = useState("");
+    const [errorMsg, setErrorMsg] = useState("");
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setErrorMsg("");
+        setSuccessMsg("");
+
+        const formData = new FormData(e.currentTarget);
+
+        try {
+            // Import the action dynamically or at the top level, but for a Server Action we need to import it at the top.
+            // Assuming it'll be imported at the top of the file in the next step.
+            const { submitContact } = await import("./actions");
+            const res = await submitContact(formData);
+            if (res.success) {
+                setSuccessMsg(res.message || "Enviado con éxito");
+                (e.target as HTMLFormElement).reset();
+            } else {
+                setErrorMsg(res.error || "Error al enviar");
+            }
+        } catch (error) {
+            setErrorMsg("Error de conexión");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 px-4 sm:px-6">
-            <div className="max-w-3xl mx-auto bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-[2rem] p-8 sm:p-12 shadow-sm">
+            <div className="max-w-4xl mx-auto bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-[2rem] p-8 sm:p-12 shadow-sm">
                 <header className="mb-8 border-b border-[var(--ag-sys-color-border)] pb-8 flex items-center gap-4">
                     <div className="w-12 h-12 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] rounded-full flex items-center justify-center shrink-0">
                         <Mail className="w-6 h-6" />
@@ -19,35 +49,112 @@ export default function ContactPage() {
 
                 <div className="space-y-8">
                     <p className="text-[var(--ag-sys-color-text)] leading-relaxed">
-                        ¿Tienes problemas técnicos, alertas sobre anuncios fraudulentos o dudas sobre cómo funciona Ruralpop? Ponte en contacto con nosotros para un soporte directo.
+                        ¿Tienes problemas técnicos, alertas sobre anuncios fraudulentos o dudas sobre cómo funciona Ruralpop? Ponte en contacto con nosotros para un soporte directo rellenando el siguiente formulario.
                     </p>
 
-                    <div className="grid grid-cols-1 max-w-md">
-                        <div className="flex flex-col gap-4 p-6 bg-[var(--ag-sys-color-background)] rounded-2xl border border-[var(--ag-sys-color-border)]">
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-blue-500/10 text-blue-600 rounded-xl">
-                                    <Mail className="w-5 h-5" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        {/* Formulario */}
+                        <div>
+                            {successMsg ? (
+                                <div className="p-6 bg-emerald-50 text-emerald-800 rounded-2xl flex flex-col items-center justify-center h-full text-center border border-emerald-200">
+                                    <MessageSquare className="w-12 h-12 mb-3 text-emerald-500" />
+                                    <h3 className="text-lg font-bold mb-1">¡Mensaje Enviado!</h3>
+                                    <p className="text-sm">{successMsg}</p>
+                                    <button
+                                        type="button"
+                                        onClick={() => setSuccessMsg("")}
+                                        className="mt-6 text-sm font-semibold underline text-emerald-800"
+                                    >
+                                        Enviar otro mensaje
+                                    </button>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                                    {errorMsg && (
+                                        <div className="p-3 bg-red-50 text-red-700 text-sm rounded-xl border border-red-200">
+                                            {errorMsg}
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Tu Nombre</label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            required
+                                            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
+                                            placeholder="Nombre completo"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Tu Email</label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            required
+                                            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
+                                            placeholder="Para que podamos responderte"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Asunto</label>
+                                        <input
+                                            type="text"
+                                            name="subject"
+                                            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
+                                            placeholder="¿De qué trata?"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">Mensaje</label>
+                                        <textarea
+                                            name="message"
+                                            required
+                                            rows={5}
+                                            className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition resize-none"
+                                            placeholder="Explícanos tu caso..."
+                                        />
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={isLoading}
+                                        className="mt-2 flex items-center justify-center gap-2 bg-[var(--ag-sys-color-primary)] text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-60"
+                                    >
+                                        {isLoading ? "Enviando..." : "Enviar Mensaje"}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
+
+                        {/* Bloques de info derecha */}
+                        <div className="space-y-6">
+                            <div className="p-6 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex gap-4">
+                                <div className="text-blue-600 shrink-0">
+                                    <Mail className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-[var(--ag-sys-color-text)]">Email Soporte</h3>
-                                    <p className="text-sm text-[var(--ag-sys-color-text-muted)]">Respuesta en 24h</p>
+                                    <h4 className="font-bold text-blue-800 mb-1">Atención Garantizada</h4>
+                                    <p className="text-sm text-blue-700/80 leading-relaxed">
+                                        Nuestro equipo revisa todos los formularios. Para posibles estafas o contenido fraudulento, indícalo directamente en el asunto para darle máxima prioridad.
+                                    </p>
                                 </div>
                             </div>
-                            <a href="mailto:hola@ruralpop.com" className="text-[var(--ag-sys-color-primary)] font-bold hover:underline">
-                                hola@ruralpop.com
-                            </a>
-                        </div>
-                    </div>
 
-                    <div className="mt-8 p-6 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl flex gap-4">
-                        <div className="text-yellow-600 shrink-0">
-                            <MessageSquare className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-yellow-800 mb-1">Feedback de la comunidad</h4>
-                            <p className="text-sm text-yellow-700/80 leading-relaxed">
-                                Constantemente implementamos mejoras de los usuarios (como el nuevo chat). Si echas en falta alguna categoría, subcategoría o utilidad, no dudes en escribirnos un correo exigiéndolo. ¡A eso venimos!
-                            </p>
+                            <div className="p-6 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl flex gap-4">
+                                <div className="text-yellow-600 shrink-0">
+                                    <MessageSquare className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-yellow-800 mb-1">Feedback de la comunidad</h4>
+                                    <p className="text-sm text-yellow-700/80 leading-relaxed">
+                                        Constantemente implementamos mejoras que nos sugerís. Si echas en falta alguna categoría, subcategoría o utilidad, no dudes en escribirnos un correo.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
