@@ -101,12 +101,16 @@ export function MagazineForm({ initialData, actionPromise }: MagazinePostProps) 
                             required
                             className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
                         >
-                            <option value="Economía y Lonja">Economía y Lonja</option>
+                            <option value="Vida Rural">Vida Rural</option>
+                            <option value="Compraventa">Compraventa</option>
+                            <option value="Agricultura y Ganadería">Agricultura y Ganadería</option>
+                            <option value="Inversión Rural">Inversión Rural</option>
                             <option value="Maquinaria">Maquinaria</option>
-                            <option value="Legislación">Legislación</option>
-                            <option value="Sostenibilidad">Sostenibilidad</option>
+                            <option value="Guías Legales">Guías Legales</option>
+                            <option value="Historias Rurales">Historias Rurales</option>
+                            <option value="Tendencias">Tendencias</option>
+                            <option value="Economía y Lonja">Economía y Lonja</option>
                             <option value="Innovación">Innovación</option>
-                            <option value="Agro">Agro</option>
                         </select>
                     </div>
                     <div>
