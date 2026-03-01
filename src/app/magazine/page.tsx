@@ -1,7 +1,8 @@
 import React from "react";
 import { Metadata } from "next";
 import { Search } from "lucide-react";
-import { StripeHeroSlider, BlogPost } from "@/components/magazine/StripeHeroSlider";
+import { StripeHeroSlider } from "@/components/magazine/StripeHeroSlider";
+import { MAGAZINE_POSTS } from "@/content/magazine/posts";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -21,75 +22,8 @@ const CATEGORIES = [
     "Tendencias"
 ];
 
-// Datos Mock (premium) para la hero section (7 post)
-const HERO_POSTS: BlogPost[] = [
-    {
-        id: "post-1",
-        title: "El auge de la robótica en la ganadería intensiva española en 2026",
-        excerpt: "Análisis sobre la penetración de sistemas automatizados de ordeño y pastoreo en las grandes explotaciones. Cifras y entrevistas a expertos.",
-        category: "Tendencias",
-        imageUrl: "https://images.unsplash.com/photo-1542841432-849ee9db4f33?q=80&w=2670&auto=format&fit=crop", // Tractores / Campo moderno
-        date: "28 Feb 2026",
-    },
-    {
-        id: "post-2",
-        title: "Guía fiscal: Beneficios de la venta de maquinaria agrícola de segunda mano",
-        excerpt: "Novedades tributarias clave para ahorrar dinero al desvincular tus activos de la empresa o transferirlos a un familiar directo.",
-        category: "Guías Legales",
-        imageUrl: "https://images.unsplash.com/photo-1589146522543-c91cb14b30c4?q=80&w=2574&auto=format&fit=crop", // Papers / legal
-        date: "25 Feb 2026",
-    },
-    {
-        id: "post-3",
-        title: "Cómo prepararse para la nueva PAC 2027",
-        excerpt: "Con los nuevos parámetros ecológicos al frente, evaluamos cómo los pequeños propietarios pueden asegurar sus primas agrícolas a tiempo.",
-        category: "Agricultura y Ganadería",
-        imageUrl: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=2664&auto=format&fit=crop", // Cultivos wheat
-        date: "20 Feb 2026",
-    },
-    {
-        id: "post-4",
-        title: "De la ciudad al pueblo: La historia de la granja 'El Retiro' y su éxito",
-        excerpt: "Una familia madrileña cambió las oficinas por la cría de cabras montesas. Hoy exportan queso artesano a media Europa.",
-        category: "Historias Rurales",
-        imageUrl: "https://images.unsplash.com/photo-1524103173738-17a4c7cf4ec3?q=80&w=2674&auto=format&fit=crop", // Cabras / Pastos
-        date: "14 Feb 2026",
-    },
-    {
-        id: "post-5",
-        title: "Aumenta la inversión extranjera en viñedos gallegos un 34%",
-        excerpt: "Por qué los fondos de capital internacionales están comprando tierras de vino Albariño a precios de oro, creando nuevas oportunidades para los locales.",
-        category: "Inversión Rural",
-        imageUrl: "https://images.unsplash.com/photo-1563245464-672ce9f166ff?q=80&w=2574&auto=format&fit=crop", // Uvas / Viñedos
-        date: "10 Feb 2026",
-    },
-    {
-        id: "post-6",
-        title: "Top 5 Tractores John Deere que arrasan en Ruralpop este mes",
-        excerpt: "Recopilamos los modelos de maquinaria pesada que más rápido han conseguido comprador gracias a la app de Ruralpop. Analizamos sus prestaciones.",
-        category: "Maquinaria",
-        imageUrl: "https://images.unsplash.com/photo-1605330366627-02edec221ec5?q=80&w=2574&auto=format&fit=crop", // Tractor
-        date: "05 Feb 2026",
-    },
-    {
-        id: "post-7",
-        title: "Guía para evitar intermediarios abusivos en la compraventa de ganado bovino",
-        excerpt: "Pautas de negociación y cómo usar la plataforma Ruralpop para conectar directamente con granjeros evitando comisiones abusivas.",
-        category: "Compraventa",
-        imageUrl: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?q=80&w=2674&auto=format&fit=crop", // Vacas
-        date: "02 Feb 2026",
-    },
-];
-
-// Artículos dummy para la sección masonry
-const GRID_POSTS = Array.from({ length: 12 }).map((_, i) => ({
-    id: `grid-${i}`,
-    title: `Artículo de actualidad rural número ${i + 1} para explorar temas del campo`,
-    excerpt: "Breve resumen autogenerado donde comentaremos las mejores noticias de mercado, tips de crianza o reportajes únicos del ecosistema agrícola de nuestro país, asegurando un formato premium para lectores.",
-    category: CATEGORIES[i % CATEGORIES.length],
-    imageUrl: `https://images.unsplash.com/photo-${1550000000 + i * 1500}?q=80&w=600&auto=format&fit=crop`,
-    date: `Enero ${20 - i}, 2026`
-}));
+const HERO_POSTS = MAGAZINE_POSTS.slice(0, 7);
+const GRID_POSTS = MAGAZINE_POSTS.slice(7);
 
 export default function MagazinePage() {
     return (
