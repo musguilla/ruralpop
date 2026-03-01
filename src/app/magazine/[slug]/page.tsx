@@ -128,7 +128,7 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
             <div className="container mx-auto px-4 mt-12 max-w-3xl">
                 {post.content ? (
                     <div
-                        className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-[var(--ag-sys-color-text)] prose-a:text-[var(--ag-sys-color-primary)] max-w-none text-[var(--ag-sys-color-text)] leading-relaxed"
+                        className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-[var(--ag-sys-color-text)] prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-a:underline max-w-none text-[var(--ag-sys-color-text)] leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: post.content }}
                     />
                 ) : (
