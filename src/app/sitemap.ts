@@ -3,10 +3,11 @@ import { CATEGORIES } from '@/constants/categories';
 import { LOCATIONS } from '@/constants/locations';
 import { buildSeoUrl } from '@/utils/seoUtils';
 import { SEO_LANDINGS } from '@/constants/seoLandings';
+import { createClient } from '@/utils/supabase/server';
 
 export const revalidate = 86400; // 24 horas
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Definimos la base URL, en producción debería ser una variable de entorno
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
 
@@ -60,6 +61,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
             });
         });
     });
+
+    // 6. Magazine
+    addEntry('/magazine', 0.9);
+
+    const supabase = await createClient();
+    const { data: posts } = await supabase
+        .from('magazine_posts')
+        .select('slug, updated_at, published_at')
+        .eq('is_published', true);
+
+    if (posts) {
+        posts.forEach((post: { slug: string; updated_at: string | null; published_at: string | null }) => {
+            sitemapEntries.push({
+                url: `${baseUrl}/magazine/${post.slug}`,
+                lastModified: new Date(post.updated_at || post.published_at || new Date().toISOString()),
+                changeFrequency: 'weekly',
+                priority: 0.8,
+            });
+        });
+    }
 
     return sitemapEntries;
 }
