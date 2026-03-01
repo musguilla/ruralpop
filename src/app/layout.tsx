@@ -24,10 +24,6 @@ export const metadata: Metadata = {
   title: "Ruralpop - App gratis para comprar y vender ganado",
   description: "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
   applicationName: "Ruralpop",
-  icons: {
-    icon: "/icon.png",
-    apple: "/apple-icon.png",
-  },
   appleWebApp: {
     title: "Ruralpop",
     statusBarStyle: "default",
