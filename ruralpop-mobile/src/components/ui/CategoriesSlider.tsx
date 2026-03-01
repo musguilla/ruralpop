@@ -42,9 +42,10 @@ export function CategoriesSlider() {
                     >
                         {cat.image ? (
                             <Image source={cat.image} className="w-10 h-10" resizeMode="contain" />
-                        ) : cat.Icon ? (
-                            <cat.Icon color="#059669" size={32} />
-                        ) : null}
+                        ) : (() => {
+                            const IconComponent = (cat as any).Icon;
+                            return IconComponent ? <IconComponent color="#059669" size={32} /> : null;
+                        })()}
                         <Text className="text-sm font-bold text-text mt-3 text-center">{cat.label}</Text>
                     </TouchableOpacity>
                 ))}

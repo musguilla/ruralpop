@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Key, Camera, X, CheckCircle2, ChevronDown, Info } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../../src/lib/supabase';
+import { decode } from "base64-arraybuffer";
 import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
 import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';

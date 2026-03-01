@@ -19,6 +19,35 @@ export default function ProfileScreen() {
         }
     }
 
+    const handleDeleteAccount = () => {
+        Alert.alert(
+            "Eliminar Cuenta",
+            "Esta acción es irreversible. Se eliminarán permanentemente todos tus datos personales, tus anuncios publicados y tu historial de mensajes.",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Sí, eliminar mi cuenta",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            const { error } = await supabase.rpc('delete_user_account');
+                            if (error) throw error;
+
+                            // User deleted, sign out from local state
+                            await supabase.auth.signOut();
+                            router.replace("/");
+                        } catch (error: any) {
+                            Alert.alert(
+                                "Error al eliminar la cuenta",
+                                error.message || "Ha ocurrido un error inesperado al intentar borrar tu cuenta."
+                            );
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     if (!session) {
         return (
             <View className="flex-1 items-center justify-center bg-surface px-6">
@@ -71,10 +100,18 @@ export default function ProfileScreen() {
 
                 <TouchableOpacity
                     onPress={() => router.push('/personal-data')}
-                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm"
+                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
                 >
                     <Text className="text-base font-bold text-text">Mis datos</Text>
                     <Text className="text-primary font-bold">→</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress={handleDeleteAccount}
+                    className="bg-white border border-red-200 p-4 rounded-xl flex-row justify-between items-center shadow-sm"
+                >
+                    <Text className="text-base font-bold text-red-600">Eliminar cuenta</Text>
+                    <Text className="text-red-500 font-bold">×</Text>
                 </TouchableOpacity>
             </View>
 
