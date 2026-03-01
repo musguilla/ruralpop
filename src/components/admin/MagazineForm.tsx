@@ -64,7 +64,7 @@ export function MagazineForm({ initialData, actionPromise }: MagazinePostProps) 
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm">
+            <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm" encType="multipart/form-data">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -109,15 +109,23 @@ export function MagazineForm({ initialData, actionPromise }: MagazinePostProps) 
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Imagen de Portada (URL)</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Imagen de Portada</label>
+                        {initialData?.image_url && (
+                            <div className="mb-3">
+                                <img src={initialData.image_url} alt="Portada actual" className="h-32 object-cover rounded-xl shadow-sm" />
+                                <p className="text-xs text-gray-500 mt-1">Sube una nueva imagen para reemplazar la actual.</p>
+                            </div>
+                        )}
                         <input
-                            type="url"
-                            name="image_url"
-                            defaultValue={initialData?.image_url}
-                            required
+                            type="file"
+                            name="image"
+                            accept="image/*"
+                            required={!initialData?.image_url}
                             className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
-                            placeholder="https://images.unsplash.com/photo-..."
                         />
+                        {initialData?.image_url && (
+                            <input type="hidden" name="existing_image_url" value={initialData.image_url} />
+                        )}
                     </div>
                 </div>
 
