@@ -117,7 +117,7 @@ export function ListingCard({ listing, isFavorited = false }: { listing: Listing
                         </div>
 
                         {/* Title */}
-                        <h3 className="font-bold text-[var(--ag-sys-color-text)] line-clamp-2 leading-tight mb-auto group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        <h3 className="font-bold text-[var(--ag-sys-color-text)] line-clamp-2 leading-tight uppercase mb-auto group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
                             {listing.title}
                         </h3>
 

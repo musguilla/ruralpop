@@ -210,7 +210,7 @@ export default async function ListingDetailPage(props: Props) {
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 sm:p-8 border border-[var(--ag-sys-color-border)] shadow-sm">
                             <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
                                 <div>
-                                    <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] mb-2">
+                                    <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] uppercase mb-2">
                                         {listing.title}
                                     </h1>
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--ag-sys-color-text-muted)]">

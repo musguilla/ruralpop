@@ -46,7 +46,8 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     const textQuery = searchParams.q as string;
     if (textQuery) {
-        query = query.or(`title.ilike.%${textQuery}%,description.ilike.%${textQuery}%,location.ilike.%${textQuery}%`);
+        const queryTerm = textQuery.trim().toLowerCase();
+        query = query.or(`title.ilike.%${queryTerm}%,description.ilike.%${queryTerm}%,location.ilike.%${queryTerm}%`);
     }
 
     const priceMin = searchParams.price_min as string;
