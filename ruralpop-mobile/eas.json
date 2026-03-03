@@ -12,7 +12,6 @@
       "distribution": "internal"
     },
     "production": {
-      "credentialsSource": "local",
       "autoIncrement": true,
       "ios": {
         "image": "latest"
