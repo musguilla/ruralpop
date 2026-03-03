@@ -25,6 +25,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1D2422"
       },
+      "compileSdkVersion": 35,
       "package": "com.ruralpop.app"
     },
     "web": {
