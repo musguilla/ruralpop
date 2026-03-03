@@ -39,3 +39,8 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Android Keystore local
+credentials.json
+*.keystore
+upload_certificate.pem
