@@ -65,8 +65,8 @@ export default async function ChatInboxPage() {
     const threads = Array.from(threadsMap.values());
 
     return (
-        <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-8">
-            <div className="container mx-auto px-4 max-w-4xl">
+        <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 w-full">
+            <div className="container mx-auto px-4 max-w-6xl">
                 <header className="mb-8">
                     <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
                         Mis Mensajes
