@@ -77,12 +77,14 @@ export function UserMenu({ userFullName, userId }: UserMenuProps) {
 
                         <div className="my-1 border-t border-gray-100"></div>
 
-                        <div className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors cursor-not-allowed opacity-80">
-                            <div className="flex items-center gap-3">
-                                <Briefcase className="w-5 h-5" />
-                                <span className="font-semibold">¿Eres profesional?</span>
+                        <div className="flex px-4 py-3 hover:bg-gray-50 transition-colors cursor-not-allowed opacity-80">
+                            <div className="flex items-start gap-3">
+                                <Briefcase className="w-5 h-5 mt-1" />
+                                <div className="flex flex-col items-start gap-1">
+                                    <span className="text-[9px] uppercase font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full leading-none">Próximamente</span>
+                                    <span className="font-semibold leading-none mt-1">¿Eres profesional?</span>
+                                </div>
                             </div>
-                            <span className="text-[10px] uppercase font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Próximamente</span>
                         </div>
 
                         <Link
