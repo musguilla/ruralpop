@@ -8,12 +8,12 @@ interface EditableFieldProps {
     field: "name" | "phone" | "email";
     initialValue: string;
     label: string;
-    icon: React.ElementType;
+    icon: React.ReactNode;
     placeholder?: string;
     type?: "text" | "email" | "tel";
 }
 
-export function EditableField({ field, initialValue, label, icon: Icon, placeholder, type = "text" }: EditableFieldProps) {
+export function EditableField({ field, initialValue, label, icon, placeholder, type = "text" }: EditableFieldProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [value, setValue] = useState(initialValue);
     const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +64,7 @@ export function EditableField({ field, initialValue, label, icon: Icon, placehol
     return (
         <div className="flex flex-col group relative">
             <dt className="flex items-center gap-2 text-sm font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider mb-2">
-                <Icon className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
+                {icon}
                 {label}
             </dt>
             <dd className="relative flex items-center min-h-[40px]">

@@ -45,7 +45,7 @@ export default async function AccountPage() {
                             <EditableField
                                 field="name"
                                 label="Nombre Completo"
-                                icon={User}
+                                icon={<User className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                 initialValue={fullName}
                                 placeholder="Tu nombre..."
                             />
@@ -53,7 +53,7 @@ export default async function AccountPage() {
                             <EditableField
                                 field="phone"
                                 label="Teléfono"
-                                icon={Phone}
+                                icon={<Phone className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                 type="tel"
                                 initialValue={userPhone}
                                 placeholder="Tu teléfono..."
@@ -62,7 +62,7 @@ export default async function AccountPage() {
                             <EditableField
                                 field="email"
                                 label="Email"
-                                icon={Mail}
+                                icon={<Mail className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                 type="email"
                                 initialValue={userEmail}
                                 placeholder="Tu correo electrónico..."
