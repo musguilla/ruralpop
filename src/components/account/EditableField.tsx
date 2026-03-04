@@ -69,7 +69,15 @@ export function EditableField({ field, initialValue, label, icon, placeholder, t
             </dt>
             <dd className="relative flex items-center min-h-[40px]">
                 {isEditing ? (
-                    <div className="flex w-full items-center gap-2">
+                    <div
+                        className="flex w-full items-center gap-2"
+                        onBlur={(e) => {
+                            // Guardar automáticamente al hacer clic fuera (perder foco de todo el bloque)
+                            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                handleSave();
+                            }
+                        }}
+                    >
                         <input
                             ref={inputRef}
                             type={type}
