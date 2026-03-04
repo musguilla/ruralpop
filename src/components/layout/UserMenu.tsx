@@ -43,7 +43,7 @@ export function UserMenu({ userFullName, userId }: UserMenuProps) {
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-gray-700 animate-in fade-in zoom-in-95 duration-200">
                     <div className="py-2">
                         <Link
-                            href="/dashboard"
+                            href="/account"
                             className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                             onClick={() => setIsOpen(false)}
                         >
