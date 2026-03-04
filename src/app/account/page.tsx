@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { User, Phone, Mail, KeyRound, ArrowLeft } from "lucide-react";
+import { EditableField } from "@/components/account/EditableField";
 
 export const dynamic = "force-dynamic";
 
@@ -14,9 +15,9 @@ export default async function AccountPage() {
     }
 
     const { user_metadata, email, phone } = user;
-    const fullName = user_metadata?.name || "Usuario Ruralpop";
-    const userPhone = phone || user_metadata?.phone || "No especificado";
-    const userEmail = email || "Sin email configurado";
+    const fullName = user_metadata?.name || "";
+    const userPhone = phone || user_metadata?.phone || "";
+    const userEmail = email || "";
 
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 w-full">
@@ -40,36 +41,32 @@ export default async function AccountPage() {
                 <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden shadow-sm">
                     <div className="p-8 border-b border-[var(--ag-sys-color-border)]">
                         <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Datos Personales</h2>
-                        <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
-                            <div className="flex flex-col">
-                                <dt className="flex items-center gap-2 text-sm font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider mb-2">
-                                    <User className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                                    Nombre Completo
-                                </dt>
-                                <dd className="text-lg font-medium text-[var(--ag-sys-color-text)]">
-                                    {fullName}
-                                </dd>
-                            </div>
+                        <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12">
+                            <EditableField
+                                field="name"
+                                label="Nombre Completo"
+                                icon={User}
+                                initialValue={fullName}
+                                placeholder="Tu nombre..."
+                            />
 
-                            <div className="flex flex-col">
-                                <dt className="flex items-center gap-2 text-sm font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider mb-2">
-                                    <Phone className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                                    Teléfono
-                                </dt>
-                                <dd className="text-lg font-medium text-[var(--ag-sys-color-text)]">
-                                    {userPhone}
-                                </dd>
-                            </div>
+                            <EditableField
+                                field="phone"
+                                label="Teléfono"
+                                icon={Phone}
+                                type="tel"
+                                initialValue={userPhone}
+                                placeholder="Tu teléfono..."
+                            />
 
-                            <div className="flex flex-col">
-                                <dt className="flex items-center gap-2 text-sm font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider mb-2">
-                                    <Mail className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                                    Email
-                                </dt>
-                                <dd className="text-lg font-medium text-[var(--ag-sys-color-text)]">
-                                    {userEmail}
-                                </dd>
-                            </div>
+                            <EditableField
+                                field="email"
+                                label="Email"
+                                icon={Mail}
+                                type="email"
+                                initialValue={userEmail}
+                                placeholder="Tu correo electrónico..."
+                            />
                         </dl>
                     </div>
 
