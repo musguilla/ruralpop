@@ -74,12 +74,12 @@ export async function signup(formData: FormData) {
                     <h1 class="title">¡Hola, ${name}!</h1>
                     <p class="text">
                         Te damos la bienvenida a <strong>Ruralpop</strong>.<br/><br/>
-                        Estamos encantados de tenerte con nosotros en el gran mercado agrícola. Descubre los mejores anuncios, gestiona tus perfiles y conecta con miles de usuarios en un instante.
+                        Estamos encantados de tenerte con nosotros en el gran mercado ganadero y agrícola que es Ruralpop. Empieza a vender y comprar ya! Descubre los mejores anuncios, gestiona tus favoritos y conecta con miles de usuarios al instante.
                     </p>
-                    <a href="${siteUrl}/account" class="button" style="color: #ffffff; text-decoration: none;">Entrar a mi panel</a>
+                    <a href="${siteUrl}/account" class="button" style="color: #ffffff; text-decoration: none;">Entrar a Ruralpop</a>
                     <p class="footer">
                         Estás recibiendo este correo porque acabas de crear una cuenta en Ruralpop.<br/><br/>
-                        © ${new Date().getFullYear()} Ruralpop. El gran mercado agrícola.
+                        © ${new Date().getFullYear()} Ruralpop
                     </p>
                 </div>
             </body>
