@@ -4,7 +4,6 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NotificationProvider } from "@/context/NotificationContext";
-import { InstallBanner } from "@/components/layout/InstallBanner";
 import { SeoFooterTabs } from "@/components/layout/SeoFooterTabs";
 import Script from "next/script";
 
@@ -36,6 +35,9 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: "Ruralpop",
     statusBarStyle: "default",
+  },
+  itunes: {
+    appId: "6759678666"
   }
 };
 
@@ -67,7 +69,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col font-sans antialiased`}
       >
         <NotificationProvider>
-          <InstallBanner />
           <Header />
           <main className="flex-1 w-full flex flex-col items-center">
             {children}
