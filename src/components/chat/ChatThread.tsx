@@ -153,7 +153,7 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
     };
 
     return (
-        <div className="flex flex-col h-[600px] sm:h-[700px] bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-[2.5rem] overflow-hidden shadow-xl">
+        <div className="flex flex-col h-[calc(100vh-10rem)] min-h-[500px] max-h-[800px] bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-[2.5rem] overflow-hidden shadow-xl">
             {/* Header del Chat */}
             <div className="p-4 sm:p-6 bg-[var(--ag-sys-color-surface)] border-b border-[var(--ag-sys-color-border)] flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -200,7 +200,7 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
                                 key={msg.id}
                                 className={`flex flex-col ${isMine ? "items-end" : "items-start"}`}
                             >
-                                <div className={`max-w-[85%] sm:max-w-[70%] p-4 rounded-3xl text-sm leading-relaxed shadow-sm ${isMine
+                                <div className={`max-w-[85%] sm:max-w-[70%] lg:max-w-[55%] p-4 rounded-3xl text-sm leading-relaxed shadow-sm ${isMine
                                     ? "bg-[var(--ag-sys-color-primary)] text-white rounded-tr-none"
                                     : "bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-tl-none"
                                     }`}>
