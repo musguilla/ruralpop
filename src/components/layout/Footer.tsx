@@ -37,7 +37,7 @@ export function Footer() {
                     <div className="hidden md:block w-px h-12 bg-[var(--ag-sys-color-border)]"></div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-4 mt-4 sm:mt-0">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-4 mt-4 sm:mt-0">
                     {/* Apple App Store Native SVG Badge */}
                     <a href="https://apps.apple.com/es/app/ruralpop/id6759678666" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 hover:opacity-80 transition-all cursor-pointer" title="Descargar en el App Store">
                         <div className="flex items-center bg-black text-white px-4 py-2 rounded-xl border border-gray-800">
