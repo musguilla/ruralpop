@@ -24,6 +24,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title: `${post.title} | Ruralpop Magazine`,
         description: post.excerpt,
+        alternates: {
+            canonical: `/magazine/${slug}`,
+        },
     };
 }
 

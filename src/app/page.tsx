@@ -4,6 +4,13 @@ import { Suspense } from "react";
 import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
 import { HomeSearchHero } from "@/components/ui/HomeSearchHero";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default async function Home(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
