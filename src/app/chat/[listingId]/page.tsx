@@ -49,8 +49,8 @@ export default async function ChatThreadPage(props: {
         .order("created_at", { ascending: true });
 
     return (
-        <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-8">
-            <div className="container mx-auto px-4 max-w-6xl">
+        <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-8 w-full flex flex-col">
+            <div className="container mx-auto px-4 w-full max-w-4xl">
                 <ChatThread
                     listing={listing}
                     initialMessages={messages || []}
