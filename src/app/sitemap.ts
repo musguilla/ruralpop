@@ -5,7 +5,7 @@ import { buildSeoUrl } from '@/utils/seoUtils';
 import { SEO_LANDINGS } from '@/constants/seoLandings';
 import { createClient } from '@/utils/supabase/server';
 
-export const revalidate = 86400; // 24 horas
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Definimos la base URL, en producción debería ser una variable de entorno
