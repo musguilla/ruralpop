@@ -42,7 +42,10 @@ export async function forgotPassword(formData: FormData) {
         const actionLink = data?.properties?.action_link;
 
         if (actionLink) {
-            const resend = new Resend(process.env.RESEND_API_KEY!);
+            if (!process.env.RESEND_API_KEY) {
+                return redirect("/forgot-password?error=Error del servidor: RESEND_API_KEY no configurado.");
+            }
+            const resend = new Resend(process.env.RESEND_API_KEY);
 
             const emailHtml = `
             <!DOCTYPE html>
@@ -86,14 +89,17 @@ export async function forgotPassword(formData: FormData) {
 
             if (resendError) {
                 console.error("Resend send error:", resendError);
-                // Redirect back but log internal error
+                return redirect(`/forgot-password?error=Error al enviar email: ${resendError.message}`);
             }
+
+            return redirect("/forgot-password?message=Si el correo existe en nuestra base de datos, recibirás un enlace para restablecer tu contraseña en unos minutos.");
         }
 
-    } catch (e) {
+    } catch (e: any) {
+        if (e.message?.includes("NEXT_REDIRECT")) throw e;
         console.error("Unexpected error in forgotPassword action:", e);
+        return redirect(`/forgot-password?error=Error inesperado: ${e.message || "Contacta al soporte"}`);
     }
 
-    // Always return a success message regardless of existence to prevent email enumeration
-    redirect("/forgot-password?message=Si el correo existe en nuestra base de datos, recibirás un enlace para restablecer tu contraseña en unos minutos.");
+    return redirect("/forgot-password?error=No se ha podido generar el enlace de recuperación.");
 }
