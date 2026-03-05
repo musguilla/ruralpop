@@ -12,6 +12,11 @@ interface ImageGalleryProps {
 export function ImageGallery({ images, title }: ImageGalleryProps) {
     const [activeIndex, setActiveIndex] = useState(0);
 
+    // Swipe state
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [touchEnd, setTouchEnd] = useState<number | null>(null);
+    const SWIPE_THRESHOLD = 50;
+
     if (!images || images.length === 0) {
         return (
             <div className="aspect-[4/3] w-full bg-[var(--ag-sys-color-background)] rounded-3xl flex items-center justify-center border border-[var(--ag-sys-color-border)]">
@@ -23,10 +28,34 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
     const next = () => setActiveIndex((prev) => (prev + 1) % images.length);
     const prev = () => setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
 
+    const onTouchStart = (e: React.TouchEvent) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEndHandler = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+
+        // Deslizar izquierda (Siguiente)
+        if (distance > SWIPE_THRESHOLD) next();
+        // Deslizar derecha (Anterior)
+        if (distance < -SWIPE_THRESHOLD) prev();
+    };
+
     return (
         <div className="space-y-4">
             {/* Main Image Container */}
-            <div className="relative aspect-[4/3] w-full bg-[var(--ag-sys-color-background)] rounded-3xl overflow-hidden border border-[var(--ag-sys-color-border)] group">
+            <div
+                className="relative aspect-[4/3] w-full bg-[var(--ag-sys-color-background)] rounded-3xl overflow-hidden border border-[var(--ag-sys-color-border)] group select-none"
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEndHandler}
+            >
                 <Image
                     src={images[activeIndex]}
                     alt={`${title} - imagen ${activeIndex + 1}`}
@@ -66,8 +95,8 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
                             key={idx}
                             onClick={() => setActiveIndex(idx)}
                             className={`relative flex-shrink-0 w-20 aspect-square rounded-xl overflow-hidden border-2 transition-all ${activeIndex === idx
-                                    ? "border-[var(--ag-sys-color-primary)] ring-2 ring-[var(--ag-sys-color-primary)]/20"
-                                    : "border-transparent opacity-70 hover:opacity-100"
+                                ? "border-[var(--ag-sys-color-primary)] ring-2 ring-[var(--ag-sys-color-primary)]/20"
+                                : "border-transparent opacity-70 hover:opacity-100"
                                 }`}
                         >
                             <Image
