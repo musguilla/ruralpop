@@ -13,12 +13,18 @@ export async function signup(formData: FormData) {
     const password = formData.get("password") as string;
     const passwordConfirm = formData.get("password_confirm") as string;
 
+    let redirectPath = "/login?message=Cuenta creada correctamente.";
+
     if (!email || !password || !name) {
-        redirect("/register?error=Todos los campos son obligatorios");
+        redirectPath = "/register?error=Todos los campos son obligatorios";
     }
 
-    if (password !== passwordConfirm) {
-        redirect("/register?error=Las contraseñas no coinciden, por favor verifica.");
+    if (password !== passwordConfirm && redirectPath === "/login?message=Cuenta creada correctamente.") {
+        redirectPath = "/register?error=Las contraseñas no coinciden, por favor verifica.";
+    }
+
+    if (redirectPath !== "/login?message=Cuenta creada correctamente.") {
+        redirect(redirectPath);
     }
 
     const { error } = await supabase.auth.signUp({
@@ -39,15 +45,15 @@ export async function signup(formData: FormData) {
             errorMsg = "user_exists";
         }
 
-        redirect(`/register?error=${encodeURIComponent(errorMsg)}`);
-    }
+        redirectPath = `/register?error=${encodeURIComponent(errorMsg)}`;
+    } else {
+        // If no error on signup, try to send welcome email
+        try {
+            if (process.env.RESEND_API_KEY) {
+                const resend = new Resend(process.env.RESEND_API_KEY);
+                const siteUrl = "https://www.ruralpop.com";
 
-    try {
-        if (process.env.RESEND_API_KEY) {
-            const resend = new Resend(process.env.RESEND_API_KEY);
-            const siteUrl = "https://www.ruralpop.com";
-
-            const emailHtml = `
+                const emailHtml = `
             <!DOCTYPE html>
             <html lang="es">
             <head>
@@ -80,22 +86,29 @@ export async function signup(formData: FormData) {
             </html>
             `;
 
-            const { error: resendError } = await resend.emails.send({
-                from: "Ruralpop <no-reply@ruralpop.com>",
-                to: [email],
-                subject: "¡Bienvenido/a a Ruralpop!",
-                html: emailHtml,
-            });
+                const { error: resendError } = await resend.emails.send({
+                    from: "Ruralpop <no-reply@ruralpop.com>",
+                    to: [email],
+                    subject: "¡Bienvenido/a a Ruralpop!",
+                    html: emailHtml,
+                });
 
-            if (resendError) {
-                console.error("Welcome email resend error:", resendError);
+                if (resendError) {
+                    console.error("Welcome email resend error:", resendError);
+                }
             }
+        } catch (e: any) {
+            console.error("Unexpected error sending welcome email:", e);
         }
-    } catch (e) {
-        console.error("Unexpected error sending welcome email:", e);
+
+        try {
+            revalidatePath("/", "layout");
+        } catch (e) {
+            console.error("revalidatePath error:", e);
+        }
+
+        redirectPath = `/login?message=${encodeURIComponent("Cuenta creada correctamente. ¡Bienvenido/a a Ruralpop!")}`;
     }
 
-    // Notamos que la creación del perfil en DB se hace mediante el trigger SQL automatizado.
-    revalidatePath("/", "layout");
-    redirect("/login?message=Cuenta creada correctamente. ¡Bienvenido/a a Ruralpop!");
+    redirect(redirectPath);
 }
