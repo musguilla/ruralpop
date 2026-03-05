@@ -9,7 +9,9 @@ export function PasswordInput({
     placeholder = "••••••••",
     required = true,
     minLength,
-    autoComplete
+    autoComplete,
+    value,
+    onChange
 }: {
     id: string;
     name: string;
@@ -17,6 +19,8 @@ export function PasswordInput({
     required?: boolean;
     minLength?: number;
     autoComplete?: string;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -29,6 +33,8 @@ export function PasswordInput({
                 autoComplete={autoComplete}
                 required={required}
                 minLength={minLength}
+                value={value}
+                onChange={onChange}
                 className="appearance-none relative block w-full px-4 py-3 pr-10 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
                 placeholder={placeholder}
             />

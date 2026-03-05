@@ -23,9 +23,14 @@ export async function forgotPassword(formData: FormData) {
             }
         );
 
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
+
         const { data, error } = await adminSupabase.auth.admin.generateLink({
             type: "recovery",
             email: email,
+            options: {
+                redirectTo: `${siteUrl}/update-password`
+            }
         });
 
         if (error) {
