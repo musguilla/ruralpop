@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Instagram } from "lucide-react";
 
 export function Footer() {
     const currentYear = new Date().getFullYear();
@@ -8,23 +9,28 @@ export function Footer() {
     return (
         <footer className="w-full border-t border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] py-8 mt-auto">
             <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-                <div className="flex flex-col md:flex-row items-center gap-6">
-                    <div className="flex flex-col items-center md:items-start gap-2">
-                        <Link
-                            href="/"
-                            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                        >
-                            <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain dark:invert" />
-                        </Link>
-                        <p className="text-[var(--ag-sys-color-text-muted)] text-sm max-w-sm text-center md:text-left">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                    <div className="flex flex-col items-center md:items-start gap-2 max-w-sm">
+                        <div className="flex items-center justify-between w-full">
+                            <Link
+                                href="/"
+                                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                            >
+                                <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain dark:invert" />
+                            </Link>
+                            <a href="https://instagram.com/ruralpop" target="_blank" rel="noopener noreferrer" className="text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors pr-2" aria-label="Instagram">
+                                <Instagram className="w-7 h-7" strokeWidth={1.5} />
+                            </a>
+                        </div>
+                        <p className="text-[var(--ag-sys-color-text-muted)] text-sm text-center md:text-left mt-2">
                             La App gratuita para buscar, comprar y vender ganado, maquinaria y mucho más directamente entre ganaderos de toda España.
                         </p>
                     </div>
 
                     {/* Vertical line 1 */}
-                    <div className="hidden md:block w-px h-12 bg-[var(--ag-sys-color-border)]"></div>
+                    <div className="hidden md:block w-px h-20 bg-[var(--ag-sys-color-border)] mt-1"></div>
 
-                    <div className="flex flex-col items-center md:items-start">
+                    <div className="flex flex-col items-center md:items-start pt-1">
                         <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
                             Conexión Rural
                         </span>
@@ -34,7 +40,7 @@ export function Footer() {
                     </div>
 
                     {/* Vertical line 2 */}
-                    <div className="hidden md:block w-px h-12 bg-[var(--ag-sys-color-border)]"></div>
+                    <div className="hidden md:block w-px h-20 bg-[var(--ag-sys-color-border)] mt-1"></div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-4 mt-4 sm:mt-0">
