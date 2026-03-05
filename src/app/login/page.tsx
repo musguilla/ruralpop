@@ -67,7 +67,7 @@ export default async function LoginPage(props: {
                             href="/forgot-password"
                             className="text-sm font-medium text-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary-hover)] hover:underline transition-all"
                         >
-                            ¿Olvidaste tu contraseña? Recordar contraseña
+                            ¿Olvidaste tu contraseña?
                         </Link>
                     </div>
 
