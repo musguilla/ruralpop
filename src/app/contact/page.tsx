@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Mail, MessageSquare, Phone } from "lucide-react";
+import { submitContact } from "./actions";
 
 export default function ContactPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -17,9 +18,6 @@ export default function ContactPage() {
         const formData = new FormData(e.currentTarget);
 
         try {
-            // Import the action dynamically or at the top level, but for a Server Action we need to import it at the top.
-            // Assuming it'll be imported at the top of the file in the next step.
-            const { submitContact } = await import("./actions");
             const res = await submitContact(formData);
             if (res.success) {
                 setSuccessMsg(res.message || "Enviado con éxito");
