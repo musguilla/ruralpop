@@ -61,7 +61,8 @@ export async function forgotPassword(formData: FormData) {
                         .logo { width: 150px; margin-bottom: 24px; }
                         .title { font-size: 24px; font-weight: bold; margin-bottom: 16px; color: #111827; }
                         .text { font-size: 16px; line-height: 1.5; color: #4b5563; margin-bottom: 32px; }
-                        .button { display: inline-block; padding: 14px 28px; background-color: #10b981; color: #ffffff; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px; }
+                        .button { display: inline-block; padding: 14px 28px; background-color: #10b981; color: #ffffff !important; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px; }
+                        .fallback-text { margin-top: 24px; font-size: 13px; color: #6b7280; word-break: break-all; text-align: left; background-color: #f3f4f6; padding: 12px; border-radius: 6px; }
                         .footer { margin-top: 32px; font-size: 12px; color: #9ca3af; }
                     </style>
                 </head>
@@ -73,7 +74,12 @@ export async function forgotPassword(formData: FormData) {
                             Hemos recibido una solicitud para cambiar tu contraseña en <strong>Ruralpop</strong>. <br/><br/>
                             Haz clic en el siguiente botón para establecer una nueva contraseña de forma segura.
                         </p>
-                        <a href="${actionLink}" class="button">Restablecer mi contraseña</a>
+                        <a href="${actionLink}" class="button" style="color: #ffffff; text-decoration: none;">Restablecer mi contraseña</a>
+                        
+                        <p class="fallback-text">
+                            Si no puedes hacer clic en el botón, copia y pega este enlace en tu navegador:<br/>
+                            <a href="${actionLink}" style="color: #10b981;">${actionLink}</a>
+                        </p>
                         <p class="footer">
                             Si no has solicitado este cambio, por favor ignora este correo electrónico.<br/><br/>
                             © ${new Date().getFullYear()} Ruralpop. El gran mercado agrícola.
