@@ -18,8 +18,8 @@ export function Footer() {
                             >
                                 <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain dark:invert" />
                             </Link>
-                            <a href="https://instagram.com/ruralpop" target="_blank" rel="noopener noreferrer" className="text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors pr-2" aria-label="Instagram">
-                                <Instagram className="w-7 h-7" strokeWidth={1.5} />
+                            <a href="https://www.instagram.com/ruralpopapp" target="_blank" rel="noopener noreferrer" className="text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors pr-2" aria-label="Instagram">
+                                <Instagram className="w-7 h-7" strokeWidth={2.25} />
                             </a>
                         </div>
                         <p className="text-[var(--ag-sys-color-text-muted)] text-sm text-center md:text-left mt-2">
