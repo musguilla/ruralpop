@@ -39,18 +39,17 @@ export async function forgotPassword(formData: FormData) {
         if (error) {
             console.error("Generate link error:", error);
             // Don't leak whether the email exists or not for security reasons.
-            redirect("/forgot-password?message=Si el correo existe en nuestra base de datos, recibirás un enlace para restablecer tu contraseña.");
-        }
+            redirectPath = "/forgot-password?message=Si el correo existe en nuestra base de datos, recibirás un enlace para restablecer tu contraseña.";
+        } else {
+            const actionLink = data?.properties?.action_link;
 
-        const actionLink = data?.properties?.action_link;
+            if (actionLink) {
+                if (!process.env.RESEND_API_KEY) {
+                    redirectPath = "/forgot-password?error=Error del servidor: RESEND_API_KEY no configurado.";
+                } else {
+                    const resend = new Resend(process.env.RESEND_API_KEY);
 
-        if (actionLink) {
-            if (!process.env.RESEND_API_KEY) {
-                redirectPath = "/forgot-password?error=Error del servidor: RESEND_API_KEY no configurado.";
-            } else {
-                const resend = new Resend(process.env.RESEND_API_KEY);
-
-                const emailHtml = `
+                    const emailHtml = `
                 <!DOCTYPE html>
                 <html lang="es">
                 <head>
@@ -89,19 +88,22 @@ export async function forgotPassword(formData: FormData) {
                 </html>
                 `;
 
-                const { error: resendError } = await resend.emails.send({
-                    from: "Ruralpop <no-reply@ruralpop.com>",
-                    to: [email],
-                    subject: "Recupera tu contraseña en Ruralpop",
-                    html: emailHtml,
-                });
+                    const { error: resendError } = await resend.emails.send({
+                        from: "Ruralpop <no-reply@ruralpop.com>",
+                        to: [email],
+                        subject: "Recupera tu contraseña en Ruralpop",
+                        html: emailHtml,
+                    });
 
-                if (resendError) {
-                    console.error("Resend send error:", resendError);
-                    redirectPath = `/forgot-password?error=Error al enviar email: ${resendError.message}`;
-                } else {
-                    redirectPath = "/forgot-password?message=Si el correo existe en nuestra base de datos, recibirás un enlace para restablecer tu contraseña en unos minutos.";
+                    if (resendError) {
+                        console.error("Resend send error:", resendError);
+                        redirectPath = `/forgot-password?error=Error al enviar email: ${resendError.message}`;
+                    } else {
+                        redirectPath = "/forgot-password?message=Si el correo existe en nuestra base de datos, recibirás un enlace para restablecer tu contraseña en unos minutos.";
+                    }
                 }
+            } else {
+                redirectPath = "/forgot-password?message=Si el correo existe en nuestra base de datos, recibirás un enlace para restablecer tu contraseña.";
             }
         }
     } catch (e: any) {
