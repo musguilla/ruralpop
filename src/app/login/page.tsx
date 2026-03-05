@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 import { login } from "./actions";
 
 export default async function LoginPage(props: {
@@ -46,14 +47,10 @@ export default async function LoginPage(props: {
                             <label htmlFor="password" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
                                 Contraseña
                             </label>
-                            <input
+                            <PasswordInput
                                 id="password"
                                 name="password"
-                                type="password"
                                 autoComplete="current-password"
-                                required
-                                className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
-                                placeholder="••••••••"
                             />
                         </div>
                     </div>

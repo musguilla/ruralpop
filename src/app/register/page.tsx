@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 import { signup } from "./actions";
 
 export default async function RegisterPage(props: {
@@ -81,30 +82,22 @@ export default async function RegisterPage(props: {
                             <label htmlFor="password" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
                                 Contraseña
                             </label>
-                            <input
+                            <PasswordInput
                                 id="password"
                                 name="password"
-                                type="password"
                                 autoComplete="new-password"
-                                required
                                 minLength={6}
-                                className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
-                                placeholder="••••••••"
                             />
                         </div>
                         <div>
                             <label htmlFor="password_confirm" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
                                 Repite la contraseña
                             </label>
-                            <input
+                            <PasswordInput
                                 id="password_confirm"
                                 name="password_confirm"
-                                type="password"
                                 autoComplete="new-password"
-                                required
                                 minLength={6}
-                                className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
-                                placeholder="••••••••"
                             />
                         </div>
                     </div>
