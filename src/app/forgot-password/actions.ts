@@ -23,7 +23,8 @@ export async function forgotPassword(formData: FormData) {
             }
         );
 
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
+        // Forzamos la URL de producción para los emails independientemente de las variables de entorno locales
+        const siteUrl = "https://www.ruralpop.com";
 
         const { data, error } = await adminSupabase.auth.admin.generateLink({
             type: "recovery",
