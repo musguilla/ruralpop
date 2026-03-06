@@ -23,14 +23,14 @@ export default function PersonalDataScreen() {
             setLoading(true);
             const { data, error } = await supabase
                 .from('users')
-                .select('name, phone')
+                .select('name, contact_phone')
                 .eq('id', user?.id)
                 .single();
 
             if (data) {
                 // Support both full_name or name from supabase
                 setName(data.name || user?.user_metadata?.full_name || '');
-                setPhone(data.phone || '');
+                setPhone(data.contact_phone || '');
             }
             if (user?.email) {
                 setEmail(user.email);
@@ -51,7 +51,7 @@ export default function PersonalDataScreen() {
             .from('users')
             .update({
                 name: name.trim(),
-                phone: phone.trim()
+                contact_phone: phone.trim()
             })
             .eq('id', user.id);
 
