@@ -8,9 +8,10 @@ import { ChatBadge } from "@/components/chat/ChatBadge";
 interface UserMenuProps {
     userFullName: string;
     userId: string;
+    avatarUrl?: string | null;
 }
 
-export function UserMenu({ userFullName, userId }: UserMenuProps) {
+export function UserMenu({ userFullName, userId, avatarUrl }: UserMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -33,8 +34,14 @@ export function UserMenu({ userFullName, userId }: UserMenuProps) {
                 className="flex items-center justify-center p-1 rounded-full text-blue-600 bg-blue-100 hover:bg-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                 aria-label="Menú de usuario"
             >
-                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-500 text-white font-semibold text-sm">
-                    {userFullName ? userFullName.charAt(0).toUpperCase() : <UserCircle2 className="w-6 h-6" />}
+                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-500 text-white font-semibold text-sm overflow-hidden">
+                    {avatarUrl ? (
+                        <img src={avatarUrl} alt={userFullName || 'Avatar'} className="w-full h-full object-cover" />
+                    ) : userFullName ? (
+                        userFullName.charAt(0).toUpperCase()
+                    ) : (
+                        <UserCircle2 className="w-6 h-6" />
+                    )}
                 </div>
                 <ChevronDown className="w-4 h-4 text-gray-600 ml-1" />
             </button>

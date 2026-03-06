@@ -70,6 +70,7 @@ export async function Header() {
                             <UserMenu
                                 userFullName={user.user_metadata?.name || ''}
                                 userId={user.id}
+                                avatarUrl={user.user_metadata?.avatar_url}
                             />
                         </div>
                     ) : (
