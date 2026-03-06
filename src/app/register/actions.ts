@@ -19,6 +19,16 @@ export async function signup(formData: FormData) {
         redirectPath = "/register?error=Todos los campos son obligatorios";
     }
 
+    if (redirectPath === "/login?message=Cuenta creada correctamente.") {
+        const cleanName = name.trim().toLowerCase();
+        // Regex to catch variants of generic names, handling accents
+        const isGenericName = /^(sin\s*nombre|an[oó]nimo|usuario|user|desconocido|null|undefined)$/i.test(cleanName);
+
+        if (cleanName.length < 2 || isGenericName) {
+            redirectPath = "/register?error=Por favor, introduce un nombre o alias válido.";
+        }
+    }
+
     if (password !== passwordConfirm && redirectPath === "/login?message=Cuenta creada correctamente.") {
         redirectPath = "/register?error=Las contraseñas no coinciden, por favor verifica.";
     }
