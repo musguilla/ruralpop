@@ -9,6 +9,7 @@ import { ChatButton } from "@/components/chat/ChatButton";
 import { decodeId } from "@/utils/idUtils";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { FavoriteDetailButton } from "@/components/ui/FavoriteDetailButton";
+import { ShareButtons } from "@/components/ui/ShareButtons";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -291,6 +292,7 @@ export default async function ListingDetailPage(props: Props) {
                                 )}
                             </div>
                         </div>
+                        <ShareButtons title={listing.title} url={`https://www.ruralpop.com/anuncio/${slug}`} />
 
                         {/* Garantía Ruralpop Simple */}
                         <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-2xl p-4 flex gap-3">
