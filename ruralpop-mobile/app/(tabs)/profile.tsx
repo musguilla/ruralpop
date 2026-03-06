@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, Image } from "react-native";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { User, LogOut, Heart, MessageCircle, Briefcase } from "lucide-react-native";
@@ -80,9 +80,16 @@ export default function ProfileScreen() {
             <Text className="text-3xl font-extrabold text-text mb-8">Mi Perfil</Text>
 
             <View className="bg-surface-muted p-6 rounded-2xl border border-gray-100 mb-8 items-center">
-                <View className="w-20 h-20 bg-primary-muted rounded-full items-center justify-center mb-4">
-                    <User className="text-primary" size={40} />
-                </View>
+                {user?.user_metadata?.avatar_url ? (
+                    <Image
+                        source={{ uri: user.user_metadata.avatar_url }}
+                        className="w-20 h-20 rounded-full mb-4 border border-gray-200"
+                    />
+                ) : (
+                    <View className="w-20 h-20 bg-primary-muted rounded-full items-center justify-center mb-4">
+                        <User className="text-primary" size={40} />
+                    </View>
+                )}
                 <Text className="text-xl font-bold text-text mb-1">
                     {user?.user_metadata?.full_name || 'Usuario Ruralpop'}
                 </Text>

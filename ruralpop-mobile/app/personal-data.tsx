@@ -3,7 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Safe
 import { useRouter } from 'expo-router';
 import { supabase } from '../src/lib/supabase';
 import { useAuth } from '../src/contexts/AuthContext';
-import { ChevronLeft, User, Phone, CheckCircle2 } from 'lucide-react-native';
+import { ChevronLeft, User, Phone, CheckCircle2, Camera } from 'lucide-react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { decode } from 'base64-arraybuffer';
+import { Image } from 'react-native';
 
 export default function PersonalDataScreen() {
     const { user, session } = useAuth();
@@ -12,8 +15,10 @@ export default function PersonalDataScreen() {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
     const [successMessage, setSuccessMessage] = useState(false);
 
     useEffect(() => {
@@ -23,7 +28,7 @@ export default function PersonalDataScreen() {
             setLoading(true);
             const { data, error } = await supabase
                 .from('users')
-                .select('name, contact_phone')
+                .select('name, contact_phone, avatar_url')
                 .eq('id', user?.id)
                 .single();
 
@@ -31,6 +36,7 @@ export default function PersonalDataScreen() {
                 // Support both full_name or name from supabase
                 setName(data.name || user?.user_metadata?.full_name || '');
                 setPhone(data.contact_phone || '');
+                setAvatarUrl(data.avatar_url || user?.user_metadata?.avatar_url || null);
             }
             if (user?.email) {
                 setEmail(user.email);
@@ -69,6 +75,60 @@ export default function PersonalDataScreen() {
         }
     };
 
+    const handlePickAvatar = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.5,
+            base64: true,
+        });
+
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            uploadAvatar(result.assets[0]);
+        }
+    };
+
+    const uploadAvatar = async (asset: ImagePicker.ImagePickerAsset) => {
+        if (!user || !asset.base64) return;
+
+        setIsUploadingImage(true);
+        try {
+            const fileExt = asset.uri.split('.').pop() || 'jpg';
+            const fileName = `${user.id}/avatar_${Date.now()}.${fileExt}`;
+
+            const { error: uploadError } = await supabase.storage
+                .from('users')
+                .upload(fileName, decode(asset.base64), {
+                    contentType: `image/${fileExt === 'png' ? 'png' : 'jpeg'}`,
+                    upsert: true
+                });
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('users')
+                .getPublicUrl(fileName);
+
+            // Fetch publicUrl again to prevent caching issues if same name (we use timestamp so it shouldn't happen)
+            setAvatarUrl(publicUrl);
+
+            // Update Auth Metadata
+            await supabase.auth.updateUser({
+                data: { avatar_url: publicUrl }
+            });
+
+            // Update Users Table
+            await supabase.from('users').update({ avatar_url: publicUrl }).eq('id', user.id);
+
+            Alert.alert("Éxito", "Tu foto de perfil ha sido actualizada.");
+        } catch (error: any) {
+            Alert.alert("Error", error.message || "Error al subir la imagen.");
+        } finally {
+            setIsUploadingImage(false);
+        }
+    };
+
     if (loading) {
         return (
             <SafeAreaView className="flex-1 bg-surface justify-center items-center">
@@ -89,11 +149,28 @@ export default function PersonalDataScreen() {
 
             <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
                 <View className="items-center mb-8">
-                    <View className="w-24 h-24 bg-primary-muted rounded-full items-center justify-center mb-2">
-                        <User className="text-primary" size={48} />
-                    </View>
-                    <Text className="text-text-muted text-sm text-center px-4">
-                        Actualiza tu información para que los compradores puedan contactarte fácilmente al publicar un anuncio.
+                    <TouchableOpacity onPress={handlePickAvatar} className="relative mb-2">
+                        {avatarUrl ? (
+                            <Image
+                                source={{ uri: avatarUrl }}
+                                className="w-24 h-24 rounded-full border border-gray-200"
+                            />
+                        ) : (
+                            <View className="w-24 h-24 bg-primary-muted rounded-full items-center justify-center">
+                                <User className="text-primary" size={48} />
+                            </View>
+                        )}
+                        <View className="absolute bottom-0 right-0 bg-primary p-2 rounded-full border-2 border-white shadow-sm">
+                            <Camera color="white" size={16} />
+                        </View>
+                        {isUploadingImage && (
+                            <View className="absolute inset-0 bg-white/60 rounded-full items-center justify-center">
+                                <ActivityIndicator color="#059669" />
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                    <Text className="text-text-muted text-sm text-center px-4 mt-2">
+                        Actualiza tu foto e información para que los compradores confíen más en ti.
                     </Text>
                 </View>
 
