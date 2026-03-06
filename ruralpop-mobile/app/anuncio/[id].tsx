@@ -84,14 +84,14 @@ export default function ListingDetailsScreen() {
         ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(listing.price)
         : 'A consultar';
 
+    const hasPhone = !!(listing.seller?.phone || listing.contact_phone);
+
     const handleCall = () => {
         const phone = listing.seller?.phone || listing.contact_phone;
         if (phone) {
             Linking.openURL(`tel:${phone}`).catch((err) => {
                 Alert.alert("Error", "No se pudo abrir la aplicación de teléfono.");
             });
-        } else {
-            Alert.alert("Información", "Este vendedor no ha proporcionado un número de teléfono.");
         }
     };
 
@@ -153,7 +153,7 @@ export default function ListingDetailsScreen() {
                             <ChevronLeft color="white" size={24} />
                         </TouchableOpacity>
 
-                        <View className="flex-row space-x-3">
+                        <View className="flex-row space-x-5">
                             <TouchableOpacity onPress={handleShare} className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
                                 <ShareIcon color="white" size={20} />
                             </TouchableOpacity>
@@ -250,21 +250,23 @@ export default function ListingDetailsScreen() {
                             });
                         }
                     }}
-                    className="flex-1 bg-surface-muted border border-gray-300 py-3.5 rounded-xl flex-row justify-center items-center mr-3"
+                    className={`bg-surface-muted border border-gray-300 py-3.5 rounded-xl flex-row justify-center items-center ${hasPhone ? 'flex-1 mr-3' : 'w-full'}`}
                     activeOpacity={0.8}
                 >
                     <Mail color="#111827" size={20} />
-                    <Text className="text-text font-bold text-base">Mensaje</Text>
+                    <Text className="text-text font-bold text-base ml-2">Chat</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                    onPress={handleCall}
-                    className="flex-1 bg-primary py-3.5 rounded-xl flex-row justify-center items-center ml-3"
-                    activeOpacity={0.8}
-                >
-                    <Phone color="#ffffff" size={20} />
-                    <Text className="text-white font-bold text-base">Llamar</Text>
-                </TouchableOpacity>
+                {hasPhone && (
+                    <TouchableOpacity
+                        onPress={handleCall}
+                        className="flex-1 bg-primary py-3.5 rounded-xl flex-row justify-center items-center ml-3"
+                        activeOpacity={0.8}
+                    >
+                        <Phone color="#ffffff" size={20} />
+                        <Text className="text-white font-bold text-base ml-2">Llamar</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
