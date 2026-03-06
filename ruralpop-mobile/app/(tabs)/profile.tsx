@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
-import { User, LogOut } from "lucide-react-native";
+import { User, LogOut, Heart, MessageCircle, Briefcase } from "lucide-react-native";
 import { supabase } from "../../src/lib/supabase";
 
 export default function ProfileScreen() {
@@ -102,9 +102,35 @@ export default function ProfileScreen() {
                     onPress={() => router.push('/personal-data')}
                     className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
                 >
-                    <Text className="text-base font-bold text-text">Mis datos</Text>
+                    <Text className="text-base font-bold text-text">Mi cuenta</Text>
                     <Text className="text-primary font-bold">→</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress={() => router.push('/(tabs)/favorites')}
+                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                >
+                    <Text className="text-base font-bold text-text">Favoritos</Text>
+                    <Text className="text-primary font-bold">→</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    onPress={() => router.push('/(tabs)/messages')}
+                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                >
+                    <Text className="text-base font-bold text-text">Mensajes</Text>
+                    <Text className="text-primary font-bold">→</Text>
+                </TouchableOpacity>
+
+                <View className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4 opacity-70">
+                    <View className="flex-col">
+                        <View className="bg-blue-100 self-start px-2 py-0.5 rounded-full mb-1">
+                            <Text className="text-[10px] uppercase font-bold text-blue-700">Próximamente</Text>
+                        </View>
+                        <Text className="text-base font-bold text-text">¿Eres profesional?</Text>
+                    </View>
+                    <Briefcase color="#9ca3af" size={20} />
+                </View>
 
                 <TouchableOpacity
                     onPress={handleDeleteAccount}
