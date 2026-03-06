@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, Dimensions, Linking, Alert, Share as RNShare } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, Dimensions, Linking, Alert, Share as RNShare, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { Listing, User } from '../../src/types';
@@ -100,8 +100,10 @@ export default function ListingDetailsScreen() {
         try {
             const url = `https://ruralpop.es/anuncio/${listing.id}`;
             await RNShare.share({
-                message: `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`,
-                url,
+                message: Platform.OS === 'ios'
+                    ? `Mira este anuncio en Ruralpop: ${listing.title}`
+                    : `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`,
+                url: Platform.OS === 'ios' ? url : undefined,
                 title: listing.title,
             });
         } catch (error) {
