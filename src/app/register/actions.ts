@@ -22,7 +22,7 @@ export async function signup(formData: FormData) {
     if (redirectPath === "/login?message=Cuenta creada correctamente.") {
         const cleanName = name.trim().toLowerCase();
         // Regex to catch variants of generic names, handling accents
-        const isGenericName = /^(sin\s*nombre|an[oó]nimo|usuario|user|desconocido|null|undefined)$/i.test(cleanName);
+        const isGenericName = /^(sin\s*nombre|an[oó]nimo|usuario|user|desconocido|null|undefined|admin|administrador|root)$/i.test(cleanName);
 
         if (cleanName.length < 2 || isGenericName) {
             redirectPath = "/register?error=Por favor, introduce un nombre o alias válido.";
