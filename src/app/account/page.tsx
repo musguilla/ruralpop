@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { User, Phone, Mail, KeyRound, ArrowLeft } from "lucide-react";
 import { EditableField } from "@/components/account/EditableField";
+import { AvatarUpload } from "@/components/account/AvatarUpload";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ export default async function AccountPage() {
     const fullName = user_metadata?.name || "";
     const userPhone = phone || user_metadata?.phone || "";
     const userEmail = email || "";
+    const avatarUrl = user_metadata?.avatar_url || "";
 
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 w-full">
@@ -39,6 +41,8 @@ export default async function AccountPage() {
                 </header>
 
                 <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden shadow-sm">
+                    <AvatarUpload initialAvatarUrl={avatarUrl} />
+
                     <div className="p-8 border-b border-[var(--ag-sys-color-border)]">
                         <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Datos Personales</h2>
                         <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12">

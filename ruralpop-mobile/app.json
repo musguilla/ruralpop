@@ -25,14 +25,23 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1D2422"
       },
-      "compileSdkVersion": 35,
       "package": "com.ruralpop.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0"
+          }
+        }
+      ]
     ],
     "extra": {
       "router": {},

@@ -25,21 +25,21 @@ export async function submitContact(formData: FormData) {
         `;
 
         const { error } = await resend.emails.send({
-            from: "Contactos Ruralpop <no-reply@ruralpop.com>",
+            from: "Contactos Ruralpop <onboarding@resend.dev>",
             to: "ruralpopapp@gmail.com",
             subject: `Contacto Web: ${subject || name}`,
             html: emailHtml,
-            replyTo: email, // This allows easily hitting "r" to reply to the user.
+            replyTo: email,
         });
 
         if (error) {
-            console.error("Resend error:", error);
-            return { success: false, error: "Ha habido un error al enviar el email. Inténtalo de nuevo más tarde." };
+            console.error("Resend API error detail:", error);
+            return { success: false, error: `Error de envío: ${error.message}` };
         }
 
         return { success: true, message: "¡Mensaje enviado correctamente! Nos pondremos en contacto contigo lo antes posible." };
     } catch (e: any) {
-        console.error("Action submitContact error:", e);
-        return { success: false, error: "Ha ocurrido un error inesperado de servidor." };
+        console.error("Action submitContact try/catch error:", e);
+        return { success: false, error: `Excepción del servidor: ${e.message || "Error desconocido"}` };
     }
 }
