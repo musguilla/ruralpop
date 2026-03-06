@@ -3,7 +3,7 @@
     "name": "Ruralpop",
     "slug": "ruralpop-mobile",
     "scheme": "ruralpop",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -49,6 +49,12 @@
         "projectId": "0db84bcc-5fb6-4cf2-9e28-525900e9a799"
       }
     },
-    "owner": "ruralpop"
+    "owner": "ruralpop",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0db84bcc-5fb6-4cf2-9e28-525900e9a799"
+    }
   }
 }
