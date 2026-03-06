@@ -9,11 +9,18 @@ import { useNotification } from "@/context/NotificationContext";
 interface ImageUploaderProps {
     onImagesChange: (urls: string[]) => void;
     maxFiles?: number;
+    initialImages?: string[];
 }
 
-export function ImageUploader({ onImagesChange, maxFiles = 10 }: ImageUploaderProps) {
+export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [] }: ImageUploaderProps) {
     const { showAlert } = useNotification();
-    const [files, setFiles] = useState<{ id: string; url: string; uploading: boolean }[]>([]);
+    const [files, setFiles] = useState<{ id: string; url: string; uploading: boolean }[]>(() => {
+        return initialImages.map(url => ({
+            id: Math.random().toString(36).substring(7),
+            url,
+            uploading: false
+        }));
+    });
     const supabase = createClient();
 
     // Notificar al componente padre solo cuando las URLs cambien
