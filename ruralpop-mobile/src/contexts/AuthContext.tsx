@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { registerForPushNotificationsAsync } from '../lib/pushNotifications';
 
 type AuthContextType = {
     session: Session | null | undefined;
@@ -25,6 +26,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setSession(session);
             setUser(session?.user ?? null);
             setIsLoading(false);
+            if (session?.user?.id) {
+                registerForPushNotificationsAsync(session.user.id);
+            }
         });
 
         // Listen for auth changes
@@ -33,6 +37,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 setSession(session);
                 setUser(session?.user ?? null);
                 setIsLoading(false);
+                if (session?.user?.id) {
+                    registerForPushNotificationsAsync(session.user.id);
+                }
             }
         );
 

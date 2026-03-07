@@ -4,7 +4,8 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { MessageCircle, Search, User as UserIcon } from 'lucide-react-native';
 import { supabase } from '../../src/lib/supabase';
-import { registerForPushNotificationsAsync } from '../../src/lib/pushNotifications';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 interface Conversation {
     other_user_id: string;
@@ -23,13 +24,14 @@ export default function MessagesScreen() {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [fetching, setFetching] = useState(true);
 
-    useEffect(() => {
-        if (session && user) {
-            // Register for Push Notifications on Mount
-            registerForPushNotificationsAsync(user.id);
-            fetchConversations();
-        }
-    }, [session, user]);
+    // Refetch on focus to clear badges
+    useFocusEffect(
+        useCallback(() => {
+            if (session && user) {
+                fetchConversations();
+            }
+        }, [session, user])
+    );
 
     async function fetchConversations() {
         if (!user) return;
