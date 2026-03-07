@@ -153,11 +153,11 @@ export default function ListingDetailsScreen() {
                             <ChevronLeft color="white" size={24} />
                         </TouchableOpacity>
 
-                        <View className="flex-row space-x-8">
+                        <View className="flex-row">
                             <TouchableOpacity onPress={handleShare} className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
                                 <ShareIcon color="white" size={20} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={handleFavoritePress} className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
+                            <TouchableOpacity onPress={handleFavoritePress} className="w-10 h-10 bg-black/30 rounded-full items-center justify-center ml-4">
                                 <Heart color={isFavorited ? "#ef4444" : "white"} fill={isFavorited ? "#ef4444" : "transparent"} size={20} />
                             </TouchableOpacity>
                         </View>
@@ -227,9 +227,9 @@ export default function ListingDetailsScreen() {
                         className={`mt-8 mb-4 py-4 rounded-xl flex-row justify-center items-center border ${isFavorited ? 'bg-red-50 border-red-200' : 'bg-white border-red-200 shadow-sm'}`}
                         activeOpacity={0.8}
                     >
-                        <Heart color="#ef4444" fill={isFavorited ? "#ef4444" : "transparent"} size={20} className="mr-2" />
-                        <Text className="font-bold text-base text-red-500">
-                            {isFavorited ? "Quitar de Favoritos" : "Guardar como Favorito"}
+                        <Heart color="#ef4444" fill={isFavorited ? "#ef4444" : "transparent"} size={20} />
+                        <Text className="font-bold text-base text-red-500 ml-2">
+                            {isFavorited ? "Quitar de favoritos" : "Guardar como favorito"}
                         </Text>
                     </TouchableOpacity>
                 </View>
