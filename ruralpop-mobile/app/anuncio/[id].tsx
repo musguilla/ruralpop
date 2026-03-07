@@ -153,7 +153,7 @@ export default function ListingDetailsScreen() {
                             <ChevronLeft color="white" size={24} />
                         </TouchableOpacity>
 
-                        <View className="flex-row space-x-5">
+                        <View className="flex-row space-x-8">
                             <TouchableOpacity onPress={handleShare} className="w-10 h-10 bg-black/30 rounded-full items-center justify-center">
                                 <ShareIcon color="white" size={20} />
                             </TouchableOpacity>
