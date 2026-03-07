@@ -9,7 +9,7 @@ import { Listing } from "../../src/types";
 import { useFavorites } from "../../src/contexts/FavoritesContext";
 
 const { width } = Dimensions.get('window');
-const numColumns = width > 768 ? 3 : 1;
+const numColumns = width > 768 ? 3 : 2;
 
 export default function FavoritesScreen() {
     const { session, isLoading: authLoading } = useAuth();
@@ -109,7 +109,7 @@ export default function FavoritesScreen() {
                     keyExtractor={(item) => item.id}
                     numColumns={numColumns}
                     renderItem={({ item }) => (
-                        <View className="p-2" style={{ flex: 1, maxWidth: numColumns === 1 ? '100%' : `${100 / numColumns}%` }}>
+                        <View className="p-2" style={{ flex: 1, maxWidth: `${100 / numColumns}%` }}>
                             <ListingCard listing={item} />
                         </View>
                     )}
