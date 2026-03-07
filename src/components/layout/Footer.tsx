@@ -79,19 +79,16 @@ export function Footer() {
                 </div>
 
                 <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-[var(--ag-sys-color-text-muted)] order-1 md:order-2">
-                    <Link href="/legal" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Aviso legal
+                    <Link href="/privacy" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
+                        Política de privacidad
                     </Link>
-                    <Link href="/privacy" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Privacidad
-                    </Link>
-                    <Link href="/cookies" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/cookies" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
                         Cookies
                     </Link>
-                    <Link href="/terms" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Condiciones
+                    <Link href="/terms" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
+                        Condiciones de uso
                     </Link>
-                    <Link href="/contact" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/contact" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
                         Contacto
                     </Link>
                 </div>
