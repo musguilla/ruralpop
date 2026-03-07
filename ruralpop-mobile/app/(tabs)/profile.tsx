@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert, Image } from "react-native";
+import { View, Text, TouchableOpacity, Alert, Image, SafeAreaView, ScrollView } from "react-native";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { User, LogOut, Heart, MessageCircle, Briefcase } from "lucide-react-native";
@@ -76,85 +76,90 @@ export default function ProfileScreen() {
     }
 
     return (
-        <View className="flex-1 bg-surface px-6 pt-12">
-            <Text className="text-3xl font-extrabold text-text mb-8">Mi Perfil</Text>
-
-            <View className="bg-surface-muted p-6 rounded-2xl border border-gray-100 mb-8 items-center">
-                {user?.user_metadata?.avatar_url ? (
-                    <Image
-                        source={{ uri: user.user_metadata.avatar_url }}
-                        className="w-20 h-20 rounded-full mb-4 border border-gray-200"
-                    />
-                ) : (
-                    <View className="w-20 h-20 bg-primary-muted rounded-full items-center justify-center mb-4">
-                        <User className="text-primary" size={40} />
-                    </View>
-                )}
-                <Text className="text-xl font-bold text-text mb-1">
-                    {user?.user_metadata?.full_name || 'Usuario Ruralpop'}
-                </Text>
-                <Text className="text-text-muted mb-4">{user?.email}</Text>
+        <SafeAreaView className="flex-1 bg-surface">
+            <View className="px-6 py-4 border-b border-gray-100 bg-white">
+                <Text className="text-2xl font-extrabold text-text">Mi Perfil</Text>
             </View>
 
-            <View className="mb-8">
-                <TouchableOpacity
-                    onPress={() => router.push('/my-listings')}
-                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
-                >
-                    <Text className="text-base font-bold text-text">Mis Anuncios</Text>
-                    <Text className="text-primary font-bold">→</Text>
-                </TouchableOpacity>
+            <ScrollView className="flex-1 px-6 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
 
-                <TouchableOpacity
-                    onPress={() => router.push('/personal-data')}
-                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
-                >
-                    <Text className="text-base font-bold text-text">Mi cuenta</Text>
-                    <Text className="text-primary font-bold">→</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={() => router.push('/(tabs)/favorites')}
-                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
-                >
-                    <Text className="text-base font-bold text-text">Favoritos</Text>
-                    <Text className="text-primary font-bold">→</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={() => router.push('/(tabs)/messages')}
-                    className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
-                >
-                    <Text className="text-base font-bold text-text">Mensajes</Text>
-                    <Text className="text-primary font-bold">→</Text>
-                </TouchableOpacity>
-
-                <View className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4 opacity-70">
-                    <View className="flex-col">
-                        <View className="bg-blue-100 self-start px-2 py-0.5 rounded-full mb-1">
-                            <Text className="text-[10px] uppercase font-bold text-blue-700">Próximamente</Text>
+                <View className="bg-surface-muted p-6 rounded-2xl border border-gray-100 mb-8 items-center">
+                    {user?.user_metadata?.avatar_url ? (
+                        <Image
+                            source={{ uri: user.user_metadata.avatar_url }}
+                            className="w-20 h-20 rounded-full mb-4 border border-gray-200"
+                        />
+                    ) : (
+                        <View className="w-20 h-20 bg-primary-muted rounded-full items-center justify-center mb-4">
+                            <User className="text-primary" size={40} />
                         </View>
-                        <Text className="text-base font-bold text-text">¿Eres profesional?</Text>
+                    )}
+                    <Text className="text-xl font-bold text-text mb-1">
+                        {user?.user_metadata?.full_name || 'Usuario Ruralpop'}
+                    </Text>
+                    <Text className="text-text-muted mb-4">{user?.email}</Text>
+                </View>
+
+                <View className="mb-8">
+                    <TouchableOpacity
+                        onPress={() => router.push('/my-listings')}
+                        className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                    >
+                        <Text className="text-base font-bold text-text">Mis Anuncios</Text>
+                        <Text className="text-primary font-bold">→</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => router.push('/personal-data')}
+                        className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                    >
+                        <Text className="text-base font-bold text-text">Mi cuenta</Text>
+                        <Text className="text-primary font-bold">→</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => router.push('/(tabs)/favorites')}
+                        className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                    >
+                        <Text className="text-base font-bold text-text">Favoritos</Text>
+                        <Text className="text-primary font-bold">→</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => router.push('/(tabs)/messages')}
+                        className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                    >
+                        <Text className="text-base font-bold text-text">Mensajes</Text>
+                        <Text className="text-primary font-bold">→</Text>
+                    </TouchableOpacity>
+
+                    <View className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4 opacity-70">
+                        <View className="flex-col">
+                            <View className="bg-blue-100 self-start px-2 py-0.5 rounded-full mb-1">
+                                <Text className="text-[10px] uppercase font-bold text-blue-700">Próximamente</Text>
+                            </View>
+                            <Text className="text-base font-bold text-text">¿Eres profesional?</Text>
+                        </View>
+                        <Briefcase color="#9ca3af" size={20} />
                     </View>
-                    <Briefcase color="#9ca3af" size={20} />
+
+                    <TouchableOpacity
+                        onPress={handleDeleteAccount}
+                        className="bg-white border border-red-200 p-4 rounded-xl flex-row justify-between items-center shadow-sm"
+                    >
+                        <Text className="text-base font-bold text-red-600">Eliminar cuenta</Text>
+                        <Text className="text-red-500 font-bold">×</Text>
+                    </TouchableOpacity>
                 </View>
 
                 <TouchableOpacity
-                    onPress={handleDeleteAccount}
-                    className="bg-white border border-red-200 p-4 rounded-xl flex-row justify-between items-center shadow-sm"
+                    onPress={handleSignOut}
+                    className="flex-row items-center justify-center bg-red-50 py-4 rounded-xl border border-red-100"
                 >
-                    <Text className="text-base font-bold text-red-600">Eliminar cuenta</Text>
-                    <Text className="text-red-500 font-bold">×</Text>
+                    <LogOut className="text-red-500 mr-2" size={20} />
+                    <Text className="text-red-600 font-bold text-base">Cerrar Sesión</Text>
                 </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-                onPress={handleSignOut}
-                className="flex-row items-center justify-center bg-red-50 py-4 rounded-xl border border-red-100"
-            >
-                <LogOut className="text-red-500 mr-2" size={20} />
-                <Text className="text-red-600 font-bold text-base">Cerrar Sesión</Text>
-            </TouchableOpacity>
-        </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }

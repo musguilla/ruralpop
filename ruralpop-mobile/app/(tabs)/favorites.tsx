@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl, SafeAreaView } from "react-native";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { Heart } from "lucide-react-native";
@@ -93,10 +93,9 @@ export default function FavoritesScreen() {
     }
 
     return (
-        <View className="flex-1 bg-surface-muted pt-12">
-            {/* Header that sticks to top */}
-            <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row justify-center items-center h-14">
-                <Text className="text-xl font-bold text-text">Mis Favoritos</Text>
+        <SafeAreaView className="flex-1 bg-surface">
+            <View className="px-6 py-4 border-b border-gray-100 bg-white">
+                <Text className="text-2xl font-extrabold text-text">Mis Favoritos</Text>
             </View>
 
             {loading && !refreshing ? (
@@ -127,6 +126,6 @@ export default function FavoritesScreen() {
                     }
                 />
             )}
-        </View>
+        </SafeAreaView>
     );
 }
