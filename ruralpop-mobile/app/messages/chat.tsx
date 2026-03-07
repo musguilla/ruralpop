@@ -80,13 +80,17 @@ export default function ChatScreen() {
 
     async function markAsRead() {
         if (!user || !listingId || !otherUserId) return;
-        await supabase
+        const { error } = await supabase
             .from('messages')
             .update({ is_read: true })
             .eq('listing_id', listingId)
             .eq('receiver_id', user.id)
             .eq('sender_id', otherUserId)
             .eq('is_read', false);
+
+        if (error) {
+            console.error("markAsRead error:", error);
+        }
     }
 
     async function fetchMessages() {
@@ -138,14 +142,11 @@ export default function ChatScreen() {
 
             if (error) throw error;
 
-            // Check receiver's push token and notify
-            const { data: receiverData } = await supabase
-                .from('users')
-                .select('expo_push_token')
-                .eq('id', otherUserId)
-                .single();
+            // Check receiver's push token using the secure RPC
+            const { data: receiverToken } = await supabase
+                .rpc('get_push_token', { target_user_id: otherUserId });
 
-            if (receiverData?.expo_push_token) {
+            if (receiverToken) {
                 await fetch('https://exp.host/--/api/v2/push/send', {
                     method: 'POST',
                     headers: {
@@ -154,7 +155,7 @@ export default function ChatScreen() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        to: receiverData.expo_push_token,
+                        to: receiverToken,
                         sound: 'default',
                         title: `Nuevo mensaje de ${user?.user_metadata?.full_name || 'Alguien'}`,
                         body: content,
