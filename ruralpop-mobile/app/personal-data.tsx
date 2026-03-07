@@ -8,6 +8,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { decode } from 'base64-arraybuffer';
 import { Image } from 'react-native';
 
+import { LocationModal } from '../src/components/ui/modals/LocationModal';
+import { MunicipalityModal } from '../src/components/ui/modals/MunicipalityModal';
+import { LOCATIONS } from '../src/constants/locations';
+
 export default function PersonalDataScreen() {
     const { user, session } = useAuth();
     const router = useRouter();
@@ -17,6 +21,12 @@ export default function PersonalDataScreen() {
     const [email, setEmail] = useState('');
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [locationId, setLocationId] = useState<string | null>(null);
+    const [municipality, setMunicipality] = useState<{ id: number, name: string } | null>(null);
+
+    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+    const [isMunicipalityModalOpen, setIsMunicipalityModalOpen] = useState(false);
+
     const [isSaving, setIsSaving] = useState(false);
     const [isUploadingImage, setIsUploadingImage] = useState(false);
     const [successMessage, setSuccessMessage] = useState(false);
@@ -28,7 +38,7 @@ export default function PersonalDataScreen() {
             setLoading(true);
             const { data, error } = await supabase
                 .from('users')
-                .select('name, contact_phone, avatar_url')
+                .select('name, contact_phone, avatar_url, location, municipality_id')
                 .eq('id', user?.id)
                 .single();
 
@@ -37,6 +47,17 @@ export default function PersonalDataScreen() {
                 setName(data.name || user?.user_metadata?.full_name || '');
                 setPhone(data.contact_phone || '');
                 setAvatarUrl(data.avatar_url || user?.user_metadata?.avatar_url || null);
+
+                // Parse existing location if available (Format: "Municipality, Province" or "Province")
+                if (data.location) {
+                    const parts = data.location.split(', ');
+                    if (parts.length === 2) {
+                        setMunicipality({ id: data.municipality_id || 0, name: parts[0] });
+                        setLocationId(parts[1]);
+                    } else if (parts.length === 1) {
+                        setLocationId(parts[0]);
+                    }
+                }
             }
             if (user?.email) {
                 setEmail(user.email);
@@ -53,11 +74,18 @@ export default function PersonalDataScreen() {
         setIsSaving(true);
         setSuccessMessage(false);
 
+        const selectedProvinceObj = LOCATIONS.find(l => l.name === locationId);
+        const provinceNumericId = selectedProvinceObj ? parseInt(selectedProvinceObj.id, 10) : null;
+        const fullLocationString = municipality && locationId ? `${municipality.name}, ${locationId}` : locationId;
+
         const { error } = await supabase
             .from('users')
             .update({
                 name: name.trim(),
-                contact_phone: phone.trim()
+                contact_phone: phone.trim(),
+                location: fullLocationString,
+                province_id: provinceNumericId,
+                municipality_id: municipality?.id || null
             })
             .eq('id', user.id);
 
@@ -144,12 +172,12 @@ export default function PersonalDataScreen() {
                 <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2 rounded-full active:bg-gray-100">
                     <ChevronLeft color="#111827" size={28} />
                 </TouchableOpacity>
-                <Text className="text-xl font-bold text-text ml-2">Mis Datos Personales</Text>
+                <Text className="text-xl font-bold text-text ml-2">Mi cuenta</Text>
             </View>
 
             <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
                 <View className="items-center mb-8">
-                    <TouchableOpacity onPress={handlePickAvatar} className="relative mb-2">
+                    <TouchableOpacity onPress={handlePickAvatar} className="relative mb-2 mt-4">
                         {avatarUrl ? (
                             <Image
                                 source={{ uri: avatarUrl }}
@@ -184,22 +212,9 @@ export default function PersonalDataScreen() {
                 )}
 
                 <View className="space-y-4">
-                    {/* Email (Read only) */}
-                    <View>
-                        <Text className="text-sm font-bold text-text mb-2">Correo Electrónico</Text>
-                        <TextInput
-                            value={email}
-                            editable={false}
-                            className="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-500"
-                        />
-                        <Text className="text-xs text-text-muted mt-1">
-                            El correo electrónico no puede modificarse por seguridad.
-                        </Text>
-                    </View>
-
                     {/* Nombre y Apellidos */}
                     <View>
-                        <Text className="text-sm font-bold text-text mb-2 mt-4">Nombre Completo</Text>
+                        <Text className="text-sm font-bold text-text mb-2 mt-2">Nombre completo</Text>
                         <TextInput
                             value={name}
                             onChangeText={setName}
@@ -209,9 +224,22 @@ export default function PersonalDataScreen() {
                         />
                     </View>
 
+                    {/* Email (Read only) */}
+                    <View>
+                        <Text className="text-sm font-bold text-text mb-2 mt-2">Correo Electrónico</Text>
+                        <TextInput
+                            value={email}
+                            editable={false}
+                            className="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-500"
+                        />
+                        <Text className="text-xs text-text-muted mt-1 mb-2">
+                            El correo electrónico no puede modificarse por seguridad.
+                        </Text>
+                    </View>
+
                     {/* Teléfono */}
                     <View>
-                        <Text className="text-sm font-bold text-text mb-2 mt-4">Teléfono de contacto</Text>
+                        <Text className="text-sm font-bold text-text mb-2 mt-2">Teléfono de contacto</Text>
                         <View className="flex-row items-center w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3">
                             <Phone color="#9ca3af" size={18} />
                             <TextInput
@@ -223,9 +251,37 @@ export default function PersonalDataScreen() {
                                 style={{ paddingVertical: 0 }}
                             />
                         </View>
-                        <Text className="text-xs text-text-muted mt-1">
+                        <Text className="text-xs text-text-muted mt-1 mb-2">
                             Aparecerá pre-completado cuando publiques nuevos anuncios.
                         </Text>
+                    </View>
+
+                    {/* Provincia */}
+                    <View>
+                        <Text className="text-sm font-bold text-text mb-2 mt-2">Provincia</Text>
+                        <TouchableOpacity
+                            onPress={() => setIsLocationModalOpen(true)}
+                            className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-4 flex-row justify-between items-center"
+                        >
+                            <Text className={`text-base ${locationId ? 'text-text' : 'text-gray-400'}`}>
+                                {locationId || 'Selecciona provincia...'}
+                            </Text>
+                            <ChevronLeft color="#9ca3af" size={20} style={{ transform: [{ rotate: '-90deg' }] }} />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Localidad */}
+                    <View>
+                        <Text className="text-sm font-bold text-text mb-2 mt-2">Localidad</Text>
+                        <TouchableOpacity
+                            onPress={() => locationId ? setIsMunicipalityModalOpen(true) : Alert.alert('Aviso', 'Selecciona primero una provincia')}
+                            className={`w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-4 flex-row justify-between items-center ${!locationId ? 'opacity-50' : ''}`}
+                        >
+                            <Text className={`text-base ${municipality ? 'text-text' : 'text-gray-400'}`}>
+                                {municipality ? municipality.name : 'Selecciona localidad...'}
+                            </Text>
+                            <ChevronLeft color="#9ca3af" size={20} style={{ transform: [{ rotate: '-90deg' }] }} />
+                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -242,6 +298,27 @@ export default function PersonalDataScreen() {
                         <Text className="text-white font-bold text-lg">Guardar Cambios</Text>
                     )}
                 </TouchableOpacity>
+                <LocationModal
+                    visible={isLocationModalOpen}
+                    onClose={() => setIsLocationModalOpen(false)}
+                    selectedLocation={locationId}
+                    onSelect={(loc) => {
+                        setLocationId(loc);
+                        setMunicipality(null);
+                        setIsLocationModalOpen(false);
+                    }}
+                />
+
+                <MunicipalityModal
+                    visible={isMunicipalityModalOpen}
+                    onClose={() => setIsMunicipalityModalOpen(false)}
+                    provinceId={LOCATIONS.find(l => l.name === locationId)?.id || null}
+                    selectedMunicipality={municipality}
+                    onSelect={(mun) => {
+                        setMunicipality(mun);
+                        setIsMunicipalityModalOpen(false);
+                    }}
+                />
             </ScrollView>
         </SafeAreaView>
     );
