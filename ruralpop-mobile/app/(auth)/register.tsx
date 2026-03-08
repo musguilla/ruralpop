@@ -27,6 +27,7 @@ export default function RegisterScreen() {
             options: {
                 data: {
                     full_name: fullName,
+                    name: fullName,  // Added so the database trigger handles it properly
                 }
             }
         });
