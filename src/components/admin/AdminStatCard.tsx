@@ -19,7 +19,7 @@ export function AdminStatCard({
     histograms?: Histograms;
     showFilters?: boolean;
 }) {
-    const [filter, setFilter] = useState<'days' | 'weeks' | 'months'>('months');
+    const [filter, setFilter] = useState<'days' | 'weeks' | 'months'>('days');
 
     const colorMap = {
         blue: { bg: 'bg-blue-500/10', text: 'text-blue-500', fill: 'bg-blue-500', activeFilter: 'bg-blue-500 text-white' },
@@ -82,9 +82,14 @@ export function AdminStatCard({
                             return (
                                 <div key={i} className="flex-1 w-full relative group h-full flex items-end">
                                     <div
-                                        className={`w-full rounded-t-sm transition-all cursor-pointer opacity-40 group-hover:opacity-100 ${colorClasses.fill}`}
-                                        style={{ height: `${heightPercentage}%` }}
-                                    />
+                                        className={`w-full rounded-t-sm transition-all cursor-pointer opacity-40 group-hover:opacity-100 relative ${colorClasses.fill}`}
+                                        style={{ height: `${heightPercentage}%`, minHeight: heightPercentage === 0 ? '2px' : undefined }}
+                                    >
+                                        <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity -top-9 left-1/2 -translate-x-1/2 bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-surface)] text-[10px] font-bold px-2 py-1 rounded-lg pointer-events-none whitespace-nowrap z-10 shadow-lg flex flex-col items-center">
+                                            {h}
+                                            <div className="w-1.5 h-1.5 bg-[var(--ag-sys-color-text)] rotate-45 absolute -bottom-[3px]"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             );
                         })}
