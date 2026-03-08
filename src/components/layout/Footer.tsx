@@ -78,7 +78,10 @@ export function Footer() {
                     &copy; 2026 Ruralpop. Todos los derechos reservados.
                 </div>
 
-                <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-[var(--ag-sys-color-text-muted)] order-1 md:order-2">
+                <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-[var(--ag-sys-color-text)] order-1 md:order-2">
+                    <Link href="/aviso-legal" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
+                        Aviso legal
+                    </Link>
                     <Link href="/privacy" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
                         Política de privacidad
                     </Link>
