@@ -11,7 +11,8 @@ import {
     AlertCircle,
     DownloadCloud,
     Share2,
-    FileText
+    FileText,
+    Mail
 } from "lucide-react";
 
 export function AdminSidebar() {
@@ -37,6 +38,7 @@ export function AdminSidebar() {
                 </div>
                 <AdminNavLink href="/admin/marketing/social" icon={<Share2 className="w-5 h-5" />} label="Social Media" />
                 <AdminNavLink href="/admin/marketing/cms" icon={<FileText className="w-5 h-5" />} label="CMS" />
+                <AdminNavLink href="/admin/marketing/email" icon={<Mail className="w-5 h-5" />} label="Email marketing" />
 
                 <div className="pt-4 pb-2">
                     <p className="px-4 text-[10px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Sistema</p>
