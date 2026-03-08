@@ -33,14 +33,6 @@ export default async function AdminUsersPage() {
                     <h1 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight">Gestión de Usuarios</h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-1">Control de roles, permisos y estado de cuentas.</p>
                 </div>
-                <div className="flex gap-4">
-                    <button className="px-6 py-3 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)] font-bold rounded-xl hover:bg-[var(--ag-sys-color-background)] transition-all flex items-center gap-2">
-                        Descargar CSV
-                    </button>
-                    <button className="px-6 py-3 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-xl transition-all shadow-lg shadow-[var(--ag-sys-color-primary)]/20">
-                        Exportar Auditoría
-                    </button>
-                </div>
             </div>
 
             {/* Users Table */}
