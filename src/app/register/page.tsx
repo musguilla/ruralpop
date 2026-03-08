@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { SubmitButton } from "@/components/auth/SubmitButton";
 import { signup } from "./actions";
 
 export default async function RegisterPage(props: {
@@ -102,12 +103,7 @@ export default async function RegisterPage(props: {
                         </div>
                     </div>
 
-                    <button
-                        type="submit"
-                        className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)] transition-all shadow-sm"
-                    >
-                        Registrarme gratis
-                    </button>
+                    <SubmitButton label="Registrarme gratis" />
                 </form>
             </div>
         </div>
