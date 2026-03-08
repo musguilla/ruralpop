@@ -35,7 +35,6 @@ export function AdminSidebar() {
                 <div className="pt-4 pb-2">
                     <p className="px-4 text-[10px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Marketing</p>
                 </div>
-                <AdminNavLink href="/admin/marketing/import" icon={<DownloadCloud className="w-5 h-5" />} label="Importación anuncios" />
                 <AdminNavLink href="/admin/marketing/social" icon={<Share2 className="w-5 h-5" />} label="Social Media" />
                 <AdminNavLink href="/admin/marketing/cms" icon={<FileText className="w-5 h-5" />} label="CMS" />
 
@@ -43,7 +42,6 @@ export function AdminSidebar() {
                     <p className="px-4 text-[10px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Sistema</p>
                 </div>
                 <AdminNavLink href="/admin/settings" icon={<Settings className="w-5 h-5" />} label="Configuración" />
-                <AdminNavLink href="/admin/reports" icon={<AlertCircle className="w-5 h-5" />} label="Reportes" badge="2" />
             </nav>
 
             <div className="p-4 border-t border-[var(--ag-sys-color-border)] space-y-2">
