@@ -125,10 +125,10 @@ export default async function AdminDashboard() {
                 />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-6">
-                <div className="lg:col-span-2 bg-[var(--ag-sys-color-surface)] rounded-[2rem] border border-[var(--ag-sys-color-border)] p-8 shadow-sm">
+            <div className="pt-6">
+                <div className="bg-[var(--ag-sys-color-surface)] rounded-[2rem] border border-[var(--ag-sys-color-border)] p-8 shadow-sm">
                     <div className="flex justify-between items-center mb-8">
-                        <h3 className="font-bold text-xl text-[var(--ag-sys-color-text)]">Evolución Global</h3>
+                        <h3 className="font-bold text-xl text-[var(--ag-sys-color-text)]">Ventas totales</h3>
                         <button className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline">Ver Reporte</button>
                     </div>
                     <div className="h-64 flex items-end justify-between gap-4 px-4">
@@ -139,24 +139,6 @@ export default async function AdminDashboard() {
                                     style={{ height: `${h}%` }}
                                 ></div>
                                 <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-[var(--ag-sys-color-text-muted)] font-bold">L-{i + 1}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="bg-[var(--ag-sys-color-surface)] rounded-[2rem] border border-[var(--ag-sys-color-border)] p-8 shadow-sm">
-                    <h3 className="font-bold text-xl text-[var(--ag-sys-color-text)] mb-8">Últimos Registros</h3>
-                    <div className="space-y-6">
-                        {[1, 2, 3, 4, 5].map((u) => (
-                            <div key={u} className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] flex items-center justify-center text-[var(--ag-sys-color-primary)]">
-                                    <Users className="w-5 h-5" />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-sm font-bold text-[var(--ag-sys-color-text)] leading-tight">Usuario Rural #{u}</p>
-                                    <span className="text-xs text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider font-bold">Salamanca</span>
-                                </div>
-                                <div className="text-xs font-bold text-green-500">Nuevo</div>
                             </div>
                         ))}
                     </div>
