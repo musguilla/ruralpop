@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Scale } from "lucide-react";
 import { Metadata } from "next";
 
@@ -158,7 +159,12 @@ export default function AvisoLegalPage() {
                         Para cualquier consulta relacionada con el sitio web, la aplicación, este Aviso Legal o cualquier cuestión jurídica relacionada con Ruralpop, puedes ponerte en contacto a través de los siguientes correos electrónicos:
                     </p>
                     <ul className="list-none space-y-1">
-                        <li><strong>Contacto general:</strong> hola@ruralpop.com</li>
+                        <li>
+                            <strong>Contacto general:</strong>{" "}
+                            <Link href="/contact" className="text-[var(--ag-sys-color-primary)] hover:underline">
+                                a través de nuestro formulario de contacto
+                            </Link>
+                        </li>
                         <li><strong>Protección de datos:</strong> privacidad@ruralpop.com</li>
                     </ul>
 
