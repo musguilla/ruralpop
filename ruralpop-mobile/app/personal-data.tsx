@@ -6,11 +6,12 @@ import { useAuth } from '../src/contexts/AuthContext';
 import { ChevronLeft, User, Phone, CheckCircle2, Camera } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { decode } from 'base64-arraybuffer';
-import { Image } from 'react-native';
+import { Image } from 'expo-image';
 
 import { LocationModal } from '../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../src/components/ui/modals/MunicipalityModal';
 import { LOCATIONS } from '../src/constants/locations';
+import { getOptimizedImageUrl } from '../src/lib/image-optimization';
 
 export default function PersonalDataScreen() {
     const { user, session } = useAuth();
@@ -180,8 +181,9 @@ export default function PersonalDataScreen() {
                     <TouchableOpacity onPress={handlePickAvatar} className="relative mb-2 mt-4">
                         {avatarUrl ? (
                             <Image
-                                source={{ uri: avatarUrl }}
+                                source={{ uri: getOptimizedImageUrl(avatarUrl, { width: 150 }) || undefined }}
                                 className="w-24 h-24 rounded-full border border-gray-200"
+                                contentFit="cover"
                             />
                         ) : (
                             <View className="w-24 h-24 bg-primary-muted rounded-full items-center justify-center">

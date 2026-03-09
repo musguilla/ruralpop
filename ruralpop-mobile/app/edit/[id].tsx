@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, ActivityIndicator, Alert, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert, SafeAreaView } from 'react-native';
+import { Image } from 'expo-image';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Camera, X, CheckCircle2, ChevronDown, ChevronLeft } from 'lucide-react-native';
@@ -261,7 +262,7 @@ export default function EditListingScreen() {
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
                         {images.map((uri, index) => (
                             <View key={index} className="relative w-24 h-24 rounded-xl overflow-hidden mr-3 border border-gray-200">
-                                <Image source={{ uri }} className="w-full h-full" />
+                                <Image source={{ uri }} className="w-full h-full" contentFit="cover" />
                                 <TouchableOpacity
                                     onPress={() => removeImage(index)}
                                     className="absolute top-1 right-1 bg-black/50 rounded-full p-1"

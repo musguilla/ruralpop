@@ -1,4 +1,6 @@
-import { View, Text, TouchableOpacity, Alert, Image, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, Alert, SafeAreaView, ScrollView } from "react-native";
+import { Image } from "expo-image";
+import { getOptimizedImageUrl } from "../../src/lib/image-optimization";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { User, LogOut, Heart, MessageCircle, Briefcase } from "lucide-react-native";
@@ -86,8 +88,9 @@ export default function ProfileScreen() {
                 <View className="bg-surface-muted p-6 rounded-2xl border border-gray-100 mb-8 items-center">
                     {user?.user_metadata?.avatar_url ? (
                         <Image
-                            source={{ uri: user.user_metadata.avatar_url }}
+                            source={{ uri: getOptimizedImageUrl(user.user_metadata.avatar_url, { width: 150 }) || undefined }}
                             className="w-20 h-20 rounded-full mb-4 border border-gray-200"
+                            contentFit="cover"
                         />
                     ) : (
                         <View className="w-20 h-20 bg-primary-muted rounded-full items-center justify-center mb-4">

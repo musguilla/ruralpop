@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, ActivityIndicator, Alert, SafeAreaView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert, SafeAreaView } from 'react-native';
+import { Image } from 'expo-image';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { Key, Camera, X, CheckCircle2, ChevronDown, Info } from 'lucide-react-native';
@@ -230,7 +231,7 @@ export default function PublishScreen() {
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
                         {images.map((uri, index) => (
                             <View key={index} className="relative w-24 h-24 rounded-xl overflow-hidden mr-3 border border-gray-200">
-                                <Image source={{ uri }} className="w-full h-full" />
+                                <Image source={{ uri }} className="w-full h-full" contentFit="cover" />
                                 <TouchableOpacity
                                     onPress={() => removeImage(index)}
                                     className="absolute top-1 right-1 bg-black/50 rounded-full p-1"

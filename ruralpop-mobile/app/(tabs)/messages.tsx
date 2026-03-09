@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator, Image } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
+import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { MessageCircle, Search, User as UserIcon } from 'lucide-react-native';
@@ -152,7 +154,7 @@ export default function MessagesScreen() {
                         >
                             <View className="w-14 h-14 bg-primary-muted rounded-full items-center justify-center mr-4 border border-gray-100 overflow-hidden">
                                 {item.other_user_avatar ? (
-                                    <Image source={{ uri: item.other_user_avatar }} className="w-full h-full" />
+                                    <Image source={{ uri: getOptimizedImageUrl(item.other_user_avatar, { width: 100 }) || undefined }} className="w-full h-full" contentFit="cover" />
                                 ) : (
                                     <UserIcon className="text-primary" size={24} />
                                 )}

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { Image } from 'expo-image';
 import { Link, useRouter } from 'expo-router';
 import { MapPin, Heart, ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react-native';
 import { Listing } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import { useFavorites } from '../../contexts/FavoritesContext';
+import { getOptimizedImageUrl } from '../../lib/image-optimization';
 
 interface ListingCardProps {
     listing: Listing;
@@ -53,9 +55,10 @@ export function ListingCard({ listing }: ListingCardProps) {
                 <View className="relative w-full bg-surface-muted items-center justify-center overflow-hidden" style={{ aspectRatio: 4 / 3 }}>
                     {mainImage ? (
                         <Image
-                            source={{ uri: mainImage }}
+                            source={{ uri: getOptimizedImageUrl(mainImage, { width: 400 }) || undefined }}
                             className="w-full h-full"
-                            resizeMode="cover"
+                            contentFit="cover"
+                            transition={300}
                         />
                     ) : (
                         <View className="items-center justify-center">

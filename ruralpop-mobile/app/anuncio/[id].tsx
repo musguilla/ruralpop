@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, Dimensions, Linking, Alert, Share as RNShare, Platform } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Linking, Alert, Share as RNShare, Platform } from 'react-native';
+import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
+import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { Listing, User } from '../../src/types';
 import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon } from 'lucide-react-native';
 import { useAuth } from '../../src/contexts/AuthContext';
@@ -130,10 +132,11 @@ export default function ListingDetailsScreen() {
                             {listing.image_urls!.map((url, idx) => (
                                 <Image
                                     key={idx}
-                                    source={{ uri: url }}
+                                    source={{ uri: getOptimizedImageUrl(url, { width: 800 }) || undefined }}
                                     className="w-full h-full"
                                     style={{ width }}
-                                    resizeMode="cover"
+                                    contentFit="cover"
+                                    transition={200}
                                 />
                             ))}
                         </ScrollView>
@@ -201,7 +204,7 @@ export default function ListingDetailsScreen() {
                     <View className="bg-primary-muted/20 border border-primary-muted rounded-2xl p-4 mb-8 flex-row items-center">
                         <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm mr-4 overflow-hidden border border-gray-100">
                             {listing.seller?.avatar_url ? (
-                                <Image source={{ uri: listing.seller.avatar_url }} className="w-full h-full" />
+                                <Image source={{ uri: getOptimizedImageUrl(listing.seller.avatar_url, { width: 100 }) || undefined }} className="w-full h-full" contentFit="cover" transition={200} />
                             ) : (
                                 <Text className="text-xl font-bold text-primary">
                                     {listing.seller?.name?.charAt(0) || 'U'}
