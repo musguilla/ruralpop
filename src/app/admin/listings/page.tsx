@@ -59,12 +59,6 @@ export default async function AdminListingsPage(props: {
                     <h1 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight">Moderación de Anuncios</h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-1">Supervisión técnica de contenidos y reportes.</p>
                 </div>
-                <div className="flex gap-4">
-                    <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-xl px-4 py-2 flex items-center gap-2">
-                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                        <span className="text-xs font-bold text-[var(--ag-sys-color-text)]">Todo despejado</span>
-                    </div>
-                </div>
             </div>
 
             <div className="grid grid-cols-1 gap-6">
