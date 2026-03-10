@@ -100,7 +100,7 @@ export default function ListingDetailsScreen() {
     const handleShare = async () => {
         if (!listing) return;
         try {
-            const url = `https://ruralpop.es/anuncio/${listing.id}`;
+            const url = `https://ruralpop.com/anuncio/${listing.id}`;
             await RNShare.share({
                 message: Platform.OS === 'ios'
                     ? `Mira este anuncio en Ruralpop: ${listing.title}`
