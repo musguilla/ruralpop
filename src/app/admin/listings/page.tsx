@@ -31,11 +31,17 @@ export default async function AdminListingsPage(props: {
     const from = (currentPage - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
-    const { data: listings, error, count } = await supabase
+    let query = supabase
         .from("listings")
         .select("*, seller:users(*)", { count: "exact" })
         .order("created_at", { ascending: false })
         .range(from, to);
+
+    if (searchParams.userId && typeof searchParams.userId === 'string') {
+        query = query.eq("user_id", searchParams.userId);
+    }
+
+    const { data: listings, error, count } = await query;
 
     if (error) {
         console.error("Error fetching listings:", error);

@@ -9,8 +9,8 @@ import {
     MapPin,
     Calendar
 } from "lucide-react";
-import Image from "next/image";
 import { formatRelativeTime } from "@/utils/format";
+import { UserRow } from "./UserRow";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,7 @@ export default async function AdminUsersPage() {
 
     const { data: users, error } = await supabase
         .from("users")
-        .select("*")
+        .select("*, listings(count)")
         .order("created_at", { ascending: false });
 
     if (error) {
@@ -43,63 +43,16 @@ export default async function AdminUsersPage() {
                             <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Usuario</th>
                             <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Ubicación</th>
                             <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Rol</th>
+                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Anuncios</th>
                             <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Registro</th>
                             <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest text-right">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--ag-sys-color-border)] text-sm">
-                        {users?.map((u: any) => (
-                            <tr key={u.id} className="hover:bg-[var(--ag-sys-color-background)]/50 transition-colors group">
-                                <td className="px-6 py-5">
-                                    <div className="flex items-center gap-4">
-                                        <div className="relative w-11 h-11 rounded-xl bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] overflow-hidden flex-shrink-0">
-                                            {u.avatar_url ? (
-                                                <Image src={u.avatar_url} alt={u.name || ''} fill className="object-cover" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-[var(--ag-sys-color-primary)] font-bold text-lg">
-                                                    {u.name?.[0] || 'U'}
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-[var(--ag-sys-color-text)] leading-tight">{u.name || 'Sin nombre'}</p>
-                                            <span className="text-xs text-[var(--ag-sys-color-text-muted)]">{u.email}</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-5">
-                                    <div className="flex items-center gap-2 text-[var(--ag-sys-color-text-muted)] font-medium">
-                                        <MapPin className="w-3.5 h-3.5" />
-                                        {u.location || 'No definida'}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-5">
-                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${u.role === 'admin'
-                                        ? 'bg-purple-100 text-purple-700'
-                                        : 'bg-blue-100 text-blue-700'
-                                        }`}>
-                                        {u.role === 'admin' ? <Shield className="w-3 h-3" /> : null}
-                                        {u.role}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-5">
-                                    <div className="flex items-center gap-2 text-[var(--ag-sys-color-text-muted)] font-medium">
-                                        <Calendar className="w-3.5 h-3.5" />
-                                        {formatRelativeTime(u.created_at)}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-5 text-right">
-                                    <div className="flex items-center justify-end gap-2 transition-opacity opacity-0 group-hover:opacity-100">
-                                        <button className="p-2.5 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-background)] rounded-xl transition-all" title="Editar Rol">
-                                            <Edit2 className="w-4 h-4" />
-                                        </button>
-                                        <button className="p-2.5 text-red-500 hover:bg-red-500/10 rounded-xl transition-all" title="Banear Usuario">
-                                            <UserX className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                        {users?.map((u: any) => {
+                            const adsCount = u.listings?.[0]?.count || 0;
+                            return <UserRow key={u.id} user={u} adsCount={adsCount} />;
+                        })}
                     </tbody>
                 </table>
             </div>
