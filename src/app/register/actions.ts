@@ -43,6 +43,7 @@ export async function signup(formData: FormData) {
         options: {
             data: {
                 name: name,
+                full_name: name,
             },
         }
     });
