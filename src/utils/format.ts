@@ -1,5 +1,5 @@
 export function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('es-ES', {
+    return new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'EUR',
         minimumFractionDigits: 0,

@@ -51,7 +51,7 @@ export async function generateMetadata(
     const previousImages = (await parent).openGraph?.images || [];
     const mainImage = listing.image_urls?.[0] || 'https://www.ruralpop.com/default-og.jpg';
 
-    const priceText = listing.price ? `${new Intl.NumberFormat('es-ES').format(listing.price)}€` : 'A convenir';
+    const priceText = listing.price ? `${new Intl.NumberFormat('de-DE').format(listing.price)}€` : 'A convenir';
     const baseTitle = `${listing.title} ${priceText}`.trim();
 
     const seoVariations = [
