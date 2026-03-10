@@ -246,8 +246,8 @@ export default function SearchScreen() {
                         className={`flex-row items-center justify-center px-3 h-10 rounded-full border ${priceMin || priceMax ? 'bg-primary-muted border-primary/50' : 'border-gray-400 bg-white'}`}
                         activeOpacity={0.7}
                     >
-                        <SlidersHorizontal className={priceMin || priceMax ? "text-primary-hover" : "text-gray-700"} size={16} />
-                        <Text className={`ml-1.5 text-[14px] font-medium ${priceMin || priceMax ? "text-primary-hover" : "text-gray-800"}`}>Filtros</Text>
+                        <SlidersHorizontal color={priceMin || priceMax ? "#059669" : "#111827"} className="mr-1.5" size={16} />
+                        <Text className={`text-[14px] font-medium ${priceMin || priceMax ? "text-primary-hover" : "text-gray-800"}`}>Filtros</Text>
                     </TouchableOpacity>
 
                     {/* Category Scroll/Chip */}
@@ -278,7 +278,7 @@ export default function SearchScreen() {
                         onPress={() => setIsSortModalOpen(true)}
                         className="flex-row items-center bg-white border border-gray-200 rounded-full px-3 py-1.5"
                     >
-                        <ArrowUpDown className="text-gray-600 mr-1.5" size={14} />
+                        <ArrowUpDown color="#111827" className="mr-1.5" size={14} />
                         <Text className="text-sm font-bold text-gray-700">
                             {sortOptions.find(opt => opt.id === sortBy)?.label || 'Relevancia'}
                         </Text>
