@@ -34,6 +34,34 @@ export async function updateUserData(field: string, value: string) {
     }
 }
 
+export async function updateUserLocationData(data: { province_id: number | null, municipality_id: string | null, location: string }) {
+    const supabase = await createClient();
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+        return { success: false, error: "No autenticado" };
+    }
+
+    try {
+        const { error } = await supabase
+            .from('users')
+            .update({
+                province_id: data.province_id,
+                municipality_id: data.municipality_id,
+                location: data.location
+            })
+            .eq('id', user.id);
+
+        if (error) throw error;
+
+        revalidatePath("/account");
+        return { success: true, message: "Ubicación actualizada correctamente." };
+    } catch (e: any) {
+        return { success: false, error: e.message || "Error al actualizar ubicación" };
+    }
+}
+
 export async function uploadAvatar(formData: FormData) {
     const supabase = await createClient();
 

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { User, Phone, Mail, KeyRound, ArrowLeft } from "lucide-react";
 import { EditableField } from "@/components/account/EditableField";
+import { EditableLocation } from "@/components/account/EditableLocation";
 import { AvatarUpload } from "@/components/account/AvatarUpload";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +21,12 @@ export default async function AccountPage() {
     const userPhone = phone || user_metadata?.phone || "";
     const userEmail = email || "";
     const avatarUrl = user_metadata?.avatar_url || "";
+
+    const { data: publicUser } = await supabase.from('users').select('province_id, municipality_id, location').eq('id', user.id).single();
+
+    const initialProvinceId = publicUser?.province_id ? String(publicUser.province_id) : "";
+    const initialMunicipalityId = publicUser?.municipality_id || "";
+    const initialLocation = publicUser?.location || "";
 
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 w-full">
@@ -70,6 +77,12 @@ export default async function AccountPage() {
                                 type="email"
                                 initialValue={userEmail}
                                 placeholder="Tu correo electrónico..."
+                            />
+
+                            <EditableLocation
+                                initialProvinceId={initialProvinceId}
+                                initialMunicipalityId={initialMunicipalityId}
+                                initialLocation={initialLocation}
                             />
                         </dl>
                     </div>
