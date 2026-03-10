@@ -229,10 +229,13 @@ export default async function ListingDetailPage(props: Props) {
                                             <Calendar className="w-4 h-4" /> {formatRelativeTime(listing.created_at)}
                                         </span>
                                         <Link
-                                            href={buildSeoUrl({ category: slugify(listing.category || "") })}
+                                            href={buildSeoUrl({
+                                                category: slugify(listing.category || ""),
+                                                subcategory: listing.subcategory || undefined
+                                            })}
                                             className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full hover:text-[var(--ag-sys-color-text)] transition-colors"
                                         >
-                                            <Tractor className="w-4 h-4" /> {listing.category}
+                                            <Tractor className="w-4 h-4" /> {listing.subcategory || listing.category}
                                         </Link>
                                     </div>
                                 </div>
