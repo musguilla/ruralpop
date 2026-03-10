@@ -22,11 +22,18 @@ export default async function AccountPage() {
     const userEmail = email || "";
     const avatarUrl = user_metadata?.avatar_url || "";
 
-    const { data: publicUser } = await supabase.from('users').select('province_id, municipality_id, location').eq('id', user.id).single();
+    const { data: publicUser } = await supabase.from('users').select('province_id, municipality_id').eq('id', user.id).single();
 
-    const initialProvinceId = publicUser?.province_id ? String(publicUser.province_id) : "";
-    const initialMunicipalityId = publicUser?.municipality_id || "";
-    const initialLocation = publicUser?.location || "";
+    // Fetch provinces to feed the first selector
+    const { data: provinces } = await supabase
+        .from("provinces")
+        .select("id, name")
+        .order("name");
+
+    const initialProvinces = provinces || [];
+
+    const initialProvinceId = publicUser?.province_id ? Number(publicUser.province_id) : "";
+    const initialMunicipalityId = publicUser?.municipality_id ? Number(publicUser.municipality_id) : "";
 
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 w-full">
@@ -82,6 +89,7 @@ export default async function AccountPage() {
                             <EditableLocation
                                 initialProvinceId={initialProvinceId}
                                 initialMunicipalityId={initialMunicipalityId}
+                                initialProvinces={initialProvinces}
                             />
                         </dl>
                     </div>

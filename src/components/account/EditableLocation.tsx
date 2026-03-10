@@ -2,12 +2,17 @@
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Check, Loader2, MapPin, ChevronDown, Search } from "lucide-react";
-import { updateUserLocationData } from "@/app/account/actions";
-import { LOCATIONS, LocationItem } from "@/constants/locations";
+import { updateUserLocationData, getMunicipalities } from "@/app/account/actions";
+
+interface LocItem {
+    id: number;
+    name: string;
+}
 
 interface EditableLocationProps {
-    initialProvinceId: string;
-    initialMunicipalityId: string;
+    initialProvinceId: number | "";
+    initialMunicipalityId: number | "";
+    initialProvinces: LocItem[];
 }
 
 function SearchableSelect({
@@ -15,13 +20,15 @@ function SearchableSelect({
     value,
     onChange,
     placeholder,
-    disabled = false
+    disabled = false,
+    isLoading = false
 }: {
-    options: LocationItem[];
-    value: string;
-    onChange: (val: string) => void;
+    options: LocItem[];
+    value: number | "";
+    onChange: (val: number | "") => void;
     placeholder: string;
     disabled?: boolean;
+    isLoading?: boolean;
 }) {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -44,7 +51,7 @@ function SearchableSelect({
         return options.filter(o => {
             const lowerName = o.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             return lowerName.includes(lowerSearch);
-        }).slice(0, 50); // limit for performance if many localities
+        }).slice(0, 100);
     }, [options, searchTerm]);
 
     return (
@@ -61,12 +68,16 @@ function SearchableSelect({
                 disabled={disabled}
             >
                 <span className={`block truncate text-lg font-medium ${selectedOption ? "text-[var(--ag-sys-color-text)]" : "text-[var(--ag-sys-color-text-muted)]"}`}>
-                    {selectedOption ? selectedOption.name : placeholder}
+                    {isLoading ? "Cargando..." : selectedOption ? selectedOption.name : placeholder}
                 </span>
-                <ChevronDown className={`w-5 h-5 text-[var(--ag-sys-color-text-muted)] transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                {isLoading ? (
+                    <Loader2 className="w-4 h-4 text-[var(--ag-sys-color-text-muted)] animate-spin" />
+                ) : (
+                    <ChevronDown className={`w-5 h-5 text-[var(--ag-sys-color-text-muted)] transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                )}
             </button>
 
-            {isOpen && !disabled && (
+            {isOpen && !disabled && !isLoading && (
                 <div className="absolute z-50 w-full mt-2 bg-white border border-[var(--ag-sys-color-border)] rounded-xl shadow-lg overflow-hidden animate-in fade-in zoom-in slide-in-from-top-2">
                     <div className="flex items-center px-4 py-3 border-b border-[var(--ag-sys-color-border)] bg-gray-50/50">
                         <Search className="w-4 h-4 text-[var(--ag-sys-color-text-muted)] mr-2 shrink-0" />
@@ -112,23 +123,48 @@ function SearchableSelect({
     );
 }
 
-export function EditableLocation({ initialProvinceId, initialMunicipalityId }: EditableLocationProps) {
+export function EditableLocation({ initialProvinceId, initialMunicipalityId, initialProvinces }: EditableLocationProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-    const [provinceId, setProvinceId] = useState(initialProvinceId);
-    const [municipalityId, setMunicipalityId] = useState(initialMunicipalityId);
+    const [provinceId, setProvinceId] = useState<number | "">(initialProvinceId);
+    const [municipalityId, setMunicipalityId] = useState<number | "">(initialMunicipalityId);
+
+    const [municipalities, setMunicipalities] = useState<LocItem[]>([]);
+    const [isLoadingMunicipalities, setIsLoadingMunicipalities] = useState(false);
 
     const isDirty = provinceId !== initialProvinceId || municipalityId !== initialMunicipalityId;
 
-    const provinces = useMemo(() => LOCATIONS.filter(l => l.type === 'province'), []);
+    useEffect(() => {
+        let isMounted = true;
 
-    // Only fetch localities for the selected province name
-    const localities = useMemo(() => {
-        if (!provinceId) return LOCATIONS.filter(l => l.type === 'municipality');
-        const pName = LOCATIONS.find(p => p.id === provinceId)?.name;
-        return LOCATIONS.filter(l => l.type === 'municipality' && l.province === pName);
+        async function fetchMuni() {
+            if (provinceId === "") {
+                setMunicipalities([]);
+                return;
+            }
+
+            setIsLoadingMunicipalities(true);
+            try {
+                const data = await getMunicipalities(provinceId as number);
+                if (isMounted) {
+                    setMunicipalities(data);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                if (isMounted) {
+                    setIsLoadingMunicipalities(false);
+                }
+            }
+        }
+
+        fetchMuni();
+
+        return () => {
+            isMounted = false;
+        };
     }, [provinceId]);
 
     const handleSave = async () => {
@@ -139,8 +175,8 @@ export function EditableLocation({ initialProvinceId, initialMunicipalityId }: E
         setSuccessMsg(null);
 
         const res = await updateUserLocationData({
-            province_id: provinceId ? Number(provinceId) : null,
-            municipality_id: municipalityId || null,
+            province_id: provinceId === "" ? null : provinceId,
+            municipality_id: municipalityId === "" ? null : String(municipalityId),
             location: "" // Eliminado campo texto libre
         });
 
@@ -150,11 +186,6 @@ export function EditableLocation({ initialProvinceId, initialMunicipalityId }: E
                 setSuccessMsg(res.message);
                 setTimeout(() => setSuccessMsg(null), 5000);
             }
-            // we pretend it's no longer dirty by updating the state if we used props directly, 
-            // but since we only check against initial props natively here, 
-            // it's best to let a reload happen or trust the user sees success.
-            // Normally we'd push router refresh. Let's just trigger a hard reload 
-            // of the RSC tree by reloading window or wait for RSC revalidatePath.
             setTimeout(() => window.location.reload(), 1500);
         } else {
             setError(res.error || "Error al actualizar");
@@ -171,10 +202,10 @@ export function EditableLocation({ initialProvinceId, initialMunicipalityId }: E
             <dd className="relative">
                 <div className="">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-                        <div>
+                        <div className="relative z-20">
                             <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Provincia</label>
                             <SearchableSelect
-                                options={provinces}
+                                options={initialProvinces}
                                 value={provinceId}
                                 onChange={(val) => {
                                     setProvinceId(val);
@@ -183,14 +214,15 @@ export function EditableLocation({ initialProvinceId, initialMunicipalityId }: E
                                 placeholder="Selecciona provincia..."
                             />
                         </div>
-                        <div>
+                        <div className="relative z-10">
                             <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Localidad</label>
                             <SearchableSelect
-                                options={localities}
+                                options={municipalities}
                                 value={municipalityId}
                                 onChange={setMunicipalityId}
                                 placeholder="Selecciona localidad..."
-                                disabled={!provinceId}
+                                disabled={provinceId === ""}
+                                isLoading={isLoadingMunicipalities}
                             />
                         </div>
                     </div>

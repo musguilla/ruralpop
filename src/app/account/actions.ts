@@ -111,3 +111,19 @@ export async function uploadAvatar(formData: FormData) {
         return { success: false, error: e.message || "Error al subir avatar" };
     }
 }
+
+export async function getMunicipalities(provinceId: number) {
+    const supabase = await createClient();
+    const { data: municipalities, error } = await supabase
+        .from("municipalities")
+        .select("id, name")
+        .eq("province_id", provinceId)
+        .order("name");
+
+    if (error) {
+        console.error("Error fetching municipalities:", error);
+        return [];
+    }
+
+    return municipalities || [];
+}
