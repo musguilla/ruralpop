@@ -10,6 +10,7 @@ import { decodeId } from "@/utils/idUtils";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { FavoriteDetailButton } from "@/components/ui/FavoriteDetailButton";
 import { ShareButtons } from "@/components/ui/ShareButtons";
+import { PhoneRevealButton } from "@/components/ui/PhoneRevealButton";
 import { buildSeoUrl, slugify } from "@/utils/seoUtils";
 
 import { Metadata, ResolvingMetadata } from "next";
@@ -292,13 +293,10 @@ export default async function ListingDetailPage(props: Props) {
                                 />
 
                                 {listing.contact_phone && (
-                                    <a
-                                        href={`tel:${listing.contact_phone}`}
-                                        className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)] font-bold rounded-2xl hover:bg-[var(--ag-sys-color-border)] transition-all active:scale-95"
-                                    >
-                                        <Phone className="w-5 h-5" />
-                                        Llamar {listing.contact_phone}
-                                    </a>
+                                    <PhoneRevealButton
+                                        phone={listing.contact_phone}
+                                        isLoggedIn={!!user}
+                                    />
                                 )}
                             </div>
                         </div>
