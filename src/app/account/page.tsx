@@ -47,12 +47,12 @@ export default async function AccountPage() {
                     </p>
                 </header>
 
-                <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden shadow-sm">
+                <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm">
                     <AvatarUpload initialAvatarUrl={avatarUrl} />
 
                     <div className="p-8 border-b border-[var(--ag-sys-color-border)]">
                         <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Datos Personales</h2>
-                        <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12">
+                        <dl className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-12">
                             <EditableField
                                 field="name"
                                 label="Nombre Completo"

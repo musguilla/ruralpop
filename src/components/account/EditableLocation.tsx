@@ -67,7 +67,7 @@ function SearchableSelect({
             </button>
 
             {isOpen && !disabled && (
-                <div className="absolute z-20 w-full mt-2 bg-white border border-[var(--ag-sys-color-border)] rounded-xl shadow-lg overflow-hidden animate-in fade-in zoom-in slide-in-from-top-2">
+                <div className="absolute z-50 w-full mt-2 bg-white border border-[var(--ag-sys-color-border)] rounded-xl shadow-lg overflow-hidden animate-in fade-in zoom-in slide-in-from-top-2">
                     <div className="flex items-center px-4 py-3 border-b border-[var(--ag-sys-color-border)] bg-gray-50/50">
                         <Search className="w-4 h-4 text-[var(--ag-sys-color-text-muted)] mr-2 shrink-0" />
                         <input
@@ -163,13 +163,13 @@ export function EditableLocation({ initialProvinceId, initialMunicipalityId }: E
     };
 
     return (
-        <div className="flex flex-col group relative mt-6 col-span-1 md:col-span-2">
+        <div className="flex flex-col group relative mt-6 col-span-1 md:col-span-3">
             <dt className="flex items-center gap-2 text-sm font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider mb-4">
                 <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                Tu Ubicación Default
+                Tu Ubicación
             </dt>
             <dd className="relative">
-                <div className="bg-gray-50/50 p-6 rounded-3xl border border-[var(--ag-sys-color-border)]">
+                <div className="">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                         <div>
                             <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Provincia</label>
