@@ -14,10 +14,13 @@ import {
     Eye,
     MoreVertical,
     Calendar,
-    UserCheck
+    UserCheck,
+    Edit
 } from "lucide-react";
 import Image from "next/image";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
+import { encodeId } from "@/utils/idUtils";
+import Link from "next/link";
 
 import { Pagination } from "@/components/ui/Pagination";
 
@@ -123,10 +126,13 @@ export default async function AdminListingsPage(props: {
 
                                     {/* Actions Moderation */}
                                     <div className="flex items-center gap-2">
-                                        <button className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all">
-                                            <Eye className="w-3.5 h-3.5" /> Ver Detalle
-                                        </button>
+                                        <Link href={`/admin/listings/edit/${encodeId(l.id)}`} className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all">
+                                            <Edit className="w-3.5 h-3.5" /> Editar
+                                        </Link>
                                         <div className="w-px h-6 bg-[var(--ag-sys-color-border)] mx-1"></div>
+                                        <button className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all">
+                                            <Eye className="w-3.5 h-3.5" /> Ver
+                                        </button>
                                         <button className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-600 text-xs font-bold rounded-xl hover:bg-amber-500/20 transition-all">
                                             <AlertTriangle className="w-3.5 h-3.5" /> Moderar
                                         </button>

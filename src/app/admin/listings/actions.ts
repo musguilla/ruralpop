@@ -77,3 +77,68 @@ export async function deleteListing(listingId: string) {
     revalidatePath("/"); // También refrescar la home
     return { success: true };
 }
+
+export async function adminUpdateListing(listingId: string, formData: FormData) {
+    if (!await isAdmin()) {
+        return { error: "No estás autorizado para realizar esta acción." };
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+        return { error: "Error de configuración de servidor." };
+    }
+
+    let supabaseAdmin;
+    try {
+        supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey);
+    } catch (err) {
+        return { error: "Hubo un error inicializando cliente backend." };
+    }
+
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const price = parseFloat(formData.get("price") as string);
+    const category = formData.get("category") as string;
+    const subcategory = formData.get("subcategory") as string;
+    const location = formData.get("location") as string;
+
+    const provStr = formData.get("province_id") as string;
+    const muniStr = formData.get("municipality_id") as string;
+    const province_id = provStr ? parseInt(provStr, 10) : null;
+    const municipality_id = muniStr ? parseInt(muniStr, 10) : null;
+
+    const contact_phone = formData.get("contact_phone") as string | null;
+    const price_type = formData.get("price_type") as string;
+    const imageUrlsString = formData.get("image_urls") as string;
+    const image_urls = imageUrlsString ? JSON.parse(imageUrlsString) : [];
+
+    const { error } = await supabaseAdmin
+        .from("listings")
+        .update({
+            title,
+            description,
+            price,
+            category,
+            subcategory: subcategory || null,
+            location,
+            province_id,
+            municipality_id,
+            price_type,
+            image_urls,
+            contact_phone
+        })
+        .eq("id", listingId);
+
+    if (error) {
+        console.error("Error updating listing via admin:", error);
+        return { error: error.message };
+    }
+
+    revalidatePath("/admin/listings");
+    revalidatePath("/");
+    revalidatePath(`/anuncio/anuncio-${listingId.substring(0, 8)}`);
+
+    return { success: true };
+}
