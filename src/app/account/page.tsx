@@ -82,7 +82,6 @@ export default async function AccountPage() {
                             <EditableLocation
                                 initialProvinceId={initialProvinceId}
                                 initialMunicipalityId={initialMunicipalityId}
-                                initialLocation={initialLocation}
                             />
                         </dl>
                     </div>
