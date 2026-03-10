@@ -26,8 +26,10 @@ export const metadata: Metadata = {
   applicationName: "Ruralpop",
   icons: {
     icon: [
+      { url: '/favicon.png', type: 'image/png' },
       { url: '/icon.png', sizes: '192x192', type: 'image/png' },
     ],
+    shortcut: ['/favicon.png'],
     apple: [
       { url: '/apple-icon.png', sizes: '192x192', type: 'image/png' },
     ],
@@ -49,6 +51,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
+        <link rel="icon" href="/favicon.png" type="image/png" />
         {/* Google Analytics */}
         <Script
           async
