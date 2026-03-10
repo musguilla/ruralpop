@@ -244,10 +244,11 @@ export default async function ListingDetailPage(props: Props) {
                                     <div className="text-4xl font-extrabold text-[var(--ag-sys-color-primary)] mb-1">
                                         {formatCurrency(listing.price)}
                                     </div>
-                                    <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)]">
-                                        {listing.price_type === 'negotiable' ? 'Precio Negociable' :
-                                            listing.price_type === 'exchange' ? 'A convenir' : 'Precio Fijo'}
-                                    </span>
+                                    {listing.price_type !== 'fixed' && (
+                                        <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)]">
+                                            {listing.price_type === 'negotiable' ? 'Precio Negociable' : 'A convenir'}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 
