@@ -10,6 +10,7 @@ import { decodeId } from "@/utils/idUtils";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { FavoriteDetailButton } from "@/components/ui/FavoriteDetailButton";
 import { ShareButtons } from "@/components/ui/ShareButtons";
+import { buildSeoUrl, slugify } from "@/utils/seoUtils";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -218,15 +219,21 @@ export default async function ListingDetailPage(props: Props) {
                                         {listing.title}
                                     </h1>
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--ag-sys-color-text-muted)]">
-                                        <span className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full">
+                                        <Link
+                                            href={buildSeoUrl({ category: slugify(listing.category || ""), province_id: listing.province_id ? String(listing.province_id) : undefined })}
+                                            className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full hover:text-[var(--ag-sys-color-text)] transition-colors"
+                                        >
                                             <MapPin className="w-4 h-4" /> {listing.location}
-                                        </span>
+                                        </Link>
                                         <span className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full">
                                             <Calendar className="w-4 h-4" /> {formatRelativeTime(listing.created_at)}
                                         </span>
-                                        <span className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full">
+                                        <Link
+                                            href={buildSeoUrl({ category: slugify(listing.category || "") })}
+                                            className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full hover:text-[var(--ag-sys-color-text)] transition-colors"
+                                        >
                                             <Tractor className="w-4 h-4" /> {listing.category}
-                                        </span>
+                                        </Link>
                                     </div>
                                 </div>
                                 <div className="text-right">
