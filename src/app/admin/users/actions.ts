@@ -11,7 +11,7 @@ function getAdminClient() {
     );
 }
 
-export async function updateUser(userId: string, data: { name?: string, role?: string, location?: string }) {
+export async function updateUser(userId: string, data: { name?: string, role?: string, location?: string, email?: string, contact_phone?: string, province_id?: string | number | null, municipality_id?: string | null }) {
     const supabaseSession = await createServerClient();
     const { data: { user } } = await supabaseSession.auth.getUser();
 
@@ -22,7 +22,20 @@ export async function updateUser(userId: string, data: { name?: string, role?: s
 
     if (callerProfile?.role !== "admin") throw new Error("Forbidden");
 
-    const { error } = await supabaseAdmin.from("users").update(data).eq("id", userId);
+    const { email, ...publicData } = data;
+
+    // If email is provided, attempt to update it in Auth first
+    if (email) {
+        const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(userId, { email });
+        if (authError) {
+            console.error("Auth update error:", authError);
+            return { success: false, error: authError.message };
+        }
+    }
+
+    // Update public profile
+    const updatePayload = { ...publicData, ...(email ? { email } : {}) };
+    const { error } = await supabaseAdmin.from("users").update(updatePayload).eq("id", userId);
 
     if (error) {
         console.error("Update error:", error);

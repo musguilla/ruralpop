@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Shield, MapPin, Calendar, Edit2, UserX, Package, X, Save, AlertTriangle } from "lucide-react";
 import { formatRelativeTime } from "@/utils/format";
+import { LOCATIONS } from "@/constants/locations";
 import { updateUser, deleteUser } from "./actions";
 
 interface UserRowProps {
@@ -21,13 +22,21 @@ export function UserRow({ user, adsCount }: UserRowProps) {
     const [editName, setEditName] = useState(user.name || "");
     const [editRole, setEditRole] = useState(user.role || "user");
     const [editLocation, setEditLocation] = useState(user.location || "");
+    const [editEmail, setEditEmail] = useState(user.email || "");
+    const [editPhone, setEditPhone] = useState(user.contact_phone || "");
+    const [editProvince, setEditProvince] = useState(user.province_id ? String(user.province_id) : "");
+    const [editMunicipality, setEditMunicipality] = useState(user.municipality_id || "");
 
     const handleSave = async () => {
         setIsSaving(true);
         const res = await updateUser(user.id, {
             name: editName,
             role: editRole,
-            location: editLocation
+            location: editLocation,
+            email: editEmail,
+            contact_phone: editPhone,
+            province_id: editProvince ? Number(editProvince) : null,
+            municipality_id: editMunicipality ? editMunicipality : null
         });
         setIsSaving(false);
         if (res.success) {
@@ -129,7 +138,7 @@ export function UserRow({ user, adsCount }: UserRowProps) {
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
-                        <div className="space-y-4">
+                        <div className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
                             <div>
                                 <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Nombre</label>
                                 <input
@@ -140,7 +149,58 @@ export function UserRow({ user, adsCount }: UserRowProps) {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Ubicación</label>
+                                <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Email</label>
+                                <input
+                                    type="email"
+                                    value={editEmail}
+                                    onChange={e => setEditEmail(e.target.value)}
+                                    className="w-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Teléfono</label>
+                                <input
+                                    type="text"
+                                    value={editPhone}
+                                    onChange={e => setEditPhone(e.target.value)}
+                                    className="w-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/50"
+                                    placeholder="Ej. +34 600..."
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Provincia</label>
+                                    <select
+                                        value={editProvince}
+                                        onChange={e => {
+                                            setEditProvince(e.target.value);
+                                            setEditMunicipality("");
+                                        }}
+                                        className="w-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/50 appearance-none"
+                                    >
+                                        <option value="">Cualquiera</option>
+                                        {LOCATIONS.filter(l => l.type === 'province').map(p => (
+                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Localidad</label>
+                                    <select
+                                        value={editMunicipality}
+                                        onChange={e => setEditMunicipality(e.target.value)}
+                                        className="w-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/50 appearance-none"
+                                        disabled={!editProvince}
+                                    >
+                                        <option value="">Cualquiera</option>
+                                        {LOCATIONS.filter(l => l.type === 'municipality' && (!editProvince || l.province === LOCATIONS.find(prov => prov.id === editProvince)?.name)).map(m => (
+                                            <option key={m.id} value={m.id}>{m.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">Ubicación (Texto Libre)</label>
                                 <input
                                     type="text"
                                     value={editLocation}
