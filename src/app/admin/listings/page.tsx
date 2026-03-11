@@ -15,7 +15,8 @@ import {
     MoreVertical,
     Calendar,
     UserCheck,
-    Edit
+    Edit,
+    Heart
 } from "lucide-react";
 import Image from "next/image";
 import supabaseLoader from "@/utils/supabase-image-loader";
@@ -37,7 +38,7 @@ export default async function AdminListingsPage(props: {
 
     let query = supabase
         .from("listings")
-        .select("*, seller:users(*)", { count: "exact" })
+        .select("*, seller:users(*), favorites(count)", { count: "exact" })
         .order("created_at", { ascending: false })
         .range(from, to);
 
@@ -62,7 +63,7 @@ export default async function AdminListingsPage(props: {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 {listings?.map((l: any) => (
                     <div
                         key={l.id}
@@ -95,6 +96,8 @@ export default async function AdminListingsPage(props: {
                                             <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {l.location}</span>
                                             <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full"></span>
                                             <span className="flex items-center gap-1"><Tag className="w-3 h-3" /> {l.category}</span>
+                                            <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full"></span>
+                                            <span className="flex items-center gap-1 text-red-500"><Heart className="w-3 h-3 fill-current" /> {l.favorites?.[0]?.count || 0}</span>
                                         </div>
                                     </div>
                                     <div className="text-right">
