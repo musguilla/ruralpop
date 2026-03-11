@@ -19,7 +19,7 @@ import {
     Heart
 } from "lucide-react";
 import Image from "next/image";
-import supabaseLoader from "@/utils/supabase-image-loader";
+import SupabaseImage from "@/components/ui/SupabaseImage";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { encodeId } from "@/utils/idUtils";
 import Link from "next/link";
@@ -73,7 +73,7 @@ export default async function AdminListingsPage(props: {
                             {/* Image and Status */}
                             <div className="relative w-full lg:w-48 aspect-square rounded-2xl overflow-hidden bg-[var(--ag-sys-color-background)] flex-shrink-0">
                                 {l.image_urls?.[0] ? (
-                                    <Image loader={supabaseLoader} src={l.image_urls[0]} alt={l.title} fill className="object-cover" />
+                                    <SupabaseImage src={l.image_urls[0]} alt={l.title} fill className="object-cover" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-[var(--ag-sys-color-text-muted)] opacity-20">
                                         <Package className="w-12 h-12" />
