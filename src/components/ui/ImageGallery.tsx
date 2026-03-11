@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import supabaseLoader from "@/utils/supabase-image-loader";
 
 interface ImageGalleryProps {
     images: string[];
@@ -92,6 +93,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
                         className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
                     >
                         <Image
+                            loader={supabaseLoader}
                             src={images[activeIndex]}
                             alt={`${title} - imagen ${activeIndex + 1}`}
                             fill
@@ -142,6 +144,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
                                 }`}
                         >
                             <Image
+                                loader={supabaseLoader}
                                 src={img}
                                 alt={`Thumbnail ${idx + 1}`}
                                 fill

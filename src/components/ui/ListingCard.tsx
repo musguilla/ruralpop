@@ -8,6 +8,7 @@ import { MapPin, Image as ImageIcon, ChevronLeft, ChevronRight } from "lucide-re
 import { slugify } from "@/utils/seoUtils";
 import { encodeId } from "@/utils/idUtils";
 import { FavoriteButton } from "./FavoriteButton";
+import supabaseLoader from "@/utils/supabase-image-loader";
 
 export interface Listing {
     id: string;
@@ -53,6 +54,7 @@ export function ListingCard({ listing, isFavorited = false }: { listing: Listing
                         {mainImage ? (
                             <>
                                 <Image
+                                    loader={supabaseLoader}
                                     src={mainImage}
                                     alt={listing.title}
                                     fill
