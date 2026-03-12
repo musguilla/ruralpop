@@ -1,6 +1,6 @@
 import React from 'react';
-import { ScrollView, View, Text, TouchableOpacity, Image } from 'react-native';
-import { Image as ExpoImage } from 'expo-image';
+import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 import { Tractor, Leaf, Apple, Hammer, PiggyBank, Bird, Dog, Rabbit, Briefcase, Truck, Stethoscope, Anvil } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
@@ -42,7 +42,7 @@ export function CategoriesSlider() {
                         className="items-center justify-center bg-white border border-gray-200 rounded-2xl p-4 w-28 h-28 shadow-sm"
                     >
                         {cat.image ? (
-                            <Image source={cat.image} className="w-10 h-10" resizeMode="contain" />
+                            <Image source={cat.image} style={{ width: 40, height: 40 }} contentFit="contain" />
                         ) : (() => {
                             const IconComponent = (cat as any).Icon;
                             return IconComponent ? <IconComponent color="#059669" size={32} /> : null;

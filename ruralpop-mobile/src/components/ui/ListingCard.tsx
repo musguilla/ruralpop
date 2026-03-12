@@ -55,10 +55,10 @@ export function ListingCard({ listing }: ListingCardProps) {
                 <View className="relative w-full bg-surface-muted items-center justify-center overflow-hidden" style={{ aspectRatio: 4 / 3 }}>
                     {mainImage ? (
                         <Image
-                            source={{ uri: getOptimizedImageUrl(mainImage, { width: 400 }) || undefined }}
-                            className="w-full h-full"
+                            source={{ uri: mainImage }}
+                            style={{ width: '100%', height: '100%' }}
                             contentFit="cover"
-                            transition={300}
+                            cachePolicy="disk"
                         />
                     ) : (
                         <View className="items-center justify-center">

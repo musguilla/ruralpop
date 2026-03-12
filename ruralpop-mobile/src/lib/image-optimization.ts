@@ -11,8 +11,6 @@ export function getOptimizedImageUrl(
     originalUrl: string | null | undefined,
     options: { width?: number; height?: number; quality?: number; resize?: 'cover' | 'contain' | 'fill' } = {}
 ): string | null {
-    // Desactivamos temporalmente las transformaciones de Supabase
-    // hasta confirmar que el proyecto tiene activo el plan Pro/Pay-as-you-go.
-    // Esto evita que las imágenes aparezcan en blanco en la app.
-    return originalUrl || null;
+    if (!originalUrl || typeof originalUrl !== 'string') return null;
+    return originalUrl;
 }
