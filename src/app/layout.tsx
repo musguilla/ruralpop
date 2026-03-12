@@ -26,12 +26,12 @@ export const metadata: Metadata = {
   applicationName: "Ruralpop",
   icons: {
     icon: [
-      { url: '/favicon.png', type: 'image/png' },
-      { url: '/icon.png', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-48x48.png', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
     ],
-    shortcut: ['/favicon.png'],
     apple: [
-      { url: '/apple-icon.png', sizes: '192x192', type: 'image/png' },
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   },
   appleWebApp: {
@@ -62,7 +62,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="icon" href="https://www.ruralpop.com/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="48x48" href="https://www.ruralpop.com/favicon-48x48.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="https://www.ruralpop.com/favicon-96x96.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="https://www.ruralpop.com/apple-touch-icon.png" />
         {/* Google Analytics */}
         <Script
           async
