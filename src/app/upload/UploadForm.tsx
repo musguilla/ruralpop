@@ -267,12 +267,7 @@ export default function UploadForm({ savedPhone, initialProvinces }: UploadFormP
                                 placeholder="Ej: 600 000 000"
                                 className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
                             />
-                            <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1.5">
-                                {savedPhone
-                                    ? "Usamos el teléfono guardado de tu perfil. Puedes cambiarlo aquí y se actualizará automáticamente."
-                                    : "Al publicar, este número se guardará en tu perfil para futuros anuncios."
-                                }
-                            </p>
+                            {/* El texto descriptivo ha sido eliminado a petición del usuario */}
                         </div>
                     </div>
                 </section>
