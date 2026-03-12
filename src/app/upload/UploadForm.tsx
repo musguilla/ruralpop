@@ -264,7 +264,7 @@ export default function UploadForm({ savedPhone, initialProvinces }: UploadFormP
                                 type="tel"
                                 // El valor guardado en el perfil se precarga automáticamente
                                 defaultValue={savedPhone ?? ""}
-                                placeholder="Ej: 600 000 000"
+                                placeholder="600 000 000"
                                 className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
                             />
                             {/* El texto descriptivo ha sido eliminado a petición del usuario */}
