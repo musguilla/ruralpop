@@ -22,8 +22,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1D2422"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#059669"
       },
       "package": "com.ruralpop.app"
     },
