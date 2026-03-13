@@ -16,6 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ruralpop.ruralpopapp",
+      "buildNumber": "23",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -25,7 +26,8 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#059669"
       },
-      "package": "com.ruralpop.app"
+      "package": "com.ruralpop.app",
+      "versionCode": 23
     },
     "web": {
       "favicon": "./assets/favicon.png"
