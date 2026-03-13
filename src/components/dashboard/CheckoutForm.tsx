@@ -56,7 +56,16 @@ export function CheckoutForm({ planId, listingId }: { planId: string, listingId:
                 </p>
             </div>
 
-            <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
+            <PaymentElement 
+                id="payment-element" 
+                options={{ 
+                    layout: "tabs",
+                    wallets: {
+                        applePay: 'never',
+                        googlePay: 'never'
+                    }
+                }} 
+            />
             
             {errorMessage && (
                 <div className="p-4 bg-red-50 text-red-600 text-sm font-semibold rounded-xl border border-red-200">
