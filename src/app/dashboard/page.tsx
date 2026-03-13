@@ -49,8 +49,14 @@ export default async function DashboardPage(props: Props) {
     const listingIdForSuccess = searchParams?.listing_id as string | undefined;
     let successMessage = "";
 
-    if (isFeaturedSuccess) {
-        const featuredListing = listings?.find((l: any) => l.id === listingIdForSuccess);
+    if (isFeaturedSuccess && listingIdForSuccess) {
+        // Obtenemos el título real directamente de la DB por si no estuviese en la lista actual
+        const { data: featuredListing } = await supabase
+            .from("listings")
+            .select("title")
+            .eq("id", listingIdForSuccess)
+            .single();
+
         const listingTitle = featuredListing ? featuredListing.title : "tu anuncio";
 
         if (planId === "bump") {
