@@ -5,7 +5,6 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { FeaturedCheckoutFlow } from "@/components/dashboard/FeaturedCheckoutFlow";
 import Image from "next/image";
-import supabaseLoader from "@/utils/supabase-image-loader";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +67,6 @@ export default async function DestacarAnuncioPage(props: Props) {
                     <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[var(--ag-sys-color-background)] flex-shrink-0 border border-[var(--ag-sys-color-border)]">
                         {listing.image_urls?.[0] ? (
                             <Image
-                                loader={supabaseLoader}
                                 src={listing.image_urls[0]}
                                 alt={listing.title}
                                 fill
