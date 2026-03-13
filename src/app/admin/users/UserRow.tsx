@@ -67,12 +67,14 @@ export function UserRow({ user, adsCount }: UserRowProps) {
                                 <Image src={user.avatar_url} alt={user.name || ''} fill className="object-cover" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-[var(--ag-sys-color-primary)] font-bold text-lg">
-                                    {user.name?.[0] || 'U'}
+                                    {(user.name?.[0] || user.email?.[0] || 'U').toUpperCase()}
                                 </div>
                             )}
                         </div>
                         <div>
-                            <p className="font-bold text-[var(--ag-sys-color-text)] leading-tight">{user.name || 'Sin nombre'}</p>
+                            <p className="font-bold text-[var(--ag-sys-color-text)] leading-tight">
+                                {user.name || user.email?.split('@')[0] || 'Usuario'}
+                            </p>
                             <span className="text-xs text-[var(--ag-sys-color-text-muted)]">{user.email}</span>
                         </div>
                     </div>
