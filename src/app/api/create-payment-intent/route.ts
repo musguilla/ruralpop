@@ -54,8 +54,8 @@ export async function POST(req: Request) {
         return NextResponse.json({
             clientSecret: paymentIntent.client_secret,
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Stripe Error:", error);
-        return new NextResponse(error.message || "Internal Error", { status: 500 });
+        return new NextResponse(error instanceof Error ? error.message : "Internal Error", { status: 500 });
     }
 }

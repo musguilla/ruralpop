@@ -16,9 +16,10 @@ export async function POST(req: Request) {
             signature,
             process.env.STRIPE_WEBHOOK_SECRET as string
         );
-    } catch (error: any) {
-        console.error("Webhook signature verification failed.", error.message);
-        return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        console.error("Webhook signature verification failed.", errorMessage);
+        return new NextResponse(`Webhook Error: ${errorMessage}`, { status: 400 });
     }
 
     // Initialize Supabase Admin strictly for webhooks to bypass RLS
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
 
     if (event.type === "payment_intent.succeeded") {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        const { listingId, planId, userId } = paymentIntent.metadata;
+        const { listingId, planId } = paymentIntent.metadata;
 
         console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
 
@@ -66,9 +67,10 @@ export async function POST(req: Request) {
 
                     console.log(`✅ Successfully fulfilled ${planId} for listing ${listingId}`);
                 }
-            } catch (err: any) {
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : "Unknown error";
                 console.error("Database Error on Webhook:", err);
-                return new NextResponse(`Database Error: ${err.message}`, { status: 500 });
+                return new NextResponse(`Database Error: ${errorMessage}`, { status: 500 });
             }
         }
     }
