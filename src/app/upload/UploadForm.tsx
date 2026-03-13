@@ -119,8 +119,9 @@ export default function UploadForm({ savedPhone, initialProvinces }: UploadFormP
                     type: "error"
                 });
                 setIsPending(false);
-            } else if (res?.success) {
-                router.push("/");
+            } else if (res?.success && res.listingId) {
+                // Redirect to highlight flow after successful publish
+                router.push(`/dashboard/destacar/${res.listingId}?published=true`);
                 router.refresh();
             }
         } catch (err) {

@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 
 type Props = {
     params: Promise<{ id: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export default async function DestacarAnuncioPage(props: Props) {
@@ -19,6 +20,9 @@ export default async function DestacarAnuncioPage(props: Props) {
     }
 
     const { id: encodedId } = await props.params;
+    const searchParams = await props.searchParams;
+    const isNewlyPublished = searchParams?.published === "true";
+    
     const listingId = decodeId(encodedId);
 
     const supabase = await createClient();
@@ -53,6 +57,17 @@ export default async function DestacarAnuncioPage(props: Props) {
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                     Volver a mi panel
                 </Link>
+
+                {isNewlyPublished && (
+                    <div className="mb-10 font-bold text-green-700 bg-green-50/80 border border-green-200 px-6 py-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 shadow-sm">
+                        <div className="bg-green-100 p-1.5 rounded-full text-green-600 flex-shrink-0">
+                            <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <span className="text-xl">¡Tu anuncio ha sido publicado!</span>
+                    </div>
+                )}
 
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10">
                     <div className="flex-1 text-center md:text-left">
@@ -93,6 +108,20 @@ export default async function DestacarAnuncioPage(props: Props) {
                 </div>
 
                 <FeaturedCheckoutFlow listingId={listing.id} />
+
+                {isNewlyPublished && (
+                    <div className="mt-12 pt-8 border-t border-[var(--ag-sys-color-border)] text-center flex flex-col items-center animate-in fade-in duration-700">
+                        <Link 
+                            href="/" 
+                            className="inline-flex py-4 px-10 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-md shadow-[var(--ag-sys-color-primary)]/20 w-full md:w-auto justify-center"
+                        >
+                            Ver mi anuncio publicado
+                        </Link>
+                        <p className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] mt-5 flex items-center gap-2">
+                            Si no deseas destacarlo ahora, puedes hacerlo más adelante desde tu panel.
+                        </p>
+                    </div>
+                )}
                 
             </div>
         </div>

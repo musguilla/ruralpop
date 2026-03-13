@@ -38,7 +38,7 @@ export async function createListing(formData: FormData) {
             .eq("id", user.id);
     }
 
-    const { error } = await supabase.from("listings").insert({
+    const { data: insertedData, error } = await supabase.from("listings").insert({
         title,
         description,
         price,
@@ -51,7 +51,7 @@ export async function createListing(formData: FormData) {
         image_urls,
         user_id: user.id,
         status: "active"
-    });
+    }).select('id').single();
 
     if (error) {
         console.error("Error creating listing:", error);
@@ -59,7 +59,7 @@ export async function createListing(formData: FormData) {
     }
 
     revalidatePath("/");
-    return { success: true };
+    return { success: true, listingId: insertedData.id };
 }
 
 export async function getMunicipalities(provinceId: number) {
