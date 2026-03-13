@@ -62,6 +62,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
+        <meta name="google-adsense-account" content="ca-pub-2042067618462129" />
         <link rel="icon" href="https://www.ruralpop.com/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="48x48" href="https://www.ruralpop.com/favicon-48x48.png" />
         <link rel="icon" type="image/png" sizes="96x96" href="https://www.ruralpop.com/favicon-96x96.png" />
