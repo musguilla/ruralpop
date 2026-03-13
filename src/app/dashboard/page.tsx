@@ -49,24 +49,29 @@ export default async function DashboardPage(props: Props) {
     const listingIdForSuccess = searchParams?.listing_id as string | undefined;
     let successMessage = "";
 
-    if (isFeaturedSuccess && listingIdForSuccess) {
-        // Obtenemos el título real directamente de la DB por si no estuviese en la lista actual
-        const { data: featuredListing } = await supabase
-            .from("listings")
-            .select("title")
-            .eq("id", listingIdForSuccess)
-            .single();
+    if (isFeaturedSuccess) {
+        if (listingIdForSuccess) {
+            // Obtenemos el título real directamente de la DB por si no estuviese en la lista actual
+            const { data: featuredListing } = await supabase
+                .from("listings")
+                .select("title")
+                .eq("id", listingIdForSuccess)
+                .single();
 
-        const listingTitle = featuredListing ? featuredListing.title : "tu anuncio";
+            const listingTitle = featuredListing ? featuredListing.title : "tu anuncio";
 
-        if (planId === "bump") {
-            successMessage = `El anuncio '${listingTitle}' ya está en primera posición.`;
-        } else if (planId === "highlight_7") {
-            successMessage = `Tu anuncio '${listingTitle}' ya está destacado 7 días en primeras posiciones.`;
-        } else if (planId === "highlight_20") {
-            successMessage = `Tu anuncio '${listingTitle}' ya está destacado 20 días en primeras posiciones.`;
+            if (planId === "bump") {
+                successMessage = `El anuncio '${listingTitle}' ya está en primera posición.`;
+            } else if (planId === "highlight_7") {
+                successMessage = `Tu anuncio '${listingTitle}' ya está destacado 7 días en primeras posiciones.`;
+            } else if (planId === "highlight_20") {
+                successMessage = `Tu anuncio '${listingTitle}' ya está destacado 20 días en primeras posiciones.`;
+            } else {
+                successMessage = `Tu anuncio '${listingTitle}' ha sido destacado correctamente.`;
+            }
         } else {
-            successMessage = `Tu anuncio '${listingTitle}' ha sido destacado correctamente.`;
+            // Fallback genérico si faltan los parámetros en la URL (ej: caché o sesión antigua)
+            successMessage = "Tu anuncio ha sido destacado correctamente.";
         }
     }
 
