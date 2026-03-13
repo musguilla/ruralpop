@@ -76,6 +76,31 @@ export default function UploadForm({ savedPhone, initialProvinces }: UploadFormP
         e.preventDefault();
         setIsPending(true);
 
+        // Validaciones manuales obligatorias
+        if (!selectedCategory) {
+            showAlert({ title: "Campo requerido", message: "Debes seleccionar una categoría principal.", type: "error" });
+            setIsPending(false);
+            return;
+        }
+
+        if (categoryData && categoryData.subcategories.length > 0 && !formDataState.subcategory) {
+            showAlert({ title: "Campo requerido", message: "Debes seleccionar una subcategoría.", type: "error" });
+            setIsPending(false);
+            return;
+        }
+
+        if (!selectedProvince) {
+            showAlert({ title: "Campo requerido", message: "Debes seleccionar una provincia.", type: "error" });
+            setIsPending(false);
+            return;
+        }
+
+        if (!selectedMunicipality) {
+            showAlert({ title: "Campo requerido", message: "Debes seleccionar una localidad válida.", type: "error" });
+            setIsPending(false);
+            return;
+        }
+
         const formData = new FormData(e.currentTarget);
         formData.append("image_urls", JSON.stringify(imageUrls));
 
