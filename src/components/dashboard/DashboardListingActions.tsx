@@ -88,8 +88,8 @@ export function DashboardListingActions({ listingId, status }: DashboardListingA
                     onClick={handleToggleStatusClick}
                     disabled={isPending}
                     className={`flex items-center justify-center gap-2 px-4 py-2.5 font-extrabold rounded-xl transition-all text-sm disabled:opacity-50 border border-transparent ${status === 'active'
-                        ? 'bg-orange-50 text-orange-500 hover:bg-orange-100'
-                        : 'bg-green-50 text-green-600 hover:bg-green-100'
+                        ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'
+                        : 'bg-green-500/10 text-green-600 hover:bg-green-500/20'
                         }`}
                 >
                     {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
@@ -109,7 +109,7 @@ export function DashboardListingActions({ listingId, status }: DashboardListingA
                 {/* Modificar anuncio */}
                 <Link
                     href={`/dashboard/edit/${encodeId(listingId)}`}
-                    className="flex items-center justify-center px-5 py-2.5 bg-[#10b981] text-white font-extrabold rounded-xl hover:bg-[#059669] transition-colors text-sm ml-0 sm:ml-2 border border-transparent"
+                    className="flex items-center justify-center px-5 py-2.5 bg-[var(--ag-sys-color-primary)] text-white font-extrabold rounded-xl hover:opacity-90 transition-opacity text-sm ml-0 sm:ml-2 border border-transparent"
                 >
                     Modificar anuncio
                 </Link>
@@ -118,12 +118,21 @@ export function DashboardListingActions({ listingId, status }: DashboardListingA
             {/* Destacar anuncio */}
             {status === 'active' && process.env.NEXT_PUBLIC_ENABLE_HIGHLIGHT_ADS === 'true' && (
                 <div className="w-full xl:w-auto flex justify-start xl:justify-end">
+                    <svg width="0" height="0" className="absolute">
+                        <linearGradient id="cta-green-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop stopColor="#34d399" offset="0%" />
+                            <stop stopColor="#059669" offset="100%" />
+                        </linearGradient>
+                    </svg>
                     <Link
                         href={`/dashboard/destacar/${encodeId(listingId)}`}
-                        className="flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-white border border-[#10b981] text-[#10b981] font-extrabold rounded-xl hover:bg-green-50 transition-colors text-sm"
+                        className="group flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-white border border-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-primary)] font-extrabold rounded-xl hover:bg-[var(--ag-sys-color-primary)]/10 transition-colors text-sm shadow-sm"
                     >
-                        <Sparkles className="w-4 h-4" />
-                        Destacar anuncio
+                        <Sparkles 
+                            className="w-5 h-5 animate-pulse" 
+                            style={{ stroke: "url(#cta-green-gradient)", filter: "drop-shadow(0 0 2px rgba(16,185,129,0.3))" }} 
+                        />
+                        <span className="group-hover:scale-105 transition-transform">Destacar anuncio</span>
                     </Link>
                 </div>
             )}
