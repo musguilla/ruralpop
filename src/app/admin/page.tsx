@@ -129,7 +129,6 @@ export default async function AdminDashboard() {
                 <div className="bg-[var(--ag-sys-color-surface)] rounded-[2rem] border border-[var(--ag-sys-color-border)] p-8 shadow-sm">
                     <div className="flex justify-between items-center mb-8">
                         <h3 className="font-bold text-xl text-[var(--ag-sys-color-text)]">Ventas totales</h3>
-                        <button className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline">Ver Reporte</button>
                     </div>
                     <div className="h-64 flex items-end justify-between gap-4 px-4">
                         {[45, 60, 45, 80, 75, 40, 95].map((h, i) => (
