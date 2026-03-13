@@ -19,6 +19,7 @@ export interface Listing {
     created_at: string;
     category: string;
     price_type: string;
+    is_featured?: boolean;
 }
 
 export function ListingCard({ listing, isFavorited = false }: { listing: Listing; isFavorited?: boolean }) {
@@ -105,17 +106,26 @@ export function ListingCard({ listing, isFavorited = false }: { listing: Listing
                     </div>
 
                     <div className="p-4 flex flex-col flex-1">
-                        {/* Price */}
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="font-bold text-lg text-[var(--ag-sys-color-primary)]">
-                                {formatCurrency(listing.price)}
-                            </span>
-                            {listing.price_type === 'negotiable' && (
-                                <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)] tracking-wider">Negociable</span>
-                            )}
-                            {listing.price_type === 'exchange' && (
-                                <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)] tracking-wider">A convenir</span>
-                            )}
+                        {/* Price & Badges */}
+                        <div className="flex items-center justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-lg text-[var(--ag-sys-color-primary)]">
+                                    {formatCurrency(listing.price)}
+                                </span>
+                                {listing.is_featured && (
+                                    <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-green-200">
+                                        ¡Destacado!
+                                    </span>
+                                )}
+                            </div>
+                            <div className="flex flex-col items-end">
+                                {listing.price_type === 'negotiable' && (
+                                    <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)] tracking-wider">Negociable</span>
+                                )}
+                                {listing.price_type === 'exchange' && (
+                                    <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)] tracking-wider">A convenir</span>
+                                )}
+                            </div>
                         </div>
 
                         {/* Title */}
