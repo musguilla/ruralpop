@@ -146,7 +146,9 @@ export function FeaturedCheckoutFlow({ listingId }: { listingId: string }) {
                                     className={`w-full py-3 rounded-xl font-bold text-sm transition-all ${
                                         isSelected 
                                         ? "bg-gray-800 text-white" 
-                                        : "bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] group-hover:bg-gray-800 group-hover:text-white"
+                                        : plan.id === "highlight_7"
+                                            ? "bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] shadow-md shadow-[var(--ag-sys-color-primary)]/20"
+                                            : "bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] group-hover:bg-gray-800 group-hover:text-white"
                                     }`}
                                 >
                                     {isLoading ? 'Cargando...' : 'Seleccionar'}
