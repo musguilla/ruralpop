@@ -54,39 +54,41 @@ export default async function DestacarAnuncioPage(props: Props) {
                     Volver a mi panel
                 </Link>
 
-                <div className="text-center mb-10">
-                    <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-4">
-                        Destaca tu anuncio
-                    </h1>
-                    <p className="text-[var(--ag-sys-color-text-muted)] text-lg max-w-2xl mx-auto">
-                        Multiplica tus posibilidades de venta. Elige el plan que mejor se adapte a ti y haz que tu anuncio destaque por encima del resto.
-                    </p>
-                </div>
-
-                <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 border border-[var(--ag-sys-color-border)] shadow-sm mb-12 flex items-center gap-6">
-                    <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-[var(--ag-sys-color-background)] flex-shrink-0 border border-[var(--ag-sys-color-border)]">
-                        {listing.image_urls?.[0] ? (
-                            <Image
-                                src={listing.image_urls[0]}
-                                alt={listing.title}
-                                fill
-                                className="object-cover"
-                                sizes="96px"
-                            />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-                                Sin foto
-                            </div>
-                        )}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10">
+                    <div className="flex-1 text-center md:text-left">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-4">
+                            Destaca tu anuncio
+                        </h1>
+                        <p className="text-[var(--ag-sys-color-text-muted)] text-lg max-w-xl mx-auto md:mx-0">
+                            Multiplica tus posibilidades de venta. Elige el plan que mejor se adapte a ti y haz que tu anuncio destaque por encima del resto.
+                        </p>
                     </div>
-                    <div>
-                        <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] line-clamp-2">{listing.title}</h2>
-                        <div className="text-lg font-black text-[var(--ag-sys-color-primary)] mt-1">{new Intl.NumberFormat('de-DE').format(listing.price)}€</div>
-                        {listing.is_featured && (
-                            <div className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full border border-green-200">
-                                Actualmente destacado
-                            </div>
-                        )}
+
+                    <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-5 border border-[var(--ag-sys-color-border)] shadow-sm flex items-center gap-4 w-full md:w-auto md:min-w-[320px]">
+                        <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-[var(--ag-sys-color-background)] flex-shrink-0 border border-[var(--ag-sys-color-border)]">
+                            {listing.image_urls?.[0] ? (
+                                <Image
+                                    src={listing.image_urls[0]}
+                                    alt={listing.title}
+                                    fill
+                                    className="object-cover"
+                                    sizes="80px"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-xs text-center p-2">
+                                    Sin foto
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <h2 className="text-lg font-bold text-[var(--ag-sys-color-text)] truncate">{listing.title}</h2>
+                            <div className="text-base font-black text-[var(--ag-sys-color-primary)] mt-0.5">{new Intl.NumberFormat('de-DE').format(listing.price)}€</div>
+                            {listing.is_featured && (
+                                <div className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full border border-green-200">
+                                    ¡Destacado!
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
