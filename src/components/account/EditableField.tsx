@@ -70,7 +70,7 @@ export function EditableField({ field, initialValue, label, icon, placeholder, t
             <dd className="relative flex items-center min-h-[40px]">
                 {isEditing ? (
                     <div
-                        className="flex w-full items-center gap-2"
+                        className="relative flex w-full items-center min-w-0"
                         onBlur={(e) => {
                             // Guardar automáticamente al hacer clic fuera (perder foco de todo el bloque)
                             if (!e.currentTarget.contains(e.relatedTarget as Node)) {
@@ -86,38 +86,40 @@ export function EditableField({ field, initialValue, label, icon, placeholder, t
                             onKeyDown={handleKeyDown}
                             placeholder={placeholder}
                             disabled={isLoading}
-                            className="flex-1 bg-white border border-[var(--ag-sys-color-border)] rounded-xl px-4 py-2 text-lg font-medium text-[var(--ag-sys-color-text)] outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/50 transition-all"
+                            className="w-full bg-white border border-[var(--ag-sys-color-primary)] rounded-xl pl-4 pr-20 py-2.5 text-base sm:text-lg font-medium text-[var(--ag-sys-color-text)] outline-none ring-4 ring-[var(--ag-sys-color-primary)]/10 transition-all shadow-sm"
                         />
-                        <button
-                            onClick={handleSave}
-                            disabled={isLoading}
-                            className="p-2 bg-[var(--ag-sys-color-primary)] text-white rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-colors disabled:opacity-50"
-                            title="Guardar"
-                        >
-                            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
-                        </button>
-                        <button
-                            onClick={() => {
-                                setValue(initialValue);
-                                setIsEditing(false);
-                                setError(null);
-                            }}
-                            disabled={isLoading}
-                            className="p-2 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50"
-                            title="Cancelar"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
+                        <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                            <button
+                                onClick={handleSave}
+                                disabled={isLoading || value.trim() === initialValue.trim() || !value.trim()}
+                                className="p-1.5 bg-[var(--ag-sys-color-primary)] text-white rounded-lg hover:bg-[var(--ag-sys-color-primary-hover)] transition-all disabled:opacity-40 disabled:scale-95"
+                                title="Guardar"
+                            >
+                                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setValue(initialValue);
+                                    setIsEditing(false);
+                                    setError(null);
+                                }}
+                                disabled={isLoading}
+                                className="p-1.5 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 hover:text-gray-700 transition-all disabled:opacity-40"
+                                title="Cancelar"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
                     </div>
                 ) : (
                     <div
-                        className="flex w-full items-center justify-between p-2 -ml-2 rounded-xl hover:bg-[var(--ag-sys-color-background)] transition-colors cursor-pointer border border-transparent hover:border-[var(--ag-sys-color-border)]"
+                        className="flex w-full items-center justify-between p-2 sm:p-3 -ml-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer border border-transparent hover:border-gray-200 group/view min-w-0"
                         onClick={() => setIsEditing(true)}
                     >
-                        <span className={`text-lg font-medium ${!initialValue || initialValue === "No especificado" ? "text-gray-400 italic" : "text-[var(--ag-sys-color-text)]"}`}>
+                        <span className={`text-base sm:text-lg font-medium truncate pr-4 ${!initialValue || initialValue === "No especificado" ? "text-gray-400 italic" : "text-[var(--ag-sys-color-text)]"}`}>
                             {value || "No especificado"}
                         </span>
-                        <div className="opacity-0 group-hover:opacity-100 p-1 text-[var(--ag-sys-color-primary)] transition-opacity">
+                        <div className="opacity-0 group-hover/view:opacity-100 p-1.5 text-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/10 rounded-lg transition-all flex-shrink-0 scale-95 group-hover/view:scale-100">
                             <Edit2 className="w-4 h-4" />
                         </div>
                     </div>
