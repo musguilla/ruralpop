@@ -112,8 +112,8 @@ export function DashboardListingActions({ listingId, status }: DashboardListingA
                 </Link>
             </div>
 
-            {/* Feature Flag for Destacar Anuncio */}
-            {status === 'active' && process.env.NEXT_PUBLIC_ENABLE_HIGHLIGHT_ADS === 'true' && (
+            {/* Feature Flag for Destacar Anuncio - Temporarily Disabled */}
+            {/* {status === 'active' && process.env.NEXT_PUBLIC_ENABLE_HIGHLIGHT_ADS === 'true' && (
                 <div className="w-full mt-4 flex justify-center">
                     <Link
                         href={`/dashboard/destacar/${encodeId(listingId)}`}
@@ -124,7 +124,7 @@ export function DashboardListingActions({ listingId, status }: DashboardListingA
                         <span className="relative z-10">Destacar anuncio</span>
                     </Link>
                 </div>
-            )}
+            )} */}
         </div>
     );
 }
