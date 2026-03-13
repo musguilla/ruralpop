@@ -95,7 +95,7 @@ export function FeaturedCheckoutFlow({ listingId }: { listingId: string }) {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 mb-16">
             <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Selecciona un plan</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {STRIPE_PLANS.map((plan) => {

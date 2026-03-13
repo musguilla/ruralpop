@@ -41,9 +41,7 @@ export async function POST(req: Request) {
         const paymentIntent = await stripe.paymentIntents.create({
             amount: plan.price, // in cents (149 = 1.49 EUR)
             currency: "eur",
-            automatic_payment_methods: {
-                enabled: true,
-            },
+            payment_method_types: ['card'],
             metadata: {
                 listingId: listing.id,
                 planId: planId,
