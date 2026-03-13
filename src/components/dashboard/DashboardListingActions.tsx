@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Eye, Trash2, CheckCircle, Loader2 } from "lucide-react";
+import { Eye, Trash2, CheckCircle, Loader2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { deleteListing, toggleListingStatus } from "@/app/dashboard/actions";
 import { useNotification } from "@/context/NotificationContext";
@@ -111,6 +111,20 @@ export function DashboardListingActions({ listingId, status }: DashboardListingA
                     Modificar anuncio
                 </Link>
             </div>
+
+            {/* Feature Flag for Destacar Anuncio */}
+            {status === 'active' && process.env.NEXT_PUBLIC_ENABLE_HIGHLIGHT_ADS === 'true' && (
+                <div className="w-full mt-4 flex justify-center">
+                    <Link
+                        href={`/dashboard/destacar/${encodeId(listingId)}`}
+                        className="group relative inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black rounded-xl hover:from-amber-400 hover:to-orange-400 transition-all shadow-md shadow-amber-500/20 transform hover:-translate-y-0.5 overflow-hidden"
+                    >
+                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                        <Sparkles className="w-5 h-5 animate-pulse relative z-10 text-yellow-200" />
+                        <span className="relative z-10">Destacar anuncio</span>
+                    </Link>
+                </div>
+            )}
         </div>
     );
 }
