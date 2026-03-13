@@ -32,7 +32,7 @@ export function CheckoutForm({ planId, listingId }: { planId: string, listingId:
             elements,
             confirmParams: {
                 // Returns to this URL after payment success
-                return_url: `${window.location.origin}/dashboard?featured_success=true`,
+                return_url: `${window.location.origin}/dashboard?featured_success=true&plan_id=${planId}&listing_id=${listingId}`,
             },
         });
 

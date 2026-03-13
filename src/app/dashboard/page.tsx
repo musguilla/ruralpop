@@ -43,6 +43,27 @@ export default async function DashboardPage(props: Props) {
 
     const hasAnyListing = totalListingsCount ? totalListingsCount > 0 : false;
 
+    // Lógica para mensaje de éxito post-pago
+    const isFeaturedSuccess = searchParams?.featured_success === "true";
+    const planId = searchParams?.plan_id as string | undefined;
+    const listingIdForSuccess = searchParams?.listing_id as string | undefined;
+    let successMessage = "";
+
+    if (isFeaturedSuccess) {
+        const featuredListing = listings?.find((l: any) => l.id === listingIdForSuccess);
+        const listingTitle = featuredListing ? featuredListing.title : "tu anuncio";
+
+        if (planId === "bump") {
+            successMessage = `El anuncio '${listingTitle}' ya está en primera posición.`;
+        } else if (planId === "highlight_7") {
+            successMessage = `Tu anuncio '${listingTitle}' ya está destacado 7 días en primeras posiciones.`;
+        } else if (planId === "highlight_20") {
+            successMessage = `Tu anuncio '${listingTitle}' ya está destacado 20 días en primeras posiciones.`;
+        } else {
+            successMessage = `Tu anuncio '${listingTitle}' ha sido destacado correctamente.`;
+        }
+    }
+
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 w-full">
             <div className="container mx-auto px-4 max-w-6xl">
@@ -54,6 +75,20 @@ export default async function DashboardPage(props: Props) {
                         Gestiona tus anuncios publicados y su estado.
                     </p>
                 </header>
+
+                {isFeaturedSuccess && (
+                    <div className="mb-8 p-5 bg-green-50 border border-green-200 rounded-2xl flex items-start gap-4 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+                        <div className="bg-green-100 p-2 rounded-full text-green-600 flex-shrink-0 mt-0.5">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 className="text-green-800 font-bold text-lg mb-1">¡Pago completado con éxito!</h3>
+                            <p className="text-green-700">{successMessage}</p>
+                        </div>
+                    </div>
+                )}
 
                 {!hasAnyListing ? (
                     <div className="bg-[var(--ag-sys-color-surface)] rounded-[2rem] border border-[var(--ag-sys-color-border)] p-16 text-center shadow-sm mt-8">
