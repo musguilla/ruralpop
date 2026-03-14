@@ -188,9 +188,17 @@ export default async function BrandCatalogPage(props: Props) {
                                     </div>
 
                                     <div className="p-5 flex-1 flex flex-col justify-between bg-white relative">
-                                        <h3 className="font-bold text-[var(--ag-sys-color-text)] leading-tight line-clamp-2 pr-8">
-                                            {/* Clean up name: replacing hyphens/underscores with spaces for better readability */}
-                                            {catalog.name.replace(/[-_]/g, ' ')}
+                                        <h3 className="font-bold text-lg text-[var(--ag-sys-color-text)] leading-tight line-clamp-3 pr-8">
+                                            {(() => {
+                                                let cleaned = catalog.name.replace(/[-_]/g, ' ');
+                                                cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica)\b/gi, '');
+                                                const parts = cleaned.split(" ").filter(Boolean);
+                                                // Remove ugly hash prefixes (usually 8-15 mixed alhpanumeric at the start)
+                                                if (parts.length > 1 && /^[a-z0-9]{8,15}$/i.test(parts[0]) && /\d/.test(parts[0]) && /[a-z]/i.test(parts[0])) {
+                                                    parts.shift();
+                                                }
+                                                return parts.map(w => w.toUpperCase()).join(" ") || "CATÁLOGO";
+                                            })()}
                                         </h3>
                                         
                                         <div className="mt-4 pt-4 border-t border-[var(--ag-sys-color-border)] flex items-center justify-between">
