@@ -30,17 +30,20 @@ export function Footer() {
                     {/* Vertical line 1 */}
                     <div className="hidden md:block w-px h-20 bg-[var(--ag-sys-color-border)] mt-1"></div>
 
-                    <div className="flex flex-col items-center md:items-start pt-1">
+                    <div className="flex flex-col items-center md:items-start pt-1 gap-2">
                         <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
                             Conexión Rural
                         </span>
                         <Link href="/magazine" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                             Ruralpop Magazine
                         </Link>
+                        <Link href="/tractores" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            Catálogos de Tractores
+                        </Link>
                     </div>
 
                     {/* Vertical line 2 */}
-                    <div className="hidden md:block w-px h-20 bg-[var(--ag-sys-color-border)] mt-1"></div>
+                    <div className="hidden md:block w-px h-32 bg-[var(--ag-sys-color-border)] mt-1"></div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-4 mt-4 sm:mt-0">
