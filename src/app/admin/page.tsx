@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import stripe from "@/lib/stripe";
 import {
     Users,
     Package,
@@ -58,15 +59,19 @@ export default async function AdminDashboard() {
     const userDates = usersData?.map((u: any) => u.created_at) || [];
     const listingDates = listingsData?.map((l: any) => l.created_at) || [];
 
+    // Fetch real revenue data from Stripe
+    const paymentIntentsResponse = await stripe.paymentIntents.list({ limit: 100 });
+    const successfulPayments = paymentIntentsResponse.data.filter(pi => 
+        pi.status === "succeeded" && pi.metadata?.listingId
+    );
+    
+    const totalFeaturedRevenue = successfulPayments.reduce((acc, pi) => acc + pi.amount, 0) / 100;
+    const paymentDates = successfulPayments.map(pi => new Date(pi.created * 1000).toISOString());
+
     const realUsersHistograms = generateHistograms(userDates);
     const realListingsHistograms = generateHistograms(listingDates);
+    const realFeaturedHistograms = generateHistograms(paymentDates);
 
-    // Demo Data for charts 3 and 4
-    const demoHistograms3: Histograms = {
-        days: [10, 15, 12, 30, 20, 45, 30, 55, 60, 40, 70, 85],
-        weeks: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
-        months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    };
 
     const demoHistograms4: Histograms = {
         days: [30, 45, 35, 70, 55, 90, 75, 110, 95, 130, 115, 150],
@@ -104,13 +109,13 @@ export default async function AdminDashboard() {
                     showFilters={true}
                 />
 
-                {/* CARD 3: Anuncios Destacados (DEMO DATA) */}
+                {/* CARD 3: Anuncios Destacados (REAL DATA) */}
                 <AdminStatCard
                     label="Anuncios destacados"
-                    value="1.450 €"
+                    value={`${new Intl.NumberFormat('de-DE').format(totalFeaturedRevenue)} €`}
                     icon={<Star className="w-7 h-7" />}
                     color="purple"
-                    histograms={demoHistograms3}
+                    histograms={realFeaturedHistograms}
                     showFilters={true}
                 />
 
