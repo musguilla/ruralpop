@@ -61,41 +61,40 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
 export const IGNORED_CATALOG_FILES: string[] = [
     "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES 1"
 ];
-const normalizeKey = (s: string) => s.toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+const nuclearNormalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-// Pre-normalize the map keys for faster and accurate lookups
 const NORMALIZED_TRACTOR_NAMES = Object.entries(SPECIFIC_TRACTOR_NAMES).reduce((acc, [key, value]) => {
-    acc[normalizeKey(key)] = value;
+    acc[nuclearNormalize(key)] = value;
     return acc;
 }, {} as Record<string, string>);
 
 export function getTractorFormattedName(originalFilename: string): string {
-    const searchKey = normalizeKey(originalFilename);
+    const searchKey = nuclearNormalize(originalFilename);
     
-    // 1. Try to find in our mapping
+    // 1. Indestructible match via nuclear mapping
     if (NORMALIZED_TRACTOR_NAMES[searchKey]) {
         return NORMALIZED_TRACTOR_NAMES[searchKey];
     }
 
-    // 2. Partial match check for complex codes (helpful for Lamborghini)
+    // 2. Partial match for long technical codes
     for (const [key, value] of Object.entries(NORMALIZED_TRACTOR_NAMES)) {
-        if (searchKey.includes(key) || key.includes(searchKey)) {
-            // Only return if it's a significant match or the code part is present
-            if (key.length > 10) return value;
+        if (key.length > 10 && (searchKey.includes(key) || key.includes(searchKey))) {
+            return value;
         }
     }
 
-    // Fallback logic
+    // Fallback logic for unmapped files
     let cleaned = originalFilename.replace(/[-_]/g, " ");
-    cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica)\b/gi, "");
+    cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica|brochure|series|lowres|flyer)\b/gi, "");
     const parts = cleaned.split(" ").filter(Boolean);
     
-    // Heuristic to remove long technical prefix codes
-    if (parts.length > 1 && /^[a-z0-9]{8,15}$/i.test(parts[0]) && /\d/.test(parts[0]) && /[a-z]/i.test(parts[0])) {
+    // Remove technical codes from display if they weren't in the map
+    if (parts.length > 1 && /^[a-z0-9.]{5,20}$/i.test(parts[0]) && /\d/.test(parts[0])) {
         parts.shift();
     }
     
-    return parts.map(w => w.toUpperCase()).join(" ") || "CATÁLOGO";
+    const result = parts.map(w => w.toUpperCase()).join(" ");
+    return result || "CATÁLOGO";
 }
 
 export function generateTractorFriendlySlug(formattedName: string): string {
@@ -103,7 +102,7 @@ export function generateTractorFriendlySlug(formattedName: string): string {
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\./g, "-") // Replace dots with dashes for SEO
+        .replace(/\./g, "-")
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 }
