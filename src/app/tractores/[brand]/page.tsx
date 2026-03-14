@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Download, FileText, Tractor, ChevronRight } from "lucide-react";
-import { SPECIFIC_TRACTOR_NAMES } from "@/lib/tractores-data";
+import { getTractorFormattedName, generateTractorFriendlySlug } from "@/lib/tractores-data";
 
 export const dynamic = "force-dynamic";
 
@@ -155,10 +155,14 @@ export default async function BrandCatalogPage(props: Props) {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {catalogs.map((catalog) => (
+                            {catalogs.map((catalog) => {
+                                const formattedName = getTractorFormattedName(catalog.name);
+                                const friendlySlug = generateTractorFriendlySlug(formattedName);
+                                
+                                return (
                                 <Link 
                                     key={catalog.name}
-                                    href={`/tractores/${brandSlug}/${encodeURIComponent(catalog.name)}`}
+                                    href={`/tractores/${brandSlug}/${friendlySlug}`}
                                     className="group flex flex-col bg-white rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block h-full focus:outline-none focus:ring-4 focus:ring-[var(--ag-sys-color-primary)]/20"
                                 >
                                     <div className="relative aspect-[3/4] w-full bg-gray-100 overflow-hidden flex items-center justify-center border-b border-[var(--ag-sys-color-border)]">
@@ -189,21 +193,7 @@ export default async function BrandCatalogPage(props: Props) {
 
                                     <div className="p-5 flex-1 flex flex-col justify-between bg-white relative">
                                         <h3 className="font-bold text-lg text-[var(--ag-sys-color-text)] leading-tight line-clamp-3 pr-8">
-                                            {(() => {
-                                                // Specific exact match override (ignoring spaces if any)
-                                                if (SPECIFIC_TRACTOR_NAMES[catalog.name]) {
-                                                    return SPECIFIC_TRACTOR_NAMES[catalog.name];
-                                                }
-
-                                                let cleaned = catalog.name.replace(/[-_]/g, ' ');
-                                                cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica)\b/gi, '');
-                                                const parts = cleaned.split(" ").filter(Boolean);
-                                                // Remove ugly hash prefixes (usually 8-15 mixed alhpanumeric at the start)
-                                                if (parts.length > 1 && /^[a-z0-9]{8,15}$/i.test(parts[0]) && /\d/.test(parts[0]) && /[a-z]/i.test(parts[0])) {
-                                                    parts.shift();
-                                                }
-                                                return parts.map(w => w.toUpperCase()).join(" ") || "CATÁLOGO";
-                                            })()}
+                                            {formattedName}
                                         </h3>
                                         
                                         <div className="mt-4 pt-4 border-t border-[var(--ag-sys-color-border)] flex items-center justify-between">
@@ -214,7 +204,8 @@ export default async function BrandCatalogPage(props: Props) {
                                         </div>
                                     </div>
                                 </Link>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </div>

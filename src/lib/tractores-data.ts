@@ -21,3 +21,24 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
     "CIH_25_PumaSWB_All_Range_ADV_Brochure_16p_001_COM": "Puma 155-185 hp",
     "Optum 270-340 - Brochure - EOO (2025)": "Optum 271-340 CV"
 };
+export function getTractorFormattedName(originalFilename: string): string {
+    if (SPECIFIC_TRACTOR_NAMES[originalFilename]) {
+        return SPECIFIC_TRACTOR_NAMES[originalFilename];
+    }
+    let cleaned = originalFilename.replace(/[-_]/g, " ");
+    cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica)\b/gi, "");
+    const parts = cleaned.split(" ").filter(Boolean);
+    if (parts.length > 1 && /^[a-z0-9]{8,15}$/i.test(parts[0]) && /\d/.test(parts[0]) && /[a-z]/i.test(parts[0])) {
+        parts.shift();
+    }
+    return parts.map(w => w.toUpperCase()).join(" ") || "CATÁLOGO";
+}
+
+export function generateTractorFriendlySlug(formattedName: string): string {
+    return formattedName
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}

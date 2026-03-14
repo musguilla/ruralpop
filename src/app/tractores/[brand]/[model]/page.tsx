@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Download, FileText, Tractor, ChevronRight } from "lucide-react";
-import { SPECIFIC_TRACTOR_NAMES, TRACTOR_DESCRIPTIONS } from "@/lib/tractores-data";
+import { getTractorFormattedName, generateTractorFriendlySlug, TRACTOR_DESCRIPTIONS } from "@/lib/tractores-data";
 
 export const dynamic = "force-dynamic";
 
@@ -33,15 +33,19 @@ type Props = {
 export async function generateMetadata(props: Props) {
     const { brand: brandSlug, model } = await props.params;
     const brand = BRANDS_MAP[brandSlug];
-    const decodedModel = decodeURIComponent(model);
+    const encodedSlug = decodeURIComponent(model); // e.g. "farmall-55-75a"
 
     if (!brand) return { title: "Modelo no encontrado | Ruralpop" };
 
-    const formattedModel = SPECIFIC_TRACTOR_NAMES[decodedModel] || decodedModel.replace(/[-_]/g, ' ').toUpperCase();
+    // We do not have the exact name to map right here easily without listing the bucket.
+    // For SEO purposes, we will roughly format the slug back to Title case if possible,
+    // though ideally the exact string would be best.
+    const tentativeTitlePieces = encodedSlug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1));
+    const titleFromSlug = tentativeTitlePieces.join(" ");
 
     return {
-        title: `Tractor ${brand.name} ${formattedModel} - Catálogo PDF | Ruralpop`,
-        description: `Conoce todos los detalles del ${brand.name} ${formattedModel}. Ficha técnica, descripciones y descarga del catálogo oficial en PDF.`,
+        title: `Tractor ${brand.name} ${titleFromSlug} - Catálogo PDF | Ruralpop`,
+        description: `Conoce todos los detalles del ${brand.name} ${titleFromSlug}. Ficha técnica, descripciones y descarga del catálogo oficial en PDF.`,
     };
 }
 
@@ -63,25 +67,45 @@ export default async function BrandModelDetail(props: Props) {
     // Instead of querying everything, let's just generate the paths and get their public urls.
     // However, to know *if* the cover exists, we need to list or just assume the urls.
     // Let's just assume the URL exists, or we can check the storage.
-    const { data: files } = await supabase.storage.from("tractores").list(folderName, {
-        search: decodedModel
-    });
+    const { data: files } = await supabase.storage.from("tractores").list(folderName, { limit: 200 });
 
     if (!files || files.length === 0) {
         notFound();
     }
 
-    // Verify it's exactly the file we want
     let pdfUrl: string | null = null;
     let imageUrl: string | null = null;
+    let targetFileName: string | null = null;
 
+    // First pass: identify the target file base name by computing slugs
+    for (const f of files) {
+        if (f.name === ".emptyFolderPlaceholder" || f.name.startsWith(".")) continue;
+        const lastDot = f.name.lastIndexOf('.');
+        if (lastDot === -1) continue;
+        const namePart = f.name.substring(0, lastDot);
+        
+        // Compute what its slug would be
+        const fName = getTractorFormattedName(namePart);
+        const fSlug = generateTractorFriendlySlug(fName);
+
+        if (fSlug === decodedModel) {
+            targetFileName = namePart;
+            break;
+        }
+    }
+
+    if (!targetFileName) {
+        notFound();
+    }
+
+    // Second pass: grab actual urls for the match
     files.forEach(f => {
         const lastDot = f.name.lastIndexOf('.');
         if (lastDot === -1) return;
         const namePart = f.name.substring(0, lastDot);
         const ext = f.name.substring(lastDot + 1).toLowerCase();
 
-        if (namePart === decodedModel) {
+        if (namePart === targetFileName) {
             if (ext === 'pdf') {
                 pdfUrl = supabase.storage.from("tractores").getPublicUrl(`${folderName}/${f.name}`).data.publicUrl;
             } else if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
@@ -94,17 +118,8 @@ export default async function BrandModelDetail(props: Props) {
          notFound(); // If no catalog PDF, 404
     }
 
-    const formattedModelName = SPECIFIC_TRACTOR_NAMES[decodedModel] || (() => {
-        let cleaned = decodedModel.replace(/[-_]/g, ' ');
-        cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica)\b/gi, '');
-        const parts = cleaned.split(" ").filter(Boolean);
-        if (parts.length > 1 && /^[a-z0-9]{8,15}$/i.test(parts[0]) && /\d/.test(parts[0]) && /[a-z]/i.test(parts[0])) {
-            parts.shift();
-        }
-        return parts.map(w => w.toUpperCase()).join(" ") || "CATÁLOGO";
-    })();
-
-    const description = TRACTOR_DESCRIPTIONS[decodedModel] || `Explora toda la información, la ficha técnica y la tecnología que ofrece el modelo de tractor ${brandData.name} ${formattedModelName}. Un equipo especialmente diseñado para satisfacer las demandas más exigentes en el campo, maximizar la productividad de la explotación y ofrecer un alto nivel de confort a los operarios.`;
+    const formattedModelName = getTractorFormattedName(targetFileName!);
+    const description = TRACTOR_DESCRIPTIONS[targetFileName!] || `Explora toda la información, la ficha técnica y la tecnología que ofrece el modelo de tractor ${brandData.name} ${formattedModelName}. Un equipo especialmente diseñado para satisfacer las demandas más exigentes en el campo, maximizar la productividad de la explotación y ofrecer un alto nivel de confort a los operarios.`;
 
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)] py-12 px-4 sm:px-6">
