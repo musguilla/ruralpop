@@ -61,34 +61,40 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
 export const IGNORED_CATALOG_FILES: string[] = [
     "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES 1"
 ];
+const normalizeKey = (s: string) => s.toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ').trim();
+
+// Pre-normalize the map keys for faster and accurate lookups
+const NORMALIZED_TRACTOR_NAMES = Object.entries(SPECIFIC_TRACTOR_NAMES).reduce((acc, [key, value]) => {
+    acc[normalizeKey(key)] = value;
+    return acc;
+}, {} as Record<string, string>);
+
 export function getTractorFormattedName(originalFilename: string): string {
-    const trimmed = originalFilename.trim();
+    const searchKey = normalizeKey(originalFilename);
     
-    // 1. Try exact match (trimmed)
-    if (SPECIFIC_TRACTOR_NAMES[trimmed]) {
-        return SPECIFIC_TRACTOR_NAMES[trimmed];
+    // 1. Try to find in our mapping
+    if (NORMALIZED_TRACTOR_NAMES[searchKey]) {
+        return NORMALIZED_TRACTOR_NAMES[searchKey];
     }
 
-    // 2. Try normalized spaces (collapse multiple spaces to one)
-    const normalized = trimmed.replace(/\s+/g, ' ');
-    if (SPECIFIC_TRACTOR_NAMES[normalized]) {
-        return SPECIFIC_TRACTOR_NAMES[normalized];
-    }
-
-    // 3. Try to find if any key is contained in the filename or vice versa for these complex Lamborghini codes
-    // This handles cases where there might be a trailing space or slight suffix variation
-    for (const [key, value] of Object.entries(SPECIFIC_TRACTOR_NAMES)) {
-        if (normalized.startsWith(key) || key.startsWith(normalized)) {
-            return value;
+    // 2. Partial match check for complex codes (helpful for Lamborghini)
+    for (const [key, value] of Object.entries(NORMALIZED_TRACTOR_NAMES)) {
+        if (searchKey.includes(key) || key.includes(searchKey)) {
+            // Only return if it's a significant match or the code part is present
+            if (key.length > 10) return value;
         }
     }
 
-    let cleaned = normalized.replace(/[-_]/g, " ");
+    // Fallback logic
+    let cleaned = originalFilename.replace(/[-_]/g, " ");
     cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica)\b/gi, "");
     const parts = cleaned.split(" ").filter(Boolean);
+    
+    // Heuristic to remove long technical prefix codes
     if (parts.length > 1 && /^[a-z0-9]{8,15}$/i.test(parts[0]) && /\d/.test(parts[0]) && /[a-z]/i.test(parts[0])) {
         parts.shift();
     }
+    
     return parts.map(w => w.toUpperCase()).join(" ") || "CATÁLOGO";
 }
 
