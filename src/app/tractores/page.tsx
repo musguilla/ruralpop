@@ -121,7 +121,7 @@ export default function TractoresIndexPage() {
                         </p>
                     </div>
                     <Link 
-                        href="/s/tractores?category=2" 
+                        href="https://www.ruralpop.com/anuncios-maquinaria" 
                         className="px-8 py-4 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-md shadow-[var(--ag-sys-color-primary)]/20 whitespace-nowrap"
                     >
                         Buscar Tractores
