@@ -76,16 +76,15 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
 export const IGNORED_CATALOG_FILES: string[] = [
     "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES 1"
 ];
-const nuclearNormalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-
 /**
- * Strips common noise words and symbols to get the core tractor identity
+ * Strips common noise words and symbols to get the core tractor identity.
+ * Extremely aggressive to ensure matches across variations in filenames.
  */
 const cleanForMatching = (s: string) => {
     return s.toLowerCase()
         .replace(/\.[a-z0-9]+$/i, '') // Remove extension
         .replace(/[-_.]/g, ' ') // Normalize separators
-        .replace(/\b(brochure|broch|folleto|catalogo|flyer|lowres|flyer|spanish|my24|my25|range|spec|sheet|launch|document|target|trend)\b/gi, '')
+        .replace(/\b(brochure|broch|folleto|catalogo|flyer|lowres|spanish|my\d+|range|spec|sheet|launch|document|target|trend|v\d+|ub\d*)\b/gi, '')
         .replace(/[^a-z0-9]/g, ''); // Final nuclear pass
 };
 
