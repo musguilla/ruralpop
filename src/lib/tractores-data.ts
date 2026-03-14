@@ -59,6 +59,7 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
 
     // Massey Ferguson
     "A ES 17244 MF 5 S SPANISH V24 UB": "MF 5S 105-145 CV",
+    "A ES MF S SPANISH V24 UB": "MF 5S 105-145 CV",
     "A ES 17256 MF 8S RANGE 2024 V4 UB": "MF 8S 205-305 CV",
     "A ES 17302 MF 6S BROCH SPANISH V26 UB": "MF 6S 135-200 CV",
     "A ES 17317 MF 7S 210 SPANISH 2025 V3 UB": "MF 7S 155-220 CV",
@@ -77,47 +78,54 @@ export const IGNORED_CATALOG_FILES: string[] = [
 ];
 const nuclearNormalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 
+/**
+ * Strips common noise words and symbols to get the core tractor identity
+ */
+const cleanForMatching = (s: string) => {
+    return s.toLowerCase()
+        .replace(/\.[a-z0-9]+$/i, '') // Remove extension
+        .replace(/[-_.]/g, ' ') // Normalize separators
+        .replace(/\b(brochure|broch|folleto|catalogo|flyer|lowres|flyer|spanish|my24|my25|range|spec|sheet|launch|document|target|trend)\b/gi, '')
+        .replace(/[^a-z0-9]/g, ''); // Final nuclear pass
+};
+
 const NORMALIZED_TRACTOR_NAMES = Object.entries(SPECIFIC_TRACTOR_NAMES).reduce((acc, [key, value]) => {
-    acc[nuclearNormalize(key)] = value;
+    acc[cleanForMatching(key)] = value;
     return acc;
 }, {} as Record<string, string>);
 
-const NORMALIZED_IGNORED = IGNORED_CATALOG_FILES.map(nuclearNormalize);
+const NORMALIZED_IGNORED = IGNORED_CATALOG_FILES.map(cleanForMatching);
 
 /**
  * Normalizes a filename or brand-specific code into a user-friendly name.
  * Handles extensions, technical prefixes, and specific mapping overrides.
  */
 export function getTractorFormattedName(originalFilename: string): string {
-    // Remove extension if present
-    const lastDotIndex = originalFilename.lastIndexOf(".");
-    const baseName = lastDotIndex === -1 ? originalFilename : originalFilename.substring(0, lastDotIndex);
-    
-    const searchKey = nuclearNormalize(baseName);
+    const searchKey = cleanForMatching(originalFilename);
     
     // Check if it should be ignored (e.g. duplicates)
     if (NORMALIZED_IGNORED.includes(searchKey)) {
         return "__IGNORE__";
     }
 
-    // 1. Indestructible match via nuclear mapping
+    // 1. Indestructible match via cleaned mapping
     if (NORMALIZED_TRACTOR_NAMES[searchKey]) {
         return NORMALIZED_TRACTOR_NAMES[searchKey];
     }
 
-    // 2. Partial match for long technical codes
+    // 2. Partial match for complex or concatenated codes
     for (const [key, value] of Object.entries(NORMALIZED_TRACTOR_NAMES)) {
-        if (key.length > 10 && (searchKey.includes(key) || key.includes(searchKey))) {
+        if (key.length > 5 && (searchKey.includes(key) || key.includes(searchKey))) {
             return value;
         }
     }
 
     // Fallback logic for unmapped files
-    let cleaned = baseName.replace(/[-_]/g, " ");
-    cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica|brochure|series|lowres|flyer|stage|v)\b/gi, "");
+    let cleaned = originalFilename.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]/g, " ");
+    cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica|brochure|series|lowres|flyer|stage|v|spanish|english|my\d+)\b/gi, "");
     
-    // Remove technical codes like 308.8901.4.2.0
-    const parts = cleaned.split(" ").filter(p => !/^[0-9.]+$/.test(p) && p.length > 0);
+    // Remove technical codes like 308.8901.4.2.0 or 17244
+    const parts = cleaned.split(" ").filter(p => !/^[0-9.]+$/.test(p) && p.length > 0 && p.length < 15);
     
     const result = parts.map(w => w.toUpperCase()).join(" ");
     return result || "CATÁLOGO";
