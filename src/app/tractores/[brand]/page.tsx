@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Download, FileText, Tractor, ChevronRight } from "lucide-react";
+import { SPECIFIC_TRACTOR_NAMES } from "@/lib/tractores-data";
 
 export const dynamic = "force-dynamic";
 
@@ -14,21 +15,6 @@ const BRANDS_MAP: Record<string, { name: string; color: string; bgLight: string;
     "massey-ferguson": { name: "Massey Ferguson", color: "bg-[#C8102E]", bgLight: "bg-red-50", textColor: "text-red-900" },
     "mc-cormick": { name: "Mc Cormick", color: "bg-[#E31837]", bgLight: "bg-red-50", textColor: "text-red-900" },
     "new-holland": { name: "New Holland", color: "bg-[#002B7F]", bgLight: "bg-blue-50", textColor: "text-blue-900" },
-};
-
-const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
-    "21c0025eoo_farmall_55-75a_series_lowres": "Farmall 55-75A",
-    "22c0013eoo_maxxum_brochure_my24_lowres": "Maxxum 115-150 CV",
-    "22c0022eoo_puma_swb_brochure_ew16_lowres": "Puma 140-175 CV",
-    "23c0001eoo_caseih_vestrum_cvxdrive_2023_lowres": "Vestrum 100-130 CV",
-    "23c0013eoo_puma_afs_connect_32p_lowres": "Puma AFS Connect 185-260 CV",
-    "23c0015eoo_caseih_quantum_full_series_16p_lowres1": "Quantum V/N/F/CL 75-120 CV",
-    "24c0006eoo_caseih_farmallc_25_flyer_lowres1": "Farmall C 90-120 CV",
-    "24c0010eoo_quadtracsteiger_connect_my25_lowres": "Quadtrac y Steiger 475-715 CV",
-    "CIH_25_Farmall_M_Range_ADV_Flyer_4p_002_COM-1": "Farmall 100-120 hp",
-    "CIH_25_Optum_440_CVXDrive_ADV_Flyer_4p_001_COM_low": "Optum 360-435 hp",
-    "CIH_25_PumaSWB_All_Range_ADV_Brochure_16p_001_COM": "Puma 155-185 hp",
-    "Optum 270-340 - Brochure - EOO (2025)": "Optum 271-340 CV"
 };
 
 
@@ -170,11 +156,9 @@ export default async function BrandCatalogPage(props: Props) {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {catalogs.map((catalog) => (
-                                <a 
+                                <Link 
                                     key={catalog.name}
-                                    href={catalog.pdfUrl!}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                    href={`/tractores/${brandSlug}/${encodeURIComponent(catalog.name)}`}
                                     className="group flex flex-col bg-white rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block h-full focus:outline-none focus:ring-4 focus:ring-[var(--ag-sys-color-primary)]/20"
                                 >
                                     <div className="relative aspect-[3/4] w-full bg-gray-100 overflow-hidden flex items-center justify-center border-b border-[var(--ag-sys-color-border)]">
@@ -229,7 +213,7 @@ export default async function BrandCatalogPage(props: Props) {
                                             <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#059669] transition-colors" />
                                         </div>
                                     </div>
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     )}
