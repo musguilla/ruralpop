@@ -127,7 +127,7 @@ export default async function BrandCatalogPage(props: Props) {
                         href="https://www.ruralpop.com/anuncios-maquinaria" 
                         className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-50 text-[var(--ag-sys-color-primary)] text-sm font-bold rounded-xl border border-green-200/50 hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all shadow-sm"
                     >
-                        ¿Buscas maquinaria de segunda mano?
+                        ¿Buscas tractores de segunda mano?
                         <ChevronRight className="w-4 h-4 opacity-80" />
                     </Link>
                 </div>
