@@ -100,7 +100,23 @@ const NORMALIZED_IGNORED = IGNORED_CATALOG_FILES.map(cleanForMatching);
  * Handles extensions, technical prefixes, and specific mapping overrides.
  */
 export function getTractorFormattedName(originalFilename: string): string {
-    const searchKey = cleanForMatching(originalFilename);
+    let baseName = originalFilename;
+    while (baseName.includes('.')) {
+        const parts = baseName.split('.');
+        const lastPart = parts[parts.length - 1];
+        // If the last part is clearly an extension (short)
+        if (lastPart && lastPart.length < 10) {
+            const lastDot = baseName.lastIndexOf('.');
+            baseName = baseName.substring(0, lastDot);
+        } else {
+            break;
+        }
+    }
+    
+    // Also remove common suffixes like .inline or .inline (1)
+    baseName = baseName.replace(/\.inline(\s\(\d+\))?$/i, '');
+
+    const searchKey = cleanForMatching(baseName);
     
     // Check if it should be ignored (e.g. duplicates)
     if (NORMALIZED_IGNORED.includes(searchKey)) {
@@ -119,12 +135,19 @@ export function getTractorFormattedName(originalFilename: string): string {
         }
     }
 
-    // Fallback logic for unmapped files
-    let cleaned = originalFilename.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]/g, " ");
-    cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica|brochure|series|lowres|flyer|stage|v|spanish|english|my\d+)\b/gi, "");
+    // Fallback logic for unmapped files (like Mc Cormick)
+    let cleaned = baseName.replace(/[-_]/g, " ");
+    cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica|brochure|series|lowres|flyer|stage|v|spanish|english|my\d+|hr|web|inline)\b/gi, "");
     
-    // Remove technical codes like 308.8901.4.2.0 or 17244
-    const parts = cleaned.split(" ").filter(p => !/^[0-9.]+$/.test(p) && p.length > 0 && p.length < 15);
+    // Specifically for Mc Cormick, they use MC_ prefix
+    cleaned = cleaned.replace(/\bmc\b/gi, "");
+
+    // Remove technical codes like 308.8901.4.2.0 or CP05, RP6D
+    const parts = cleaned.split(" ").filter(p => {
+        const isTechnical = /^[A-Z0-9.]+$/i.test(p) && /\d/.test(p) && p.length < 8;
+        const isNumeric = /^[0-9.]+$/.test(p);
+        return !isTechnical && !isNumeric && p.length > 0;
+    });
     
     const result = parts.map(w => w.toUpperCase()).join(" ");
     return result || "CATÁLOGO";
