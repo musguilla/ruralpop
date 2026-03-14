@@ -68,9 +68,24 @@ const NORMALIZED_TRACTOR_NAMES = Object.entries(SPECIFIC_TRACTOR_NAMES).reduce((
     return acc;
 }, {} as Record<string, string>);
 
+const NORMALIZED_IGNORED = IGNORED_CATALOG_FILES.map(nuclearNormalize);
+
+/**
+ * Normalizes a filename or brand-specific code into a user-friendly name.
+ * Handles extensions, technical prefixes, and specific mapping overrides.
+ */
 export function getTractorFormattedName(originalFilename: string): string {
-    const searchKey = nuclearNormalize(originalFilename);
+    // Remove extension if present
+    const lastDotIndex = originalFilename.lastIndexOf(".");
+    const baseName = lastDotIndex === -1 ? originalFilename : originalFilename.substring(0, lastDotIndex);
     
+    const searchKey = nuclearNormalize(baseName);
+    
+    // Check if it should be ignored (e.g. duplicates)
+    if (NORMALIZED_IGNORED.includes(searchKey)) {
+        return "__IGNORE__";
+    }
+
     // 1. Indestructible match via nuclear mapping
     if (NORMALIZED_TRACTOR_NAMES[searchKey]) {
         return NORMALIZED_TRACTOR_NAMES[searchKey];
@@ -84,14 +99,11 @@ export function getTractorFormattedName(originalFilename: string): string {
     }
 
     // Fallback logic for unmapped files
-    let cleaned = originalFilename.replace(/[-_]/g, " ");
-    cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica|brochure|series|lowres|flyer)\b/gi, "");
-    const parts = cleaned.split(" ").filter(Boolean);
+    let cleaned = baseName.replace(/[-_]/g, " ");
+    cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica|brochure|series|lowres|flyer|stage|v)\b/gi, "");
     
-    // Remove technical codes from display if they weren't in the map
-    if (parts.length > 1 && /^[a-z0-9.]{5,20}$/i.test(parts[0]) && /\d/.test(parts[0])) {
-        parts.shift();
-    }
+    // Remove technical codes like 308.8901.4.2.0
+    const parts = cleaned.split(" ").filter(p => !/^[0-9.]+$/.test(p) && p.length > 0);
     
     const result = parts.map(w => w.toUpperCase()).join(" ");
     return result || "CATÁLOGO";

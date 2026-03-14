@@ -79,27 +79,26 @@ export default async function BrandCatalogPage(props: Props) {
         console.error("Error fetching files from storage:", error);
     }
 
-    // Group files by base name (without extension)
+    // Group files by their FINAL formatted name to merge duplicates (e.g. different filenames mapping to same product)
     const itemsMap = new Map<string, CatalogItem>();
 
     files?.forEach((file: { name: string }) => {
-        // Skip hidden files, empty placeholders, or explicitly ignored duplicates
+        // Skip hidden files or empty placeholders
         if (file.name === ".emptyFolderPlaceholder" || file.name.startsWith(".")) return;
 
-        const lastDotIndex = file.name.lastIndexOf(".");
-        if (lastDotIndex === -1) return; // Skip files without extension
+        const formattedName = getTractorFormattedName(file.name);
+        if (formattedName === "__IGNORE__") return;
 
-        const baseName = file.name.substring(0, lastDotIndex);
-        if (IGNORED_CATALOG_FILES.includes(baseName)) return;
-
-        const extension = file.name.substring(lastDotIndex + 1).toLowerCase();
-
-        if (!itemsMap.has(baseName)) {
-            itemsMap.set(baseName, { name: baseName, pdfUrl: null, imageUrl: null });
+        const friendlySlug = generateTractorFriendlySlug(formattedName);
+        
+        // Use slug as the unique key to merge duplicates like "strike" and "strike-v" if they map to same
+        if (!itemsMap.has(friendlySlug)) {
+            itemsMap.set(friendlySlug, { name: formattedName, pdfUrl: null, imageUrl: null });
         }
 
-        const item = itemsMap.get(baseName)!;
+        const item = itemsMap.get(friendlySlug)!;
         const publicUrl = supabase.storage.from("tractores").getPublicUrl(`${folderName}/${file.name}`).data.publicUrl;
+        const extension = file.name.substring(file.name.lastIndexOf(".") + 1).toLowerCase();
 
         if (extension === "pdf") {
             item.pdfUrl = publicUrl;
@@ -164,8 +163,7 @@ export default async function BrandCatalogPage(props: Props) {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {catalogs.map((catalog) => {
-                                const formattedName = getTractorFormattedName(catalog.name);
-                                const friendlySlug = generateTractorFriendlySlug(formattedName);
+                                const friendlySlug = generateTractorFriendlySlug(catalog.name);
                                 
                                 return (
                                 <Link 
@@ -201,7 +199,7 @@ export default async function BrandCatalogPage(props: Props) {
 
                                     <div className="p-5 flex-1 flex flex-col justify-between bg-white relative">
                                         <h3 className="font-bold text-lg text-[var(--ag-sys-color-text)] leading-tight line-clamp-3 pr-8">
-                                            {formattedName}
+                                            {catalog.name}
                                         </h3>
                                         
                                         <div className="mt-4 pt-4 border-t border-[var(--ag-sys-color-border)] flex items-center justify-between">
