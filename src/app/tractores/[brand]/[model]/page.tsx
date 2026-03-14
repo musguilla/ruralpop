@@ -170,7 +170,12 @@ export default async function BrandModelDetail(props: Props) {
                          <div className={`absolute top-0 right-0 w-64 h-64 rounded-full ${brandData.color} opacity-5 translate-x-1/2 -translate-y-1/2`}></div>
                          <div className={`absolute bottom-0 left-0 w-48 h-48 rounded-full ${brandData.color} opacity-5 -translate-x-1/2 translate-y-1/2`}></div>
                          
-                         <div className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 bg-white flex items-center justify-center group">
+                         <a 
+                            href={pdfUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5 bg-white flex items-center justify-center group focus:outline-none focus:ring-4 focus:ring-[var(--ag-sys-color-primary)]/20 block cursor-pointer"
+                         >
                             {imageUrl ? (
                                 <Image
                                     src={imageUrl}
@@ -180,20 +185,30 @@ export default async function BrandModelDetail(props: Props) {
                                     sizes="(max-width: 1024px) 100vw, 33vw"
                                 />
                             ) : (
-                                <div className="flex flex-col items-center justify-center text-center p-6">
+                                <div className="flex flex-col items-center justify-center text-center p-6 bg-gray-50 h-full w-full">
                                     <div className="w-20 h-20 bg-red-100 rounded-2xl flex items-center justify-center mb-4">
                                         <FileText className="w-10 h-10 text-red-500" />
                                     </div>
                                     <span className="text-gray-400 font-semibold uppercase text-xs tracking-wider">Documento Técino sin imagen</span>
                                 </div>
                             )}
+                            
+                            {/* Hover dark overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
                             {/* Little Top Badge */}
                             <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm shadow-md rounded-lg p-2 px-3 border border-white/20 text-xs font-bold text-gray-800 flex items-center gap-1.5 z-10">
                                 <FileText className="w-3.5 h-3.5 text-red-500" />
                                 PDF
                             </div>
-                         </div>
+                            
+                            {/* Hover download icon indicator */}
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <div className="bg-[var(--ag-sys-color-primary)] text-white p-4 rounded-full shadow-xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                                    <Download className="w-8 h-8" />
+                                </div>
+                            </div>
+                         </a>
                     </div>
 
                 </div>
