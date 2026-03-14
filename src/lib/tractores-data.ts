@@ -62,10 +62,28 @@ export const IGNORED_CATALOG_FILES: string[] = [
     "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES 1"
 ];
 export function getTractorFormattedName(originalFilename: string): string {
-    if (SPECIFIC_TRACTOR_NAMES[originalFilename]) {
-        return SPECIFIC_TRACTOR_NAMES[originalFilename];
+    const trimmed = originalFilename.trim();
+    
+    // 1. Try exact match (trimmed)
+    if (SPECIFIC_TRACTOR_NAMES[trimmed]) {
+        return SPECIFIC_TRACTOR_NAMES[trimmed];
     }
-    let cleaned = originalFilename.replace(/[-_]/g, " ");
+
+    // 2. Try normalized spaces (collapse multiple spaces to one)
+    const normalized = trimmed.replace(/\s+/g, ' ');
+    if (SPECIFIC_TRACTOR_NAMES[normalized]) {
+        return SPECIFIC_TRACTOR_NAMES[normalized];
+    }
+
+    // 3. Try to find if any key is contained in the filename or vice versa for these complex Lamborghini codes
+    // This handles cases where there might be a trailing space or slight suffix variation
+    for (const [key, value] of Object.entries(SPECIFIC_TRACTOR_NAMES)) {
+        if (normalized.startsWith(key) || key.startsWith(normalized)) {
+            return value;
+        }
+    }
+
+    let cleaned = normalized.replace(/[-_]/g, " ");
     cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica)\b/gi, "");
     const parts = cleaned.split(" ").filter(Boolean);
     if (parts.length > 1 && /^[a-z0-9]{8,15}$/i.test(parts[0]) && /\d/.test(parts[0]) && /[a-z]/i.test(parts[0])) {
@@ -79,6 +97,7 @@ export function generateTractorFriendlySlug(formattedName: string): string {
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\./g, "-") // Replace dots with dashes for SEO
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 }
