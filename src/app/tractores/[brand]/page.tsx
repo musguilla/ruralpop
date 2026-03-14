@@ -16,6 +16,22 @@ const BRANDS_MAP: Record<string, { name: string; color: string; bgLight: string;
     "new-holland": { name: "New Holland", color: "bg-[#002B7F]", bgLight: "bg-blue-50", textColor: "text-blue-900" },
 };
 
+const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
+    "21c0025eoo_farmall_55-75a_series_lowres": "Farmall 55-75A",
+    "22c0013eoo_maxxum_brochure_my24_lowres": "Maxxum 115-150 CV",
+    "22c0022eoo_puma_swb_brochure_ew16_lowres": "Puma 140-175 CV",
+    "23c0001eoo_caseih_vestrum_cvxdrive_2023_lowres": "Vestrum 100-130 CV",
+    "23c0013eoo_puma_afs_connect_32p_lowres": "Puma AFS Connect 185-260 CV",
+    "23c0015eoo_caseih_quantum_full_series_16p_lowres1": "Quantum V/N/F/CL 75-120 CV",
+    "24c0006eoo_caseih_farmallc_25_flyer_lowres1": "Farmall C 90-120 CV",
+    "24c0010eoo_quadtracsteiger_connect_my25_lowres": "Quadtrac y Steiger 475-715 CV",
+    "CIH_25_Farmall_M_Range_ADV_Flyer_4p_002_COM-1": "Farmall 100-120 hp",
+    "CIH_25_Optum_440_CVXDrive_ADV_Flyer_4p_001_COM_low": "Optum 360-435 hp",
+    "CIH_25_PumaSWB_All_Range_ADV_Brochure_16p_001_COM": "Puma 155-185 hp",
+    "Optum 270-340 - Brochure - EOO (2025)": "Optum 271-340 CV"
+};
+
+
 type Props = {
     params: Promise<{ brand: string }>;
 };
@@ -190,6 +206,11 @@ export default async function BrandCatalogPage(props: Props) {
                                     <div className="p-5 flex-1 flex flex-col justify-between bg-white relative">
                                         <h3 className="font-bold text-lg text-[var(--ag-sys-color-text)] leading-tight line-clamp-3 pr-8">
                                             {(() => {
+                                                // Specific exact match override (ignoring spaces if any)
+                                                if (SPECIFIC_TRACTOR_NAMES[catalog.name]) {
+                                                    return SPECIFIC_TRACTOR_NAMES[catalog.name];
+                                                }
+
                                                 let cleaned = catalog.name.replace(/[-_]/g, ' ');
                                                 cleaned = cleaned.replace(/\b(tractor|tractores|folleto|catalogo|ficha|tecnica)\b/gi, '');
                                                 const parts = cleaned.split(" ").filter(Boolean);
