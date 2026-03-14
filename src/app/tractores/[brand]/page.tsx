@@ -136,9 +136,9 @@ export default async function BrandCatalogPage(props: Props) {
                 <div className={`relative overflow-hidden rounded-[2.5rem] ${brandData.bgLight} border border-black/5 p-8 sm:p-14 mb-12 flex flex-col md:flex-row items-center justify-between gap-8`}>
                     <div className="relative z-10 text-center md:text-left flex-1">
                         <h1 className={`text-4xl sm:text-6xl font-black ${brandData.textColor} tracking-tight mb-4`}>
-                            {brandData.name}
+                            Tractores {brandData.name}
                         </h1>
-                        <p className="text-lg text-[var(--ag-sys-color-text-muted)] max-w-xl font-medium">
+                        <p className="text-[var(--ag-sys-color-text-muted)] sm:text-lg max-w-2xl leading-relaxed mx-auto md:mx-0">
                             Colección completa de catálogos y fichas técnicas en PDF. Descubre todos los detalles, potencia y tecnología de los tractores {brandData.name}.
                         </p>
                     </div>
