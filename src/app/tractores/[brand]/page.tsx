@@ -1,5 +1,5 @@
 import React from "react";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -34,7 +34,6 @@ export async function generateMetadata(props: Props) {
 }
 
 // Map real folder names based on the user's bucket screenshot 
-// "Case", "John Deere", "Lamborghini", "Massey Ferguson", "Mc Cormick", "New Holland"
 const FOLDER_NAMES: Record<string, string> = {
     "case": "Case",
     "john-deere": "John Deere",
@@ -59,7 +58,11 @@ export default async function BrandCatalogPage(props: Props) {
         notFound();
     }
 
-    const supabase = await createClient();
+    // Use service role to bypass any missing RLS SELECT policies on storage.objects for anonymous users
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     // List all files in the brand folder
     const { data: files, error } = await supabase.storage
