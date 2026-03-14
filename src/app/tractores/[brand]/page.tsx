@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Download, FileText, Tractor, ChevronRight } from "lucide-react";
-import { getTractorFormattedName, generateTractorFriendlySlug } from "@/lib/tractores-data";
+import { getTractorFormattedName, generateTractorFriendlySlug, IGNORED_CATALOG_FILES } from "@/lib/tractores-data";
 
 export const dynamic = "force-dynamic";
 
@@ -83,13 +83,15 @@ export default async function BrandCatalogPage(props: Props) {
     const itemsMap = new Map<string, CatalogItem>();
 
     files?.forEach((file: { name: string }) => {
-        // Skip hidden files or empty placeholders
+        // Skip hidden files, empty placeholders, or explicitly ignored duplicates
         if (file.name === ".emptyFolderPlaceholder" || file.name.startsWith(".")) return;
 
         const lastDotIndex = file.name.lastIndexOf(".");
         if (lastDotIndex === -1) return; // Skip files without extension
 
         const baseName = file.name.substring(0, lastDotIndex);
+        if (IGNORED_CATALOG_FILES.includes(baseName)) return;
+
         const extension = file.name.substring(lastDotIndex + 1).toLowerCase();
 
         if (!itemsMap.has(baseName)) {

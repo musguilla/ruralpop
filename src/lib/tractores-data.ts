@@ -8,6 +8,7 @@ export const TRACTOR_DESCRIPTIONS: Record<string, string> = {
 };
 
 export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
+    // Case
     "21c0025eoo_farmall_55-75a_series_lowres": "Farmall 55-75A",
     "22c0013eoo_maxxum_brochure_my24_lowres": "Maxxum 115-150 CV",
     "22c0022eoo_puma_swb_brochure_ew16_lowres": "Puma 140-175 CV",
@@ -19,8 +20,23 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
     "CIH_25_Farmall_M_Range_ADV_Flyer_4p_002_COM-1": "Farmall 100-120 hp",
     "CIH_25_Optum_440_CVXDrive_ADV_Flyer_4p_001_COM_low": "Optum 360-435 hp",
     "CIH_25_PumaSWB_All_Range_ADV_Brochure_16p_001_COM": "Puma 155-185 hp",
-    "Optum 270-340 - Brochure - EOO (2025)": "Optum 271-340 CV"
+    "Optum 270-340 - Brochure - EOO (2025)": "Optum 271-340 CV",
+    
+    // Lamborghini
+    "308.8702.4.2 1 SPIRE VRT ES": "SPIRE VRT",
+    "308.8901.4.2 0 STRIKE STAGE V ES": "STAGE",
+    "308.8905.4.2 0 SPARK R STAGE V ES": "SPARK R",
+    "308.8910.4.2 0 SPIRE F S V TARGET ES 1": "SPIRE F/S/V 80 Target",
+    "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES": "SPIRE F/S/V",
+    "308.8917.4.2 0 STRIKE TB ES": "STRIKE TB",
+    "308.8954.4.2 0 SPIRE F TREND ES": "SPIRE F TREND",
+    "308.8956.4.2 1 SPIRE TREND ES LOW": "SPIRE TREND",
+    "308.9002.4.2 0 SPRINT STAGE V ES": "SPRINT"
 };
+
+export const IGNORED_CATALOG_FILES: string[] = [
+    "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES 1"
+];
 export function getTractorFormattedName(originalFilename: string): string {
     if (SPECIFIC_TRACTOR_NAMES[originalFilename]) {
         return SPECIFIC_TRACTOR_NAMES[originalFilename];
