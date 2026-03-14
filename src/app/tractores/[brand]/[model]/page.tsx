@@ -124,23 +124,28 @@ export default async function BrandModelDetail(props: Props) {
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)] py-12 px-4 sm:px-6">
             <div className="max-w-5xl mx-auto">
-                <Link
-                    href={`/tractores/${brandSlug}`}
-                    className="inline-flex items-center gap-2 text-sm font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group mb-8"
-                >
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                    Volver a {brandData.name}
-                </Link>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+                    <Link
+                        href={`/tractores/${brandSlug}`}
+                        className="inline-flex items-center gap-2 text-sm font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group"
+                    >
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        Volver a {brandData.name}
+                    </Link>
+
+                    <Link 
+                        href="https://www.ruralpop.com/anuncios-maquinaria" 
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-50 text-[var(--ag-sys-color-primary)] text-sm font-bold rounded-xl border border-green-200/50 hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all shadow-sm"
+                    >
+                        ¿Buscas maquinaria de segunda mano?
+                        <ChevronRight className="w-4 h-4 opacity-80" />
+                    </Link>
+                </div>
 
                 <div className="bg-white rounded-[2.5rem] border border-[var(--ag-sys-color-border)] shadow-sm overflow-hidden flex flex-col md:flex-row">
                     
                     {/* Left: Content Info */}
                     <div className="flex-1 p-8 sm:p-14 order-2 md:order-1 flex flex-col justify-center">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full text-xs font-black uppercase tracking-widest text-[var(--ag-sys-color-text-muted)] w-fit mb-6">
-                            <Tractor className="w-4 h-4" />
-                            {brandData.name}
-                        </div>
-
                         <h1 className="text-3xl sm:text-5xl font-black text-[var(--ag-sys-color-text)] tracking-tight mb-6 leading-tight">
                             {formattedModelName}
                         </h1>

@@ -112,21 +112,27 @@ export default async function BrandCatalogPage(props: Props) {
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)] py-12 px-4 sm:px-6">
             <div className="max-w-6xl mx-auto">
-                <Link
-                    href="/tractores"
-                    className="inline-flex items-center gap-2 text-sm font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group mb-8"
-                >
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                    Volver a marcas
-                </Link>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+                    <Link
+                        href="/tractores"
+                        className="inline-flex items-center gap-2 text-sm font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group"
+                    >
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        Volver a marcas
+                    </Link>
+
+                    <Link 
+                        href="https://www.ruralpop.com/anuncios-maquinaria" 
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-50 text-[var(--ag-sys-color-primary)] text-sm font-bold rounded-xl border border-green-200/50 hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all shadow-sm"
+                    >
+                        ¿Buscas maquinaria de segunda mano?
+                        <ChevronRight className="w-4 h-4 opacity-80" />
+                    </Link>
+                </div>
 
                 {/* Brand Header */}
                 <div className={`relative overflow-hidden rounded-[2.5rem] ${brandData.bgLight} border border-black/5 p-8 sm:p-14 mb-12 flex flex-col md:flex-row items-center justify-between gap-8`}>
-                    <div className="relative z-10 text-center md:text-left">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-xs font-black uppercase tracking-widest text-[#059669] shadow-sm mb-6">
-                            <Tractor className="w-4 h-4" />
-                            Biblioteca Oficial
-                        </div>
+                    <div className="relative z-10 text-center md:text-left flex-1">
                         <h1 className={`text-4xl sm:text-6xl font-black ${brandData.textColor} tracking-tight mb-4`}>
                             {brandData.name}
                         </h1>
