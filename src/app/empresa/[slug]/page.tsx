@@ -7,11 +7,24 @@ export const revalidate = 60; // Revalidate every minute
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const slug = (await params).slug;
-    const commercialName = decodeURIComponent(slug).replace(/-/g, ' ');
+    const cleanName = decodeURIComponent(slug).replace(/-/g, ' ');
+
+    const supabase = await createClient();
+    const { data: company } = await supabase
+        .from('users')
+        .select('commercial_name, company_description')
+        .ilike('commercial_name', cleanName)
+        .eq('role', 'profesional')
+        .limit(1)
+        .single();
+
+    const name = company?.commercial_name || cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+    const rawDesc = company?.company_description || `Encuentra todos los anuncios, productos e información sobre ${name} en Ruralpop.`;
+    const description = rawDesc.length > 155 ? rawDesc.substring(0, 152) + "..." : rawDesc;
     
     return {
-        title: `${commercialName} - Anuncios y Perfil Profesional | Ruralpop`,
-        description: `Encuentra todos los anuncios, productos e información sobre ${commercialName} en Ruralpop.`,
+        title: `${name} - Anuncios y Perfil Profesional | Ruralpop`,
+        description: description,
     };
 }
 
