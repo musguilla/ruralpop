@@ -42,10 +42,10 @@ export default function ProfesionalesPage() {
                             </div>
                             <div className="mb-8">
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-5xl font-black text-[var(--ag-sys-color-text)] tracking-tighter">19€</span>
+                                    <span className="text-5xl font-black text-[var(--ag-sys-color-text)] tracking-tighter">19,99€</span>
                                     <span className="text-[var(--ag-sys-color-text-muted)] font-medium">/mes</span>
                                 </div>
-                                <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-2">IVA no incluido. Cancela cuando quieras.</p>
+                                <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-2">IVA incluido. Cancela cuando quieras.</p>
                             </div>
                             
                             <ul className="space-y-4 mb-10 flex-1">
@@ -65,19 +65,13 @@ export default function ProfesionalesPage() {
                                     <div className="mt-1 w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-3.5 h-3.5 text-green-600" />
                                     </div>
-                                    <span className="text-[var(--ag-sys-color-text)] font-medium">Sello / Badge <strong className="text-[var(--ag-sys-color-primary)]">Profesional</strong> en tus anuncios</span>
+                                    <span className="text-[var(--ag-sys-color-text)] font-medium"><strong className="text-[var(--ag-sys-color-primary)]">Sello profesional</strong> en tus anuncios</span>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <div className="mt-1 w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-3.5 h-3.5 text-green-600" />
                                     </div>
                                     <span className="text-[var(--ag-sys-color-text)] font-medium"><strong className="text-[var(--ag-sys-color-primary)]">2 impulsos</strong> de subida de anuncio al mes gratis</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <div className="mt-1 w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-3.5 h-3.5 text-green-600" />
-                                    </div>
-                                    <span className="text-[var(--ag-sys-color-text)] font-medium">Soporte prioritario</span>
                                 </li>
                             </ul>
 
