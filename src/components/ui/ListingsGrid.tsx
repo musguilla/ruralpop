@@ -3,6 +3,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import { ListingCard, type Listing } from "@/components/ui/ListingCard";
 import { Tractor } from "lucide-react";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
+import { LOCATIONS } from "@/constants/locations";
 
 export async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     const supabase = await createClient();
@@ -65,7 +66,7 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
     if (locationFilter) {
         if (locationFilter.startsWith('m')) {
             // Find the location's real name from constants
-            const muni = require("@/constants/locations").LOCATIONS.find((l: any) => l.id === locationFilter);
+            const muni = LOCATIONS.find((l: { id: string }) => l.id === locationFilter);
             if (muni) {
                 // ILIKE on location column (e.g. location ilike '%Córdoba%')
                 query = query.ilike("location", `%${muni.name}%`);
@@ -77,6 +78,11 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         } else {
             query = query.eq("province_id", locationFilter);
         }
+    }
+
+    const userIdFilter = searchParams.user_id as string;
+    if (userIdFilter) {
+        query = query.eq("user_id", userIdFilter);
     }
 
     // Ejecutar query con rango para paginación
