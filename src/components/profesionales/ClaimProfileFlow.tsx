@@ -60,9 +60,9 @@ export function ClaimProfileFlow({ ghostToken }: { ghostToken: string }) {
                 throw new Error(err.error || 'Error al reclamar el perfil');
             }
 
-            // 3. Redirigir al cobro del plan start por defecto, o dejar que elijan.
-            // Los mandaremos a la selección de planes para que decidan si quieren Start o Pro.
-            router.push('/profesionales?plan=start');
+            // 3. Redirigir a la vista de planes, pero especificando que viene de un ghost profile
+            // para que solo se le ofrezca el plan Pro.
+            router.push('/profesionales?ghost_claim=true');
             
         } catch (err) {
             console.error("Claim error:", err);
@@ -121,7 +121,7 @@ export function ClaimProfileFlow({ ghostToken }: { ghostToken: string }) {
             <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[var(--ag-sys-color-primary)] text-white font-bold py-4 px-6 rounded-xl hover:bg-[var(--ag-sys-color-primary-dark)] transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full bg-[var(--ag-sys-color-primary)] text-white font-bold py-4 px-6 rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
             >
                 {loading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
