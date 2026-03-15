@@ -221,9 +221,9 @@ export function DashboardListingActions({
                         process.env.NEXT_PUBLIC_ENABLE_HIGHLIGHT_ADS === 'true' && (
                             <Link
                                 href={`/dashboard/destacar/${encodeId(listingId)}`}
-                                className="group flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-white border border-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-primary)] font-extrabold rounded-xl hover:bg-[var(--ag-sys-color-primary)]/10 transition-colors text-sm shadow-sm"
+                                className="group flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-[var(--ag-sys-color-primary)] text-white font-extrabold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all text-sm shadow-lg shadow-[var(--ag-sys-color-primary)]/20"
                             >
-                                <Sparkles className="w-5 h-5 animate-pulse text-[var(--ag-sys-color-primary)]" />
+                                <Sparkles className="w-5 h-5 animate-pulse text-white" />
                                 <span className="group-hover:scale-105 transition-transform">Destacar anuncio</span>
                             </Link>
                         )
