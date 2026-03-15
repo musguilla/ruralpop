@@ -22,7 +22,7 @@ export default async function AdminUsersPage(props: Props) {
         .select("*, listings(count)", { count: "exact" });
 
     if (search) {
-        query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
+        query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,contact_phone.ilike.%${search}%`);
     }
 
     const { data: users, count, error } = await query
