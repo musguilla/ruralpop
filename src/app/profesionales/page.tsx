@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check, ShieldCheck, Zap, PackageOpen, Tag, Settings, CreditCard } from "lucide-react";
+import { Check, ShieldCheck, Zap, CreditCard } from "lucide-react";
 
 export const metadata = {
     title: "Área Profesionales | Ruralpop",
