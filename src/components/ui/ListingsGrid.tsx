@@ -14,11 +14,23 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     const sortParam = searchParams.sort as string || "relevance";
 
+    const userIdFilter = searchParams.user_id as string;
+
     let query = supabase
         .from("listings")
-        .select("id, title, price, location, image_urls, created_at, category, price_type, is_featured", { count: "exact" })
+        .select(`
+            id, title, price, location, image_urls, created_at, category, price_type, is_featured,
+            users!inner(is_ghost)
+        `, { count: "exact" })
         .eq("status", "active")
         .order("is_featured", { ascending: false, nullsFirst: false });
+
+    // Hide ghost listings globally UNLESS we are specifically fetching a user's listings
+    if (!userIdFilter) {
+        query = query.eq("users.is_ghost", false);
+    } else {
+        query = query.eq("user_id", userIdFilter);
+    }
 
     // Apply Sorting
     switch (sortParam) {
@@ -78,11 +90,6 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         } else {
             query = query.eq("province_id", locationFilter);
         }
-    }
-
-    const userIdFilter = searchParams.user_id as string;
-    if (userIdFilter) {
-        query = query.eq("user_id", userIdFilter);
     }
 
     // Ejecutar query con rango para paginación
