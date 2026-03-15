@@ -20,6 +20,7 @@ const BRANDS_MAP: Record<string, { name: string; color: string; bgLight: string;
 const BRAND_SEO_TEXT: Record<string, string> = {
     "case": "Diseñados para ofrecerte toda la potencia y eficiencia de combustible que necesites, cuando y como quieras. Case IH presenta una gama completa de tractores para todos los usos, incluidas las labores agrícolas, la siembra, el paisajismo y los trabajos de carga.",
     "john-deere": "John Deere ofrece la gama más amplia de tractores, desde tractores compactos para el cuidado del césped hasta el tractor más potente del mundo con una potencia máxima del motor de hasta 913 CV. Nuestra cartera cubre todo el espectro de necesidades agrícolas y municipales. Diseñado para ofrecer versatilidad, eficiencia y comodidad al operador. Explore cómo nuestros tractores se adaptan a su trabajo.",
+    "lamborghini": "Los tractores Lamborghini destacan por su carácter inconfundible, su diseño audaz y una imagen exclusiva dentro del sector agrícola. Combinan tecnología avanzada, alto rendimiento y una conducción pensada para ofrecer potencia, precisión y confort en todo tipo de trabajos. Su estética diferencial y su ingeniería los convierten en una opción muy valorada por profesionales que buscan eficiencia y personalidad. Desde modelos especializados hasta gamas de mayor potencia, Lamborghini ofrece soluciones adaptadas a distintas necesidades del campo. Descubre nuestros productos y servicios y encuentra el tractor Lamborghini que mejor se adapta a tu explotación.",
 };
 
 
