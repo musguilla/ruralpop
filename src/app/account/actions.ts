@@ -17,6 +17,18 @@ export async function updateUserData(field: string, value: string) {
             const { error } = await supabase.auth.updateUser({ email: value });
             if (error) throw error;
             return { success: true, message: "Enlace de confirmación enviado a tu nuevo email." };
+        } else if (
+            ["commercial_name", "company_description", "company_address", "company_zip", "company_country"].includes(field)
+        ) {
+            // Actualizar campos de empresa directamente en la tabla users
+            const { error } = await supabase
+                .from('users')
+                .update({ [field]: value })
+                .eq('id', user.id);
+            if (error) throw error;
+
+            revalidatePath("/account");
+            return { success: true };
         } else {
             // Actualizar metadata para nombre y teléfono
             const { error } = await supabase.auth.updateUser({
@@ -29,8 +41,8 @@ export async function updateUserData(field: string, value: string) {
             revalidatePath("/account");
             return { success: true };
         }
-    } catch (e: any) {
-        return { success: false, error: e.message || "Error al actualizar" };
+    } catch (e: unknown) {
+        return { success: false, error: e instanceof Error ? e.message : "Error al actualizar" };
     }
 }
 
@@ -57,8 +69,8 @@ export async function updateUserLocationData(data: { province_id: number | null,
 
         revalidatePath("/account");
         return { success: true, message: "Ubicación actualizada correctamente." };
-    } catch (e: any) {
-        return { success: false, error: e.message || "Error al actualizar ubicación" };
+    } catch (e: unknown) {
+        return { success: false, error: e instanceof Error ? e.message : "Error al actualizar ubicación" };
     }
 }
 
@@ -107,8 +119,8 @@ export async function uploadAvatar(formData: FormData) {
 
         revalidatePath("/account");
         return { success: true, url: publicUrl };
-    } catch (e: any) {
-        return { success: false, error: e.message || "Error al subir avatar" };
+    } catch (e: unknown) {
+        return { success: false, error: e instanceof Error ? e.message : "Error al subir avatar" };
     }
 }
 

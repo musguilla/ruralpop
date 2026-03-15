@@ -5,7 +5,7 @@ import { Check, X, Edit2, Loader2 } from "lucide-react";
 import { updateUserData } from "@/app/account/actions";
 
 interface EditableFieldProps {
-    field: "name" | "phone" | "email";
+    field: "name" | "phone" | "email" | "commercial_name" | "company_description" | "company_address" | "company_zip" | "company_country";
     initialValue: string;
     label: string;
     icon: React.ReactNode;

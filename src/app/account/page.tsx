@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { User, Phone, Mail, KeyRound, ArrowLeft } from "lucide-react";
+import { User, Phone, Mail, KeyRound, ArrowLeft, Building2, FileText, MapPin, Globe } from "lucide-react";
 import { EditableField } from "@/components/account/EditableField";
 import { EditableLocation } from "@/components/account/EditableLocation";
 import { AvatarUpload } from "@/components/account/AvatarUpload";
@@ -22,7 +22,14 @@ export default async function AccountPage() {
     const userEmail = email || "";
     const avatarUrl = user_metadata?.avatar_url || "";
 
-    const { data: publicUser } = await supabase.from('users').select('province_id, municipality_id').eq('id', user.id).single();
+    const { data: publicUser } = await supabase
+        .from('users')
+        .select(`
+            province_id, municipality_id, role,
+            commercial_name, company_description, company_address, company_zip, company_country
+        `)
+        .eq('id', user.id)
+        .single();
 
     // Fetch provinces to feed the first selector
     const { data: provinces } = await supabase
@@ -93,6 +100,62 @@ export default async function AccountPage() {
                             />
                         </dl>
                     </div>
+
+                    {publicUser?.role === 'profesional' && (
+                        <div className="p-8 border-b border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-primary)]/5">
+                            <div className="flex items-center gap-3 mb-6">
+                                <Building2 className="w-6 h-6 text-[var(--ag-sys-color-primary)]" />
+                                <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">Datos de la Empresa</h2>
+                            </div>
+                            <p className="text-sm text-[var(--ag-sys-color-text-muted)] mb-8">
+                                Esta información será pública y aparecerá en el perfil de tu empresa y en tus anuncios.
+                            </p>
+                            <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12">
+                                <EditableField
+                                    field="commercial_name"
+                                    label="Nombre Comercial"
+                                    icon={<Building2 className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
+                                    initialValue={publicUser.commercial_name || ""}
+                                    placeholder="Ej: Tractores Pérez"
+                                />
+
+                                <EditableField
+                                    field="company_country"
+                                    label="País"
+                                    icon={<Globe className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
+                                    initialValue={publicUser.company_country || ""}
+                                    placeholder="Ej: España"
+                                />
+
+                                <EditableField
+                                    field="company_address"
+                                    label="Dirección de la empresa"
+                                    icon={<MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
+                                    initialValue={publicUser.company_address || ""}
+                                    placeholder="Ej: Polígono Industrial Sur, Nave 4"
+                                />
+
+                                <EditableField
+                                    field="company_zip"
+                                    label="Código Postal"
+                                    icon={<MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
+                                    initialValue={publicUser.company_zip || ""}
+                                    placeholder="Ej: 28001"
+                                />
+                                
+                                <div className="md:col-span-2">
+                                    <EditableField
+                                        field="company_description"
+                                        label="Descripción de la empresa"
+                                        icon={<FileText className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
+                                        initialValue={publicUser.company_description || ""}
+                                        placeholder="Describe tu negocio, años de experiencia, especialidades..."
+                                        type="text" // Ideally this would use a textarea, but we map to EditableField for now
+                                    />
+                                </div>
+                            </dl>
+                        </div>
+                    )}
 
                     <div className="p-8 bg-gray-50/50">
                         <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Seguridad</h2>
