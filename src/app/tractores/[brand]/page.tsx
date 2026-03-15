@@ -132,7 +132,7 @@ export default async function BrandCatalogPage(props: Props) {
                 </div>
 
                 {/* Brand Header */}
-                <div className={`relative overflow-hidden rounded-[2.5rem] ${brandData.bgLight} border border-black/5 p-8 sm:p-14 mb-12 flex flex-col md:flex-row items-center justify-between gap-8`}>
+                <div className={`relative overflow-hidden rounded-[2.5rem] ${brandData.bgLight} border border-black/5 p-8 sm:p-10 mb-12 flex flex-col md:flex-row items-center justify-between gap-8`}>
                     <div className="relative z-10 text-center md:text-left flex-1">
                         <h1 className={`text-4xl sm:text-6xl font-black ${brandData.textColor} tracking-tight mb-4`}>
                             Tractores {brandData.name}
@@ -151,7 +151,7 @@ export default async function BrandCatalogPage(props: Props) {
                 {/* PDF Grid */}
                 <div className="mb-12">
                     <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-6">
-                        Catálogos Disponibles ({catalogs.length})
+                        Modelos disponibles de Tractores {brandData.name}
                     </h2>
 
                     {catalogs.length === 0 ? (

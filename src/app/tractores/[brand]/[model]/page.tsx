@@ -134,7 +134,7 @@ export default async function BrandModelDetail(props: Props) {
                 <div className="bg-white rounded-[2.5rem] border border-[var(--ag-sys-color-border)] shadow-sm overflow-hidden flex flex-col md:flex-row">
                     
                     {/* Left: Content Info */}
-                    <div className="flex-1 p-8 sm:p-14 order-2 md:order-1 flex flex-col justify-center">
+                    <div className="flex-1 p-8 sm:p-10 order-2 md:order-1 flex flex-col justify-center">
                         <h1 className="text-3xl sm:text-5xl font-black text-[var(--ag-sys-color-text)] tracking-tight mb-6 leading-tight">
                             {formattedModelName}
                         </h1>
