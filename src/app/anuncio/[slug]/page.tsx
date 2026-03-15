@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
-import { MapPin, Calendar, Phone, User, ArrowLeft, ShieldCheck, Tractor } from "lucide-react";
+import { MapPin, Calendar, Phone, User, ArrowLeft, ShieldCheck, Tractor, Building2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChatButton } from "@/components/chat/ChatButton";
@@ -133,7 +133,7 @@ export default async function ListingDetailPage(props: Props) {
         .from("listings")
         .select(`
       *,
-      seller:users(id, name, avatar_url, created_at)
+      seller:users(id, name, avatar_url, created_at, role, commercial_name)
     `)
         .eq("id", id)
         .single();
@@ -142,8 +142,10 @@ export default async function ListingDetailPage(props: Props) {
         notFound();
     }
 
+    const isProfessional = listing.seller?.role === 'profesional';
+    
     // Fallback para el nombre del vendedor si no existe en la tabla users
-    const sellerName = listing.seller?.name || "Usuario de Ruralpop";
+    const rawSellerName = isProfessional && listing.seller?.commercial_name ? listing.seller.commercial_name : (listing.seller?.name || "Usuario de Ruralpop");
     const sellerJoinedDate = listing.seller?.created_at ? new Date(listing.seller.created_at).getFullYear() : "";
 
     // Schema Markup for Google (JSON-LD)
@@ -184,7 +186,7 @@ export default async function ListingDetailPage(props: Props) {
             "itemCondition": "https://schema.org/UsedCondition",
             "seller": {
                 "@type": "Person",
-                "name": sellerName
+                "name": rawSellerName
             }
         }
     };
@@ -268,16 +270,29 @@ export default async function ListingDetailPage(props: Props) {
                         {/* Tarjeta Vendedor */}
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 border border-[var(--ag-sys-color-border)] shadow-sm">
                             <div className="flex items-center gap-4 mb-6">
-                                <div className="relative w-16 h-16 rounded-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] overflow-hidden flex items-center justify-center text-[var(--ag-sys-color-primary)]">
+                                <div className="relative w-16 h-16 rounded-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] overflow-hidden flex flex-shrink-0 items-center justify-center text-[var(--ag-sys-color-primary)]">
                                     {listing.seller?.avatar_url ? (
-                                        <Image src={listing.seller.avatar_url} alt={sellerName} fill className="object-cover" sizes="64px" />
+                                        <Image src={listing.seller.avatar_url} alt={rawSellerName} fill className="object-cover" sizes="64px" />
                                     ) : (
-                                        <User className="w-8 h-8" />
+                                        isProfessional ? <Building2 className="w-8 h-8" /> : <User className="w-8 h-8" />
                                     )}
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-lg text-[var(--ag-sys-color-text)]">{sellerName}</h4>
-                                    <p className="text-xs text-[var(--ag-sys-color-text-muted)]">
+                                    {isProfessional ? (
+                                        <Link href={`/empresa/${slugify(rawSellerName)}`} className="group">
+                                            <h4 className="font-bold text-lg text-[var(--ag-sys-color-text)] group-hover:text-[var(--ag-sys-color-primary)] transition-colors flex items-center gap-1.5 line-clamp-1 break-all">
+                                                {rawSellerName}
+                                                <ShieldCheck className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
+                                            </h4>
+                                            <span className="text-xs font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wider">
+                                                Ver empresa
+                                            </span>
+                                        </Link>
+                                    ) : (
+                                        <h4 className="font-bold text-lg text-[var(--ag-sys-color-text)]">{rawSellerName}</h4>
+                                    )}
+
+                                    <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
                                         En Ruralpop desde {sellerJoinedDate || 'recientemente'}
                                     </p>
                                 </div>
