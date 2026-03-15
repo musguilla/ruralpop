@@ -1,5 +1,4 @@
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
 import { DeleteButton } from "./DeleteButton";
 
 export const dynamic = "force-dynamic";
@@ -8,12 +7,8 @@ import {
     Package,
     MapPin,
     Tag,
-    CheckCircle2,
     AlertTriangle,
-    XCircle,
     Eye,
-    MoreVertical,
-    Calendar,
     UserCheck,
     Edit,
     Heart
@@ -64,7 +59,7 @@ export default async function AdminListingsPage(props: {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                {listings?.map((l: any) => (
+                {listings?.map((l: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                     <div
                         key={l.id}
                         className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden shadow-sm hover:shadow-md transition-all group p-6"
@@ -114,24 +109,23 @@ export default async function AdminListingsPage(props: {
                                     {/* Seller Info */}
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-lg bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] flex items-center justify-center text-[var(--ag-sys-color-primary)] overflow-hidden">
-                                            {(l.seller as any)?.avatar_url ? <Image src={(l.seller as any).avatar_url} alt="" width={32} height={32} /> : <UserCheck className="w-4 h-4" />}
+                                            {(l.seller as Record<string, string | null>)?.avatar_url ? <Image src={(l.seller as Record<string, string | null>).avatar_url as string} alt="" width={32} height={32} /> : <UserCheck className="w-4 h-4" />}
                                         </div>
                                         <div>
-                                            <p className="text-xs font-bold text-[var(--ag-sys-color-text)] leading-none">{(l.seller as any)?.name || 'Vendedor'}</p>
+                                            <p className="text-xs font-bold text-[var(--ag-sys-color-text)] leading-none">{(l.seller as Record<string, string | null>)?.name || 'Vendedor'}</p>
                                             <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider font-bold">{formatRelativeTime(l.created_at)}</span>
                                         </div>
                                     </div>
 
                                     {/* Actions Moderation */}
-                                    <div className="flex items-center gap-2">
-                                        <Link href={`/admin/listings/edit/${encodeId(l.id)}`} className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all">
+                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                                        <Link href={`/admin/listings/edit/${encodeId(l.id)}`} className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all whitespace-nowrap">
                                             <Edit className="w-3.5 h-3.5" /> Editar
                                         </Link>
-                                        <div className="w-px h-6 bg-[var(--ag-sys-color-border)] mx-1"></div>
-                                        <button className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all">
+                                        <button className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all whitespace-nowrap">
                                             <Eye className="w-3.5 h-3.5" /> Ver
                                         </button>
-                                        <button className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-600 text-xs font-bold rounded-xl hover:bg-amber-500/20 transition-all">
+                                        <button className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-600 text-xs font-bold rounded-xl hover:bg-amber-500/20 transition-all whitespace-nowrap">
                                             <AlertTriangle className="w-3.5 h-3.5" /> Moderar
                                         </button>
                                         <DeleteButton listingId={l.id} title={l.title} />
