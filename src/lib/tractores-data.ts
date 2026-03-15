@@ -166,6 +166,11 @@ export function getTractorFormattedName(originalFilename: string): string {
         return !isNumeric && !isLangCode && p.length > 0;
     });
     
+    // John Deere codes usually start with a 8 to 15 alphanumeric code (e.g., a163ar0519)
+    if (parts.length > 1 && /^[a-z0-9]{8,15}$/i.test(parts[0]) && /\d/.test(parts[0]) && /[a-z]/i.test(parts[0])) {
+        parts.shift();
+    }
+    
     const result = parts.map(w => w.toUpperCase()).join(" ");
     return result || "CATÁLOGO";
 }
