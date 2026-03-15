@@ -107,7 +107,9 @@ export async function POST(req: Request) {
                             stripe_subscription_id: subscriptionId,
                             available_bumps: bumps,
                             available_featured: featured,
-                            plan_renews_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // Fake 1 month renewal for now
+                            plan_renews_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Fake 1 month renewal for now
+                            is_ghost: false,
+                            ghost_token: null
                         })
                         .eq('id', userId);
 
