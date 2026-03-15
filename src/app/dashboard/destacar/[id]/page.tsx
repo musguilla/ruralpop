@@ -32,6 +32,14 @@ export default async function DestacarAnuncioPage(props: Props) {
         redirect("/login");
     }
 
+    const { data: profile } = await supabase
+        .from("users")
+        .select("role, available_featured, available_bumps")
+        .eq("id", user.id)
+        .single();
+    
+    const isProfesional = profile?.role === 'profesional';
+
     const { data: listing, error } = await supabase
         .from("listings")
         .select("id, title, price, image_urls, user_id, is_featured, featured_until")
@@ -107,7 +115,12 @@ export default async function DestacarAnuncioPage(props: Props) {
                     </div>
                 </div>
 
-                <FeaturedCheckoutFlow listingId={listing.id} />
+                <FeaturedCheckoutFlow 
+                    listingId={listing.id} 
+                    isProfesional={isProfesional}
+                    availableFeatured={profile?.available_featured || 0}
+                    availableBumps={profile?.available_bumps || 0}
+                />
 
                 {isNewlyPublished && (
                     <div className="mt-12 pt-8 border-t border-[var(--ag-sys-color-border)] text-center flex flex-col items-center animate-in fade-in duration-700">

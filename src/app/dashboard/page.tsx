@@ -23,6 +23,12 @@ export default async function DashboardPage(props: Props) {
         redirect("/login");
     }
 
+    const { data: publicUser } = await supabase
+        .from('users')
+        .select(`role, available_bumps, available_featured`)
+        .eq('id', user.id)
+        .single();
+
     // Obtener anuncios del usuario actual filtrados por pestaña
     const { data: listings, error } = await supabase
         .from("listings")
@@ -45,11 +51,14 @@ export default async function DashboardPage(props: Props) {
 
     // Lógica para mensaje de éxito post-pago
     const isFeaturedSuccess = searchParams?.featured_success === "true";
+    const isProActivationSuccess = searchParams?.success === "activated";
     const planId = searchParams?.plan_id as string | undefined;
     const listingIdForSuccess = searchParams?.listing_id as string | undefined;
     let successMessage = "";
 
-    if (isFeaturedSuccess) {
+    if (isProActivationSuccess) {
+        successMessage = "¡Tu anuncio ha sido actualizado correctamente!";
+    } else if (isFeaturedSuccess) {
         if (listingIdForSuccess) {
             // Obtenemos el título real directamente de la DB por si no estuviese en la lista actual
             const { data: featuredListing } = await supabase
@@ -87,7 +96,7 @@ export default async function DashboardPage(props: Props) {
                     </p>
                 </header>
 
-                {isFeaturedSuccess && (
+                {(isFeaturedSuccess || isProActivationSuccess) && (
                     <div className="mb-8 p-5 bg-green-50 border border-green-200 rounded-2xl flex items-start gap-4 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
                         <div className="bg-green-100 p-2 rounded-full text-green-600 flex-shrink-0 mt-0.5">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -148,7 +157,7 @@ export default async function DashboardPage(props: Props) {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 gap-6">
-                                {listings?.map((listing: any) => (
+                                {listings?.map((listing: { id: string, title: string, price: number, image_urls: string[], status: string, location: string, category: string, created_at: string, sold_price?: number }) => (
                                     <div
                                         key={listing.id}
                                         className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden shadow-sm hover:shadow-md transition-all group"
@@ -220,7 +229,13 @@ export default async function DashboardPage(props: Props) {
                                                     </div>
                                                 </div>
 
-                                                <DashboardListingActions listingId={listing.id} status={listing.status} />
+                                                <DashboardListingActions 
+                                                    listingId={listing.id} 
+                                                    status={listing.status}
+                                                    isProfesional={publicUser?.role === 'profesional'}
+                                                    availableFeatured={publicUser?.available_featured || 0}
+                                                    availableBumps={publicUser?.available_bumps || 0}
+                                                />
                                             </div>
                                         </div>
                                     </div>

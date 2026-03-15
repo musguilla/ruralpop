@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowUpCircle, Sparkles, Crown } from "lucide-react";
+import { ArrowUpCircle, Sparkles, Crown, ArrowLeft } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
@@ -41,10 +41,26 @@ export const STRIPE_PLANS = [
     }
 ];
 
-export function FeaturedCheckoutFlow({ listingId }: { listingId: string }) {
+import { useRouter } from "next/navigation";
+
+export interface FeaturedCheckoutFlowProps {
+    listingId: string;
+    isProfesional?: boolean;
+    availableFeatured?: number;
+    availableBumps?: number;
+}
+
+export function FeaturedCheckoutFlow({ 
+    listingId, 
+    isProfesional = false, 
+    availableFeatured = 0, 
+    availableBumps = 0 
+}: FeaturedCheckoutFlowProps) {
+    const router = useRouter();
     const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
     const [clientSecret, setClientSecret] = useState<string | null>(null);
     const [isCreatingIntent, setIsCreatingIntent] = useState(false);
+    const [isActivating, setIsActivating] = useState(false);
 
     const handleSelectPlan = async (planId: string) => {
         setSelectedPlanId(planId);
@@ -64,13 +80,108 @@ export function FeaturedCheckoutFlow({ listingId }: { listingId: string }) {
             setClientSecret(data.clientSecret);
         } catch (error) {
             console.error("Error al inicializar el pago:", error);
-            // Optionally set an error state here to show to the user
             alert("Ha ocurrido un error al conectar con el procesador de pagos.");
             setSelectedPlanId(null);
         } finally {
             setIsCreatingIntent(false);
         }
     };
+
+    const handleProActivation = async (type: 'highlight' | 'bump') => {
+        if (isActivating) return;
+        setIsActivating(true);
+
+        try {
+            const res = await fetch("/api/activate-professional-feature", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ listingId, type }),
+            });
+
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(txt || "Error al activar la funcionalidad.");
+            }
+
+            router.push("/dashboard?success=activated");
+            router.refresh();
+        } catch (error) {
+            console.error("Error activating feature:", error);
+            alert(error instanceof Error ? error.message : "Error al procesar la solicitud.");
+        } finally {
+            setIsActivating(false);
+        }
+    };
+
+    if (isProfesional) {
+        return (
+            <div className="space-y-8 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Professional Highlight Option */}
+                    <div className="bg-[var(--ag-sys-color-primary)]/5 rounded-[2.5rem] p-8 border-2 border-[var(--ag-sys-color-primary)]/20 flex flex-col items-center text-center">
+                        <div className="w-16 h-16 rounded-3xl bg-[var(--ag-sys-color-primary)] text-white flex items-center justify-center mb-6 shadow-lg shadow-[var(--ag-sys-color-primary)]/20">
+                            <Crown className="w-8 h-8" />
+                        </div>
+                        <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] mb-3">Destacar 20 días</h3>
+                        <p className="text-sm text-[var(--ag-sys-color-text-muted)] mb-8 max-w-[240px]">
+                            Tu anuncio aparecerá en primeras posiciones durante los próximos 20 días.
+                        </p>
+                        
+                        <div className="mt-auto w-full">
+                            <div className="flex items-center justify-center gap-2 mb-6 text-[var(--ag-sys-color-primary)] font-bold text-sm">
+                                <span className="px-3 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full border border-[var(--ag-sys-color-primary)]/10">
+                                    {availableFeatured} disponibles
+                                </span>
+                            </div>
+
+                            <button
+                                onClick={() => handleProActivation('highlight')}
+                                disabled={availableFeatured <= 0 || isActivating}
+                                className="w-full py-4 bg-[var(--ag-sys-color-primary)] text-white font-black rounded-2xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-[var(--ag-sys-color-primary)]/10"
+                            >
+                                {isActivating ? 'Activando...' : 'Destacar ahora'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Return or Other Info */}
+                    <div className="bg-white rounded-[2.5rem] p-8 border border-[var(--ag-sys-color-border)] flex flex-col items-center text-center justify-center">
+                        <div className="w-16 h-16 rounded-3xl bg-gray-50 text-gray-400 flex items-center justify-center mb-6 border border-gray-100">
+                            <ArrowUpCircle className="w-8 h-8" />
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-400 mb-3">Subir anuncio (Bump)</h3>
+                        <p className="text-sm text-gray-400 mb-8 max-w-[240px]">
+                            Usa tus impulsos disponibles para colocar tu anuncio arriba del todo.
+                        </p>
+                        <div className="mt-auto w-full">
+                            <div className="flex items-center justify-center gap-2 mb-6 text-gray-400 font-bold text-sm">
+                                <span className="px-3 py-1 bg-gray-50 rounded-full border border-gray-100">
+                                    {availableBumps} disponibles
+                                </span>
+                            </div>
+                            <button
+                                onClick={() => handleProActivation('bump')}
+                                disabled={availableBumps <= 0 || isActivating}
+                                className="w-full py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-colors disabled:opacity-50"
+                            >
+                                Subir anuncio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="pt-8 border-t border-[var(--ag-sys-color-border)] flex flex-col items-center">
+                    <button
+                        onClick={() => router.push("/dashboard")}
+                        className="text-[var(--ag-sys-color-text-muted)] hover:text-[#059669] font-bold text-sm flex items-center gap-2 transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        No deseo destacarlo ahora, volver a mi panel
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     if (clientSecret) {
         return (
