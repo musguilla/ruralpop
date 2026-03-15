@@ -74,7 +74,9 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
 };
 
 export const IGNORED_CATALOG_FILES: string[] = [
-    "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES 1"
+    "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES 1",
+    "MC RP6D X6.4 40P 6725799A1 WEB ES 2.PDF.INLINE (1)",
+    "MC RPE7 RPE8 X7.6 BROCHURE CLEVERCAB 64P 6749394A1 WEB ES (1).PDF.INLINE"
 ];
 /**
  * Strips common noise words and symbols to get the core tractor identity.
