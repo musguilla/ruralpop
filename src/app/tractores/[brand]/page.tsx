@@ -19,6 +19,7 @@ const BRANDS_MAP: Record<string, { name: string; color: string; bgLight: string;
 
 const BRAND_SEO_TEXT: Record<string, string> = {
     "case": "Diseñados para ofrecerte toda la potencia y eficiencia de combustible que necesites, cuando y como quieras. Case IH presenta una gama completa de tractores para todos los usos, incluidas las labores agrícolas, la siembra, el paisajismo y los trabajos de carga.",
+    "john-deere": "John Deere ofrece la gama más amplia de tractores, desde tractores compactos para el cuidado del césped hasta el tractor más potente del mundo con una potencia máxima del motor de hasta 913 CV. Nuestra cartera cubre todo el espectro de necesidades agrícolas y municipales. Diseñado para ofrecer versatilidad, eficiencia y comodidad al operador. Explore cómo nuestros tractores se adaptan a su trabajo.",
 };
 
 
