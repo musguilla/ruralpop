@@ -97,10 +97,10 @@ export default function ProfesionalesPage() {
                             </div>
                             <div className="mb-8 relative z-10">
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-5xl font-black text-white tracking-tighter">49€</span>
+                                    <span className="text-5xl font-black text-white tracking-tighter">49,99€</span>
                                     <span className="text-white/80 font-medium">/mes</span>
                                 </div>
-                                <p className="text-xs text-white/70 mt-2">IVA no incluido. Cancela cuando quieras.</p>
+                                <p className="text-xs text-white/70 mt-2">IVA incluido. Cancela cuando quieras.</p>
                             </div>
                             
                             <ul className="space-y-4 mb-10 flex-1 relative z-10">
@@ -132,7 +132,7 @@ export default function ProfesionalesPage() {
                                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-3.5 h-3.5 text-white" />
                                     </div>
-                                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">2 anuncios destacados</strong> en página principal (valorado en 30€)</span>
+                                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">2 anuncios destacados</strong> en página principal</span>
                                 </li>
                             </ul>
 
