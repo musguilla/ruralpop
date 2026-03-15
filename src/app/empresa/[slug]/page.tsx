@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
-import { Building2, MapPin, Search, ShieldCheck, Check } from "lucide-react";
+import { Building2, MapPin, Search, ShieldCheck, BadgeCheck } from "lucide-react";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -80,8 +80,8 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                                 </div>
                                 
                                 {company.plan_type === 'pro' && (
-                                    <div className="absolute -bottom-2 -right-2 bg-blue-500 text-white w-9 h-9 rounded-full flex items-center justify-center shadow-sm border-[4px] border-white z-10" title="Perfil Profesional Verificado">
-                                        <Check className="w-5 h-5 stroke-[4]" />
+                                    <div className="absolute -bottom-[6px] -right-[6px] bg-white rounded-full shadow-sm z-10 flex items-center justify-center pointer-events-none" title="Perfil Profesional Verificado">
+                                        <BadgeCheck className="w-8 h-8 text-white fill-blue-500" />
                                     </div>
                                 )}
                             </div>
