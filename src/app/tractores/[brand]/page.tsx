@@ -17,6 +17,10 @@ const BRANDS_MAP: Record<string, { name: string; color: string; bgLight: string;
     "new-holland": { name: "New Holland", color: "bg-[#002B7F]", bgLight: "bg-blue-50", textColor: "text-blue-900" },
 };
 
+const BRAND_SEO_TEXT: Record<string, string> = {
+    "case": "Diseñados para ofrecerte toda la potencia y eficiencia de combustible que necesites, cuando y como quieras. Case IH presenta una gama completa de tractores para todos los usos, incluidas las labores agrícolas, la siembra, el paisajismo y los trabajos de carga.",
+};
+
 
 type Props = {
     params: Promise<{ brand: string }>;
@@ -215,6 +219,18 @@ export default async function BrandCatalogPage(props: Props) {
                         </div>
                     )}
                 </div>
+
+                {/* SEO Text Block */}
+                {BRAND_SEO_TEXT[brandSlug] && (
+                    <div className={`mt-8 mb-12 p-8 rounded-3xl ${brandData.bgLight} border border-black/5`}>
+                        <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-3">
+                            Sobre los tractores {brandData.name}
+                        </h2>
+                        <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">
+                            {BRAND_SEO_TEXT[brandSlug]}
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );
