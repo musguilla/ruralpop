@@ -24,7 +24,7 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
     
     // Lamborghini
     "308.8702.4.2 1 SPIRE VRT ES": "SPIRE VRT",
-    "308.8901.4.2 0 STRIKE STAGE V ES": "STAGE",
+    "308.8901.4.2 0 STRIKE STAGE V ES": "STRIKE",
     "308.8905.4.2 0 SPARK R STAGE V ES": "SPARK R",
     "308.8910.4.2 0 SPIRE F S V TARGET ES 1": "SPIRE F/S/V 80 Target",
     "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES": "SPIRE F/S/V",
