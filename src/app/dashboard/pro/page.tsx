@@ -5,7 +5,14 @@ import { ArrowLeft, Building2, TrendingUp, RefreshCw, CreditCard, ChevronRight, 
 
 export const dynamic = "force-dynamic";
 
-export default async function ProfessionalDashboardPage() {
+type Props = {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function ProfessionalDashboardPage(props: Props) {
+    const searchParams = await props.searchParams;
+    const currentTab = searchParams?.tab === "suscripcion" ? "subscription" : "general";
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -24,18 +31,16 @@ export default async function ProfessionalDashboardPage() {
         .single();
 
     if (!publicUser || publicUser.role !== 'profesional') {
-        // Redirigir a landing de ventas o dashboard normal si no es pro
         redirect("/profesionales");
     }
 
-    // Fetch some basic stats: active listings vs total
+    // Fetch some basic stats
     const { count: activeListings } = await supabase
         .from('listings')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
         .eq('status', 'active');
     
-    // Total listings (any status)
     const { count: totalListings } = await supabase
         .from('listings')
         .select('*', { count: 'exact', head: true })
@@ -43,14 +48,12 @@ export default async function ProfessionalDashboardPage() {
 
     const isStartPlan = publicUser.plan_type === 'start';
     const isProPlan = publicUser.plan_type === 'pro';
-
-    // Mock Customer Portal URL generator logic - In a real app we'd redirect to an api route that calls `stripe.billingPortal.sessions.create`
-    const portalUrl = "/api/create-portal-session"; // Needs to be implemented yet
+    const portalUrl = "/api/create-portal-session";
 
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 w-full">
             <div className="container mx-auto px-4 max-w-5xl">
-                <header className="mb-10">
+                <header className="mb-8">
                     <Link
                         href="/dashboard"
                         className="inline-flex items-center text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors mb-4 font-medium"
@@ -58,153 +61,189 @@ export default async function ProfessionalDashboardPage() {
                         <ArrowLeft className="w-5 h-5 mr-2" />
                         Volver al Panel Principal
                     </Link>
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-amber-100 text-amber-600 rounded-2xl hidden sm:flex">
-                            <ShieldCheck className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight flex items-center gap-3">
-                                Panel Profesional
-                                <span className={`text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wider ${isProPlan ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'}`}>
-                                    PLAN {publicUser.plan_type?.toUpperCase() || 'START'}
-                                </span>
-                            </h1>
-                            <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                                {/* {publicUser.commercial_name ? `Bienvenido, ${publicUser.commercial_name}` : "Configura tu empresa en 'Mi Perfil'"} */}
-                                Gestiona tu suscripción y acelera tus ventas.
-                            </p>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-amber-100 text-amber-600 rounded-2xl hidden sm:flex">
+                                <ShieldCheck className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight flex items-center gap-3">
+                                    Panel Profesional
+                                    <span className={`text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wider ${isProPlan ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'}`}>
+                                        PLAN {publicUser.plan_type?.toUpperCase() || 'START'}
+                                    </span>
+                                </h1>
+                                <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
+                                    Gestiona tus contactos, anuncios y promociones para acelerar tus ventas.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* LEFT COLUMN: RESUMEN Y PROMOCIÓN */}
-                    <div className="lg:col-span-2 flex flex-col gap-8">
-                        
-                        {/* Estadísticas */}
-                        <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm p-6 sm:p-8">
-                            <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6 flex items-center gap-2">
-                                <TrendingUp className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
-                                Resumen del Negocio
-                            </h2>
-                            
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
-                                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Anuncios Activos</h3>
-                                    <div className="flex items-end gap-2">
-                                        <span className="text-4xl font-black text-[var(--ag-sys-color-text)]">{activeListings || 0}</span>
-                                        <span className="text-sm text-gray-400 mb-1 font-medium">/ {isStartPlan ? '15' : isProPlan ? '50' : '∞'} límite</span>
-                                    </div>
-                                    <Link 
-                                        href={totalListings && totalListings > 0 ? "/dashboard" : "/upload"} 
-                                        className="text-sm text-[var(--ag-sys-color-primary)] font-bold mt-4 inline-flex hover:underline"
-                                    >
-                                        {totalListings && totalListings > 0 ? "Gestionar inventario" : "Añade tu primer producto"}
-                                    </Link>
-                                </div>
-                                <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
-                                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Anuncios Totales</h3>
-                                    <div className="flex items-end gap-2">
-                                        <span className="text-4xl font-black text-[var(--ag-sys-color-text)]">{totalListings || 0}</span>
-                                        <span className="text-sm text-gray-400 mb-1 font-medium">históricos</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                {/* Tabs Navigation */}
+                <div className="flex gap-2 mb-10 p-1 bg-gray-100/50 w-fit rounded-2xl border border-gray-100">
+                    <Link
+                        href="/dashboard/pro"
+                        className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${currentTab === 'general'
+                            ? 'bg-white text-[var(--ag-sys-color-text)] shadow-sm'
+                            : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]'}`}
+                    >
+                        General
+                    </Link>
+                    <Link
+                        href="/dashboard/pro?tab=suscripcion"
+                        className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${currentTab === 'subscription'
+                            ? 'bg-white text-[var(--ag-sys-color-text)] shadow-sm'
+                            : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]'}`}
+                    >
+                        Suscripción
+                    </Link>
+                </div>
 
-                        {/* Herramientas de Promoción */}
-                        <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm overflow-hidden">
-                            <div className="p-6 sm:p-8 border-b border-[var(--ag-sys-color-border)] bg-gradient-to-r from-green-50 to-emerald-50/20">
-                                <h2 className="text-xl font-bold text-green-800 mb-2 flex items-center gap-2">
-                                    <Zap className="w-5 h-5 text-green-600 fill-green-600" />
-                                    Tus Promociones Mensuales
+                {currentTab === 'general' ? (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-3 flex flex-col gap-8">
+                            {/* Estadísticas */}
+                            <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm p-6 sm:p-10">
+                                <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-8 flex items-center gap-2">
+                                    <TrendingUp className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
+                                    Resumen del Negocio
                                 </h2>
-                                <p className="text-sm text-green-800/80">
-                                    Beneficios incluidos con tu cuota mensual. Se renuevan cada mes.
-                                </p>
-                            </div>
-                            
-                            <div className="p-6 sm:p-8 space-y-6">
-                                {/* Auto-subidas */}
-                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-4 border-b border-gray-100">
-                                    <div className="flex items-start gap-3">
-                                        <div className="p-2.5 bg-green-100 text-green-600 rounded-xl">
-                                            <RefreshCw className="w-5 h-5" />
+                                
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
+                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Anuncios Activos</h3>
+                                        <div className="flex items-end gap-3">
+                                            <span className="text-5xl font-black text-[var(--ag-sys-color-text)]">{activeListings || 0}</span>
+                                            <span className="text-sm text-gray-400 mb-2 font-bold">/ {isStartPlan ? '15' : isProPlan ? '50' : '∞'}</span>
                                         </div>
-                                        <div>
-                                            <h4 className="font-bold text-[var(--ag-sys-color-text)] text-lg">Impulsos para subir anuncio</h4>
-                                            <p className="text-sm text-[var(--ag-sys-color-text-muted)] font-medium">Regresa tus anuncios a las primeras páginas.</p>
-                                        </div>
+                                        <Link 
+                                            href={totalListings && totalListings > 0 ? "/dashboard" : "/upload"} 
+                                            className="mt-6 inline-flex items-center gap-2 text-sm text-[var(--ag-sys-color-primary)] font-black hover:gap-3 transition-all"
+                                        >
+                                            {totalListings && totalListings > 0 ? "Gestionar inventario" : "Añade tu primer producto"}
+                                            <ChevronRight className="w-4 h-4" />
+                                        </Link>
                                     </div>
-                                    <div className="text-right flex flex-col items-end">
-                                        <span className="text-2xl font-black text-[var(--ag-sys-color-text)]">{publicUser.available_bumps || 0}</span>
-                                        <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">Disponibles</span>
+                                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
+                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Anuncios Totales</h3>
+                                        <div className="flex items-end gap-3">
+                                            <span className="text-5xl font-black text-[var(--ag-sys-color-text)]">{totalListings || 0}</span>
+                                            <span className="text-sm text-gray-400 mb-2 font-bold">históricos</span>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Destacados */}
-                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-4">
-                                    <div className="flex items-start gap-3">
-                                        <div className="p-2.5 bg-amber-100 text-amber-600 rounded-xl">
-                                            <ShieldCheck className="w-5 h-5" />
+                            {/* Herramientas de Promoción */}
+                            <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm overflow-hidden">
+                                <div className="p-8 border-b border-[var(--ag-sys-color-border)] bg-gradient-to-r from-green-50 to-emerald-50/20">
+                                    <h2 className="text-xl font-bold text-green-800 mb-1 flex items-center gap-2">
+                                        <Zap className="w-5 h-5 text-green-600 fill-green-600" />
+                                        Tus Promociones Mensuales
+                                    </h2>
+                                    <p className="text-sm text-green-700/70 font-medium">
+                                        Beneficios incluidos para aumentar tu visibilidad. Se renuevan cada mes.
+                                    </p>
+                                </div>
+                                
+                                <div className="p-8 space-y-8">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 py-2">
+                                        <div className="flex items-start gap-4">
+                                            <div className="p-3 bg-green-100 text-green-600 rounded-2xl">
+                                                <RefreshCw className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-[var(--ag-sys-color-text)] text-xl">Impulsos para subir anuncio</h4>
+                                                <p className="text-sm text-[var(--ag-sys-color-text-muted)] font-medium max-w-xs">Coloca tus anuncios de nuevo en las primeras páginas rápidamente.</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 className="font-bold text-[var(--ag-sys-color-text)] text-lg">Anuncios Destacados</h4>
-                                            <p className="text-sm text-[var(--ag-sys-color-text-muted)] font-medium">Mayor visibilidad en un lugar preferente.</p>
+                                        <div className="bg-green-50 border border-green-100 rounded-2xl px-6 py-4 text-center min-w-[140px]">
+                                            <div className="text-3xl font-black text-green-700">{publicUser.available_bumps || 0}</div>
+                                            <div className="text-[10px] text-green-600 font-bold uppercase tracking-wider">Disponibles</div>
                                         </div>
                                     </div>
-                                    <div className="text-right flex flex-col items-end">
-                                        <span className="text-2xl font-black text-[var(--ag-sys-color-text)]">{publicUser.available_featured || 0}</span>
-                                        <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">Disponibles</span>
+
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 py-2">
+                                        <div className="flex items-start gap-4">
+                                            <div className="p-3 bg-amber-100 text-amber-600 rounded-2xl">
+                                                <ShieldCheck className="w-6 h-6" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-[var(--ag-sys-color-text)] text-xl">Anuncios Destacados</h4>
+                                                <p className="text-sm text-[var(--ag-sys-color-text-muted)] font-medium max-w-xs">Tus anuncios en lugares preferentes de la categoría.</p>
+                                            </div>
+                                        </div>
+                                        <div className="bg-amber-50 border border-amber-100 rounded-2xl px-6 py-4 text-center min-w-[140px]">
+                                            <div className="text-3xl font-black text-amber-700">{publicUser.available_featured || 0}</div>
+                                            <div className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Disponibles</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
-
-                    {/* RIGHT COLUMN: SUSCRIPCION */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-[var(--ag-sys-color-primary)] text-white rounded-3xl shadow-lg border border-[var(--ag-sys-color-primary-hover)] overflow-hidden sticky top-8">
-                            <div className="p-8 border-b border-white/20 relative overflow-hidden">
-                                <Building2 className="absolute -right-8 -bottom-8 w-40 h-40 text-white/10" />
-                                <h3 className="text-sm font-bold uppercase tracking-wider text-green-200 mb-2">Tu Suscripción Activa</h3>
-                                <div className="text-4xl font-black mb-1 drop-shadow-sm">Plan {publicUser.plan_type?.toUpperCase() || 'START'}</div>
-                                <div className="text-green-100 font-medium">Renovación mensual</div>
+                ) : (
+                    <div className="max-w-2xl">
+                        <div className="bg-[var(--ag-sys-color-surface)] rounded-[2.5rem] border border-[var(--ag-sys-color-border)] shadow-xl overflow-hidden">
+                            <div className="p-10 bg-[var(--ag-sys-color-primary)] text-white relative overflow-hidden">
+                                <Building2 className="absolute -right-12 -bottom-12 w-48 h-48 text-white/10" />
+                                <div className="relative z-10">
+                                    <h3 className="text-sm font-black uppercase tracking-[0.2em] text-green-200 mb-4 flex items-center gap-2">
+                                        <ShieldCheck className="w-4 h-4" />
+                                        Suscripción Activa
+                                    </h3>
+                                    <h2 className="text-5xl font-black mb-3 drop-shadow-md">Plan {publicUser.plan_type?.toUpperCase() || 'START'}</h2>
+                                    <p className="text-green-100 font-bold text-lg">Facturación y gestión de cuenta profesional</p>
+                                </div>
                             </div>
                             
-                            <div className="p-8 bg-white text-[var(--ag-sys-color-text)]">
-                                {publicUser.plan_renews_at && (
-                                    <div className="mb-6 pb-6 border-b border-gray-100">
-                                        <div className="text-sm text-gray-500 font-semibold uppercase tracking-wider mb-2 flex items-center gap-2">
-                                            <Calendar className="w-4 h-4" />
+                            <div className="p-10 space-y-10">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div>
+                                        <div className="text-xs text-gray-400 font-black uppercase tracking-widest mb-3 flex items-center gap-2">
+                                            <Calendar className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
                                             Próxima Factura
                                         </div>
-                                        <div className="font-bold text-lg">
-                                            {new Date(publicUser.plan_renews_at).toLocaleDateString("es-ES", {
+                                        <div className="font-black text-2xl text-[var(--ag-sys-color-text)]">
+                                            {publicUser.plan_renews_at ? new Date(publicUser.plan_renews_at).toLocaleDateString("es-ES", {
                                                 year: "numeric", month: "long", day: "numeric"
-                                            })}
+                                            }) : "Pendiente"}
                                         </div>
                                     </div>
-                                )}
+                                    <div>
+                                        <div className="text-xs text-gray-400 font-black uppercase tracking-widest mb-3 flex items-center gap-2">
+                                            <RefreshCw className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
+                                            Ciclo de Renovación
+                                        </div>
+                                        <div className="font-black text-2xl text-[var(--ag-sys-color-text)]">
+                                            Mensual
+                                        </div>
+                                    </div>
+                                </div>
                                 
-                                <form action={portalUrl} method="POST">
-                                    <button 
-                                        type="submit"
-                                        className="w-full flex justify-between items-center py-4 px-5 bg-gray-50 hover:bg-gray-100 rounded-xl font-bold text-[var(--ag-sys-color-text)] transition-colors border border-gray-200 group"
-                                    >
-                                        <span className="flex items-center gap-2"><CreditCard className="w-5 h-5 text-[var(--ag-sys-color-text-muted)]" /> Gestionar Suscripción</span>
-                                        <ChevronRight className="w-5 h-5 text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-text)] transition-colors" />
-                                    </button>
-                                </form>
-                                <p className="text-xs text-center text-gray-400 mt-4 leading-relaxed px-4">
-                                    Serás redirigido al portal seguro de Stripe para descargar tus facturas, actualizar tu tarjeta o cancelar tu plan.
-                                </p>
+                                <div className="pt-10 border-t border-gray-100">
+                                    <form action={portalUrl} method="POST">
+                                        <button 
+                                            type="submit"
+                                            className="w-full flex justify-between items-center py-6 px-8 bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-black transition-all group shadow-xl shadow-gray-200"
+                                        >
+                                            <span className="flex items-center gap-3">
+                                                <CreditCard className="w-6 h-6 text-green-400" /> 
+                                                Gestionar en Stripe
+                                            </span>
+                                            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                                        </button>
+                                    </form>
+                                    <p className="text-sm text-center text-gray-400 mt-6 font-medium leading-relaxed max-w-md mx-auto">
+                                        Descarga tus facturas, actualiza tu tarjeta o cancela tu plan en el portal seguro de pagos.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                </div>
+                )}
             </div>
         </div>
     );
