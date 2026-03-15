@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
-import { Building2, MapPin, Search, ShieldCheck } from "lucide-react";
+import { Building2, MapPin, Search, ShieldCheck, Check } from "lucide-react";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -68,18 +68,20 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                 <div className="container mx-auto px-4 max-w-7xl">
                     <div className="py-12 md:py-16 flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                            {/* Logo */}
-                            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-gray-100 flex items-center justify-center flex-shrink-0 shadow-sm border border-gray-200 overflow-hidden relative">
-                                {company.avatar_url ? (
-                                    /* eslint-disable-next-line @next/next/no-img-element */
-                                    <img src={company.avatar_url} alt={company.commercial_name || "Logo empresa"} className="w-full h-full object-cover" />
-                                ) : (
-                                    <Building2 className="w-12 h-12 text-gray-400" />
-                                )}
+                            {/* Logo Wrapper */}
+                            <div className="relative flex-shrink-0">
+                                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-gray-100 flex items-center justify-center shadow-sm border border-gray-200 overflow-hidden">
+                                    {company.avatar_url ? (
+                                        /* eslint-disable-next-line @next/next/no-img-element */
+                                        <img src={company.avatar_url} alt={company.commercial_name || "Logo empresa"} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <Building2 className="w-12 h-12 text-gray-400" />
+                                    )}
+                                </div>
                                 
                                 {company.plan_type === 'pro' && (
-                                    <div className="absolute -top-2 -right-2 bg-amber-400 text-amber-900 w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white" title="Usuario PRO">
-                                        <ShieldCheck className="w-4 h-4" />
+                                    <div className="absolute -bottom-2 -right-2 bg-blue-500 text-white w-9 h-9 rounded-full flex items-center justify-center shadow-sm border-[4px] border-white z-10" title="Perfil Profesional Verificado">
+                                        <Check className="w-5 h-5 stroke-[4]" />
                                     </div>
                                 )}
                             </div>
