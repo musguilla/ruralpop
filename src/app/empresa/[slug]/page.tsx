@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
-import { Building2, MapPin, Search, ShieldCheck, BadgeCheck } from "lucide-react";
+import { Building2, MapPin, Search, ShieldCheck, BadgeCheck, Sparkles, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -12,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const supabase = await createClient();
     const { data: company } = await supabase
         .from('users')
-        .select('commercial_name, company_description')
+        .select('commercial_name, company_description, is_ghost')
         .ilike('commercial_name', cleanName)
         .eq('role', 'profesional')
         .limit(1)
@@ -25,6 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title: `${name} - Anuncios y Perfil Profesional | Ruralpop`,
         description: description,
+        robots: company?.is_ghost ? { index: false, follow: false } : undefined,
     };
 }
 
@@ -35,6 +37,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
     const sp = await searchParams;
     const slug = (await params).slug;
     const searchTerm = typeof sp.q === 'string' ? sp.q : '';
+    const token = typeof sp.token === 'string' ? sp.token : null;
 
     const supabase = await createClient();
 
@@ -43,16 +46,24 @@ export default async function CompanyProfilePage({ params, searchParams }: {
     // A more robust approach would be to store a clean slug on the user table, but this works for now.
     const cleanName = decodeURIComponent(slug).replace(/-/g, ' ');
 
-    const { data: company, error: companyError } = await supabase
+    const query = supabase
         .from('users')
-        .select('id, commercial_name, company_description, company_address, company_zip, company_country, avatar_url, role, plan_type')
+        .select('id, commercial_name, company_description, company_address, company_zip, company_country, avatar_url, role, plan_type, is_ghost, ghost_token')
         .ilike('commercial_name', cleanName)
         .eq('role', 'profesional')
-        .limit(1)
-        .single();
+        .limit(1);
+
+    const { data: company, error: companyError } = await query.single();
 
     if (companyError || !company) {
         // If no professional user found with that name
+        notFound();
+    }
+
+    const isValidGhostToken = token && company.is_ghost && company.ghost_token === token;
+
+    if (company.is_ghost && !isValidGhostToken) {
+        // Ghost profiles without the correct token are functionally invisible
         notFound();
     }
 
@@ -63,6 +74,37 @@ export default async function CompanyProfilePage({ params, searchParams }: {
 
     return (
         <main className="min-h-screen bg-[var(--ag-sys-color-background)] pb-20">
+            {company.is_ghost && isValidGhostToken && (
+                <div className="bg-gradient-to-r from-indigo-600 to-purple-600 border-b border-indigo-700 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                    <div className="container mx-auto px-4 max-w-7xl">
+                        <div className="py-6 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                            <div className="flex items-start gap-4 text-white">
+                                <div className="p-3 bg-white/20 rounded-2xl flex-shrink-0">
+                                    <Sparkles className="w-8 h-8 text-amber-300" />
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h2 className="text-xl font-bold">¡Esta es la demostración de tu escaparate profesional!</h2>
+                                        <span className="bg-white/20 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider hidden sm:inline-block">Solo visible para ti</span>
+                                    </div>
+                                    <p className="text-indigo-100 font-medium text-sm max-w-2xl">
+                                        Hemos creado este perfil pre-configurado para ti. Reclámalo ahora, activa tu plan profesional y empieza a vender a nivel nacional.
+                                    </p>
+                                </div>
+                            </div>
+                            <Link 
+                                href={`/profesionales/reclamar?token=${token}`}
+                                className="w-full md:w-auto bg-white text-indigo-700 hover:bg-gray-50 font-black px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 whitespace-nowrap flex items-center justify-center gap-2"
+                            >
+                                Reclamar Perfil y Activar
+                                <ArrowRight className="w-5 h-5" />
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Header / Banner */}
             <div className="bg-[var(--ag-sys-color-surface)] border-b border-[var(--ag-sys-color-border)]">
                 <div className="container mx-auto px-4 max-w-7xl">
