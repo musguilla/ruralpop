@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Building2, TrendingUp, RefreshCw, CreditCard, ChevronRight, ShieldCheck, Zap, Calendar, ExternalLink } from "lucide-react";
+import { ArrowLeft, TrendingUp, RefreshCw, ChevronRight, ShieldCheck, Zap, ExternalLink } from "lucide-react";
 import { ProSubscriptionManager } from "@/components/dashboard/ProSubscriptionManager";
 import { slugify } from "@/utils/seoUtils";
 
@@ -50,7 +50,6 @@ export default async function ProfessionalDashboardPage(props: Props) {
 
     const isStartPlan = publicUser.plan_type === 'start';
     const isProPlan = publicUser.plan_type === 'pro';
-    const portalUrl = "/api/create-portal-session";
 
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 w-full">
