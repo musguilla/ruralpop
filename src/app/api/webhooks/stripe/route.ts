@@ -76,13 +76,13 @@ export async function POST(req: Request) {
         }
     }
 
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object as Stripe.Checkout.Session;
+    if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.created') {
+        const subscription = event.data.object as Stripe.Subscription;
 
-        if (session.mode === 'subscription') {
-            const userId = session.metadata?.userId;
-            const priceId = session.metadata?.priceId;
-            const subscriptionId = session.subscription as string;
+        if (subscription.status === 'active') {
+            const userId = subscription.metadata?.userId;
+            const priceId = subscription.metadata?.priceId;
+            const subscriptionId = subscription.id;
 
             if (userId && priceId) {
                 try {
@@ -90,10 +90,10 @@ export async function POST(req: Request) {
                     let bumps = 0;
                     let featured = 0;
 
-                    if (priceId === "prod_U9cLl68F9yE878") {
+                    if (priceId === "price_1TBJ6b6eGJa0K3pVDmyCDPeW") { // Start Plan Price ID
                         planType = "start";
                         bumps = 2;
-                    } else if (priceId === "prod_U9cMLJBruG6h5C") {
+                    } else if (priceId === "price_1TBJ7M6eGJa0K3pVFfx0h8Fz") { // Pro Plan Price ID
                         planType = "pro";
                         bumps = 6;
                         featured = 2;

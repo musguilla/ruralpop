@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import stripe from "@/lib/stripe";
+import Stripe from "stripe";
 
 export async function POST(req: Request) {
     try {
-        const h = await headers();
-        const origin = h.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
-        const formData = await req.formData();
-        const priceId = formData.get("priceId") as string;
+        const body = await req.json();
+        const { priceId } = body;
 
         if (!priceId) {
             return new NextResponse("Price ID is required", { status: 400 });
@@ -18,8 +16,7 @@ export async function POST(req: Request) {
         const { data: { user } } = await supabase.auth.getUser();
 
         if (!user) {
-            // Redirect to login but save where they were going (or just go to /login frontend handles it)
-            return NextResponse.redirect(`${origin}/login?redirect=/profesionales`, 303);
+            return new NextResponse("Unauthorized", { status: 401 });
         }
 
         // Validate plan vs existing
@@ -30,7 +27,7 @@ export async function POST(req: Request) {
             .single();
 
         if (profile?.plan_type !== "free" && profile?.plan_type !== null) {
-            return NextResponse.redirect(`${origin}/dashboard/pro?error=already_subscribed`, 303);
+            return new NextResponse("Already subscribed", { status: 400 });
         }
 
         let customerId = profile?.stripe_customer_id;
@@ -52,31 +49,29 @@ export async function POST(req: Request) {
                 .eq("id", user.id);
         }
 
-        // Crear la sesión de Checkout de Suscripción recurrente
-        const session = await stripe.checkout.sessions.create({
+        // Crear la Suscripción incompleta para Elements
+        const subscription = await stripe.subscriptions.create({
             customer: customerId,
-            payment_method_types: ['card'],
-            line_items: [
-                {
-                    price: priceId,
-                    quantity: 1,
-                },
-            ],
-            mode: 'subscription',
-            allow_promotion_codes: true, // Por si en el futuro quiere dar descuentos
-            success_url: `${origin}/dashboard/pro?success=true&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${origin}/profesionales?canceled=true`,
+            items: [{
+                price: priceId,
+            }],
+            payment_behavior: 'default_incomplete',
+            payment_settings: { save_default_payment_method: 'on_subscription' },
+            expand: ['latest_invoice.payment_intent'],
             metadata: {
                 userId: user.id,
                 priceId: priceId
             }
         });
 
-        if (!session.url) {
-            return new NextResponse("Error creating stripe session", { status: 500 });
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const invoice = subscription.latest_invoice as any;
+        const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
 
-        return NextResponse.redirect(session.url, 303);
+        return NextResponse.json({
+            subscriptionId: subscription.id,
+            clientSecret: paymentIntent.client_secret,
+        });
     } catch (err: unknown) {
         console.error("Error creating subscription:", err);
         return new NextResponse(`Error: ${err instanceof Error ? err.message : 'Unknown error'}`, { status: 500 });
