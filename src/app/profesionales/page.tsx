@@ -34,7 +34,7 @@ export default function ProfesionalesPage() {
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-[2.5rem] p-8 lg:p-10 border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col group hover:-translate-y-1">
                             <div className="mb-8">
                                 <h3 className="text-2xl font-black text-[var(--ag-sys-color-text)] tracking-tight mb-2">Plan Start</h3>
-                                <p className="text-[var(--ag-sys-color-text-muted)] text-sm">Perfecto para pequeños negocios y autónomos que quieren empezar a destacar online.</p>
+                                <p className="text-[var(--ag-sys-color-text-muted)] text-sm">Perfecto para profesionales y autónomos que quieren empezar a destacar online.</p>
                             </div>
                             <div className="mb-8">
                                 <div className="flex items-baseline gap-2">
@@ -85,7 +85,7 @@ export default function ProfesionalesPage() {
                             
                             <div className="mb-8 relative z-10">
                                 <h3 className="text-2xl font-black text-white tracking-tight mb-2 flex items-center gap-2">Plan Pro <Zap className="w-5 h-5 text-amber-300 fill-amber-300" /></h3>
-                                <p className="text-white/80 text-sm">El arma definitiva para concesionarios, criadores y profesionales con alto volumen de stock.</p>
+                                <p className="text-white/80 text-sm">El arma definitiva para vender más si eres empresa del sector, ganadería, concesionario de maquinaria, criadores, ...</p>
                             </div>
                             <div className="mb-8 relative z-10">
                                 <div className="flex items-baseline gap-2">
