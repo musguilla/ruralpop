@@ -1,10 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { User, Phone, Mail, KeyRound, ArrowLeft, Building2, FileText, MapPin, Globe } from "lucide-react";
+import { User, Phone, Mail, KeyRound, ArrowLeft, Building2, FileText, MapPin, Globe, ExternalLink } from "lucide-react";
 import { EditableField } from "@/components/account/EditableField";
 import { EditableLocation } from "@/components/account/EditableLocation";
 import { AvatarUpload } from "@/components/account/AvatarUpload";
+import { slugify } from "@/utils/seoUtils";
 
 export const dynamic = "force-dynamic";
 
@@ -153,6 +154,28 @@ export default async function AccountPage() {
                                         type="text" // Ideally this would use a textarea, but we map to EditableField for now
                                     />
                                 </div>
+
+                                {publicUser.commercial_name && (
+                                    <div className="md:col-span-2 p-6 bg-white rounded-2xl border border-[var(--ag-sys-color-border)]">
+                                        <dt className="flex items-center gap-2 text-sm font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider mb-3">
+                                            <ExternalLink className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
+                                            Acceso a tu perfil de empresa
+                                        </dt>
+                                        <dd className="flex items-center justify-between gap-4">
+                                            <div className="text-[var(--ag-sys-color-primary)] font-bold break-all">
+                                                https://www.ruralpop.com/empresa/{slugify(publicUser.commercial_name)}
+                                            </div>
+                                            <Link 
+                                                href={`/empresa/${slugify(publicUser.commercial_name)}`}
+                                                target="_blank"
+                                                className="shrink-0 inline-flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-primary)] text-white text-sm font-bold rounded-xl hover:opacity-90 transition-opacity"
+                                            >
+                                                Ver perfil
+                                                <ExternalLink className="w-4 h-4" />
+                                            </Link>
+                                        </dd>
+                                    </div>
+                                )}
                             </dl>
                         </div>
                     )}
