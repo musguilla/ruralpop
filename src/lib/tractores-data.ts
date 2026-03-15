@@ -98,7 +98,7 @@ const cleanForMatching = (s: string) => {
     return s.toLowerCase()
         .replace(/\.[a-z0-9]+$/i, '') // Remove extension
         .replace(/[-_.]/g, ' ') // Normalize separators
-        .replace(/\b(brochure|broch|folleto|catalogo|flyer|lowres|spanish|my\d+|range|spec|sheet|launch|document|target|trend|v\d+|ub\d*)\b/gi, '')
+        .replace(/\b(brochure|broch|folleto|catalogo|flyer|lowres|spanish|my\d+|range|spec|sheet|launch|document|target|trend|v\d+|ub\d*|mc|hr|web|inline)\b/gi, '')
         .replace(/[^a-z0-9]/g, ''); // Final nuclear pass
 };
 
