@@ -67,7 +67,7 @@ export default function ProfesionalesPage() {
                                     <div className="mt-1 w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-3.5 h-3.5 text-green-600" />
                                     </div>
-                                    <span className="text-[var(--ag-sys-color-text)] font-medium"><strong className="text-[var(--ag-sys-color-primary)]">2 impulsos</strong> de subida de anuncio al mes gratis</span>
+                                    <span className="text-[var(--ag-sys-color-text)] font-medium"><strong className="text-[var(--ag-sys-color-primary)]">2 impulsos</strong> de subida de anuncio al mes incluidos</span>
                                 </li>
                             </ul>
 
@@ -118,7 +118,7 @@ export default function ProfesionalesPage() {
                                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-3.5 h-3.5 text-white" />
                                     </div>
-                                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">6 impulsos</strong> de subida de anuncio al mes gratis</span>
+                                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">6 impulsos</strong> de subida de anuncio al mes incluidos</span>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
