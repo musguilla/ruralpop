@@ -1,37 +1,51 @@
 import { createClient } from "@/utils/supabase/server";
-import {
-    Search,
-    MoreHorizontal,
-    Edit2,
-    Shield,
-    UserX,
-    UserCheck,
-    MapPin,
-    Calendar
-} from "lucide-react";
-import { formatRelativeTime } from "@/utils/format";
 import { UserRow } from "./UserRow";
+import { SearchUsers } from "./SearchUsers";
+import { Pagination } from "@/components/ui/Pagination";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminUsersPage() {
-    const supabase = await createClient();
+type Props = {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
 
-    const { data: users, error } = await supabase
+export default async function AdminUsersPage(props: Props) {
+    const searchParams = await props.searchParams;
+    const supabase = await createClient();
+    
+    const page = parseInt(searchParams.page as string) || 1;
+    const limit = 100;
+    const search = searchParams.search as string || "";
+
+    let query = supabase
         .from("users")
-        .select("*, listings(count)")
-        .order("created_at", { ascending: false });
+        .select("*, listings(count)", { count: "exact" });
+
+    if (search) {
+        query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
+    }
+
+    const { data: users, count, error } = await query
+        .order("created_at", { ascending: false })
+        .range((page - 1) * limit, page * limit - 1);
 
     if (error) {
         console.error("Error fetching users:", error);
     }
 
+    const totalPages = count ? Math.ceil(count / limit) : 1;
+
     return (
         <div className="space-y-8">
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight">Gestión de Usuarios</h1>
-                    <p className="text-[var(--ag-sys-color-text-muted)] mt-1">Control de roles, permisos y estado de cuentas.</p>
+                    <p className="text-[var(--ag-sys-color-text-muted)] mt-1">
+                        Control de roles, permisos y estado de cuentas. {count ? `(${count} usuarios)` : ''}
+                    </p>
+                </div>
+                <div className="w-full sm:w-auto self-end">
+                    <SearchUsers />
                 </div>
             </div>
 
@@ -49,13 +63,15 @@ export default async function AdminUsersPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--ag-sys-color-border)] text-sm">
-                        {users?.map((u: any) => {
+                        {users?.map((u: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                             const adsCount = u.listings?.[0]?.count || 0;
                             return <UserRow key={u.id} user={u} adsCount={adsCount} />;
                         })}
                     </tbody>
                 </table>
             </div>
+
+            <Pagination currentPage={page} totalPages={totalPages} />
         </div>
     );
 }
