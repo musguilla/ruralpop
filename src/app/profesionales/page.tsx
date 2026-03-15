@@ -10,12 +10,8 @@ export default function ProfesionalesPage() {
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
             {/* Hero Section */}
-            <section className="relative px-6 py-20 lg:py-32 overflow-hidden flex items-center justify-center">
-                {/* Background decorative elements */}
-                <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-[var(--ag-sys-color-primary)] rounded-full mix-blend-multiply filter blur-[128px] opacity-30 animate-blob"></div>
-                <div className="absolute bottom-0 left-0 -ml-32 -mb-32 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-30 animate-blob animation-delay-2000"></div>
-
-                <div className="relative max-w-4xl mx-auto text-center space-y-8 z-10 w-full">
+            <section className="px-6 pt-12 pb-10 lg:pt-16 lg:pb-12 flex items-center justify-center">
+                <div className="max-w-4xl mx-auto text-center space-y-6 w-full">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] font-bold text-sm mb-4 border border-[var(--ag-sys-color-primary)]/20 shadow-sm backdrop-blur-sm">
                         <ShieldCheck className="w-4 h-4" />
                         Abre tu tienda en Ruralpop
