@@ -87,8 +87,8 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
 
 export const IGNORED_CATALOG_FILES: string[] = [
     "308.8912.4.2 0 SPIRE FSV CAB PLAT STAGE V ES 1",
-    "MC RP6D X6.4 40P 6725799A1 WEB ES 2.PDF.INLINE (1)",
-    "MC RPE7 RPE8 X7.6 BROCHURE CLEVERCAB 64P 6749394A1 WEB ES (1).PDF.INLINE"
+    "6725799A1 WEB ES 2", // Eliminates MC_RP6D_X6.4_Brochure_40p_6725799A1_WEB_ES-2...
+    "6749394A1" // Eliminates MC_RPE7-RPE8_X7.6_Brochure_CleverCab_64p_6749394A1_Web_ES (1)...
 ];
 /**
  * Strips common noise words and symbols to get the core tractor identity.
@@ -132,8 +132,8 @@ export function getTractorFormattedName(originalFilename: string): string {
 
     const searchKey = cleanForMatching(baseName);
     
-    // Check if it should be ignored (e.g. duplicates)
-    if (NORMALIZED_IGNORED.includes(searchKey)) {
+    // Check if it should be ignored by substring match for maximum resilience
+    if (NORMALIZED_IGNORED.some(ignored => searchKey.includes(ignored))) {
         return "__IGNORE__";
     }
 
