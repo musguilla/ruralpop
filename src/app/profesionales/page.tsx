@@ -55,13 +55,13 @@ export default function ProfesionalesPage() {
                                     <div className="mt-1 w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-3.5 h-3.5 text-green-600" />
                                     </div>
-                                    <span className="text-[var(--ag-sys-color-text)] font-medium">Perfil de empresa con <strong className="text-[var(--ag-sys-color-primary)]">logotipo</strong> y descripción</span>
+                                    <span className="text-[var(--ag-sys-color-text)] font-medium">Página web pública de tu empresa con todos tus productos, <strong className="text-[var(--ag-sys-color-primary)]">logotipo</strong> y descripción.</span>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <div className="mt-1 w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-3.5 h-3.5 text-green-600" />
                                     </div>
-                                    <span className="text-[var(--ag-sys-color-text)] font-medium"><strong className="text-[var(--ag-sys-color-primary)]">Sello profesional</strong> en tus anuncios</span>
+                                    <span className="text-[var(--ag-sys-color-text)] font-medium"><strong className="text-[var(--ag-sys-color-primary)]">Sello Profesional Verificado</strong> en tu perfil</span>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <div className="mt-1 w-5 h-5 rounded-full bg-green-500/10 flex items-center justify-center flex-shrink-0">
@@ -106,13 +106,13 @@ export default function ProfesionalesPage() {
                                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-3.5 h-3.5 text-white" />
                                     </div>
-                                    <span className="text-white font-medium">Página web pública de tu empresa con todos tus productos y logotipo</span>
+                                    <span className="text-white font-medium">Página web pública de tu empresa con todos tus productos, logotipo y descripción.</span>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                                         <Check className="w-3.5 h-3.5 text-white" />
                                     </div>
-                                    <span className="text-white font-medium">Sello / Badge <strong className="text-amber-300 font-bold">Profesional Pro</strong> destacado</span>
+                                    <span className="text-white font-medium">Sello <strong className="text-amber-300 font-bold">Profesional Verificado</strong> en tu perfil</span>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
