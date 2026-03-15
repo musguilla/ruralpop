@@ -17,6 +17,15 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:category/anuncio/:slug*',
+        destination: '/anuncio/:slug*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
