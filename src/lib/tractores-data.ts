@@ -82,7 +82,10 @@ export const SPECIFIC_TRACTOR_NAMES: Record<string, string> = {
     "6737445A1 ES": "X5 HC",
     "6736297A1 ES": "X6",
     "6717642A2 ES": "X5",
-    "6736272A1 ES": "X5.085"
+    "6736272A1 ES": "X5.085",
+
+    // John Deere
+    "a309ar0120 serie 6 tractores": "SERIE 6E"
 };
 
 export const IGNORED_CATALOG_FILES: string[] = [
