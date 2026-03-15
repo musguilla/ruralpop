@@ -7,7 +7,6 @@ import {
     Package,
     MapPin,
     Tag,
-    AlertTriangle,
     Eye,
     UserCheck,
     Edit,
@@ -124,9 +123,6 @@ export default async function AdminListingsPage(props: {
                                         </Link>
                                         <button className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all whitespace-nowrap">
                                             <Eye className="w-3.5 h-3.5" /> Ver
-                                        </button>
-                                        <button className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-600 text-xs font-bold rounded-xl hover:bg-amber-500/20 transition-all whitespace-nowrap">
-                                            <AlertTriangle className="w-3.5 h-3.5" /> Moderar
                                         </button>
                                         <DeleteButton listingId={l.id} title={l.title} />
                                     </div>
