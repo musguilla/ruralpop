@@ -82,7 +82,7 @@ export default function ProfesionalesPage() {
                             </ul>
 
                             <form action="/api/create-subscription" method="POST" className="mt-auto">
-                                <input type="hidden" name="priceId" value="prod_U9cLl68F9yE878" />
+                                <input type="hidden" name="priceId" value="price_1TBJ6b6eGJa0K3pVDmyCDPeW" />
                                 <button type="submit" className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ag-sys-color-surface)] border-2 border-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-primary)] font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all group-hover:bg-[var(--ag-sys-color-primary)] group-hover:text-white">
                                     <Settings className="w-5 h-5" />
                                     Seleccionar START
@@ -143,7 +143,7 @@ export default function ProfesionalesPage() {
                             </ul>
 
                             <form action="/api/create-subscription" method="POST" className="mt-auto relative z-10">
-                                <input type="hidden" name="priceId" value="prod_U9cMLJBruG6h5C" />
+                                <input type="hidden" name="priceId" value="price_1TBJ7M6eGJa0K3pVFfx0h8Fz" />
                                 <button type="submit" className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-white text-[var(--ag-sys-color-primary)] font-black rounded-2xl hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5">
                                     <Zap className="w-5 h-5" />
                                     Quiero el PRO
