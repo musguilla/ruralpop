@@ -30,12 +30,13 @@ export async function POST(req: Request) {
 
     if (event.type === "payment_intent.succeeded") {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        const { listingId, planId } = paymentIntent.metadata;
+        const { listingId, planId } = paymentIntent.metadata || {};
 
         console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
 
         if (listingId && planId) {
             try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 let updateData: any = {};
 
                 if (planId === "bump") {
@@ -71,6 +72,53 @@ export async function POST(req: Request) {
                 const errorMessage = err instanceof Error ? err.message : "Unknown error";
                 console.error("Database Error on Webhook:", err);
                 return new NextResponse(`Database Error: ${errorMessage}`, { status: 500 });
+            }
+        }
+    }
+
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object as Stripe.Checkout.Session;
+
+        if (session.mode === 'subscription') {
+            const userId = session.metadata?.userId;
+            const priceId = session.metadata?.priceId;
+            const subscriptionId = session.subscription as string;
+
+            if (userId && priceId) {
+                try {
+                    let planType = "free";
+                    let bumps = 0;
+                    let featured = 0;
+
+                    if (priceId === "prod_U9cLl68F9yE878") {
+                        planType = "start";
+                        bumps = 2;
+                    } else if (priceId === "prod_U9cMLJBruG6h5C") {
+                        planType = "pro";
+                        bumps = 6;
+                        featured = 2;
+                    }
+
+                    const { error } = await supabaseAdmin
+                        .from('users')
+                        .update({
+                            role: 'profesional',
+                            plan_type: planType,
+                            stripe_subscription_id: subscriptionId,
+                            available_bumps: bumps,
+                            available_featured: featured,
+                            plan_renews_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // Fake 1 month renewal for now
+                        })
+                        .eq('id', userId);
+
+                    if (error) {
+                        console.error(`Failed to update user ${userId} to profesional:`, error.message);
+                    } else {
+                        console.log(`✅ User ${userId} upgraded to ${planType} plan`);
+                    }
+                } catch (err: unknown) {
+                    console.error("DB Error processing subscription:", err);
+                }
             }
         }
     }
