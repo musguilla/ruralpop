@@ -155,12 +155,15 @@ export function getTractorFormattedName(originalFilename: string): string {
     
     // Specifically for Mc Cormick, they use MC_ prefix
     cleaned = cleaned.replace(/\bmc\b/gi, "");
+    
+    // Specifically remove Mc Cormick internal technical codes like CP05, RP6D, RPE7, RS14...
+    cleaned = cleaned.replace(/\b(CP|RP|RS)[0-9A-Z]{2,4}\b/gi, "");
 
     // Remove technical codes like 308.8901.4.2.0 or CP05, RP6D
     const parts = cleaned.split(" ").filter(p => {
-        const isTechnical = /^[A-Z0-9.]+$/i.test(p) && /\d/.test(p) && p.length < 8;
         const isNumeric = /^[0-9.]+$/.test(p);
-        return !isTechnical && !isNumeric && p.length > 0;
+        const isLangCode = /^(es|en)$/i.test(p); // Remove ES, EN from end results typically
+        return !isNumeric && !isLangCode && p.length > 0;
     });
     
     const result = parts.map(w => w.toUpperCase()).join(" ");
