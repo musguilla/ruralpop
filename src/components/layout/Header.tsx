@@ -19,6 +19,16 @@ export async function Header() {
         .eq('receiver_id', user.id)
         .eq('is_read', false) : { count: 0 };
 
+    let userRole = null;
+    if (user) {
+        const { data: profile } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+        userRole = profile?.role;
+    }
+
     return (
         <header className="sticky top-0 z-50 w-full border-b border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] shadow-sm">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
@@ -71,6 +81,7 @@ export async function Header() {
                                 userFullName={user.user_metadata?.name || ''}
                                 userId={user.id}
                                 avatarUrl={user.user_metadata?.avatar_url}
+                                role={userRole}
                             />
                         </div>
                     ) : (

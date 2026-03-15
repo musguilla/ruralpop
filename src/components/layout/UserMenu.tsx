@@ -9,9 +9,10 @@ interface UserMenuProps {
     userFullName: string;
     userId: string;
     avatarUrl?: string | null;
+    role?: string | null;
 }
 
-export function UserMenu({ userFullName, userId, avatarUrl }: UserMenuProps) {
+export function UserMenu({ userFullName, userId, avatarUrl, role }: UserMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -84,15 +85,37 @@ export function UserMenu({ userFullName, userId, avatarUrl }: UserMenuProps) {
 
                         <div className="my-1 border-t border-gray-100"></div>
 
-                        <div className="flex px-4 py-3 hover:bg-gray-50 transition-colors cursor-not-allowed opacity-80">
-                            <div className="flex items-start gap-3">
-                                <Briefcase className="w-5 h-5 mt-1" />
-                                <div className="flex flex-col items-start gap-1">
-                                    <span className="text-[9px] uppercase font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full leading-none">Próximamente</span>
-                                    <span className="font-semibold leading-none mt-1">¿Eres profesional?</span>
+                        {role === 'profesional' ? (
+                            <Link
+                                href="/dashboard/pro"
+                                className="flex px-4 py-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                <div className="flex items-center gap-3 w-full">
+                                    <Briefcase className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
+                                    <div className="flex flex-col items-start gap-1 flex-1">
+                                        <div className="flex w-full items-center justify-between">
+                                            <span className="font-semibold leading-none text-[var(--ag-sys-color-text)] group-hover:text-[var(--ag-sys-color-primary)]">Panel Profesional</span>
+                                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-1"></span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            </Link>
+                        ) : (
+                            <Link
+                                href="/profesionales"
+                                className="flex px-4 py-3 hover:bg-gray-50 transition-colors"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                <div className="flex items-start gap-3">
+                                    <Briefcase className="w-5 h-5 mt-1" />
+                                    <div className="flex flex-col items-start gap-1">
+                                        <span className="text-[9px] uppercase font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full leading-none whitespace-nowrap">NUEVO</span>
+                                        <span className="font-semibold leading-none mt-1">¿Eres profesional?</span>
+                                    </div>
+                                </div>
+                            </Link>
+                        )}
 
                         <Link
                             href="/contact"
