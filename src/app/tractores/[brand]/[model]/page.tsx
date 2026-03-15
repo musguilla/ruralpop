@@ -77,39 +77,28 @@ export default async function BrandModelDetail(props: Props) {
     let imageUrl: string | null = null;
     let targetFileName: string | null = null;
 
-    // First pass: identify the target file base name by computing slugs
-    for (const f of files) {
-        if (f.name === ".emptyFolderPlaceholder" || f.name.startsWith(".")) continue;
-        const lastDot = f.name.lastIndexOf('.');
-        if (lastDot === -1) continue;
-        const namePart = f.name.substring(0, lastDot);
+    // Identify files matching this slug
+    let foundFormattedName = "";
+    
+    files.forEach(f => {
+        if (f.name === ".emptyFolderPlaceholder" || f.name.startsWith(".")) return;
         
-        // Compute what its slug would be
-        const fName = getTractorFormattedName(namePart);
+        const fName = getTractorFormattedName(f.name);
+        if (fName === "__IGNORE__") return;
+        
         const fSlug = generateTractorFriendlySlug(fName);
 
         if (fSlug === decodedModel) {
-            targetFileName = namePart;
-            break;
-        }
-    }
+            foundFormattedName = fName; // Same for all items in this slug
+            const ext = f.name.substring(f.name.lastIndexOf(".") + 1).toLowerCase();
+            const publicUrl = supabase.storage.from("tractores").getPublicUrl(`${folderName}/${f.name}`).data.publicUrl;
 
-    if (!targetFileName) {
-        notFound();
-    }
-
-    // Second pass: grab actual urls for the match
-    files.forEach(f => {
-        const lastDot = f.name.lastIndexOf('.');
-        if (lastDot === -1) return;
-        const namePart = f.name.substring(0, lastDot);
-        const ext = f.name.substring(lastDot + 1).toLowerCase();
-
-        if (namePart === targetFileName) {
             if (ext === 'pdf') {
-                pdfUrl = supabase.storage.from("tractores").getPublicUrl(`${folderName}/${f.name}`).data.publicUrl;
+                pdfUrl = publicUrl;
+                // Use the file name as the target to look up description if needed
+                if (!targetFileName) targetFileName = f.name;
             } else if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
-                imageUrl = supabase.storage.from("tractores").getPublicUrl(`${folderName}/${f.name}`).data.publicUrl;
+                imageUrl = publicUrl;
             }
         }
     });
@@ -118,8 +107,8 @@ export default async function BrandModelDetail(props: Props) {
          notFound(); // If no catalog PDF, 404
     }
 
-    const formattedModelName = getTractorFormattedName(targetFileName!);
-    const description = TRACTOR_DESCRIPTIONS[targetFileName!] || `Explora toda la información, la ficha técnica y la tecnología que ofrece el modelo de tractor ${brandData.name} ${formattedModelName}. Un equipo especialmente diseñado para satisfacer las demandas más exigentes en el campo, maximizar la productividad de la explotación y ofrecer un alto nivel de confort a los operarios.`;
+    const formattedModelName = foundFormattedName || getTractorFormattedName(targetFileName || "");
+    const description = (targetFileName && TRACTOR_DESCRIPTIONS[targetFileName]) || `Explora toda la información, la ficha técnica y la tecnología que ofrece el modelo de tractor ${brandData.name} ${formattedModelName}. Un equipo especialmente diseñado para satisfacer las demandas más exigentes en el campo, maximizar la productividad de la explotación y ofrecer un alto nivel de confort a los operarios.`;
 
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)] py-12 px-4 sm:px-6">
