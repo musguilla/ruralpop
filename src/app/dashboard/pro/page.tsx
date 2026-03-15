@@ -95,7 +95,12 @@ export default async function ProfessionalDashboardPage() {
                                         <span className="text-4xl font-black text-[var(--ag-sys-color-text)]">{activeListings || 0}</span>
                                         <span className="text-sm text-gray-400 mb-1 font-medium">/ {isStartPlan ? '15' : isProPlan ? '50' : '∞'} límite</span>
                                     </div>
-                                    <Link href="/dashboard" className="text-sm text-[var(--ag-sys-color-primary)] font-bold mt-4 inline-flex hover:underline">Gestionar inventario</Link>
+                                    <Link 
+                                        href={totalListings && totalListings > 0 ? "/dashboard" : "/upload"} 
+                                        className="text-sm text-[var(--ag-sys-color-primary)] font-bold mt-4 inline-flex hover:underline"
+                                    >
+                                        {totalListings && totalListings > 0 ? "Gestionar inventario" : "Añade tu primer producto"}
+                                    </Link>
                                 </div>
                                 <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
                                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Anuncios Totales</h3>
