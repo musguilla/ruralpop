@@ -67,7 +67,7 @@ export function AdminSidebar() {
 
 function AdminNavLink({ href, icon, label, badge }: { href: string; icon: React.ReactNode; label: string; badge?: string }) {
     return (
-        <Link
+        <a
             href={href}
             className="flex items-center justify-between px-4 py-3 text-sm font-semibold text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-primary)]/5 hover:text-[var(--ag-sys-color-primary)] rounded-xl transition-all group"
         >
@@ -82,6 +82,6 @@ function AdminNavLink({ href, icon, label, badge }: { href: string; icon: React.
                     {badge}
                 </span>
             )}
-        </Link>
+        </a>
     );
 }
