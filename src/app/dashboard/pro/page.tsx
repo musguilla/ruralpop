@@ -1,8 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Building2, TrendingUp, RefreshCw, CreditCard, ChevronRight, ShieldCheck, Zap, Calendar } from "lucide-react";
+import { ArrowLeft, Building2, TrendingUp, RefreshCw, CreditCard, ChevronRight, ShieldCheck, Zap, Calendar, ExternalLink } from "lucide-react";
 import { ProSubscriptionManager } from "@/components/dashboard/ProSubscriptionManager";
+import { slugify } from "@/utils/seoUtils";
 
 export const dynamic = "force-dynamic";
 
@@ -82,24 +83,37 @@ export default async function ProfessionalDashboardPage(props: Props) {
                     </div>
                 </header>
 
-                {/* Tabs Navigation */}
-                <div className="flex gap-2 mb-10 p-1 bg-gray-100/50 w-fit rounded-2xl border border-gray-100">
-                    <Link
-                        href="/dashboard/pro"
-                        className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${currentTab === 'general'
-                            ? 'bg-white text-[var(--ag-sys-color-text)] shadow-sm'
-                            : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]'}`}
-                    >
-                        General
-                    </Link>
-                    <Link
-                        href="/dashboard/pro?tab=suscripcion"
-                        className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${currentTab === 'subscription'
-                            ? 'bg-white text-[var(--ag-sys-color-text)] shadow-sm'
-                            : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]'}`}
-                    >
-                        Suscripción
-                    </Link>
+                {/* Tabs Navigation & Actions */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+                    <div className="flex gap-2 p-1 bg-gray-100/50 w-fit rounded-2xl border border-gray-100">
+                        <Link
+                            href="/dashboard/pro"
+                            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${currentTab === 'general'
+                                ? 'bg-white text-[var(--ag-sys-color-text)] shadow-sm'
+                                : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]'}`}
+                        >
+                            General
+                        </Link>
+                        <Link
+                            href="/dashboard/pro?tab=suscripcion"
+                            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${currentTab === 'subscription'
+                                ? 'bg-white text-[var(--ag-sys-color-text)] shadow-sm'
+                                : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]'}`}
+                        >
+                            Suscripción
+                        </Link>
+                    </div>
+
+                    {publicUser.commercial_name && (
+                        <Link
+                            href={`/empresa/${slugify(publicUser.commercial_name)}`}
+                            target="_blank"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)] font-bold text-sm rounded-xl hover:bg-gray-50 transition-all shadow-sm group"
+                        >
+                            Ver perfil de empresa
+                            <ExternalLink className="w-4 h-4 text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)] transition-colors" />
+                        </Link>
+                    )}
                 </div>
 
                 {currentTab === 'general' ? (
