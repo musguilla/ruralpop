@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Building2, TrendingUp, RefreshCw, CreditCard, ChevronRight, ShieldCheck, Zap, Calendar } from "lucide-react";
+import { ProSubscriptionManager } from "@/components/dashboard/ProSubscriptionManager";
 
 export const dynamic = "force-dynamic";
 
@@ -185,64 +186,11 @@ export default async function ProfessionalDashboardPage(props: Props) {
                         </div>
                     </div>
                 ) : (
-                    <div className="max-w-2xl">
-                        <div className="bg-[var(--ag-sys-color-surface)] rounded-[2.5rem] border border-[var(--ag-sys-color-border)] shadow-xl overflow-hidden">
-                            <div className="p-10 bg-[var(--ag-sys-color-primary)] text-white relative overflow-hidden">
-                                <Building2 className="absolute -right-12 -bottom-12 w-48 h-48 text-white/10" />
-                                <div className="relative z-10">
-                                    <h3 className="text-sm font-black uppercase tracking-[0.2em] text-green-200 mb-4 flex items-center gap-2">
-                                        <ShieldCheck className="w-4 h-4" />
-                                        Suscripción Activa
-                                    </h3>
-                                    <h2 className="text-5xl font-black mb-3 drop-shadow-md">Plan {publicUser.plan_type?.toUpperCase() || 'START'}</h2>
-                                    <p className="text-green-100 font-bold text-lg">Facturación y gestión de cuenta profesional</p>
-                                </div>
-                            </div>
-                            
-                            <div className="p-10 space-y-10">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                    <div>
-                                        <div className="text-xs text-gray-400 font-black uppercase tracking-widest mb-3 flex items-center gap-2">
-                                            <Calendar className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                                            Próxima Factura
-                                        </div>
-                                        <div className="font-black text-2xl text-[var(--ag-sys-color-text)]">
-                                            {publicUser.plan_renews_at ? new Date(publicUser.plan_renews_at).toLocaleDateString("es-ES", {
-                                                year: "numeric", month: "long", day: "numeric"
-                                            }) : "Pendiente"}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div className="text-xs text-gray-400 font-black uppercase tracking-widest mb-3 flex items-center gap-2">
-                                            <RefreshCw className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                                            Ciclo de Renovación
-                                        </div>
-                                        <div className="font-black text-2xl text-[var(--ag-sys-color-text)]">
-                                            Mensual
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div className="pt-10 border-t border-gray-100">
-                                    <form action={portalUrl} method="POST">
-                                        <button 
-                                            type="submit"
-                                            className="w-full flex justify-between items-center py-6 px-8 bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-black transition-all group shadow-xl shadow-gray-200"
-                                        >
-                                            <span className="flex items-center gap-3">
-                                                <CreditCard className="w-6 h-6 text-green-400" /> 
-                                                Gestionar en Stripe
-                                            </span>
-                                            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                                        </button>
-                                    </form>
-                                    <p className="text-sm text-center text-gray-400 mt-6 font-medium leading-relaxed max-w-md mx-auto">
-                                        Descarga tus facturas, actualiza tu tarjeta o cancela tu plan en el portal seguro de pagos.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ProSubscriptionManager 
+                        planType={publicUser.plan_type}
+                        renewsAt={publicUser.plan_renews_at}
+                        stripeSubscriptionId={publicUser.stripe_subscription_id}
+                    />
                 )}
             </div>
         </div>
