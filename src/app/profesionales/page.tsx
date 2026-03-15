@@ -42,7 +42,7 @@ export default function ProfesionalesPage() {
                             </div>
                             <div className="mb-8">
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-5xl font-black text-[var(--ag-sys-color-text)] tracking-tighter">19,99€</span>
+                                    <span className="text-5xl font-black text-[var(--ag-sys-color-text)] tracking-tighter">19,99 €</span>
                                     <span className="text-[var(--ag-sys-color-text-muted)] font-medium">/mes</span>
                                 </div>
                                 <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-2">IVA incluido. Cancela cuando quieras.</p>
@@ -76,8 +76,7 @@ export default function ProfesionalesPage() {
                             </ul>
 
                             <Link href="/profesionales/checkout/start" className="mt-auto w-full flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ag-sys-color-surface)] border-2 border-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-primary)] font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all group-hover:bg-[var(--ag-sys-color-primary)] group-hover:text-white">
-                                <Settings className="w-5 h-5" />
-                                Seleccionar START
+                                Empezar ahora
                             </Link>
                         </div>
 
@@ -94,7 +93,7 @@ export default function ProfesionalesPage() {
                             </div>
                             <div className="mb-8 relative z-10">
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-5xl font-black text-white tracking-tighter">49,99€</span>
+                                    <span className="text-5xl font-black text-white tracking-tighter">49,99 €</span>
                                     <span className="text-white/80 font-medium">/mes</span>
                                 </div>
                                 <p className="text-xs text-white/70 mt-2">IVA incluido. Cancela cuando quieras.</p>
