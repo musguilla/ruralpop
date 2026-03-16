@@ -63,39 +63,30 @@ export async function sendGhostInvites(payloads: InvitePayload[]) {
                     <h1 class="title">¡Hola, equipo de ${commercialName}! 👋</h1>
                     
                     <p class="text">
-                        En <strong>Ruralpop</strong> sabemos que vuestros productos son de primera clase, y por eso nos hemos adelantado: <strong>¡Hemos diseñado vuestro perfil de empresa y subido vuestros productos!</strong>
-                    </p>
-                    
-                    <p class="text">
                         Ruralpop es la nueva plataforma dedicada exclusivamente a profesionales del sector agrónomo, la ganadería y el entorno rural. Nuestro objetivo es ayudaros a ganar <span class="highlight">visibilidad nacional</span> de forma inmediata y conectaros directamente con miles de usuarios interesados en vuestros productos, servicios y actividad profesional.
                     </p>
                     
                     <p class="text">
-                        A través de Ruralpop, vuestra empresa puede contar con un escaparate digital especializado, pensado para daros presencia en un marketplace vertical donde realmente está vuestro público. Queremos facilitar que negocios del mundo rural, agroganadero y profesional puedan mostrar su oferta de una forma clara, directa y enfocada a generar contactos y oportunidades reales.
-                    </p>
-                    
-                    <p class="text">
-                        Además, en Ruralpop disponemos de planes especiales para empresas, con ventajas como perfil verificado, anuncios destacados, mayor visibilidad, gestión de contactos, métricas de rendimiento y otras herramientas pensadas para impulsar vuestra presencia comercial dentro de la plataforma y ayudaros a convertir más oportunidades en clientes.
+                        A través de Ruralpop, <strong>vuestra empresa puede contar con un escaparate digital</strong> especializado, pensado para daros presencia en un marketplace vertical donde realmente está vuestro público. Queremos facilitar que negocios del mundo rural, agroganadero y profesional puedan mostrar su oferta de una forma clara, directa y enfocada a generar contactos y oportunidades reales.
                     </p>
 
                     <p class="text">
-                        Podéis acceder ahora y ver una muestra de vuestro escaparate digital y empezar a recibir clientes; solo tenéis que hacer clic en el siguiente enlace exclusivo. Este es un enlace mágico, seguro y único para vosotros:
+                        <span class="highlight">Podéis acceder ahora y ver una muestra de vuestro escaparate digital</span> y empezar a recibir clientes; solo tenéis que hacer clic en el siguiente enlace exclusivo. Este es un enlace mágico, seguro y único para vosotros:
                     </p>
 
-                    <a href="${magicUrl}" class="button" style="color:#ffffff; text-decoration:none;">Ver perfil ${commercialName} en Ruralpop</a>
+                    <a href="${magicUrl}" class="button" style="color:#ffffff; text-decoration:none;">Ver perfil de ${commercialName}</a>
                     
                     <p class="text">
                         Una vez activado vuestro perfil de empresa, podréis incluir más productos y adaptarlo con vuestros datos reales.
                     </p>
                     
                     <p class="text" style="font-size: 14px;">
-                        Si tenéis alguna duda, podéis responder directamente a este correo.<br/>
-                        ¡Estamos deseando veros crecer con nosotros!
+                        ¡Estamos deseando veros crecer con nosotros!<br/><br/>
+                        El equipo de Ruralpop
                     </p>
 
                     <p class="footer">
-                        © ${new Date().getFullYear()} Ruralpop<br>
-                        El punto de encuentro rural.
+                        © ${new Date().getFullYear()} Ruralpop - El mercado líder del mundo rural.
                     </p>
                 </div>
             </body>
