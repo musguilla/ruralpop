@@ -125,6 +125,8 @@ export async function sendGhostInvites(payloads: InvitePayload[]) {
     return { success: true, count };
 }
 
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+
 export async function saveCompanyEmails(companyId: string, emails: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -143,7 +145,13 @@ export async function saveCompanyEmails(companyId: string, emails: string) {
         return { error: "No autorizado" };
     }
 
-    const { error } = await supabase
+    // Use service role to bypass RLS when updating another user's profile
+    const supabaseAdmin = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { error } = await supabaseAdmin
         .from('users')
         .update({ email: emails })
         .eq('id', companyId);
