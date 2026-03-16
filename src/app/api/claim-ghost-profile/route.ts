@@ -51,7 +51,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "No se pudo recuperar los datos del perfil" }, { status: 500 });
         }
 
-        const { id, is_ghost, ghost_token, created_at, ...ghostDataToCopy } = fullGhostData;
+        const { id, is_ghost, ghost_token, created_at, email, ...ghostDataToCopy } = fullGhostData;
 
         // Add the professional role explicitly
         ghostDataToCopy.role = 'profesional';
