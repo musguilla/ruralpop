@@ -9,7 +9,7 @@ export default async function AdminGhostCompaniesPage() {
     // Fetch all ghost companies
     const { data: ghosts, error } = await supabase
         .from('users')
-        .select('id, commercial_name, ghost_token, company_logo_url, created_at, avatar_url')
+        .select('id, commercial_name, ghost_token, company_logo_url, created_at, avatar_url, email')
         .eq('is_ghost', true)
         .order('created_at', { ascending: false });
 

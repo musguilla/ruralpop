@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Copy, Mail, ExternalLink, Loader2, CheckCircle2 } from "lucide-react";
 import { slugify } from "@/utils/seoUtils";
-import { sendGhostInvites } from "./actions";
+import { sendGhostInvites, saveCompanyEmails } from "./actions";
 
 type GhostCompany = {
     id: string;
@@ -12,6 +12,7 @@ type GhostCompany = {
     avatar_url: string;
     company_logo_url: string;
     created_at: string;
+    email: string | null;
 };
 
 interface GhostCompaniesTableProps {
@@ -20,7 +21,15 @@ interface GhostCompaniesTableProps {
 
 export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-    const [emailsMap, setEmailsMap] = useState<Record<string, string>>({});
+    const [emailsMap, setEmailsMap] = useState<Record<string, string>>(() => {
+        const initMap: Record<string, string> = {};
+        companies.forEach(c => {
+            if (c.email && !c.email.endsWith('@ruralpop.com')) {
+                initMap[c.id] = c.email;
+            }
+        });
+        return initMap;
+    });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const toggleSelect = (id: string) => {
@@ -206,6 +215,12 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
                                             placeholder="ejemplo@deheus.com, ceo@deheus.com"
                                             value={emailsMap[company.id] || ""}
                                             onChange={(e) => handleEmailChange(company.id, e.target.value)}
+                                            onBlur={async (e) => {
+                                                const value = e.target.value;
+                                                if (value.trim()) {
+                                                    await saveCompanyEmails(company.id, value);
+                                                }
+                                            }}
                                             className="w-full bg-white border border-[var(--ag-sys-color-border)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]"
                                         />
                                     </td>
