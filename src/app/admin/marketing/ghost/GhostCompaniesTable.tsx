@@ -21,15 +21,18 @@ interface GhostCompaniesTableProps {
 
 export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-    const [emailsMap, setEmailsMap] = useState<Record<string, string>>(() => {
-        const initMap: Record<string, string> = {};
-        companies.forEach(c => {
-            if (c.email && !c.email.endsWith('@ruralpop.com')) {
-                initMap[c.id] = c.email;
-            }
-        });
-        return initMap;
-    });
+    const [emailsMap, setEmailsMap] = useState<Record<string, string>>({});
+
+    const getEmailForCompany = (id: string) => {
+        if (emailsMap[id] !== undefined) {
+            return emailsMap[id];
+        }
+        const company = companies.find(c => c.id === id);
+        if (company && company.email && !company.email.endsWith('@ruralpop.com')) {
+            return company.email;
+        }
+        return "";
+    };
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const toggleSelect = (id: string) => {
@@ -71,7 +74,7 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
 
         const payload = Array.from(selectedIds).map(id => {
             const company = companies.find(c => c.id === id)!;
-            const emails = (emailsMap[id] || "").split(",").map(e => e.trim()).filter(Boolean);
+            const emails = getEmailForCompany(id).split(",").map(e => e.trim()).filter(Boolean);
             return {
                 companyId: id,
                 commercialName: company.commercial_name,
@@ -213,7 +216,7 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
                                         <input
                                             type="text"
                                             placeholder="ejemplo@deheus.com, ceo@deheus.com"
-                                            value={emailsMap[company.id] || ""}
+                                            value={getEmailForCompany(company.id)}
                                             onChange={(e) => handleEmailChange(company.id, e.target.value)}
                                             onBlur={async (e) => {
                                                 const value = e.target.value;
