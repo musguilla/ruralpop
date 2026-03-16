@@ -56,6 +56,9 @@ export async function POST(req: Request) {
         // Add the professional role explicitly
         ghostDataToCopy.role = 'profesional';
         ghostDataToCopy.plan_type = 'free'; // They will pay right after this
+        // Keep them as ghost until payment webhook succeeds
+        ghostDataToCopy.is_ghost = true;
+        ghostDataToCopy.ghost_token = ghost_token;
 
         // Update the newly created user row
         const { error: updateError } = await supabaseAdmin

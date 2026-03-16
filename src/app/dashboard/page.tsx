@@ -25,9 +25,13 @@ export default async function DashboardPage(props: Props) {
 
     const { data: publicUser } = await supabase
         .from('users')
-        .select(`role, available_bumps, available_featured`)
+        .select(`role, available_bumps, available_featured, is_ghost`)
         .eq('id', user.id)
         .single();
+
+    if (publicUser?.is_ghost) {
+        redirect("/profesionales?ghost_claim=true");
+    }
 
     // Obtener anuncios del usuario actual filtrados por pestaña
     const { data: listings, error } = await supabase

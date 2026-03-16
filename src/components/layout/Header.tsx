@@ -20,13 +20,15 @@ export async function Header() {
         .eq('is_read', false) : { count: 0 };
 
     let userRole = null;
+    let isGhost = false;
     if (user) {
         const { data: profile } = await supabase
             .from('users')
-            .select('role')
+            .select('role, is_ghost')
             .eq('id', user.id)
             .single();
         userRole = profile?.role;
+        isGhost = profile?.is_ghost || false;
     }
 
     return (
@@ -46,13 +48,13 @@ export async function Header() {
                 {/* Actions Navigation */}
                 <nav className="flex items-center gap-4">
                     <Link
-                        href="/upload"
+                        href={isGhost ? "/profesionales?ghost_claim=true" : "/upload"}
                         className="group hidden sm:flex items-center justify-center gap-2 px-4 py-2 font-medium bg-[var(--ag-sys-color-primary)] text-white rounded-full hover:bg-[var(--ag-sys-color-primary-hover)] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)]"
                     >
                         <div className="bg-white/20 rounded-full p-0.5 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110">
                             <Plus className="w-4 h-4" />
                         </div>
-                        Vender
+                        {isGhost ? "Finalizar Activación" : "Vender"}
                     </Link>
 
                     {user ? (
@@ -82,6 +84,7 @@ export async function Header() {
                                 userId={user.id}
                                 avatarUrl={user.user_metadata?.avatar_url}
                                 role={userRole}
+                                isGhost={isGhost}
                             />
                         </div>
                     ) : (

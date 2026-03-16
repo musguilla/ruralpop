@@ -10,9 +10,10 @@ interface UserMenuProps {
     userId: string;
     avatarUrl?: string | null;
     role?: string | null;
+    isGhost?: boolean;
 }
 
-export function UserMenu({ userFullName, userId, avatarUrl, role }: UserMenuProps) {
+export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: UserMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -50,81 +51,101 @@ export function UserMenu({ userFullName, userId, avatarUrl, role }: UserMenuProp
             {isOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-gray-700 animate-in fade-in zoom-in-95 duration-200">
                     <div className="py-2">
-                        <Link
-                            href="/account"
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <User className="w-5 h-5" />
-                            <span className="font-semibold">Mi cuenta</span>
-                        </Link>
-                        <Link
-                            href="/dashboard"
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <List className="w-5 h-5" />
-                            <span className="font-semibold">Mis anuncios</span>
-                        </Link>
-                        <Link
-                            href="/favoritos"
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <Heart className="w-5 h-5" />
-                            <span className="font-semibold">Mis guardados</span>
-                        </Link>
-                        <Link
-                            href="/chat"
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <MessageSquare className="w-5 h-5" />
-                            <span className="font-semibold">Mis mensajes</span>
-                        </Link>
-
-                        <div className="my-1 border-t border-gray-100"></div>
-
-                        {role === 'profesional' ? (
+                        {isGhost ? (
                             <Link
-                                href="/dashboard/pro"
-                                className="flex px-4 py-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group"
+                                href="/profesionales?ghost_claim=true"
+                                className="flex px-4 py-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group border-b border-gray-100"
                                 onClick={() => setIsOpen(false)}
                             >
                                 <div className="flex items-center gap-3 w-full">
-                                    <Briefcase className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
+                                    <Briefcase className="w-5 h-5 text-amber-500" />
                                     <div className="flex flex-col items-start gap-1 flex-1">
                                         <div className="flex w-full items-center justify-between">
-                                            <span className="font-semibold leading-none text-[var(--ag-sys-color-text)] group-hover:text-[var(--ag-sys-color-primary)]">Panel Profesional</span>
-                                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-1"></span>
+                                            <span className="font-semibold leading-none text-amber-600 group-hover:text-amber-700">Completar Activación</span>
+                                            <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse mr-1"></span>
                                         </div>
                                     </div>
                                 </div>
                             </Link>
                         ) : (
-                            <Link
-                                href="/profesionales"
-                                className="flex px-4 py-3 hover:bg-gray-50 transition-colors"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                <div className="flex items-start gap-3">
-                                    <Briefcase className="w-5 h-5 mt-1" />
-                                    <div className="flex flex-col items-start gap-1">
-                                        <span className="text-[9px] uppercase font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full leading-none whitespace-nowrap">NUEVO</span>
-                                        <span className="font-semibold leading-none mt-1">¿Eres profesional?</span>
-                                    </div>
-                                </div>
-                            </Link>
-                        )}
+                            <>
+                                <Link
+                                    href="/account"
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <User className="w-5 h-5" />
+                                    <span className="font-semibold">Mi cuenta</span>
+                                </Link>
+                                <Link
+                                    href="/dashboard"
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <List className="w-5 h-5" />
+                                    <span className="font-semibold">Mis anuncios</span>
+                                </Link>
+                                <Link
+                                    href="/favoritos"
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <Heart className="w-5 h-5" />
+                                    <span className="font-semibold">Mis guardados</span>
+                                </Link>
+                                <Link
+                                    href="/chat"
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <MessageSquare className="w-5 h-5" />
+                                    <span className="font-semibold">Mis mensajes</span>
+                                </Link>
 
-                        <Link
-                            href="/contact"
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <HelpCircle className="w-5 h-5" />
-                            <span className="font-semibold">Ayuda</span>
-                        </Link>
+                                <div className="my-1 border-t border-gray-100"></div>
+
+                                {role === 'profesional' ? (
+                                    <Link
+                                        href="/dashboard/pro"
+                                        className="flex px-4 py-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <div className="flex items-center gap-3 w-full">
+                                            <Briefcase className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
+                                            <div className="flex flex-col items-start gap-1 flex-1">
+                                                <div className="flex w-full items-center justify-between">
+                                                    <span className="font-semibold leading-none text-[var(--ag-sys-color-text)] group-hover:text-[var(--ag-sys-color-primary)]">Panel Profesional</span>
+                                                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-1"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        href="/profesionales"
+                                        className="flex px-4 py-3 hover:bg-gray-50 transition-colors"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <div className="flex items-start gap-3">
+                                            <Briefcase className="w-5 h-5 mt-1" />
+                                            <div className="flex flex-col items-start gap-1">
+                                                <span className="text-[9px] uppercase font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full leading-none whitespace-nowrap">NUEVO</span>
+                                                <span className="font-semibold leading-none mt-1">¿Eres profesional?</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                )}
+
+                                <Link
+                                    href="/contact"
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <HelpCircle className="w-5 h-5" />
+                                    <span className="font-semibold">Ayuda</span>
+                                </Link>
+                            </>
+                        )}
 
                         <form action={async () => {
                             const { logout } = await import("@/app/auth/actions");

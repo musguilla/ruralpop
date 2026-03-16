@@ -15,9 +15,13 @@ export default async function UploadPage() {
     // Fetch user profile to get saved phone
     const { data: profile } = await supabase
         .from("users")
-        .select("phone")
+        .select("phone, is_ghost")
         .eq("id", user.id)
         .single();
+
+    if (profile?.is_ghost) {
+        redirect("/profesionales?ghost_claim=true");
+    }
 
     const savedPhone = profile?.phone ?? null;
 

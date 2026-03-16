@@ -26,11 +26,15 @@ export default async function AccountPage() {
     const { data: publicUser } = await supabase
         .from('users')
         .select(`
-            province_id, municipality_id, role,
+            province_id, municipality_id, role, is_ghost,
             commercial_name, company_description, company_address, company_zip, company_country
         `)
         .eq('id', user.id)
         .single();
+
+    if (publicUser?.is_ghost) {
+        redirect("/profesionales?ghost_claim=true");
+    }
 
     // Fetch provinces to feed the first selector
     const { data: provinces } = await supabase

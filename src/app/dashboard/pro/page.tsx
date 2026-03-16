@@ -27,13 +27,17 @@ export default async function ProfessionalDashboardPage(props: Props) {
         .from('users')
         .select(`
             id, role, commercial_name, plan_type, available_bumps, available_featured, 
-            plan_renews_at, stripe_customer_id, stripe_subscription_id
+            plan_renews_at, stripe_customer_id, stripe_subscription_id, is_ghost
         `)
         .eq('id', user.id)
         .single();
 
     if (!publicUser || publicUser.role !== 'profesional') {
         redirect("/profesionales");
+    }
+
+    if (publicUser.is_ghost) {
+        redirect("/profesionales?ghost_claim=true");
     }
 
     // Fetch some basic stats
