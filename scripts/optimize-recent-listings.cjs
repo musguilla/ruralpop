@@ -63,7 +63,7 @@ async function main() {
         .from('listings')
         .select('id, title, image_urls')
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(20);
 
     if (error) throw error;
 
