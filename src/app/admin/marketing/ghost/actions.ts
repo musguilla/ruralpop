@@ -82,7 +82,7 @@ export async function sendGhostInvites(payloads: InvitePayload[]) {
                     
                     <p class="text" style="font-size: 14px;">
                         ¡Estamos deseando veros crecer con nosotros!<br/><br/>
-                        El equipo de Ruralpop 🐄🐎
+                        El equipo de Ruralpop 🐄
                     </p>
 
                     <p class="footer">
