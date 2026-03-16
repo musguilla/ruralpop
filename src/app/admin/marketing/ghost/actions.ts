@@ -126,6 +126,7 @@ export async function sendGhostInvites(payloads: InvitePayload[]) {
 }
 
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { revalidatePath } from "next/cache";
 
 export async function saveCompanyEmails(companyId: string, emails: string) {
     const supabase = await createClient();
@@ -161,5 +162,6 @@ export async function saveCompanyEmails(companyId: string, emails: string) {
         return { error: error.message };
     }
 
+    revalidatePath('/admin/marketing/ghost');
     return { success: true };
 }
