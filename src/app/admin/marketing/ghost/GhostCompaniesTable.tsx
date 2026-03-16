@@ -28,7 +28,7 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
             return emailsMap[id];
         }
         const company = companies.find(c => c.id === id);
-        if (company && company.email && !company.email.endsWith('@ruralpop.com')) {
+        if (company && company.email && !company.email.includes('ghost_')) {
             return company.email;
         }
         return "";
