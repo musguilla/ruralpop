@@ -63,7 +63,7 @@ export async function sendGhostInvites(payloads: InvitePayload[]) {
                     <h1 class="title">¡Hola, equipo de ${commercialName}! 👋</h1>
                     
                     <p class="text">
-                        Ruralpop es la nueva plataforma dedicada exclusivamente a profesionales del sector agrónomo, la ganadería y el entorno rural. Nuestro objetivo es ayudaros a ganar <span class="highlight">visibilidad nacional</span> de forma inmediata y conectaros directamente con miles de usuarios interesados en vuestros productos, servicios y actividad profesional.
+                        <strong>Ruralpop</strong> es la nueva plataforma dedicada exclusivamente a profesionales del sector agrónomo, la ganadería y el entorno rural. Nuestro objetivo es ayudaros a ganar <span class="highlight">visibilidad nacional</span> de forma inmediata y conectaros directamente con miles de usuarios interesados en vuestros productos, servicios y actividad profesional.
                     </p>
                     
                     <p class="text">
@@ -71,7 +71,7 @@ export async function sendGhostInvites(payloads: InvitePayload[]) {
                     </p>
 
                     <p class="text">
-                        <span class="highlight">Podéis acceder ahora y ver una muestra de vuestro escaparate digital</span> y empezar a recibir clientes; solo tenéis que hacer clic en el siguiente enlace exclusivo. Este es un enlace mágico, seguro y único para vosotros:
+                        <span class="highlight">Podéis acceder ahora y ver una muestra de vuestro escaparate digital</span> y empezar a recibir clientes; solo tenéis que hacer clic en el siguiente enlace exclusivo. <strong>Este es un enlace seguro y únicamente visible para vosotros.</strong>
                     </p>
 
                     <a href="${magicUrl}" class="button" style="color:#ffffff; text-decoration:none;">Ver perfil de ${commercialName}</a>
