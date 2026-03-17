@@ -55,6 +55,9 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     return {
         title: pageTitle,
         description: `Aplicación gratis para ${parts.join(" ") || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`,
+        alternates: {
+            canonical: `/${params.slug}`
+        }
     };
 }
 
