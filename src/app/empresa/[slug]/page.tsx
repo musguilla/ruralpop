@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
-import { Building2, MapPin, Search, ShieldCheck, BadgeCheck, Sparkles, ArrowRight } from "lucide-react";
+import { Building2, MapPin, ShieldCheck, BadgeCheck, Sparkles, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { CompanySearchInput } from "./CompanySearchInput";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -172,17 +173,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                         </p>
                     </div>
 
-                    {/* Simple search filter for their own listings */}
-                    <form className="relative w-full sm:w-auto">
-                        <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <input 
-                            type="text" 
-                            name="q"
-                            defaultValue={searchTerm}
-                            placeholder="Buscar en esta tienda..." 
-                            className="w-full sm:w-72 pl-10 pr-4 py-2.5 bg-white border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] shadow-sm"
-                        />
-                    </form>
+                    <CompanySearchInput initialSearchTerm={searchTerm} />
                 </div>
 
                 <ListingsGrid searchParams={gridSearchParams} />
