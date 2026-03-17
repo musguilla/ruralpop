@@ -27,8 +27,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon-48x48.png', sizes: '48x48', type: 'image/png' },
-      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/favicon.png', type: 'image/png' },
     ],
     apple: [
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
@@ -64,8 +63,7 @@ export default function RootLayout({
       <head>
         <meta name="google-adsense-account" content="ca-pub-2042067618462129" />
         <link rel="icon" href="https://www.ruralpop.com/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" sizes="48x48" href="https://www.ruralpop.com/favicon-48x48.png" />
-        <link rel="icon" type="image/png" sizes="96x96" href="https://www.ruralpop.com/favicon-96x96.png" />
+        <link rel="icon" type="image/png" href="https://www.ruralpop.com/favicon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="https://www.ruralpop.com/apple-touch-icon.png" />
         {/* Google Analytics */}
         <Script
