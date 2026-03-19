@@ -70,7 +70,8 @@ export default async function CompanyProfilePage({ params, searchParams }: {
 
     const gridSearchParams = {
         ...sp,
-        user_id: company.id // Force the grid to filter by this specific professional
+        user_id: company.id, // Force the grid to filter by this specific professional
+        is_ghost_profile: company.is_ghost ? "true" : undefined
     };
 
     return (

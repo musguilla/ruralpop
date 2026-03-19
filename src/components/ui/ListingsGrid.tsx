@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 import { Pagination } from "@/components/ui/Pagination";
 import { ListingCard, type Listing } from "@/components/ui/ListingCard";
 import { Tractor } from "lucide-react";
@@ -6,15 +7,23 @@ import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { LOCATIONS } from "@/constants/locations";
 
 export async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-    const supabase = await createClient();
+    let supabase = await createClient();
     const PAGE_SIZE = 40;
     const currentPage = Number(searchParams.page) || 1;
     const from = (currentPage - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
     const sortParam = searchParams.sort as string || "relevance";
-
     const userIdFilter = searchParams.user_id as string;
+    const isGhostProfile = searchParams.is_ghost_profile === "true";
+
+    // If it's a ghost profile we must bypass RLS to read 'sold' listings
+    if (isGhostProfile) {
+        supabase = createSupabaseAdmin(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+    }
 
     let query = supabase
         .from("listings")
@@ -28,7 +37,11 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
     if (!userIdFilter) {
         query = query.eq("status", "active").eq("users.is_ghost", false);
     } else {
-        query = query.in("status", ["active", "ghost"]).eq("user_id", userIdFilter);
+        if (isGhostProfile) {
+            query = query.in("status", ["active", "sold"]).eq("user_id", userIdFilter);
+        } else {
+            query = query.eq("status", "active").eq("user_id", userIdFilter);
+        }
     }
 
     // Apply Sorting

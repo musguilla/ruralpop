@@ -165,7 +165,7 @@ async function run() {
                     description,
                     category,
                     subcategory: null,
-                    status: 'ghost' // Unique status so they stay hidden in feeds but direct links work
+                    status: 'sold' 
                 }).eq('id', listingId);
             } else {
                 const { data: inserted, error: insertError } = await supabase
@@ -178,7 +178,7 @@ async function run() {
                         subcategory: null,
                         price: 0,
                         price_type: 'negotiable',
-                        status: 'ghost', // Unique status for imported hidden items
+                        status: 'sold', 
                         location: CITY,
                         image_urls: []
                     })
