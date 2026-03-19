@@ -138,7 +138,7 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {listings.map((listing: Listing) => (
-                    <ListingCard key={listing.id} listing={listing} isFavorited={userFavs.includes(listing.id)} />
+                    <ListingCard key={listing.id} listing={listing} isFavorited={userFavs.includes(listing.id)} isGhostPreview={isGhostProfile} />
                 ))}
             </div>
 
