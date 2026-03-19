@@ -22,14 +22,13 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
             id, title, price, location, image_urls, created_at, category, price_type, is_featured,
             users!inner(is_ghost)
         `, { count: "exact" })
-        .eq("status", "active")
         .order("is_featured", { ascending: false, nullsFirst: false });
 
     // Hide ghost listings globally UNLESS we are specifically fetching a user's listings
     if (!userIdFilter) {
-        query = query.eq("users.is_ghost", false);
+        query = query.eq("status", "active").eq("users.is_ghost", false);
     } else {
-        query = query.eq("user_id", userIdFilter);
+        query = query.in("status", ["active", "ghost"]).eq("user_id", userIdFilter);
     }
 
     // Apply Sorting

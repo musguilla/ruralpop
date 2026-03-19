@@ -5,6 +5,7 @@ import { supabase } from '../src/lib/supabase';
 import { useAuth } from '../src/contexts/AuthContext';
 import { ChevronLeft, User, Phone, CheckCircle2, Camera } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { decode } from 'base64-arraybuffer';
 import { Image } from 'expo-image';
 
@@ -109,12 +110,24 @@ export default function PersonalDataScreen() {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
-            quality: 0.5,
-            base64: true,
+            quality: 1, // We will compress during manipulation
+            base64: false,
         });
 
         if (!result.canceled && result.assets && result.assets.length > 0) {
-            uploadAvatar(result.assets[0]);
+            const asset = result.assets[0];
+            
+            // Resize and compress
+            const manipResult = await ImageManipulator.manipulateAsync(
+                asset.uri,
+                [{ resize: { width: 500 } }], // Smaller size for avatars
+                { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+            );
+
+            if (manipResult.base64) {
+                // Pass a mocked asset object that has the base64 injected
+                uploadAvatar({ ...asset, base64: manipResult.base64, uri: manipResult.uri });
+            }
         }
     };
 

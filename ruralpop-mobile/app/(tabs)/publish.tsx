@@ -5,6 +5,7 @@ import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter } from 'expo-router';
 import { Key, Camera, X, CheckCircle2, ChevronDown, Info } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { supabase } from '../../src/lib/supabase';
 import { decode } from "base64-arraybuffer";
 import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
@@ -78,13 +79,23 @@ export default function PublishScreen() {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
-            quality: 0.7,
-            base64: true,
+            quality: 1, // We will compress during manipulation
+            base64: false,
         });
 
         if (!result.canceled && result.assets && result.assets.length > 0) {
             const asset = result.assets[0];
-            setImages([...images, `data:image/jpeg;base64,${asset.base64}`]);
+            
+            // Resize and compress
+            const manipResult = await ImageManipulator.manipulateAsync(
+                asset.uri,
+                [{ resize: { width: 1200 } }],
+                { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+            );
+
+            if (manipResult.base64) {
+                setImages([...images, `data:image/jpeg;base64,${manipResult.base64}`]);
+            }
         }
     };
 

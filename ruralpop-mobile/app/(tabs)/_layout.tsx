@@ -1,7 +1,12 @@
 import { Tabs } from "expo-router";
 import { Home, Search, PlusCircle, Heart, User, MessageCircle } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Platform } from "react-native";
 
 export default function TabLayout() {
+    const insets = useSafeAreaInsets();
+    const baseHeight = Platform.OS === 'ios' ? 60 : 60;
+    
     return (
         <Tabs
             initialRouteName="index"
@@ -13,9 +18,9 @@ export default function TabLayout() {
                     borderTopWidth: 1,
                     borderTopColor: "#e5e7eb",
                     backgroundColor: "#ffffff",
-                    height: 60,
-                    paddingBottom: 12,
-                    paddingTop: 4,
+                    height: baseHeight + insets.bottom,
+                    paddingBottom: Platform.OS === 'ios' ? insets.bottom + 12 : insets.bottom + 10,
+                    paddingTop: 8,
                 },
                 tabBarLabelStyle: {
                     fontSize: 10,

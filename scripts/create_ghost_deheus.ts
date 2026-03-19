@@ -22,19 +22,27 @@ const ZIP = '15004';
 const COUNTRY = 'España';
 
 const PRODUCT_URLS = [
+    'https://www.deheus.es/productos-y-servicios/productos-rumiantes/kovital-iniciacion',
     'https://www.deheus.es/productos-y-servicios/productos-rumiantes/kovital-arranque',
     'https://www.deheus.es/productos-y-servicios/productos-rumiantes/kovital-cebo',
-    'https://www.deheus.es/productos-y-servicios/productos-rumiantes/kovital-iniciacion',
-    'https://www.deheus.es/productos-y-servicios/productos-rumiantes/bacilactol-absolut',
-    'https://www.deheus.es/productos-y-servicios/productos-rumiantes/reprobeef-proteico',
-    'https://www.deheus.es/productos-y-servicios/productos-rumiantes/reprobeef-super',
     'https://www.deheus.es/productos-y-servicios/productos-rumiantes/kovital-acabado',
+    'https://www.deheus.es/productos-y-servicios/productos-rumiantes/reprobeef-super',
+    'https://www.deheus.es/productos-y-servicios/productos-rumiantes/reprobeef-proteico',
     'https://www.deheus.es/productos-y-servicios/productos-rumiantes/bacilactol-benefit',
+    'https://www.deheus.es/productos-y-servicios/productos-rumiantes/bacilactol-absolut',
     'https://www.deheus.es/productos-y-servicios/productos-caballos/equifeed-breeding',
+    'https://www.deheus.es/productos-y-servicios/productos-caballos/equifeed-essence',
     'https://www.deheus.es/productos-y-servicios/productos-caballos/equifeed-exclusive-omega-3',
-    'https://www.deheus.es/productos-y-servicios/productos-caballos/equifeed-premium-blend-omega-3',
     'https://www.deheus.es/productos-y-servicios/productos-caballos/equifeed-supreme-e',
-    'https://www.deheus.es/productos-y-servicios/productos-caballos/equifeed-essence'
+    'https://www.deheus.es/productos-y-servicios/productos-caballos/equifeed-balance-cc',
+    'https://www.deheus.es/productos-y-servicios/productos-caballos/equifeed-blend-muesli',
+    'https://www.deheus.es/productos-y-servicios/productos-caballos/equiblock-10',
+    'https://www.deheus.es/productos-y-servicios/productos-avicultura/one-recria-201',
+    'https://www.deheus.es/productos-y-servicios/productos-avicultura/one-prepuesta',
+    'https://www.deheus.es/productos-y-servicios/productos-avicultura/one-puesta-f3',
+    'https://www.deheus.es/productos-y-servicios/productos-avicultura/one-puesta-f2',
+    'https://www.deheus.es/productos-y-servicios/productos-avicultura/one-sp-protect',
+    'https://www.deheus.es/productos-y-servicios/productos-avicultura/one-sp-prepico'
 ];
 
 async function run() {
@@ -133,7 +141,9 @@ async function run() {
                 }
             }
 
-            const category = url.includes('caballos') ? 'Caballos' : 'Vacas';
+            let category = 'Vacas';
+            if (url.includes('caballos')) category = 'Caballos';
+            if (url.includes('avicultura')) category = 'Gallinas';
             const subcategory = 'Alimentación';
             
             // Check if listing exists by title and user_id instead of slug
@@ -154,7 +164,8 @@ async function run() {
                 await supabase.from('listings').update({
                     description,
                     category,
-                    subcategory: null
+                    subcategory: null,
+                    status: 'ghost' // Unique status so they stay hidden in feeds but direct links work
                 }).eq('id', listingId);
             } else {
                 const { data: inserted, error: insertError } = await supabase
@@ -163,11 +174,11 @@ async function run() {
                         user_id: userId,
                         title,
                         description,
-                        category: 'servicios', // Usar una categoría válida, pej: 'servicios' u otra
+                        category,
                         subcategory: null,
                         price: 0,
                         price_type: 'negotiable',
-                        status: 'active',
+                        status: 'ghost', // Unique status for imported hidden items
                         location: CITY,
                         image_urls: []
                     })
