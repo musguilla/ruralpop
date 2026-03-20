@@ -100,7 +100,7 @@ export default async function AdminDashboard() {
 
     // Fetch real subscription revenue data from Stripe (Perfiles Profesionales)
     const invoicesResponse = await stripe.invoices.list({ limit: 100 });
-    const paidInvoices = invoicesResponse.data.filter(inv => inv.status === "paid" && inv.subscription);
+    const paidInvoices = invoicesResponse.data.filter((inv: any) => inv.status === "paid" && inv.subscription);
     
     const totalSubscriptionRevenue = paidInvoices.reduce((acc, inv) => acc + inv.amount_paid, 0) / 100;
     const subscriptionDates = paidInvoices.map(inv => ({ date: new Date(inv.created * 1000).toISOString(), amount: inv.amount_paid / 100 }));
