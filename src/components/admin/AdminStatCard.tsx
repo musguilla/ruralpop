@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 
-export type Histograms = { days: number[]; weeks: number[]; months: number[] };
+export type HistogramData = { value: number; label: string };
+export type Histograms = { days: HistogramData[]; weeks: HistogramData[]; months: HistogramData[] };
 
 export function AdminStatCard({
     label,
@@ -75,8 +76,9 @@ export function AdminStatCard({
 
                 {chartData && (
                     <div className="h-16 flex items-end justify-between gap-[2px] w-full pt-2">
-                        {chartData.map((h, i) => {
-                            const maxVal = Math.max(...chartData);
+                        {chartData.map((hObj, i) => {
+                            const maxVal = Math.max(...chartData.map(d => d.value));
+                            const h = hObj.value;
                             // Avoid division by zero if all values are 0
                             const heightPercentage = maxVal > 0 ? (h / maxVal) * 100 : 0;
                             return (
@@ -86,7 +88,7 @@ export function AdminStatCard({
                                         style={{ height: `${heightPercentage}%`, minHeight: heightPercentage === 0 ? '2px' : undefined }}
                                     >
                                         <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity -top-9 left-1/2 -translate-x-1/2 bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-surface)] text-[10px] font-bold px-2 py-1 rounded-lg pointer-events-none whitespace-nowrap z-10 shadow-lg flex flex-col items-center">
-                                            {h}
+                                            {h} - {hObj.label}
                                             <div className="w-1.5 h-1.5 bg-[var(--ag-sys-color-text)] rotate-45 absolute -bottom-[3px]"></div>
                                         </div>
                                     </div>

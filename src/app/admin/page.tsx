@@ -12,48 +12,63 @@ import { AdminStatCard, Histograms } from "@/components/admin/AdminStatCard";
 
 export const dynamic = "force-dynamic";
 
-function generateHistograms(dates: string[]): Histograms {
+function generateHistograms(dates: string[]) {
     const now = new Date();
+    
+    const daysData = Array.from({ length: 12 }, (_, i) => {
+        const d = new Date(now);
+        d.setDate(d.getDate() - (11 - i));
+        return { value: 0, label: ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'][d.getDay()] };
+    });
 
-    // Arrays of size 12 filled with 0 (from newest [0] to oldest [11], but we map it so [11] is newest for visual consistency, actually let's just make [11] newest, [0] oldest)
-    // Actually, visually: left is oldest, right is newest. So [11] is newest (now).
-    const days = new Array(12).fill(0);
-    const weeks = new Array(12).fill(0);
-    const months = new Array(12).fill(0);
+    const weeksData = Array.from({ length: 12 }, (_, i) => {
+        return { value: 0, label: `Sem -${11 - i}` };
+    });
+
+    const monthsData = Array.from({ length: 12 }, (_, i) => {
+        const d = new Date(now);
+        d.setMonth(d.getMonth() - (11 - i));
+        const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        return { value: 0, label: monthNames[d.getMonth()] };
+    });
 
     dates.forEach(dateStr => {
         const d = new Date(dateStr);
-        const diffTime = now.getTime() - d.getTime();
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        // Days difference computed based on local calendar dates
+        const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const dAtMidnight = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        const diffDays = Math.max(0, Math.floor((todayAtMidnight.getTime() - dAtMidnight.getTime()) / (86400000)));
 
         if (diffDays >= 0 && diffDays < 12) {
-            days[11 - diffDays]++;
+            daysData[11 - diffDays].value++;
         }
 
-        const diffWeeks = Math.floor(diffDays / 7);
+        const diffWeeks = Math.max(0, Math.floor(diffDays / 7));
         if (diffWeeks >= 0 && diffWeeks < 12) {
-            weeks[11 - diffWeeks]++;
+            weeksData[11 - diffWeeks].value++;
         }
 
-        const diffMonths = (now.getFullYear() - d.getFullYear()) * 12 + now.getMonth() - d.getMonth();
+        const diffMonths = Math.max(0, (now.getFullYear() - d.getFullYear()) * 12 + now.getMonth() - d.getMonth());
         if (diffMonths >= 0 && diffMonths < 12) {
-            months[11 - diffMonths]++;
+            monthsData[11 - diffMonths].value++;
         }
     });
 
-    return { days, weeks, months };
+    return { days: daysData, weeks: weeksData, months: monthsData };
 }
 
 export default async function AdminDashboard() {
     const supabase = await createClient();
 
     // Fetch metrics and all creation dates to build histograms
+    // We fetch more than the default 1000 limit (5000) to ensure we don't truncate histograms
     const [
         { data: usersData, count: totalUsers },
         { data: listingsData, count: activeListings },
     ] = await Promise.all([
-        supabase.from("users").select("created_at", { count: 'exact' }),
-        supabase.from("listings").select("created_at", { count: 'exact' }).eq("status", "active"),
+        supabase.from("users").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
+        supabase.from("listings").select("created_at", { count: 'exact' }).eq("status", "active").order('created_at', { ascending: false }).limit(5000),
     ]);
 
     const userDates = usersData?.map((u: any) => u.created_at) || [];
@@ -73,10 +88,13 @@ export default async function AdminDashboard() {
     const realFeaturedHistograms = generateHistograms(paymentDates);
 
 
-    const demoHistograms4: Histograms = {
-        days: [30, 45, 35, 70, 55, 90, 75, 110, 95, 130, 115, 150],
-        weeks: [20, 30, 25, 50, 40, 70, 60, 90, 80, 110, 100, 130],
-        months: [10, 20, 15, 30, 25, 45, 35, 60, 50, 75, 65, 90]
+    const demoHistograms4: any = {
+        days: [30, 45, 35, 70, 55, 90, 75, 110, 95, 130, 115, 150].map((v, i) => ({ value: v, label: ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'][new Date(Date.now() - (11 - i) * 86400000).getDay()] })),
+        weeks: [20, 30, 25, 50, 40, 70, 60, 90, 80, 110, 100, 130].map((v, i) => ({ value: v, label: `Sem -${11 - i}` })),
+        months: [10, 20, 15, 30, 25, 45, 35, 60, 50, 75, 65, 90].map((v, i) => {
+            const d = new Date(); d.setMonth(d.getMonth() - (11 - i));
+            return { value: v, label: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()] };
+        })
     };
 
     return (
