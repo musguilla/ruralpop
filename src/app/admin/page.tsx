@@ -9,6 +9,7 @@ import {
     Handshake
 } from "lucide-react";
 import { AdminStatCard, Histograms } from "@/components/admin/AdminStatCard";
+import { AdminSalesChart } from "@/components/admin/AdminSalesChart";
 
 export const dynamic = "force-dynamic";
 
@@ -161,24 +162,7 @@ export default async function AdminDashboard() {
                 />
             </div>
 
-            <div className="pt-6">
-                <div className="bg-[var(--ag-sys-color-surface)] rounded-[2rem] border border-[var(--ag-sys-color-border)] p-8 shadow-sm">
-                    <div className="flex justify-between items-center mb-8">
-                        <h3 className="font-bold text-xl text-[var(--ag-sys-color-text)]">Ventas totales</h3>
-                    </div>
-                    <div className="h-64 flex items-end justify-between gap-4 px-4">
-                        {[45, 60, 45, 80, 75, 40, 95].map((h, i) => (
-                            <div key={i} className="flex-1 group relative">
-                                <div
-                                    className="w-full bg-[var(--ag-sys-color-primary)]/10 group-hover:bg-[var(--ag-sys-color-primary)]/20 rounded-t-lg transition-all cursor-pointer"
-                                    style={{ height: `${h}%` }}
-                                ></div>
-                                <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-[var(--ag-sys-color-text-muted)] font-bold">L-{i + 1}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+            <AdminSalesChart featured={realFeaturedHistograms} subscriptions={realSubscriptionHistograms} />
         </div>
     );
 }
