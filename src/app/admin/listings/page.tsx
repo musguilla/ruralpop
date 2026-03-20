@@ -40,6 +40,10 @@ export default async function AdminListingsPage(props: {
         query = query.eq("user_id", searchParams.userId);
     }
 
+    if (searchParams.status === 'sold') {
+        query = query.eq('status', 'sold');
+    }
+
     const { data: listings, error, count } = await query;
 
     if (error) {
@@ -54,6 +58,32 @@ export default async function AdminListingsPage(props: {
                 <div>
                     <h1 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight">Moderación de Anuncios</h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-1">Supervisión técnica de contenidos y reportes.</p>
+                </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                    <Link 
+                        href="/admin/listings" 
+                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${!searchParams.status || searchParams.status === 'all' ? 'bg-[var(--ag-sys-color-primary)] text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-gray-50'}`}
+                    >
+                        Todos los anuncios
+                    </Link>
+                    <Link 
+                        href="/admin/listings?status=sold" 
+                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${searchParams.status === 'sold' ? 'bg-[var(--ag-sys-color-primary)] text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-gray-50'}`}
+                    >
+                        Vendidos
+                    </Link>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                    <span className="px-4 py-2 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200 cursor-not-allowed opacity-70 flex items-center gap-1.5 title flex-shrink-0" title="Próximamente">
+                        <Heart className="w-3.5 h-3.5" /> Top 50 Likes
+                    </span>
+                    <span className="px-4 py-2 rounded-full text-xs font-bold bg-blue-100 text-blue-700 border border-blue-200 cursor-not-allowed opacity-70 flex items-center gap-1.5 flex-shrink-0" title="Próximamente">
+                        <Eye className="w-3.5 h-3.5" /> Top 50 Visitas
+                    </span>
                 </div>
             </div>
 
