@@ -89,7 +89,7 @@ export default async function AdminDashboard() {
     const userDates = usersData?.map((u: any) => ({ date: u.created_at })) || [];
     const listingDates = listingsData?.map((l: any) => ({ date: l.created_at })) || [];
 
-    // Fetch real revenue data from Stripe
+    // Fetch real revenue data from Stripe (Anuncios Destacados)
     const paymentIntentsResponse = await stripe.paymentIntents.list({ limit: 100 });
     const successfulPayments = paymentIntentsResponse.data.filter(pi => 
         pi.status === "succeeded" && pi.metadata?.listingId
@@ -98,19 +98,17 @@ export default async function AdminDashboard() {
     const totalFeaturedRevenue = successfulPayments.reduce((acc, pi) => acc + pi.amount, 0) / 100;
     const paymentDates = successfulPayments.map(pi => ({ date: new Date(pi.created * 1000).toISOString(), amount: pi.amount / 100 }));
 
+    // Fetch real subscription revenue data from Stripe (Perfiles Profesionales)
+    const invoicesResponse = await stripe.invoices.list({ limit: 100 });
+    const paidInvoices = invoicesResponse.data.filter(inv => inv.status === "paid" && inv.subscription);
+    
+    const totalSubscriptionRevenue = paidInvoices.reduce((acc, inv) => acc + inv.amount_paid, 0) / 100;
+    const subscriptionDates = paidInvoices.map(inv => ({ date: new Date(inv.created * 1000).toISOString(), amount: inv.amount_paid / 100 }));
+
     const realUsersHistograms = generateHistograms(userDates);
     const realListingsHistograms = generateHistograms(listingDates);
     const realFeaturedHistograms = generateHistograms(paymentDates, true);
-
-
-    const demoHistograms4: any = {
-        days: [30, 45, 35, 70, 55, 90, 75, 110, 95, 130, 115, 150].map((v, i) => ({ value: v, tooltip: `${v} € - ${Math.floor(v/10)} - ${['D', 'L', 'M', 'Mi', 'J', 'V', 'S'][new Date(Date.now() - (11 - i) * 86400000).getDay()]}` })),
-        weeks: [20, 30, 25, 50, 40, 70, 60, 90, 80, 110, 100, 130].map((v, i) => ({ value: v, tooltip: `${v} € - ${Math.floor(v/10)} - Sem -${11 - i}` })),
-        months: [10, 20, 15, 30, 25, 45, 35, 60, 50, 75, 65, 90].map((v, i) => {
-            const d = new Date(); d.setMonth(d.getMonth() - (11 - i));
-            return { value: v, tooltip: `${v} € - ${Math.floor(v/10)} - ${['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()]}` };
-        })
-    };
+    const realSubscriptionHistograms = generateHistograms(subscriptionDates, true);
 
     return (
         <div className="space-y-10">
@@ -152,13 +150,13 @@ export default async function AdminDashboard() {
                     showFilters={true}
                 />
 
-                {/* CARD 4: Ventas y Comisiones (DEMO DATA) */}
+                {/* CARD 4: Perfiles Profesionales (REAL DATA) */}
                 <AdminStatCard
-                    label="Ventas y comisiones"
-                    value="3.240 €"
+                    label="Perfiles profesionales"
+                    value={`${new Intl.NumberFormat('de-DE').format(totalSubscriptionRevenue)} €`}
                     icon={<BadgeEuro className="w-7 h-7" />}
                     color="amber"
-                    histograms={demoHistograms4}
+                    histograms={realSubscriptionHistograms}
                     showFilters={true}
                 />
             </div>
