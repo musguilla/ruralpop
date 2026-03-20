@@ -44,10 +44,38 @@ export default async function AdminListingsPage(props: {
         query = query.eq('status', 'sold');
     }
 
-    const { data: listings, error, count } = await query;
+    if (searchParams.status === 'top-likes') {
+        // Remove range to get all available for JS sorting
+        query = supabase
+            .from("listings")
+            .select("*, seller:users(*), favorites(count)", { count: "exact" })
+            .order("created_at", { ascending: false });
+            
+        if (searchParams.userId && typeof searchParams.userId === 'string') {
+            query = query.eq("user_id", searchParams.userId);
+        }
+    }
+
+    let { data: listings, error, count } = await query;
 
     if (error) {
         console.error("Error fetching listings:", error);
+    }
+    
+    if (searchParams.status === 'top-likes' && listings) {
+        // Sort in memory by favorites count descending
+        listings.sort((a: any, b: any) => {
+            const countA = a.favorites?.[0]?.count || 0;
+            const countB = b.favorites?.[0]?.count || 0;
+            return countB - countA;
+        });
+        
+        // Take top 50 overall
+        listings = listings.slice(0, 50);
+        count = listings.length;
+        
+        // Apply pagination over the top 50
+        listings = listings.slice(from, from + PAGE_SIZE);
     }
 
     const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
@@ -78,9 +106,12 @@ export default async function AdminListingsPage(props: {
                 </div>
                 
                 <div className="flex items-center gap-2">
-                    <span className="px-4 py-2 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200 cursor-not-allowed opacity-70 flex items-center gap-1.5 title flex-shrink-0" title="Próximamente">
+                    <Link 
+                        href="/admin/listings?status=top-likes" 
+                        className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 flex-shrink-0 transition-all ${searchParams.status === 'top-likes' ? 'bg-amber-500 text-white shadow-md' : 'bg-amber-100 text-amber-700 border border-amber-200 hover:bg-amber-200'}`}
+                    >
                         <Heart className="w-3.5 h-3.5" /> Top 50 Likes
-                    </span>
+                    </Link>
                     <span className="px-4 py-2 rounded-full text-xs font-bold bg-blue-100 text-blue-700 border border-blue-200 cursor-not-allowed opacity-70 flex items-center gap-1.5 flex-shrink-0" title="Próximamente">
                         <Eye className="w-3.5 h-3.5" /> Top 50 Visitas
                     </span>
