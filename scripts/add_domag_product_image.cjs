@@ -27,7 +27,7 @@ async function run() {
     const { data: listing, error: listingError } = await supabase.from('listings')
       .select('id, title')
       .eq('user_id', user.id)
-      .ilike('title', '%ANDREOLI ATHENA%')
+      .ilike('title', '%SICMA F3 125%')
       .single();
 
     if (listingError || !listing) {
