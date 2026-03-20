@@ -18,7 +18,7 @@ export async function updateUserData(field: string, value: string) {
             if (error) throw error;
             return { success: true, message: "Enlace de confirmación enviado a tu nuevo email." };
         } else if (
-            ["commercial_name", "company_description", "company_address", "company_zip", "company_country"].includes(field)
+            ["commercial_name", "company_description", "company_address", "company_zip", "company_country", "company_website"].includes(field)
         ) {
             // Actualizar campos de empresa directamente en la tabla users
             const { error } = await supabase

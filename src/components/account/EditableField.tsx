@@ -5,12 +5,12 @@ import { Check, X, Edit2, Loader2 } from "lucide-react";
 import { updateUserData } from "@/app/account/actions";
 
 interface EditableFieldProps {
-    field: "name" | "phone" | "email" | "commercial_name" | "company_description" | "company_address" | "company_zip" | "company_country";
+    field: "name" | "phone" | "email" | "commercial_name" | "company_description" | "company_address" | "company_zip" | "company_country" | "company_website";
     initialValue: string;
     label: string;
     icon: React.ReactNode;
     placeholder?: string;
-    type?: "text" | "email" | "tel";
+    type?: "text" | "email" | "tel" | "url";
 }
 
 export function EditableField({ field, initialValue, label, icon, placeholder, type = "text" }: EditableFieldProps) {

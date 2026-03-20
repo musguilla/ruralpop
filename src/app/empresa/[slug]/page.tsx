@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
-import { Building2, MapPin, ShieldCheck, BadgeCheck, Sparkles, ArrowRight } from "lucide-react";
+import { Building2, MapPin, ShieldCheck, BadgeCheck, Sparkles, ArrowRight, Globe, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { CompanySearchInput } from "./CompanySearchInput";
 
@@ -49,7 +49,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
 
     const query = supabase
         .from('users')
-        .select('id, commercial_name, company_description, company_address, company_zip, company_country, avatar_url, role, plan_type, is_ghost, ghost_token')
+        .select('id, commercial_name, company_description, company_address, company_zip, company_country, company_website, avatar_url, role, plan_type, is_ghost, ghost_token')
         .ilike('commercial_name', cleanName)
         .eq('role', 'profesional')
         .limit(1);
@@ -148,6 +148,20 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                                             <MapPin className="w-4 h-4" />
                                             {company.company_address}{company.company_zip ? `, ${company.company_zip}` : ''}{company.company_country ? `, ${company.company_country}` : ''}
                                         </div>
+                                    </div>
+                                )}
+                                
+                                {company.company_website && (
+                                    <div className="flex flex-wrap items-center mt-2.5">
+                                        <Link 
+                                            href={company.company_website.startsWith('http') ? company.company_website : `https://${company.company_website}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:opacity-80 transition-opacity flex items-center gap-1.5"
+                                        >
+                                            <Globe className="w-4 h-4" />
+                                            Sitio web
+                                        </Link>
                                     </div>
                                 )}
                                 

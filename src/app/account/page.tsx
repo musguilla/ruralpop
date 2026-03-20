@@ -27,7 +27,7 @@ export default async function AccountPage() {
         .from('users')
         .select(`
             province_id, municipality_id, role, is_ghost,
-            commercial_name, company_description, company_address, company_zip, company_country
+            commercial_name, company_description, company_address, company_zip, company_country, company_website
         `)
         .eq('id', user.id)
         .single();
@@ -130,6 +130,15 @@ export default async function AccountPage() {
                                     icon={<Globe className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                     initialValue={publicUser.company_country || ""}
                                     placeholder="Ej: España"
+                                />
+
+                                <EditableField
+                                    field="company_website"
+                                    label="Sitio Web (Opcional)"
+                                    icon={<Globe className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
+                                    initialValue={publicUser.company_website || ""}
+                                    placeholder="Ej: https://www.transconcar.es"
+                                    type="url"
                                 />
 
                                 <EditableField
