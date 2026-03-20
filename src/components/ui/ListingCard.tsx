@@ -137,9 +137,11 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                 {/* Price & Badges */}
                 <div className="flex items-center justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2">
-                        <span className="font-bold text-lg text-[var(--ag-sys-color-primary)]">
-                            {formatCurrency(listing.price)}
-                        </span>
+                        {!isGhostPreview && (
+                            <span className="font-bold text-lg text-[var(--ag-sys-color-primary)]">
+                                {formatCurrency(listing.price)}
+                            </span>
+                        )}
                         {listing.is_featured && (
                             <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-green-200">
                                 ¡Destacado!
