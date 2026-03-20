@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-export type HistogramData = { value: number; label: string };
+export type HistogramData = { value: number; tooltip: string };
 export type Histograms = { days: HistogramData[]; weeks: HistogramData[]; months: HistogramData[] };
 
 export function AdminStatCard({
@@ -88,7 +88,7 @@ export function AdminStatCard({
                                         style={{ height: `${heightPercentage}%`, minHeight: heightPercentage === 0 ? '2px' : undefined }}
                                     >
                                         <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity -top-9 left-1/2 -translate-x-1/2 bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-surface)] text-[10px] font-bold px-2 py-1 rounded-lg pointer-events-none whitespace-nowrap z-10 shadow-lg flex flex-col items-center">
-                                            {h} - {hObj.label}
+                                            {hObj.tooltip}
                                             <div className="w-1.5 h-1.5 bg-[var(--ag-sys-color-text)] rotate-45 absolute -bottom-[3px]"></div>
                                         </div>
                                     </div>

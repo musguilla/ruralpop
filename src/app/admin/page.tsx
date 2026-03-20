@@ -12,28 +12,31 @@ import { AdminStatCard, Histograms } from "@/components/admin/AdminStatCard";
 
 export const dynamic = "force-dynamic";
 
-function generateHistograms(dates: string[]) {
+function generateHistograms(items: { date: string, amount?: number }[], isCurrency = false) {
     const now = new Date();
     
+    const formatter = new Intl.NumberFormat('de-DE');
+
     const daysData = Array.from({ length: 12 }, (_, i) => {
         const d = new Date(now);
         d.setDate(d.getDate() - (11 - i));
-        return { value: 0, label: ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'][d.getDay()] };
+        return { count: 0, sum: 0, label: ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'][d.getDay()] };
     });
 
     const weeksData = Array.from({ length: 12 }, (_, i) => {
-        return { value: 0, label: `Sem -${11 - i}` };
+        return { count: 0, sum: 0, label: `Sem -${11 - i}` };
     });
 
     const monthsData = Array.from({ length: 12 }, (_, i) => {
         const d = new Date(now);
         d.setMonth(d.getMonth() - (11 - i));
         const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-        return { value: 0, label: monthNames[d.getMonth()] };
+        return { count: 0, sum: 0, label: monthNames[d.getMonth()] };
     });
 
-    dates.forEach(dateStr => {
-        const d = new Date(dateStr);
+    items.forEach(item => {
+        const d = new Date(item.date);
+        const amount = item.amount || 0;
         
         // Days difference computed based on local calendar dates
         const todayAtMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -41,21 +44,33 @@ function generateHistograms(dates: string[]) {
         const diffDays = Math.max(0, Math.floor((todayAtMidnight.getTime() - dAtMidnight.getTime()) / (86400000)));
 
         if (diffDays >= 0 && diffDays < 12) {
-            daysData[11 - diffDays].value++;
+            daysData[11 - diffDays].count++;
+            daysData[11 - diffDays].sum += amount;
         }
 
         const diffWeeks = Math.max(0, Math.floor(diffDays / 7));
         if (diffWeeks >= 0 && diffWeeks < 12) {
-            weeksData[11 - diffWeeks].value++;
+            weeksData[11 - diffWeeks].count++;
+            weeksData[11 - diffWeeks].sum += amount;
         }
 
         const diffMonths = Math.max(0, (now.getFullYear() - d.getFullYear()) * 12 + now.getMonth() - d.getMonth());
         if (diffMonths >= 0 && diffMonths < 12) {
-            monthsData[11 - diffMonths].value++;
+            monthsData[11 - diffMonths].count++;
+            monthsData[11 - diffMonths].sum += amount;
         }
     });
 
-    return { days: daysData, weeks: weeksData, months: monthsData };
+    const mapFn = (d: any) => ({
+        value: isCurrency ? d.sum : d.count,
+        tooltip: isCurrency ? `${formatter.format(d.sum)} € - ${d.count} - ${d.label}` : `${d.count} - ${d.label}`
+    });
+
+    return { 
+        days: daysData.map(mapFn), 
+        weeks: weeksData.map(mapFn), 
+        months: monthsData.map(mapFn) 
+    };
 }
 
 export default async function AdminDashboard() {
@@ -71,8 +86,8 @@ export default async function AdminDashboard() {
         supabase.from("listings").select("created_at", { count: 'exact' }).eq("status", "active").order('created_at', { ascending: false }).limit(5000),
     ]);
 
-    const userDates = usersData?.map((u: any) => u.created_at) || [];
-    const listingDates = listingsData?.map((l: any) => l.created_at) || [];
+    const userDates = usersData?.map((u: any) => ({ date: u.created_at })) || [];
+    const listingDates = listingsData?.map((l: any) => ({ date: l.created_at })) || [];
 
     // Fetch real revenue data from Stripe
     const paymentIntentsResponse = await stripe.paymentIntents.list({ limit: 100 });
@@ -81,19 +96,19 @@ export default async function AdminDashboard() {
     );
     
     const totalFeaturedRevenue = successfulPayments.reduce((acc, pi) => acc + pi.amount, 0) / 100;
-    const paymentDates = successfulPayments.map(pi => new Date(pi.created * 1000).toISOString());
+    const paymentDates = successfulPayments.map(pi => ({ date: new Date(pi.created * 1000).toISOString(), amount: pi.amount / 100 }));
 
     const realUsersHistograms = generateHistograms(userDates);
     const realListingsHistograms = generateHistograms(listingDates);
-    const realFeaturedHistograms = generateHistograms(paymentDates);
+    const realFeaturedHistograms = generateHistograms(paymentDates, true);
 
 
     const demoHistograms4: any = {
-        days: [30, 45, 35, 70, 55, 90, 75, 110, 95, 130, 115, 150].map((v, i) => ({ value: v, label: ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'][new Date(Date.now() - (11 - i) * 86400000).getDay()] })),
-        weeks: [20, 30, 25, 50, 40, 70, 60, 90, 80, 110, 100, 130].map((v, i) => ({ value: v, label: `Sem -${11 - i}` })),
+        days: [30, 45, 35, 70, 55, 90, 75, 110, 95, 130, 115, 150].map((v, i) => ({ value: v, tooltip: `${v} € - ${Math.floor(v/10)} - ${['D', 'L', 'M', 'Mi', 'J', 'V', 'S'][new Date(Date.now() - (11 - i) * 86400000).getDay()]}` })),
+        weeks: [20, 30, 25, 50, 40, 70, 60, 90, 80, 110, 100, 130].map((v, i) => ({ value: v, tooltip: `${v} € - ${Math.floor(v/10)} - Sem -${11 - i}` })),
         months: [10, 20, 15, 30, 25, 45, 35, 60, 50, 75, 65, 90].map((v, i) => {
             const d = new Date(); d.setMonth(d.getMonth() - (11 - i));
-            return { value: v, label: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()] };
+            return { value: v, tooltip: `${v} € - ${Math.floor(v/10)} - ${['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][d.getMonth()]}` };
         })
     };
 
