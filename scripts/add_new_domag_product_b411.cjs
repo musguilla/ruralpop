@@ -23,13 +23,13 @@ async function run() {
         return;
     }
 
-    const title = 'Vibrador autopropulsado SICMA B411 intensive';
+    const title = 'Mini cargador con pinza vibrante SICMA Agrifarmer 28.7';
     
     // 2. Create the new listing row
     const listingData = {
         user_id: user.id,
         title: title,
-        description: `Impresionante vibrador autopropulsado modelo SICMA B411 intensive. Ideal para recolecciones intensivas con precisión garantizada de DOMAG.`,
+        description: `Impresionante mini cargador con pinza vibrante modelo SICMA Agrifarmer 28.7. Ideal para recolecciones intensivas con precisión garantizada de DOMAG.`,
         price: 0,
         price_type: 'negotiable',
         category: 'cosechadoras', 
