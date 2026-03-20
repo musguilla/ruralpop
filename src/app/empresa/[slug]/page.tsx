@@ -9,18 +9,19 @@ export const revalidate = 60; // Revalidate every minute
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const slug = (await params).slug;
-    const cleanName = decodeURIComponent(slug).replace(/-/g, ' ');
 
     const supabase = await createClient();
-    const { data: company } = await supabase
+    const { data: companies } = await supabase
         .from('users')
         .select('commercial_name, company_description, is_ghost')
-        .ilike('commercial_name', cleanName)
-        .eq('role', 'profesional')
-        .limit(1)
-        .single();
+        .eq('role', 'profesional');
+        
+    const company = companies?.find((c: any) => {
+        const cSlug = c.commercial_name?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        return cSlug === slug;
+    });
 
-    const name = company?.commercial_name || cleanName.charAt(0).toUpperCase() + cleanName.slice(1);
+    const name = company?.commercial_name || "Perfil no encontrado";
     const rawDesc = company?.company_description || `Encuentra todos los anuncios, productos e información sobre ${name} en Ruralpop.`;
     const description = rawDesc.length > 155 ? rawDesc.substring(0, 152) + "..." : rawDesc;
     
@@ -42,19 +43,16 @@ export default async function CompanyProfilePage({ params, searchParams }: {
 
     const supabase = await createClient();
 
-    // The slug is essentially the commercial name URL-encoded and kebab-cased
-    // For simplicity, we search the user by an ILIKE match on commercial_name
-    // A more robust approach would be to store a clean slug on the user table, but this works for now.
-    const cleanName = decodeURIComponent(slug).replace(/-/g, ' ');
-
-    const query = supabase
+    // Robust slug matching (accent-insensitive, exact-match against normalized DB names)
+    const { data: companies, error: companyError } = await supabase
         .from('users')
         .select('id, commercial_name, company_description, company_address, company_zip, company_country, company_website, avatar_url, role, plan_type, is_ghost, ghost_token')
-        .ilike('commercial_name', cleanName)
-        .eq('role', 'profesional')
-        .limit(1);
+        .eq('role', 'profesional');
 
-    const { data: company, error: companyError } = await query.single();
+    const company = companies?.find((c: any) => {
+        const cSlug = c.commercial_name?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        return cSlug === slug;
+    });
 
     if (companyError || !company) {
         // If no professional user found with that name
