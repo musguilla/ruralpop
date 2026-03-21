@@ -52,7 +52,7 @@ export default function EmailClientView() {
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 h-[calc(100vh-12rem)] min-h-[600px]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 h-[calc(100vh-12rem)] min-h-[900px]">
             {/* Sidebar (Templates List) */}
             <div className="md:col-span-4 flex flex-col gap-4 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-3xl p-5 overflow-hidden shadow-sm h-full">
                 <div className="mb-2">
@@ -148,12 +148,12 @@ export default function EmailClientView() {
                         {/* Email Preview iframe */}
                         <div className="flex-1 bg-gray-100 p-8 overflow-y-auto custom-scrollbar flex justify-center border-t border-[var(--ag-sys-color-border)]">
                             <div 
-                                className="w-full max-w-[600px] h-fit min-h-[500px] bg-white rounded-md shadow-lg overflow-hidden border border-gray-200"
+                                className="w-full max-w-[600px] h-fit min-h-[800px] bg-white rounded-md shadow-lg overflow-hidden border border-gray-200"
                             >
                                 <iframe 
                                     srcDoc={selectedTemplate.htmlContent} 
                                     title="Email Preview"
-                                    className="w-full h-[600px] pointer-events-none"
+                                    className="w-full h-[800px] pointer-events-none"
                                     sandbox="allow-same-origin"
                                 />
                             </div>
