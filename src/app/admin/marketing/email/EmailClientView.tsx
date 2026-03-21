@@ -84,7 +84,7 @@ export default function EmailClientView() {
                                 setSelectedTemplateId(template.id);
                                 setSendSuccess(null);
                             }}
-                            className={\`w-full text-left p-4 rounded-2xl border transition-all \${selectedTemplateId === template.id ? 'bg-[var(--ag-sys-color-primary)]/5 border-[var(--ag-sys-color-primary)]' : 'border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] hover:bg-[var(--ag-sys-color-surface)]'}\`}
+                            className={`w-full text-left p-4 rounded-2xl border transition-all ${selectedTemplateId === template.id ? 'bg-[var(--ag-sys-color-primary)]/5 border-[var(--ag-sys-color-primary)]' : 'border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] hover:bg-[var(--ag-sys-color-surface)]'}`}
                         >
                             <div className="flex justify-between items-start mb-1">
                                 <span className="text-[10px] font-black uppercase text-[var(--ag-sys-color-primary)] tracking-widest">{template.category}</span>
@@ -138,7 +138,7 @@ export default function EmailClientView() {
                             </div>
 
                             {sendSuccess && (
-                                <div className={\`mt-4 p-3 rounded-xl border text-sm font-bold flex items-center gap-2 \${sendSuccess.isError ? 'bg-red-50 text-red-600 border-red-200' : 'bg-green-50 text-green-600 border-green-200'}\`}>
+                                <div className={`mt-4 p-3 rounded-xl border text-sm font-bold flex items-center gap-2 ${sendSuccess.isError ? 'bg-red-50 text-red-600 border-red-200' : 'bg-green-50 text-green-600 border-green-200'}`}>
                                     {!sendSuccess.isError && <CheckCircle2 className="w-4 h-4" />}
                                     {sendSuccess.msg}
                                 </div>
