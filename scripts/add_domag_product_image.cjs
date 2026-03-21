@@ -27,7 +27,7 @@ async function run() {
     const { data: listing, error: listingError } = await supabase.from('listings')
       .select('id, title')
       .eq('user_id', user.id)
-      .ilike('title', '%SICMA F3 125%')
+      .ilike('title', '%SPEEDY 125%')
       .single();
 
     if (listingError || !listing) {
@@ -37,8 +37,7 @@ async function run() {
 
     // 3. Find latest media file
     const artifactsDir = '/Users/luis/.gemini/antigravity/brain/54bd403f-9554-41a2-b0dd-1df7a41a8985';
-    const files = fs.readdirSync(artifactsDir).filter(f => f.startsWith('media__') && (f.endsWith('.png') || f.endsWith('.jpg') || f.endsWith('.jpeg'))).sort();
-    const latestFile = files[files.length - 1];
+    const latestFile = 'media__1774038079106.jpg';
 
     if (!latestFile) {
         console.log("WARNING: Could not find the new media file in artifacts.");

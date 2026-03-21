@@ -1,0 +1,88 @@
+{
+  "company": {
+    "commercial_name": "Avicon Tienda",
+    "description": "Cooperativa con más de 60 años de trayectoria dedicada a la fabricación de piensos de alta calidad para ganadería y animales de compañía. Centra su actividad en ofrecer soluciones nutricionales sostenibles para agricultores y ganaderos, contando con instalaciones modernas y un compromiso firme con el bienestar animal.",
+    "company_logo_url": "https://avicontienda.com/wp-content/uploads/2021/01/Logo-TendaAvicon.png",
+    "location": "c/ Santa Lucía, 58, 45700 Consuegra, Toledo, España",
+    "phone": "925 48 00 40",
+    "email": "tienda@avicontienda.com",
+    "website": "https://avicontienda.com/"
+  },
+  "products": [
+    {
+      "title": "Pienso único caracoles saco 30 kg",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/Pienso-caracoles-260031300-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Pienso único caballos saco 30 kg",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/Especialista-en-alimentacion-animal-7-5-1-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Pienso perdiz reclamo 5 KG",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/productos/pienso-perdices-reclamo-5kg-legazin-3200042.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Perdices y faisanes reproductor saco 30 KG",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/perdices-faisanes-7-5-210321031-1-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Perdices y faisanes crecimiento saco 30 KG",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/perdices-faisanes-7-5-210321031-1-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Parideras ovino inicio migaja saco 30 KG",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/perdices-faisanes-7-5-210321031-1-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Palomos deportivos M4 con maíz",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/palomo-deportivo-m4-25kg-3200082-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Palomos deportivos M3 sin maíz",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/palomo-deportivo-m3-25kg-3200085-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Stick tortugas 1l",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/stick-tortugas-1l-3101710-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Tolva pequeña Perros",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/tolvana-peros-pequena-3101277-1024x1024.jpg",
+      "category": "otros"
+    },
+    {
+      "title": "Tierra diatomeas saco 20 kg",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/SACO-DIATOMEA-3018055-1024x1024.jpg",
+      "category": "otros"
+    },
+    {
+      "title": "Ovejas lecheras gránulo saco 30 KG",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/ovejas-lecheras-7-5-240112-1-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Cabras lecheras gránulo saco 30 KG",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/cabras-lecheras-7-5-240114-1-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Ovejas y cabras gestantes gránulo saco 30 KG",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/ovejas-cabras-gestantes-7-5-240113-1-1024x1024.jpg",
+      "category": "alimentacion"
+    },
+    {
+      "title": "Vacuno campo 20-20 taco saco 30 KG",
+      "external_image_url": "https://avicontienda.com/wp-content/uploads/Especialista-en-alimentacion-animal-7-5-1-1024x1024.jpg",
+      "category": "alimentacion"
+    }
+  ]
+}

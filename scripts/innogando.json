@@ -1,0 +1,63 @@
+{
+  "company": {
+    "commercial_name": "Innogando",
+    "description": "Innogando es una empresa tecnológica líder en el desarrollo de sistemas de localización GPS y monitorización en tiempo real para el sector ganadero. Su misión es mejorar la rentabilidad de las explotaciones y el bienestar animal a través de soluciones innovadoras como Rumi Carne y Rumi Leche, permitiendo a los ganaderos controlar su ganado de forma eficiente desde cualquier lugar.",
+    "company_logo_url": "https://innogando.com/wp-content/uploads/2025/03/innogando-logo.png",
+    "location": "Rúa dos Artesáns nº19 Bajo, pol ind Ceao 27003 Lugo, España",
+    "phone": "+34 982 892 008",
+    "email": "hola@innogando.com",
+    "website": "https://innogando.com/"
+  },
+  "products": [
+    {
+      "title": "Rumi Carne - Collar GPS Solar",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2025/05/gps-solar-rumi-carne.png",
+      "category": "otros"
+    },
+    {
+      "title": "Rumi Dairy - Monitorización de Vacuno de Leche",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2025/05/control-y-produccion.jpg",
+      "category": "otros"
+    },
+    {
+      "title": "Medición de la Rumia",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2025/05/medicion-rumia.png",
+      "category": "otros"
+    },
+    {
+      "title": "Rumi App - Gestión Ganadera Móvil",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2025/03/vallado-virtual-1024x307.jpg",
+      "category": "otros"
+    },
+    {
+      "title": "Vallado Virtual y Geovallas",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2026/02/Captura-de-pantalla-2026-02-24-a-las-16.57.22-1024x351.png",
+      "category": "otros"
+    },
+    {
+      "title": "Detección Inteligente de Celos",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2026/01/Captura-de-pantalla-2026-01-15-a-las-17.21.44-1024x754.png",
+      "category": "otros"
+    },
+    {
+      "title": "Monitorización del Pastoreo",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2026/02/Captura-de-pantalla-2026-02-24-a-las-16.57.22-1024x351.png",
+      "category": "otros"
+    },
+    {
+      "title": "Sistema de Alerta de Partos",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2025/03/11-curiosidades.jpg",
+      "category": "otros"
+    },
+    {
+      "title": "Equipo de Soporte Innogando",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2025/03/equipo.jpg",
+      "category": "otros"
+    },
+    {
+      "title": "Kit Digital para Ganaderías",
+      "external_image_url": "https://innogando.com/wp-content/uploads/2025/03/innogando-logo.png",
+      "category": "otros"
+    }
+  ]
+}

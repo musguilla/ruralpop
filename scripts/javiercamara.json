@@ -1,0 +1,88 @@
+{
+  "company": {
+    "commercial_name": "JAVIER CÁMARA INDUSTRIAS GANADERAS SL",
+    "description": "Empresa especializada en la fabricación de equipos para el sector ganadero (ovino, vacuno, caprino y porcino) desde mediados de los años 50. Su objetivo es ofrecer soluciones que mejoren la rentabilidad y el manejo diario del ganado.",
+    "company_logo_url": "https://javiercamaraindustrial.com/assets/img/logo-white.svg",
+    "location": "Pol. Allende-Duero, Ctra. Valladolid, parcelas 123-125, 09400 Aranda de Duero (Burgos), España",
+    "phone": "+34 947 51 23 23",
+    "email": "oscar@javiercamara.es",
+    "website": "https://javiercamaraindustrial.com/"
+  },
+  "products": [
+    {
+      "title": "BANDEJA PIENSO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0472700001761824787.png",
+      "category": "ganado"
+    },
+    {
+      "title": "BÁSCULAS PORCINO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0760041001761824863.png",
+      "category": "ganado"
+    },
+    {
+      "title": "BEBEDEROS PORCINO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0260524001761824923.png",
+      "category": "ganado"
+    },
+    {
+      "title": "MANGAS Y CEPOS",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0583099001761824976.png",
+      "category": "ganado"
+    },
+    {
+      "title": "TOLVA COCHINOS",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0255685001761825082.png",
+      "category": "ganado"
+    },
+    {
+      "title": "AMARRES Y MESA ORDEÑO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0807110001761825151.png",
+      "category": "ganado"
+    },
+    {
+      "title": "CEBADERO CORDEROS",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0350550001761825761.png",
+      "category": "ganado"
+    },
+    {
+      "title": "COMEDEROS GANADO OVINO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0987559001761825863.png",
+      "category": "ganado"
+    },
+    {
+      "title": "DISPENSADOR DE PIENSO AUTOMÁTICO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0102926001761826247.png",
+      "category": "ganado"
+    },
+    {
+      "title": "PARIDERAS OVINO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0127282001761826464.png",
+      "category": "ganado"
+    },
+    {
+      "title": "AMARRES VACUNO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/a013-peana_opaco-0757632001625484889-0674748001766050114.png",
+      "category": "ganado"
+    },
+    {
+      "title": "BOXES TERNEROS",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0019019001761827762.png",
+      "category": "ganado"
+    },
+    {
+      "title": "COMEDEROS VACUNO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0650435001761828465.png",
+      "category": "ganado"
+    },
+    {
+      "title": "PASOS CANADIENSES",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0862781001761828983.png",
+      "category": "ganado"
+    },
+    {
+      "title": "REMOLQUES VACUNO",
+      "external_image_url": "https://www.agromaquinaria.es/categorias/fotos/_imagenes-800x600-2025-10-0860751001761829227.png",
+      "category": "ganado"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "company": {
+    "commercial_name": "AGROLUGO",
+    "description": "AgroLugo es una empresa sarriana fundada en el año 1975 referente comarcal en cuanto a maquinaria agrícola, forestal y de jardinería. Desde 2005 se expande a todo el territorio nacional.",
+    "company_logo_url": "https://agrolugo.com/img/agro-lugo-logo-1618418605.jpg",
+    "location": "Carretera de Lugo, s/n - 27617 Sarria (Lugo) - España",
+    "phone": "+34 982 530 523",
+    "email": "info@agrolugo.com",
+    "website": "https://agrolugo.com/"
+  },
+  "products": [
+    {
+      "title": "MOTOSIERRA HUSQVARNA 372 XP",
+      "external_image_url": "https://agrolugo.com/538-home_default/motosierra-husqvarna-372-xp.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "MOTOSIERRA HUSQVARNA T435",
+      "external_image_url": "https://agrolugo.com/539-home_default/motosierra-husqvarna-t435.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "MOTOSIERRA HUSQVARNA 120 MARK II",
+      "external_image_url": "https://agrolugo.com/540-home_default/husqvarna-120-mark-ii.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "MOTOSIERRA HUSQVARNA 120I",
+      "external_image_url": "https://agrolugo.com/595-home_default/motosierra-husqvarna-120i.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "MOTOSIERRA HUSQVARNA 450 II",
+      "external_image_url": "https://agrolugo.com/617-home_default/motosierra-husqvarna-450-ii.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "MOTOSIERRA HUSQVARNA 460 RANCHER",
+      "external_image_url": "https://agrolugo.com/548-home_default/motosierra-husqvarna-460-rancher.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "MOTOSIERRA DE ALTURA HUSQVARNA 525PT5S",
+      "external_image_url": "https://agrolugo.com/545-home_default/motosierra-de-altura-husqvarna-525pt5s.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "MOTOSIERRA HUSQVARNA 550 XP MARK II",
+      "external_image_url": "https://agrolugo.com/554-home_default/motosierra-husqvarna-550-xp.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "MOTOSIERRA SPORT GARDEN CS 2520",
+      "external_image_url": "https://agrolugo.com/591-home_default/motosierra-sport-garden-cs-2520.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "MOTOSIERRA SPORT GARDEN M 2500",
+      "external_image_url": "https://agrolugo.com/625-home_default/motosierra-sport-garden-sg-m-2500.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "DESBROZADORA HUSQVARNA 553RS",
+      "external_image_url": "https://agrolugo.com/644-home_default/desbrozadora-husqvarna-553rs.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "DESBROZADORA HUSQVARNA 555RXT",
+      "external_image_url": "https://agrolugo.com/560-home_default/desbrozadora-husqvarna-555rxt.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "DESBROZADORA HUSQVARNA 545RX",
+      "external_image_url": "https://agrolugo.com/611-home_default/desbrozadora-husqvarna-545rx.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "DESBROZADORA HUSQVARNA 535RX",
+      "external_image_url": "https://agrolugo.com/598-home_default/desbrozadora-husqvarana-535rx.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "DESBROZADORA HUSQVARNA 543RS",
+      "external_image_url": "https://agrolugo.com/559-home_default/desbrozadora-husqvarna-543rs.jpg",
+      "category": "maquinaria"
+    }
+  ]
+}

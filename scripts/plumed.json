@@ -1,0 +1,88 @@
+{
+  "company": {
+    "commercial_name": "Maquinaria Agrícola Plumed S.L.",
+    "description": "Empresa de Maquinaria Agrícola ubicada en Monreal del Campo (Teruel) con más de 30 años de experiencia. Concesionario oficial de marcas líderes como New Holland, Kuhn y Promodis, especialistas en soluciones integrales para el sector agrario.",
+    "company_logo_url": "https://www.plumed.es/wp-content/uploads/2025/01/maquinaria-plumed-logo.png",
+    "location": "Pol El Tollo 715, 44300 Monreal del Campo, TERUEL",
+    "phone": "978 86 30 60",
+    "email": "info@plumed.es",
+    "website": "https://www.plumed.es/"
+  },
+  "products": [
+    {
+      "title": "Tractor New Holland T4F",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/02/financiacion-t4f-1024x536.jpg",
+      "category": "tractores"
+    },
+    {
+      "title": "Atomizadores y Pulverizadores",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/02/tienda-1024x768.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "Abonadora Promodis",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/02/siembra-abonado-promodis-1024x768.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "Sembradora Larrosa",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/02/larrosa-sembradora.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "Drone DJI Agras T50",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/02/dji-logo-300x177.png",
+      "category": "otros"
+    },
+    {
+      "title": "Sistema de Riego Pivot",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/03/icono-hidro-pivot.png",
+      "category": "otros"
+    },
+    {
+      "title": "Aplicadores de Purín ALP",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/01/riegos-plumed.jpg",
+      "category": "maquinaria"
+    },
+    {
+      "title": "Sembradoras Solano Horizonte",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/02/solano-productos-1024x858.png",
+      "category": "maquinaria"
+    },
+    {
+      "title": "Recambios Agrícolas",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/01/plumed-logo.png",
+      "category": "repuestos"
+    },
+    {
+      "title": "Drone DJI Agras T25",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/02/dji-logo-300x177.png",
+      "category": "otros"
+    },
+    {
+      "title": "Drone DJI Mavic Multispectral",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/02/dji-logo-300x177.png",
+      "category": "otros"
+    },
+    {
+      "title": "Control de Riego Hidro-Análisis",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/03/icono-hidro-analisis.png",
+      "category": "otros"
+    },
+    {
+      "title": "Conectividad Riego WiFi",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/03/icono-hidro-wifi.png",
+      "category": "otros"
+    },
+    {
+      "title": "Válvulas de Riego",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/03/icono-hidro-tuberia.png",
+      "category": "otros"
+    },
+    {
+      "title": "Monitoreo de Pozos",
+      "external_image_url": "https://www.plumed.es/wp-content/uploads/2025/03/icono-hidro-pozo.png",
+      "category": "otros"
+    }
+  ]
+}
