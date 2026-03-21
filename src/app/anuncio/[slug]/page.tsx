@@ -53,26 +53,7 @@ export async function generateMetadata(
     const previousImages = (await parent).openGraph?.images || [];
     const mainImage = listing.image_urls?.[0] || 'https://www.ruralpop.com/default-og.jpg';
 
-    const priceText = listing.price ? `${new Intl.NumberFormat('de-DE').format(listing.price)}€` : 'A convenir';
-    const baseTitle = `${listing.title} ${priceText}`.trim();
-
-    const seoVariations = [
-        "Comprar y vender",
-        "App gratis ganado",
-        "Anuncios del campo",
-        "Mercado rural",
-        "Compraventa"
-    ];
-
-    const charCodeSum = slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    const suffix = seoVariations[charCodeSum % seoVariations.length];
-
-    let fullTitle = `${baseTitle} | Ruralpop`;
-    const candidateTitle = `${baseTitle} - ${suffix} | Ruralpop`;
-
-    if (candidateTitle.length <= 72) {
-        fullTitle = candidateTitle;
-    }
+    const fullTitle = `${listing.title} - Vender y comprar ganado | Ruralpop`;
 
     // Acortar base para dejar espacio a las keywords SEO
     const rawDesc = listing.description?.replace(/\n/g, ' ') || "";
