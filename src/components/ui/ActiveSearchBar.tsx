@@ -283,10 +283,10 @@ export function ActiveSearchBar() {
                                     onChange={(val) => setModalLocation(val as string)}
                                     options={[
                                         { id: "", name: "Toda España" },
-                                        ...LOCATIONS.map(loc => ({ id: loc.id, name: loc.type === 'municipality' ? `↳ ${loc.name} (${loc.province})` : loc.name }))
+                                        ...LOCATIONS.filter(loc => loc.type === 'province').map(loc => ({ id: loc.id, name: loc.name }))
                                     ]}
                                     placeholder="Toda España"
-                                    searchPlaceholder="Buscar provincia o localidad..."
+                                    searchPlaceholder="Buscar provincia..."
                                 />
                             </div>
 
