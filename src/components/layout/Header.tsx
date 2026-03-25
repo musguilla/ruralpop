@@ -49,7 +49,7 @@ export async function Header() {
                 <nav className="flex items-center gap-4">
                     <Link
                         href={isGhost ? "/profesionales?ghost_claim=true" : "/upload"}
-                        className="group hidden sm:flex items-center justify-center gap-2 px-4 py-2 font-medium bg-[var(--ag-sys-color-primary)] text-white rounded-full hover:bg-[var(--ag-sys-color-primary-hover)] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)]"
+                        className="group flex items-center justify-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base font-medium bg-[var(--ag-sys-color-primary)] text-white rounded-full hover:bg-[var(--ag-sys-color-primary-hover)] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)]"
                     >
                         <div className="bg-white/20 rounded-full p-0.5 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110">
                             <Plus className="w-4 h-4" />
@@ -62,7 +62,7 @@ export async function Header() {
                             <div className="flex items-center gap-1">
                                 <Link
                                     href="/favoritos"
-                                    className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full"
+                                    className="hidden sm:flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full"
                                     aria-label="Mis Favoritos"
                                     title="Mis Favoritos"
                                 >
