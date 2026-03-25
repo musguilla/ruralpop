@@ -30,7 +30,7 @@ export function ProPlanCard({ isGhostClaim }: { isGhostClaim: boolean }) {
 
             {/* Toggle Anual / Mensual */}
             <div className="relative z-10 flex flex-col items-start gap-4 mb-6 pt-2 pb-2">
-                <div className="inline-flex bg-white/20 p-1 rounded-2xl">
+                <div className="relative inline-flex bg-white/20 p-1 rounded-2xl">
                     <button 
                         onClick={() => setIsAnnual(false)} 
                         className={`px-4 py-2 text-sm font-bold rounded-xl transition-all ${!isAnnual ? 'bg-white text-[var(--ag-sys-color-primary)] shadow' : 'text-white hover:bg-white/10'}`}
@@ -43,6 +43,15 @@ export function ProPlanCard({ isGhostClaim }: { isGhostClaim: boolean }) {
                     >
                         Anual <span className="text-[10px] bg-amber-400 text-amber-900 px-1.5 py-0.5 rounded-md leading-none uppercase tracking-wider font-black">-25%</span>
                     </button>
+
+                    {/* Flecha Handwriting (solo visible en desktop o si hay espacio) */}
+                    <div className="absolute -right-[110px] -top-8 pointer-events-none opacity-90 hidden sm:flex flex-col items-center transform rotate-6">
+                        <span className="text-amber-300 text-sm font-bold font-serif italic mb-1 drop-shadow-md">¡Mejor opción!</span>
+                        <svg width="50" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="text-amber-300 drop-shadow-md transform -scale-x-100 rotate-12">
+                            <path d="M90 10 Q 50 10 20 60" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none" />
+                            <path d="M20 60 L 40 50 M20 60 L 30 80" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                        </svg>
+                    </div>
                 </div>
             </div>
 
