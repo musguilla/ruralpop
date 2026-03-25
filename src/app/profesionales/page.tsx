@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Check, ShieldCheck, Zap, CreditCard } from "lucide-react";
+import { ProPlanCard } from "@/components/profesionales/ProPlanCard";
 
 export const metadata = {
     title: "Área Profesionales | Ruralpop",
@@ -99,64 +100,7 @@ export default async function ProfesionalesPage({ searchParams }: { searchParams
                         )}
 
                         {/* PLAN PRO */}
-                        <div className={`bg-[var(--ag-sys-color-primary)] rounded-[2.5rem] p-8 lg:p-10 border border-[var(--ag-sys-color-primary)] shadow-2xl relative flex flex-col transform ${isGhostClaim ? '' : 'md:-translate-y-4'}`}>
-                            {!isGhostClaim && (
-                                <div className="absolute top-0 right-8 -mt-4 bg-white text-[var(--ag-sys-color-primary)] text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg">
-                                    El más popular
-                                </div>
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-[2.5rem] pointer-events-none"></div>
-                            
-                            <div className="mb-8 relative z-10">
-                                <h3 className="text-2xl font-black text-white tracking-tight mb-2 flex items-center gap-2">Plan Pro <Zap className="w-5 h-5 text-amber-300 fill-amber-300" /></h3>
-                                <p className="text-white/80 text-sm">El arma definitiva para vender más si eres empresa del sector, ganadería, concesionario de maquinaria, criadores, ...</p>
-                            </div>
-                            <div className="mb-8 relative z-10">
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-5xl font-black text-white tracking-tighter">49,99 €</span>
-                                    <span className="text-white/80 font-medium">/mes</span>
-                                </div>
-                                <p className="text-xs text-white/70 mt-2">IVA incluido. Cancela cuando quieras.</p>
-                            </div>
-                            
-                            <ul className="space-y-4 mb-10 flex-1 relative z-10">
-                                <li className="flex items-start gap-3">
-                                    <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-3.5 h-3.5 text-white" />
-                                    </div>
-                                    <span className="text-white font-medium">Hasta <strong className="text-amber-300 font-bold">50 anuncios</strong> activos simultáneos</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-3.5 h-3.5 text-white" />
-                                    </div>
-                                    <span className="text-white font-medium">Página web pública de tu empresa con todos tus productos, logotipo y descripción.</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-3.5 h-3.5 text-white" />
-                                    </div>
-                                    <span className="text-white font-medium">Sello <strong className="text-amber-300 font-bold">Profesional Verificado</strong> en tu perfil</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-3.5 h-3.5 text-white" />
-                                    </div>
-                                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">6 impulsos</strong> de subida de anuncio al mes incluidos</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                                        <Check className="w-3.5 h-3.5 text-white" />
-                                    </div>
-                                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">2 anuncios destacados</strong> en página principal</span>
-                                </li>
-                            </ul>
-
-                            <Link href={`/profesionales/checkout/pro${isGhostClaim ? '?ghost_claim=true' : ''}`} className="mt-auto relative z-10 w-full flex items-center justify-center gap-2 px-6 py-4 bg-white text-[var(--ag-sys-color-primary)] font-black rounded-2xl hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5">
-                                <Zap className="w-5 h-5" />
-                                {isGhostClaim ? 'Activar Plan PRO' : 'Quiero el PRO'}
-                            </Link>
-                        </div>
+                        <ProPlanCard isGhostClaim={isGhostClaim} />
 
                     </div>
                     

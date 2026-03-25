@@ -9,7 +9,7 @@ import Link from "next/link";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder");
 
-export function SubscriptionCheckoutFlow({ planId, priceId }: { planId: string, priceId: string }) {
+export function SubscriptionCheckoutFlow({ planId, priceId, isAnnual }: { planId: string, priceId: string, isAnnual?: boolean }) {
     const [clientSecret, setClientSecret] = useState<string | null>(null);
     const [isCreatingIntent, setIsCreatingIntent] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -41,8 +41,8 @@ export function SubscriptionCheckoutFlow({ planId, priceId }: { planId: string, 
         createSubscriptionIntent();
     }, [priceId]);
 
-    const planName = planId === "start" ? "Plan Start" : "Plan Pro";
-    const planPrice = planId === "start" ? "19,99€" : "49,99€";
+    const planName = planId === "start" ? "Plan Start" : (isAnnual ? "Plan Pro (Anual)" : "Plan Pro");
+    const planPrice = planId === "start" ? "19,99€" : (isAnnual ? "450 €" : "49,99€");
 
     return (
         <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 sm:p-10 border border-[var(--ag-sys-color-border)] shadow-md relative">
