@@ -45,12 +45,12 @@ export function ProPlanCard({ isGhostClaim }: { isGhostClaim: boolean }) {
                     </button>
 
                     {/* Flecha Handwriting (solo visible en desktop o si hay espacio) */}
-                    <div className="absolute -right-[110px] -top-8 pointer-events-none opacity-90 hidden sm:flex flex-col items-center transform rotate-6">
-                        <span className="text-amber-300 text-sm font-bold font-serif italic mb-1 drop-shadow-md">¡Mejor opción!</span>
-                        <svg width="50" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="text-amber-300 drop-shadow-md transform -scale-x-100 rotate-12">
-                            <path d="M90 10 Q 50 10 20 60" stroke="currentColor" strokeWidth="6" strokeLinecap="round" fill="none" />
-                            <path d="M20 60 L 40 50 M20 60 L 30 80" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                    <div className="absolute -right-[140px] top-1/2 -translate-y-1/2 pointer-events-none opacity-90 hidden sm:flex flex-row items-center gap-1.5">
+                        <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="text-amber-300 drop-shadow-md">
+                            <path d="M90 50 Q 50 20 10 50" stroke="currentColor" strokeWidth="8" strokeLinecap="round" fill="none" />
+                            <path d="M10 50 L 30 35 M10 50 L 25 70" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                         </svg>
+                        <span className="text-amber-300 text-sm font-bold font-serif italic drop-shadow-md transform -rotate-1 whitespace-nowrap">¡Mejor opción!</span>
                     </div>
                 </div>
             </div>
