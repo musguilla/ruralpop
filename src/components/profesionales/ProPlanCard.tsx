@@ -45,12 +45,13 @@ export function ProPlanCard({ isGhostClaim }: { isGhostClaim: boolean }) {
                     </button>
 
                     {/* Flecha Handwriting (solo visible en desktop o si hay espacio) */}
-                    <div className="absolute -right-[150px] top-1/2 -translate-y-1/2 pointer-events-none opacity-90 hidden sm:flex flex-row items-center gap-2">
-                        <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" className="text-amber-300 drop-shadow-md">
-                            <path d="M85 25 Q 50 10 15 50" stroke="currentColor" strokeWidth="7" strokeLinecap="round" fill="none" />
-                            <path d="M30 35 L 15 50 L 25 70" stroke="currentColor" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                    <div className="absolute -right-[160px] top-1/2 -translate-y-1/2 pointer-events-none opacity-90 hidden sm:flex flex-row items-center">
+                        <svg width="45" height="40" viewBox="0 0 120 80" className="text-amber-300 drop-shadow-md">
+                            <path fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" 
+                                d="M110,20 C80,10 50,40 10,40 L30,20 M10,40 L30,60" 
+                            />
                         </svg>
-                        <span className="text-amber-300 text-[15px] font-bold font-serif italic drop-shadow-md transform -rotate-2 whitespace-nowrap mt-1">¡Mejor opción!</span>
+                        <span className="text-amber-300 text-[16px] font-bold font-serif italic drop-shadow-md -ml-1 transform -rotate-1 whitespace-nowrap mt-2">¡Mejor opción!</span>
                     </div>
                 </div>
             </div>
