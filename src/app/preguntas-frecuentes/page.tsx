@@ -1,6 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import FAQClient from './FAQClient';
 
 export const metadata: Metadata = {
     title: 'Preguntas Frecuentes - Ruralpop',
@@ -89,87 +90,13 @@ export default function FAQPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
+        <>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            
-            {/* Header Area */}
-            <div className="bg-[var(--ag-sys-color-surface)] border-b border-[var(--ag-sys-color-border)] py-12 px-4 shadow-sm">
-                <div className="container mx-auto max-w-5xl">
-                    <h1 className="text-4xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">
-                        Preguntas frecuentes
-                    </h1>
-                    <p className="text-lg text-[var(--ag-sys-color-text-muted)] max-w-2xl">
-                        Encuentra las respuestas más rápidas y sencillas sobre cómo utilizar la plataforma Ruralpop.
-                    </p>
-                </div>
-            </div>
-
-            {/* Content Area */}
-            <div className="container mx-auto max-w-5xl px-4 py-12 flex flex-col md:flex-row gap-12">
-                
-                {/* Sidebar Navigation */}
-                <aside className="w-full md:w-64 md:flex-shrink-0">
-                    <div className="sticky top-24 space-y-8">
-                        <nav className="flex flex-col space-y-2">
-                            {faqs.map(cat => (
-                                <div key={cat.id} className="mb-4">
-                                    <Link 
-                                        href={`#${cat.id}`} 
-                                        className="text-xl font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors mb-2 block"
-                                    >
-                                        {cat.category}
-                                    </Link>
-                                    <ul className="space-y-2 border-l-2 border-[var(--ag-sys-color-border)] ml-2 pl-4">
-                                        {cat.questions.map((q, idx) => (
-                                            <li key={idx}>
-                                                <Link 
-                                                    href={`#${cat.id}-q${idx}`} 
-                                                    className="text-sm text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)] transition-colors line-clamp-1"
-                                                >
-                                                    {q.q}
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
-                        </nav>
-                    </div>
-                </aside>
-
-                {/* FAQ Content */}
-                <main className="flex-1 space-y-16">
-                    {faqs.map(cat => (
-                        <section key={cat.id} id={cat.id} className="scroll-mt-24 space-y-8">
-                            <h2 className="text-3xl font-bold text-[var(--ag-sys-color-text)] border-b pb-4">
-                                {cat.category}
-                            </h2>
-                            
-                            <div className="space-y-10">
-                                {cat.questions.map((q, idx) => (
-                                    <article key={idx} id={`${cat.id}-q${idx}`} className="scroll-mt-32">
-                                        <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-4 flex items-start gap-2">
-                                            <span className="text-[var(--ag-sys-color-primary)] mt-1">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
-                                            </span>
-                                            {q.q}
-                                        </h3>
-                                        <div className="text-[var(--ag-sys-color-text-muted)] leading-relaxed space-y-2 pl-7">
-                                            {q.a.split('\n').map((line, lIdx) => (
-                                                <p key={lIdx}>{line}</p>
-                                            ))}
-                                        </div>
-                                    </article>
-                                ))}
-                            </div>
-                        </section>
-                    ))}
-                </main>
-            </div>
-        </div>
+            <FAQClient faqs={faqs} />
+        </>
     );
 }
 
@@ -177,5 +104,5 @@ export default function FAQPage() {
  * Memory / Decisiones Técnicas:
  * - Implementación de un Schema JSON-LD dinámico `FAQPage` vital para SEO (Google Rich Snippets).
  * - Componente Server-side por defecto en app-router para que el indexado sea perfecto.
- * - Sidebar con sticky positioning y anchors al `id` exacto de las secciones.
+ * - Delegate to FAQClient for the interactive visual layout.
  */
