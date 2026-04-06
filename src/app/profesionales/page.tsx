@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Check, ShieldCheck, Zap, CreditCard } from "lucide-react";
 import { ProPlanCard } from "@/components/profesionales/ProPlanCard";
 
@@ -12,9 +13,23 @@ export default async function ProfesionalesPage({ searchParams }: { searchParams
     const isGhostClaim = sp.ghost_claim === 'true';
 
     return (
-        <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
-            {/* Hero Section */}
-            <section className="px-6 pt-12 pb-10 lg:pt-16 lg:pb-12 flex items-center justify-center">
+        <div className="min-h-screen bg-[var(--ag-sys-color-surface)] pb-20">
+            {/* Full-width Hero Image pegada al menú */}
+            <div className="relative w-full h-[40vh] md:h-[50vh] lg:h-[60vh] max-h-[600px] mb-12">
+                <Image
+                    src="/ruralpop-empresas-profesionales.jpg"
+                    alt="Ruralpop Empresas y Profesionales"
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="100vw"
+                    quality={90}
+                />
+                {/* Opcional: Gradient subtil para que no parezca que acaba muy bruscamente, pero como nos han pedido imagen tal cual, la dejamos pegada */}
+            </div>
+
+            {/* Title & CTA Intro Section */}
+            <section className="px-6 pb-12 pt-2 flex items-center justify-center">
                 <div className="max-w-4xl mx-auto text-center space-y-6 w-full">
                     {isGhostClaim ? (
                         <>
@@ -46,14 +61,14 @@ export default async function ProfesionalesPage({ searchParams }: { searchParams
                 </div>
             </section>
 
-            {/* Pricing Section */}
-            <section className="px-6 pb-32">
+            {/* Pricing Section - Integrado más fluido con el layout sin fondos enmarcados pesados */}
+            <section className="px-6 pb-20">
                 <div className="max-w-5xl mx-auto">
                     <div className={`grid grid-cols-1 ${isGhostClaim ? 'max-w-lg mx-auto' : 'md:grid-cols-2'} gap-8 lg:gap-12`}>
                         
                         {/* PLAN START */}
                         {!isGhostClaim && (
-                            <div className="bg-[var(--ag-sys-color-surface)] rounded-[2.5rem] p-8 lg:p-10 border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-xl transition-all duration-300 relative flex flex-col group hover:-translate-y-1">
+                            <div className="bg-[var(--ag-sys-color-background)] rounded-[2.5rem] p-8 lg:p-10 transition-all duration-300 relative flex flex-col group border border-[var(--ag-sys-color-border)] shadow-sm">
                                 <div className="mb-8">
                                     <h3 className="text-2xl font-black text-[var(--ag-sys-color-text)] tracking-tight mb-2">Plan Start</h3>
                                     <p className="text-[var(--ag-sys-color-text-muted)] text-sm">Perfecto para profesionales y autónomos que quieren empezar a destacar online.</p>
@@ -105,7 +120,7 @@ export default async function ProfesionalesPage({ searchParams }: { searchParams
                     </div>
                     
                     {/* Trust indicators */}
-                    <div className="mt-16 text-center">
+                    <div className="mt-16 text-center border-t border-[var(--ag-sys-color-border)] pt-12">
                         <div className="flex flex-col items-center justify-center gap-4 text-[var(--ag-sys-color-text-muted)] text-sm font-medium">
                             <div className="flex items-center gap-2">
                                 <CreditCard className="w-5 h-5 text-gray-400" />
