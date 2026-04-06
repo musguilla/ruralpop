@@ -43,6 +43,18 @@ export function Footer() {
                     </div>
 
                     {/* Vertical line 2 */}
+                    <div className="hidden md:block w-px h-28 bg-[var(--ag-sys-color-border)] mt-1"></div>
+
+                    <div className="flex flex-col items-center md:items-start pt-1 gap-2">
+                        <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
+                            Información
+                        </span>
+                        <Link href="/preguntas-frecuentes" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            Preguntas frecuentes
+                        </Link>
+                    </div>
+                    
+                    {/* Vertical line 3 */}
                     <div className="hidden md:block w-px h-32 bg-[var(--ag-sys-color-border)] mt-1"></div>
                 </div>
 
