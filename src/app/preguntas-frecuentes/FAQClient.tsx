@@ -15,12 +15,12 @@ type FAQCategory = {
 };
 
 export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
-    // Por defecto marcamos la primera categoría y su primer pregunta. Así no hay estados huecos.
-    const [activeCategory, setActiveCategory] = useState<string>(faqs[0].id);
-    const [activeQuestion, setActiveQuestion] = useState<number>(0);
+    // La categoría 1 se abre por defecto, pero ninguna pregunta está activa para mostrar el Empty State "premium".
+    const [activeCategory, setActiveCategory] = useState<string | null>(faqs[0].id);
+    const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
 
     const currentFaq = faqs.find(cat => cat.id === activeCategory);
-    const currentQ = currentFaq?.questions[activeQuestion];
+    const currentQ = activeQuestion !== null && currentFaq ? currentFaq.questions[activeQuestion] : null;
 
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
@@ -53,8 +53,15 @@ export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
                                     <div key={cat.id} className="flex flex-col">
                                         <button
                                             onClick={() => {
-                                                setActiveCategory(cat.id);
-                                                setActiveQuestion(0);
+                                                // Si clica en la categoría activa, la cierra y quita pregunta activa.
+                                                // Si clica en una nueva, la abre y no marca pregunta.
+                                                if (isCatExpanded) {
+                                                    setActiveCategory(null);
+                                                    setActiveQuestion(null);
+                                                } else {
+                                                    setActiveCategory(cat.id);
+                                                    setActiveQuestion(null);
+                                                }
                                             }}
                                             className={`text-left px-4 py-3 rounded-xl font-bold transition-all text-lg flex items-center justify-between ${
                                                 isCatExpanded 
@@ -97,25 +104,39 @@ export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
 
                 {/* FAQ Content Area Blanca unificada */}
                 <main className="flex-1 w-full min-w-0">
-                    <div className="bg-white border border-[var(--ag-sys-color-border)] rounded-3xl p-8 sm:p-12 shadow-sm min-h-[500px] flex flex-col">
-                        <div className="animate-in fade-in duration-300">
-                            {/* Path de Navegación sutil */}
-                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--ag-sys-color-background)] rounded-full text-xs font-bold tracking-wider uppercase text-[var(--ag-sys-color-primary)] mb-6">
-                                {currentFaq?.category}
+                    <div className="bg-white border border-[var(--ag-sys-color-border)] rounded-3xl p-8 sm:p-12 shadow-sm min-h-[500px] flex flex-col justify-center">
+                        {activeQuestion === null || !currentQ ? (
+                            <div className="flex flex-col justify-center items-center text-center animate-in fade-in duration-300">
+                                <div className="p-4 bg-[var(--ag-sys-color-primary)]/10 rounded-full mb-6">
+                                    <HelpCircle className="w-12 h-12 text-[var(--ag-sys-color-primary)] opacity-80" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-3">
+                                    ¿En qué podemos ayudarte?
+                                </h2>
+                                <p className="text-[var(--ag-sys-color-text-muted)] text-lg max-w-sm">
+                                    Selecciona cualquier pregunta del menú interactivo de la izquierda para descubrir la respuesta paso a paso.
+                                </p>
                             </div>
-                            
-                            <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--ag-sys-color-text)] border-b border-[var(--ag-sys-color-border)] pb-8 mb-8 flex items-start gap-3 leading-tight">
-                                {currentQ?.q}
-                            </h2>
-                            
-                            <div className="text-[var(--ag-sys-color-text-muted)] lg:text-lg leading-relaxed space-y-5">
-                                {currentQ?.a.split('\n').map((line, lIdx) => (
-                                    <p key={lIdx} className="flex gap-2">
-                                        <span>{line}</span>
-                                    </p>
-                                ))}
+                        ) : (
+                            <div className="animate-in fade-in duration-300 flex-1 flex flex-col justify-start">
+                                {/* Path de Navegación sutil */}
+                                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--ag-sys-color-background)] rounded-full text-xs font-bold tracking-wider uppercase text-[var(--ag-sys-color-primary)] mb-6 self-start">
+                                    {currentFaq?.category}
+                                </div>
+                                
+                                <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--ag-sys-color-text)] border-b border-[var(--ag-sys-color-border)] pb-8 mb-8 flex items-start gap-3 leading-tight">
+                                    {currentQ?.q}
+                                </h2>
+                                
+                                <div className="text-[var(--ag-sys-color-text-muted)] lg:text-lg leading-relaxed space-y-5">
+                                    {currentQ?.a.split('\n').map((line, lIdx) => (
+                                        <p key={lIdx} className="flex gap-2">
+                                            <span>{line}</span>
+                                        </p>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </main>
             </div>
