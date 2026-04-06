@@ -52,6 +52,9 @@ export function Footer() {
                         <Link href="/preguntas-frecuentes" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                             Preguntas frecuentes
                         </Link>
+                        <Link href="/profesionales" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            Profesionales y empresas
+                        </Link>
                     </div>
                     
                     {/* Vertical line 3 */}
