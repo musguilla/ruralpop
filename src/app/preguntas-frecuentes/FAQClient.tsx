@@ -15,9 +15,12 @@ type FAQCategory = {
 };
 
 export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
-    const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    // Por defecto marcamos la primera categoría y su primer pregunta. Así no hay estados huecos.
+    const [activeCategory, setActiveCategory] = useState<string>(faqs[0].id);
+    const [activeQuestion, setActiveQuestion] = useState<number>(0);
 
     const currentFaq = faqs.find(cat => cat.id === activeCategory);
+    const currentQ = currentFaq?.questions[activeQuestion];
 
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
@@ -42,36 +45,49 @@ export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
                 {/* Sidebar Navigation */}
                 <aside className="w-full md:w-[320px] flex-shrink-0">
                     <div className="sticky top-24">
-                        <nav className="flex flex-col space-y-6">
+                        <nav className="flex flex-col space-y-4">
                             {faqs.map(cat => {
-                                const isActive = activeCategory === cat.id;
+                                const isCatExpanded = activeCategory === cat.id;
+
                                 return (
                                     <div key={cat.id} className="flex flex-col">
                                         <button
-                                            onClick={() => setActiveCategory(cat.id)}
+                                            onClick={() => {
+                                                setActiveCategory(cat.id);
+                                                setActiveQuestion(0);
+                                            }}
                                             className={`text-left px-4 py-3 rounded-xl font-bold transition-all text-lg flex items-center justify-between ${
-                                                isActive 
+                                                isCatExpanded 
                                                   ? "bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)]" 
                                                   : "text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-border)]"
                                             }`}
                                         >
                                             {cat.category}
-                                            {isActive && <div className="w-2 h-2 rounded-full bg-[var(--ag-sys-color-primary)]" />}
+                                            {isCatExpanded && <div className="w-2 h-2 rounded-full bg-[var(--ag-sys-color-primary)]" />}
                                         </button>
                                         
-                                        {/* List of questions under title - shown with some indent, active styling inherits context */}
-                                        <ul className="mt-3 ml-4 pl-4 border-l-2 border-[var(--ag-sys-color-border)] space-y-2.5">
-                                            {cat.questions.map((q, idx) => (
-                                                <li key={idx}>
-                                                    <button 
-                                                        onClick={() => setActiveCategory(cat.id)}
-                                                        className={`text-left text-sm transition-colors block line-clamp-2 ${isActive ? 'text-[var(--ag-sys-color-primary)] font-medium' : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]'}`}
-                                                    >
-                                                        {q.q}
-                                                    </button>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        {/* Submenú tipo acordeón: Solo se muestran las preguntas de la categoría activa */}
+                                        {isCatExpanded && (
+                                            <ul className="mt-3 ml-4 pl-4 border-l-2 border-[var(--ag-sys-color-border)] space-y-3 mb-2 animate-in slide-in-from-top-2 duration-200">
+                                                {cat.questions.map((q, idx) => {
+                                                    const isQuestionActive = isCatExpanded && activeQuestion === idx;
+                                                    return (
+                                                        <li key={idx}>
+                                                            <button 
+                                                                onClick={() => setActiveQuestion(idx)}
+                                                                className={`text-left text-sm transition-colors block line-clamp-3 leading-relaxed hover:text-[var(--ag-sys-color-primary)] ${
+                                                                    isQuestionActive 
+                                                                        ? 'text-[var(--ag-sys-color-primary)] font-bold' 
+                                                                        : 'text-[var(--ag-sys-color-text-muted)]'
+                                                                }`}
+                                                            >
+                                                                {q.q}
+                                                            </button>
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        )}
                                     </div>
                                 );
                             })}
@@ -81,46 +97,25 @@ export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
 
                 {/* FAQ Content Area Blanca unificada */}
                 <main className="flex-1 w-full min-w-0">
-                    <div className="bg-white border border-[var(--ag-sys-color-border)] rounded-3xl p-8 sm:p-12 shadow-sm min-h-[500px]">
-                        {!activeCategory ? (
-                            <div className="h-full flex flex-col justify-center items-center text-center pt-20 pb-20 fade-in duration-300">
-                                <div className="p-4 bg-[var(--ag-sys-color-primary)]/10 rounded-full mb-6">
-                                    <HelpCircle className="w-12 h-12 text-[var(--ag-sys-color-primary)] opacity-80" />
-                                </div>
-                                <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-3">
-                                    ¿En qué podemos ayudarte?
-                                </h2>
-                                <p className="text-[var(--ag-sys-color-text-muted)] text-lg max-w-sm">
-                                    Selecciona una categoría en el menú lateral para descubrir nuestras guías paso a paso.
-                                </p>
+                    <div className="bg-white border border-[var(--ag-sys-color-border)] rounded-3xl p-8 sm:p-12 shadow-sm min-h-[500px] flex flex-col">
+                        <div className="animate-in fade-in duration-300">
+                            {/* Path de Navegación sutil */}
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--ag-sys-color-background)] rounded-full text-xs font-bold tracking-wider uppercase text-[var(--ag-sys-color-primary)] mb-6">
+                                {currentFaq?.category}
                             </div>
-                        ) : (
-                            <div className="animate-in fade-in duration-300">
-                                <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] border-b border-[var(--ag-sys-color-border)] pb-6 mb-10">
-                                    {currentFaq?.category}
-                                </h2>
-                                
-                                <div className="space-y-12">
-                                    {currentFaq?.questions.map((q, idx) => (
-                                        <article key={idx} className="group">
-                                            <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-4 flex items-start gap-3">
-                                                <span className="text-[var(--ag-sys-color-primary)] mt-0.5 flex-shrink-0">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                                                </span>
-                                                {q.q}
-                                            </h3>
-                                            <div className="text-[var(--ag-sys-color-text-muted)] lg:text-lg leading-relaxed space-y-4 pl-8">
-                                                {q.a.split('\n').map((line, lIdx) => (
-                                                    <p key={lIdx} className="flex gap-2">
-                                                        <span>{line}</span>
-                                                    </p>
-                                                ))}
-                                            </div>
-                                        </article>
-                                    ))}
-                                </div>
+                            
+                            <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--ag-sys-color-text)] border-b border-[var(--ag-sys-color-border)] pb-8 mb-8 flex items-start gap-3 leading-tight">
+                                {currentQ?.q}
+                            </h2>
+                            
+                            <div className="text-[var(--ag-sys-color-text-muted)] lg:text-lg leading-relaxed space-y-5">
+                                {currentQ?.a.split('\n').map((line, lIdx) => (
+                                    <p key={lIdx} className="flex gap-2">
+                                        <span>{line}</span>
+                                    </p>
+                                ))}
                             </div>
-                        )}
+                        </div>
                     </div>
                 </main>
             </div>
