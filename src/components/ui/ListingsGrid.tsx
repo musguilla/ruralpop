@@ -25,99 +25,115 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         );
     }
 
-    let query = supabase
-        .from("listings")
-        .select(`
-            id, title, price, location, image_urls, created_at, category, price_type, is_featured,
-            users!inner(is_ghost)
-        `, { count: "exact" })
-        .order("is_featured", { ascending: false, nullsFirst: false });
+    const buildQuery = (useOrFallback = false) => {
+        let query = supabase
+            .from("listings")
+            .select(`
+                id, title, price, location, image_urls, created_at, category, price_type, is_featured,
+                users!inner(is_ghost)
+            `, { count: "exact" })
+            .order("is_featured", { ascending: false, nullsFirst: false });
 
-    // Hide ghost listings globally UNLESS we are specifically fetching a user's listings
-    if (!userIdFilter) {
-        query = query.eq("status", "active").eq("users.is_ghost", false);
-    } else {
-        if (isGhostProfile) {
-            query = query.in("status", ["active", "sold"]).eq("user_id", userIdFilter);
+        // Hide ghost listings globally UNLESS we are specifically fetching a user's listings
+        if (!userIdFilter) {
+            query = query.eq("status", "active").eq("users.is_ghost", false);
         } else {
-            query = query.eq("status", "active").eq("user_id", userIdFilter);
-        }
-    }
-
-    // Apply Sorting
-    switch (sortParam) {
-        case "cheap":
-            query = query.order("price", { ascending: true });
-            break;
-        case "expensive":
-            query = query.order("price", { ascending: false });
-            break;
-        case "recent":
-        case "relevance":
-        default:
-            query = query.order("created_at", { ascending: false });
-            break;
-    }
-
-    // Filter based on search params
-    const categoryFilter = searchParams.category as string;
-    if (categoryFilter) {
-        query = query.eq("category", categoryFilter);
-    }
-
-    const subcategoryFilter = searchParams.subcategory as string;
-    if (subcategoryFilter) {
-        query = query.ilike("subcategory", subcategoryFilter);
-    }
-
-    const textQuery = searchParams.q as string;
-    if (textQuery) {
-        const sanitizedQuery = textQuery.trim().toLowerCase();
-        
-        // Use regex to get words, ignoring extra spaces or hyphens.
-        const queryTerms = sanitizedQuery.split(/[\s\-]+/).filter(t => t.length > 2);
-        
-        if (queryTerms.length === 0) {
-            // Fallback for very short queries 
-            query = query.or(`title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%,location.ilike.%${sanitizedQuery}%`);
-        } else {
-            // Enforce that EVERY word must be present in title OR description OR location
-            queryTerms.forEach(term => {
-                query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`);
-            });
-        }
-    }
-
-    const priceMin = searchParams.price_min as string;
-    if (priceMin) {
-        query = query.gte("price", priceMin);
-    }
-
-    const priceMax = searchParams.price_max as string;
-    if (priceMax) {
-        query = query.lte("price", priceMax);
-    }
-
-    const locationFilter = searchParams.province_id as string;
-    if (locationFilter) {
-        if (locationFilter.startsWith('m')) {
-            // Find the location's real name from constants
-            const muni = LOCATIONS.find((l: { id: string }) => l.id === locationFilter);
-            if (muni) {
-                // ILIKE on location column (e.g. location ilike '%Córdoba%')
-                query = query.ilike("location", `%${muni.name}%`);
+            if (isGhostProfile) {
+                query = query.in("status", ["active", "sold"]).eq("user_id", userIdFilter);
             } else {
-                // Fallback to ID stripping just in case
-                const muniId = locationFilter.substring(1);
-                query = query.eq("municipality_id", muniId);
+                query = query.eq("status", "active").eq("user_id", userIdFilter);
             }
-        } else {
-            query = query.eq("province_id", locationFilter);
         }
-    }
 
-    // Ejecutar query con rango para paginación
-    const { data: listings, error, count } = await query.range(from, to);
+        // Apply Sorting
+        switch (sortParam) {
+            case "cheap":
+                query = query.order("price", { ascending: true });
+                break;
+            case "expensive":
+                query = query.order("price", { ascending: false });
+                break;
+            case "recent":
+            case "relevance":
+            default:
+                query = query.order("created_at", { ascending: false });
+                break;
+        }
+
+        // Filter based on search params
+        const categoryFilter = searchParams.category as string;
+        if (categoryFilter) {
+            query = query.eq("category", categoryFilter);
+        }
+
+        const subcategoryFilter = searchParams.subcategory as string;
+        if (subcategoryFilter) {
+            query = query.ilike("subcategory", subcategoryFilter);
+        }
+
+        const textQuery = searchParams.q as string;
+        if (textQuery) {
+            const sanitizedQuery = textQuery.trim().toLowerCase();
+            const queryTerms = sanitizedQuery.split(/[\s\-]+/).filter(t => t.length > 2);
+            
+            if (queryTerms.length <= 1) {
+                query = query.or(`title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%,location.ilike.%${sanitizedQuery}%`);
+            } else {
+                if (!useOrFallback) {
+                    // AND Logic (default)
+                    queryTerms.forEach(term => {
+                        query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`);
+                    });
+                } else {
+                    // OR Logic Fallback
+                    const orConditions = queryTerms.map(term => `title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`).join(',');
+                    query = query.or(orConditions);
+                }
+            }
+        }
+
+        const priceMin = searchParams.price_min as string;
+        if (priceMin) {
+            query = query.gte("price", priceMin);
+        }
+
+        const priceMax = searchParams.price_max as string;
+        if (priceMax) {
+            query = query.lte("price", priceMax);
+        }
+
+        const locationFilter = searchParams.province_id as string;
+        if (locationFilter) {
+            if (locationFilter.startsWith('m')) {
+                const muni = LOCATIONS.find((l: { id: string }) => l.id === locationFilter);
+                if (muni) {
+                    query = query.ilike("location", `%${muni.name}%`);
+                } else {
+                    const muniId = locationFilter.substring(1);
+                    query = query.eq("municipality_id", muniId);
+                }
+            } else {
+                query = query.eq("province_id", locationFilter);
+            }
+        }
+
+        return query;
+    };
+
+    // Attempt primary strict AND search
+    let query = buildQuery(false);
+    let { data: listings, error, count } = await query.range(from, to);
+
+    const isMultiWordSearch = typeof searchParams.q === 'string' && searchParams.q.trim().split(/[\s\-]+/).filter(t => t.length > 2).length > 1;
+
+    // Retry with OR fallback if needed
+    if (!error && (!listings || listings.length === 0) && isMultiWordSearch) {
+        query = buildQuery(true);
+        const fallbackRes = await query.range(from, to);
+        listings = fallbackRes.data;
+        count = fallbackRes.count;
+        error = fallbackRes.error;
+    }
 
     if (error) {
         console.error("Supabase Error fetching listings:", error);
