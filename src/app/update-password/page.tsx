@@ -19,39 +19,64 @@ export default function UpdatePasswordPage() {
     const supabase = createClient();
 
     useEffect(() => {
-        // 1. Manejo de errores por hash fragment (flujo implícito legado)
-        const hash = window.location.hash;
-        if (hash && hash.includes("error_description")) {
-            const params = new URLSearchParams(hash.substring(1));
-            setError(params.get("error_description")?.replace(/\+/g, " ") || "El enlace es inválido o ha caducado.");
-        }
+        const setupSession = async () => {
+            // 1. Manejo de Flujo Implícito (Hash fragment: #access_token=...) generado por admin.generateLink()
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                const params = new URLSearchParams(hash);
+                
+                if (params.get("error_description")) {
+                    setError(params.get("error_description")?.replace(/\+/g, " ") || "El enlace es inválido o ha caducado.");
+                    return;
+                }
 
-        // 2. Manejo de PKCE (code en query params) - Estándar en Next.js App Router con @supabase/ssr
-        const searchParams = new URLSearchParams(window.location.search);
-        const code = searchParams.get("code");
-        const urlError = searchParams.get("error_description") || searchParams.get("error");
+                const accessToken = params.get("access_token");
+                const refreshToken = params.get("refresh_token");
 
-        if (urlError) {
-            setError(urlError.replace(/\+/g, " "));
-        }
+                if (accessToken && refreshToken) {
+                    setIsExchangingCode(true);
+                    const { error: sessionError } = await supabase.auth.setSession({
+                        access_token: accessToken,
+                        refresh_token: refreshToken
+                    });
+                    setIsExchangingCode(false);
 
-        if (code) {
-            setIsExchangingCode(true);
-            const handleExchange = async () => {
+                    if (sessionError) {
+                        console.error("Error setting session from hash:", sessionError);
+                        setError("La sesión ha caducado o el enlace es viejo. Vuelve a solicitar la recuperación de contraseña.");
+                    } else {
+                        // Éxito: La sesión se restauró de los tokens de la URL
+                        window.history.replaceState(null, '', window.location.pathname);
+                    }
+                    return; 
+                }
+            }
+
+            // 2. Manejo de PKCE (Query param: ?code=...) por si el entorno migra estrictamente a PKCE
+            const searchParams = new URLSearchParams(window.location.search);
+            const code = searchParams.get("code");
+            const urlError = searchParams.get("error_description") || searchParams.get("error");
+
+            if (urlError) {
+                setError(urlError.replace(/\+/g, " "));
+                return;
+            }
+
+            if (code) {
+                setIsExchangingCode(true);
                 const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
                 setIsExchangingCode(false);
                 
                 if (exchangeError) {
                     console.error("Error validando token PKCE:", exchangeError);
-                    setError("El enlace de recuperación ha caducado o ya ha sido utilizado (PKCE inválido). Por favor, solicita uno nuevo.");
+                    setError("El enlace de recuperación ha caducado o ya ha sido utilizado. Vuelve a solicitar uno nuevo.");
                 } else {
-                    // Éxito: La sesión se ha establecido en las cookies.
-                    // Limpiamos la URL para no dejar expuesto el token de un solo uso.
                     window.history.replaceState(null, '', window.location.pathname);
                 }
-            };
-            handleExchange();
-        }
+            }
+        };
+
+        setupSession();
     }, [supabase.auth]);
 
     const handleSubmit = async (e: React.FormEvent) => {
