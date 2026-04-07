@@ -40,6 +40,48 @@ export default function EmpresasProfesionalesPage() {
                 </div>
             </section>
 
+            {/* Features & Value Proposition Section */}
+            <section className="px-6 pb-20 flex flex-col items-center justify-center">
+                <div className="max-w-3xl mx-auto text-center space-y-4 w-full">
+                    <p className="text-lg md:text-xl text-[var(--ag-sys-color-text)] font-medium">
+                        Cada día, miles de usuarios del sector de la ganadería y agricultura utilizan gratuitamente la app de Ruralpop para conectar, cerrar acuerdos y generar negocio.
+                    </p>
+                    <p className="text-lg md:text-xl text-[var(--ag-sys-color-text)] font-bold">
+                        Por eso, si eres una empresa del sector o profesional debes estar en Ruralpop.
+                    </p>
+                    
+                    <div className="pt-8">
+                        <h2 className="text-3xl font-black text-[var(--ag-sys-color-text)] mb-4">
+                            Vende más y haz crecer tu <span className="text-[var(--ag-sys-color-primary)]">negocio</span>
+                        </h2>
+                        
+                        <p className="text-lg text-[var(--ag-sys-color-text-muted)] leading-relaxed">
+                            Ruralpop se convierte en el punto de encuentro ideal donde tu marca puede llegar a nuevos clientes potenciales.
+                        </p>
+                        <p className="text-lg text-[var(--ag-sys-color-text-muted)] leading-relaxed mt-2">
+                            De forma directa, ágil y sin complicaciones. Para ellos y para ti.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="max-w-5xl mx-auto w-full mt-16">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-[var(--ag-sys-color-primary)]/5 p-8 rounded-3xl border border-[var(--ag-sys-color-primary)]/10 text-left">
+                            <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] mb-3">Visibilidad que convierte</h3>
+                            <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">Tus anuncios aparecen antes, se ven mejor y ocupan posiciones premium para atraer más clics y ventas.</p>
+                        </div>
+                        <div className="bg-[var(--ag-sys-color-primary)]/5 p-8 rounded-3xl border border-[var(--ag-sys-color-primary)]/10 text-left">
+                            <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] mb-3">Credibilidad profesional</h3>
+                            <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">Todos tus anuncios llevan un sello que transmite confianza y profesionalismo a tus compradores.</p>
+                        </div>
+                        <div className="bg-[var(--ag-sys-color-primary)]/5 p-8 rounded-3xl border border-[var(--ag-sys-color-primary)]/10 text-left">
+                            <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] mb-3">Gestión simplificada</h3>
+                            <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">Control total desde un solo panel: estadísticas detalladas, mensajes, oportunidades... todo a tu alcance.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Pricing Section (con el diseño original en Surface flotando sobre el Background gris/oscuro) */}
             <section className="px-6 pb-32 mt-4">
                 <div className="max-w-5xl mx-auto">
