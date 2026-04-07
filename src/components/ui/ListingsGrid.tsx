@@ -72,8 +72,20 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     const textQuery = searchParams.q as string;
     if (textQuery) {
-        const queryTerm = textQuery.trim().toLowerCase();
-        query = query.or(`title.ilike.%${queryTerm}%,description.ilike.%${queryTerm}%,location.ilike.%${queryTerm}%`);
+        const sanitizedQuery = textQuery.trim().toLowerCase();
+        
+        // Use regex to get words, ignoring extra spaces or hyphens.
+        const queryTerms = sanitizedQuery.split(/[\s\-]+/).filter(t => t.length > 2);
+        
+        if (queryTerms.length === 0) {
+            // Fallback for very short queries 
+            query = query.or(`title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%,location.ilike.%${sanitizedQuery}%`);
+        } else {
+            // Enforce that EVERY word must be present in title OR description OR location
+            queryTerms.forEach(term => {
+                query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`);
+            });
+        }
     }
 
     const priceMin = searchParams.price_min as string;
