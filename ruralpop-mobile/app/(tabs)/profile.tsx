@@ -13,6 +13,11 @@ export default function ProfileScreen() {
     if (isLoading) return null;
 
     async function handleSignOut() {
+        if (user?.id) {
+            // Eliminar el token de este dispositivo para que no reciba push notification del usuario tras cerrar sesión
+            await supabase.from('users').update({ expo_push_token: null }).eq('id', user.id);
+        }
+
         const { error } = await supabase.auth.signOut();
         if (error) {
             Alert.alert("Error al cerrar sesión", error.message);
