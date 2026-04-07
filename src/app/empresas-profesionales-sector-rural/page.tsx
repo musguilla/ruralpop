@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function EmpresasProfesionalesPage() {
     return (
-        <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
+        <div className="min-h-screen w-full bg-[var(--ag-sys-color-background)]">
             {/* Full-width Hero Image pegada al menú */}
             <div className="relative w-full h-[30vh] sm:h-[40vh] md:h-[50vh] lg:h-[60vh] max-h-[600px] mb-12">
                 <Image
