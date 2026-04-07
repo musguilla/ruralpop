@@ -53,7 +53,7 @@ export function Footer() {
                             Preguntas frecuentes
                         </Link>
                         <Link href="/empresas-profesionales-sector-rural" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                            Profesionales y empresas
+                            ¿Eres profesional?
                         </Link>
                     </div>
                     
