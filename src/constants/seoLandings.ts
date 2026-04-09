@@ -3,6 +3,7 @@ import { slugify } from "@/utils/seoUtils";
 export interface SeoLanding {
     title: string;
     slug: string;
+    subtitle?: string;
     category?: string;
     subcategory?: string;
     province?: string;
@@ -25,7 +26,7 @@ const rawLandings = [
     { title: "Ganadería en Extremadura", category: "ganaderia", province: "Cáceres" },
     { title: "Cerdos", category: "ganaderia", subcategory: "Porcino" },
     { title: "Vacas", category: "ganaderia", subcategory: "Bovino" },
-    { title: "Segunda mano de tractores", category: "maquinaria", searchQuery: "tractor" },
+    { title: "Segunda mano tractores", subtitle: "Vende y compra tractores de ocasión y seminuevos", category: "maquinaria", searchQuery: "tractor" },
     { title: "Ganado", category: "ganaderia" },
     { title: "Tractores segunda mano", category: "maquinaria", searchQuery: "tractor" },
     { title: "Comprar maquinaria agricola", category: "maquinaria" },

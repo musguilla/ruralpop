@@ -104,7 +104,7 @@ export default async function SeoLandingPage(props: {
 
             <div className="mb-10 text-center sm:text-left mt-6">
                 <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] mb-3">{landing.title}</h1>
-                <p className="text-[var(--ag-sys-color-text-muted)] text-lg">Encuentra y compara las mejores ofertas de nuestro mercado agrícola.</p>
+                <p className="text-[var(--ag-sys-color-text-muted)] text-lg">{landing.subtitle || "Encuentra y compara las mejores ofertas de nuestro mercado agrícola."}</p>
             </div>
 
             <Suspense fallback={<GridSkeleton />}>
@@ -160,7 +160,7 @@ export default async function SeoLandingPage(props: {
                 <div className="mt-10 px-2 sm:px-4 flex flex-col sm:flex-row items-center sm:justify-start gap-4 text-center sm:text-left">
                     <span className="font-bold text-[var(--ag-sys-color-text)]">Otros usuarios han buscado:</span>
                     <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                        <a href="https://www.ruralpop.com/s/segunda-mano-de-tractores" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                        <a href="https://www.ruralpop.com/s/segunda-mano-tractores" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
                             Segunda mano tractores
                         </a>
                         <a href="https://www.ruralpop.com/s/comprar-maquinaria-agricola" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
