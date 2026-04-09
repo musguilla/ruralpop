@@ -114,14 +114,14 @@ export default function TractoresIndexPage() {
                 <div className="mt-20 bg-gradient-to-br from-[var(--ag-sys-color-surface)] to-green-50/50 rounded-[2rem] p-8 sm:p-12 border border-[var(--ag-sys-color-border)] flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
                     <div className="max-w-xl text-center md:text-left">
                         <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-2">
-                            ¿Buscas maquinaria de segunda mano?
+                            ¿Buscas tractores de segunda mano?
                         </h3>
                         <p className="text-[var(--ag-sys-color-text-muted)]">
                             Además de catálogos técnicos, en Ruralpop encontrarás miles de anuncios de tractores y maquinaria agrícola de ocasión cerca de ti.
                         </p>
                     </div>
                     <Link 
-                        href="https://www.ruralpop.com/anuncios-maquinaria" 
+                        href="/s/tractores-segunda-mano" 
                         className="px-8 py-4 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-md shadow-[var(--ag-sys-color-primary)]/20 whitespace-nowrap"
                     >
                         Buscar Tractores
