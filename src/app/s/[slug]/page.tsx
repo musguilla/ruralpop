@@ -78,8 +78,26 @@ export default async function SeoLandingPage(props: {
         }
     }
 
+    const faqSchema = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": landing.faqs.map((faq) => ({
+            "@type": "Question",
+            "name": faq.question,
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer
+            }
+        }))
+    };
+
     return (
         <div className="container mx-auto px-4 pt-0 pb-16 sm:py-8 min-h-screen">
+            {/* Inject JSON-LD FAQ Schema */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+            />
             <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
                 <ActiveSearchBar />
             </Suspense>
@@ -99,6 +117,22 @@ export default async function SeoLandingPage(props: {
                 <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed text-lg mb-12">
                     {landing.description}
                 </p>
+
+                {/* Custom Content for Tractores */}
+                {params.slug === "tractores-segunda-mano" && (
+                    <div className="mb-12 text-[var(--ag-sys-color-text)]">
+                        <h2 className="text-2xl font-extrabold mb-4">Comprar y vender animales tractores de segunda mano</h2>
+                        <p className="text-[var(--ag-sys-color-text-muted)] text-lg mb-4 leading-relaxed">
+                            Comprar y vender animales y <strong className="font-bold text-[var(--ag-sys-color-text)]">tractores de segunda mano</strong> nunca había sido tan fácil como hoy en día. Cada vez más profesionales del sector rural, ganaderos y agricultores recurren a plataformas online para encontrar oportunidades reales cerca de su zona, ahorrar costes y dar salida a sus productos o maquinaria de forma rápida.
+                        </p>
+                        <p className="text-[var(--ag-sys-color-text-muted)] text-lg mb-4 leading-relaxed">
+                            Si estás pensando en comprar animales o tractores de segunda mano, es importante contar con un espacio donde la oferta sea variada y actualizada, con vendedores reales y opciones que se adapten a tus necesidades. En Ruralpop puedes comparar desde tractores hasta maquinaria agrícola, puedes comparar, negociar directamente y encontrar precios mucho más competitivos que en el mercado tradicional.
+                        </p>
+                        <p className="text-[var(--ag-sys-color-text-muted)] text-lg leading-relaxed">
+                            Por otro lado, si lo que buscas es vender, este tipo de canales te permiten llegar a miles de personas interesadas en el entorno rural y la búsqueda de maquinaria o tractores. Publicar un anuncio es sencillo y en poco tiempo puedes empezar a recibir contactos de potenciales compradores, sin intermediarios y con total libertad para gestionar tus ventas.
+                        </p>
+                    </div>
+                )}
 
                 <h3 className="text-xl font-extrabold text-[var(--ag-sys-color-text)] mb-8">Preguntas frecuentes</h3>
                 <div className="space-y-4">
@@ -120,6 +154,21 @@ export default async function SeoLandingPage(props: {
                     ))}
                 </div>
             </div>
+
+            {/* Related Searches for Tractores */}
+            {params.slug === "tractores-segunda-mano" && (
+                <div className="mt-10 px-2 sm:px-4 flex flex-col sm:flex-row items-center sm:justify-start gap-4 text-center sm:text-left">
+                    <span className="font-bold text-[var(--ag-sys-color-text)]">Otros usuarios han buscado:</span>
+                    <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                        <a href="https://www.ruralpop.com/s/segunda-mano-de-tractores" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                            Segunda mano tractores
+                        </a>
+                        <a href="https://www.ruralpop.com/s/comprar-maquinaria-agricola" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                            Comprar maquinaria agrícola
+                        </a>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

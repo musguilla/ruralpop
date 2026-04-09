@@ -66,7 +66,7 @@ export const SEO_LANDINGS: SeoLanding[] = rawLandings.map((item) => ({
             answer: "Totalmente seguro. No tienes que facilitar ningún dato tuyo personal si no quieres. Al configurar tu perfil solo introduces tu nombre, email y contraseña. Si luego conectas con otro miembro de la comunidad y quieres facilitarle más datos a través del chat será una decisión tuya."
         },
         {
-            question: "¿Eres un profesional o empresa del sector?",
+            question: `¿Eres un profesional o empresa del sector${item.category === "maquinaria" ? " de la maquinaria agrícola" : ""}?`,
             answer: "Para ti como profesional tenemos diferentes espacios donde ofrecer tus productos y servicios a los ganaderos. Obtendrás la visibilidad que necesitas en el mejor lugar."
         },
         {
@@ -76,7 +76,11 @@ export const SEO_LANDINGS: SeoLanding[] = rawLandings.map((item) => ({
         {
             question: `¿Es seguro comprar o vender en la categoría de ${item.title.toLowerCase()}?`,
             answer: `Sí, verificamos los perfiles y monitorizamos el contenido. Siempre recomendamos contactar al vendedor a través del sistema de mensajería o por teléfono y organizar una visita presencial antes de realizar cualquier pago relativo a ${item.title.toLowerCase()}.`
-        }
+        },
+        ...(item.title.toLowerCase().includes('tractor') ? [{
+            question: "¿Cómo anuncio mi tractor en Ruralpop?",
+            answer: "Anunciar tu tractor en Ruralpop es gratis y muy rápido. Solo tienes que descargar la app, registrarte en menos de un minuto y pulsar en el botón de publicar anuncio. Añade buenas fotos, una descripción detallada de tu tractor (marca, modelo, horas, año) y fija el precio. ¡En seguida empezarás a recibir mensajes de compradores interesados!"
+        }] : [])
     ]
 }));
 
