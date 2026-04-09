@@ -71,10 +71,21 @@ export default async function SeoLandingPage(props: {
     if (landing.subcategory) combinedParams.subcategory = landing.subcategory;
 
     if (landing.province) {
-        // Find the province ID
-        const prov = LOCATIONS.find(l => l.name === landing.province && l.type === 'province');
-        if (prov) {
-            combinedParams.province_id = prov.id;
+        // Fallback temporal para llenar las nuevas landings con el inventario completo de tractores
+        const isTemporaryFallback = [
+            "tractores-segunda-mano-asturias", 
+            "tractores-segunda-mano-galicia", 
+            "tractores-usados-madrid", 
+            "tractor-segunda-mano-bilbao", 
+            "tractor-usado-valencia"
+        ].includes(params.slug);
+
+        if (!isTemporaryFallback) {
+            // Find the province ID
+            const prov = LOCATIONS.find(l => l.name === landing.province && l.type === 'province');
+            if (prov) {
+                combinedParams.province_id = prov.id;
+            }
         }
     }
 
