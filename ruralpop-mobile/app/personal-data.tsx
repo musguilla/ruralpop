@@ -194,8 +194,9 @@ export default function PersonalDataScreen() {
                     <TouchableOpacity onPress={handlePickAvatar} className="relative mb-2 mt-4">
                         {avatarUrl ? (
                             <Image
-                                source={{ uri: getOptimizedImageUrl(avatarUrl, { width: 150 }) || undefined }}
-                                className="w-24 h-24 rounded-full border border-gray-200"
+                                source={{ uri: avatarUrl }}
+                                style={{ width: 96, height: 96, borderRadius: 48 }}
+                                className="border border-gray-200"
                                 contentFit="cover"
                             />
                         ) : (

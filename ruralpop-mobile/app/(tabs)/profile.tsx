@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { getOptimizedImageUrl } from "../../src/lib/image-optimization";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
-import { User, LogOut, Heart, MessageCircle, Briefcase } from "lucide-react-native";
+import { User, LogOut, ChevronRight, Briefcase } from "lucide-react-native";
 import { supabase } from "../../src/lib/supabase";
 
 export default function ProfileScreen() {
@@ -88,85 +88,94 @@ export default function ProfileScreen() {
                 <Text className="text-2xl font-extrabold text-text">Mi Perfil</Text>
             </View>
 
-            <ScrollView className="flex-1 px-6 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
-
-                <View className="bg-surface-muted p-6 rounded-2xl border border-gray-100 mb-8 items-center">
+            <ScrollView className="flex-1 bg-gray-50 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
+                <View className="px-6 items-center mb-8">
                     {user?.user_metadata?.avatar_url ? (
                         <Image
-                            source={{ uri: getOptimizedImageUrl(user.user_metadata.avatar_url, { width: 150 }) || undefined }}
-                            className="w-20 h-20 rounded-full mb-4 border border-gray-200"
+                            source={{ uri: user.user_metadata.avatar_url }}
+                            style={{ width: 84, height: 84, borderRadius: 42 }}
+                            className="mb-4 border border-gray-200 bg-white"
                             contentFit="cover"
                         />
                     ) : (
-                        <View className="w-20 h-20 bg-primary-muted rounded-full items-center justify-center mb-4">
-                            <User className="text-primary" size={40} />
+                        <View className="w-[84px] h-[84px] bg-primary-muted rounded-full items-center justify-center mb-4 border border-primary/10">
+                            <Text className="text-[32px] font-bold text-primary uppercase">
+                                {(user?.user_metadata?.full_name || 'U').charAt(0)}
+                            </Text>
                         </View>
                     )}
                     <Text className="text-xl font-bold text-text mb-1">
                         {user?.user_metadata?.full_name || 'Usuario Ruralpop'}
                     </Text>
-                    <Text className="text-text-muted mb-4">{user?.email}</Text>
+                    <Text className="text-text-muted">{user?.email}</Text>
                 </View>
 
-                <View className="mb-8">
+                {/* Subtitle / Separador */}
+                <View className="bg-white border-t border-gray-100">
                     <TouchableOpacity
                         onPress={() => router.push('/my-listings')}
-                        className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
                     >
-                        <Text className="text-base font-bold text-text">Mis Anuncios</Text>
-                        <Text className="text-primary font-bold">→</Text>
+                        <Text className="text-[17px] text-gray-800">Mis Anuncios</Text>
+                        <ChevronRight color="#9ca3af" size={20} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => router.push('/personal-data')}
-                        className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
                     >
-                        <Text className="text-base font-bold text-text">Mi cuenta</Text>
-                        <Text className="text-primary font-bold">→</Text>
+                        <Text className="text-[17px] text-gray-800">Mi cuenta</Text>
+                        <ChevronRight color="#9ca3af" size={20} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => router.push('/(tabs)/favorites')}
-                        className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
                     >
-                        <Text className="text-base font-bold text-text">Favoritos</Text>
-                        <Text className="text-primary font-bold">→</Text>
+                        <Text className="text-[17px] text-gray-800">Favoritos</Text>
+                        <ChevronRight color="#9ca3af" size={20} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => router.push('/(tabs)/messages')}
-                        className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4"
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
                     >
-                        <Text className="text-base font-bold text-text">Mensajes</Text>
-                        <Text className="text-primary font-bold">→</Text>
+                        <Text className="text-[17px] text-gray-800">Mensajes</Text>
+                        <ChevronRight color="#9ca3af" size={20} />
                     </TouchableOpacity>
+                </View>
 
-                    <View className="bg-white border border-gray-100 p-4 rounded-xl flex-row justify-between items-center shadow-sm mb-4 opacity-70">
-                        <View className="flex-col">
-                            <View className="bg-blue-100 self-start px-2 py-0.5 rounded-full mb-1">
-                                <Text className="text-[10px] uppercase font-bold text-blue-700">Próximamente</Text>
+                <View className="h-3 w-full bg-gray-50" />
+
+                <View className="bg-white border-y border-gray-100">
+                    <View className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100 opacity-70">
+                        <View className="flex-row items-center flex-1 pr-4">
+                            <Text className="text-[17px] text-gray-800 mr-3 shrink-0">¿Eres profesional?</Text>
+                            <View className="bg-blue-100 px-2 py-1 rounded-full shrink-0">
+                                <Text className="text-[10px] uppercase font-bold text-blue-700 tracking-wider">Próximamente</Text>
                             </View>
-                            <Text className="text-base font-bold text-text">¿Eres profesional?</Text>
                         </View>
                         <Briefcase color="#9ca3af" size={20} />
                     </View>
 
                     <TouchableOpacity
                         onPress={handleDeleteAccount}
-                        className="bg-white border border-red-200 p-4 rounded-xl flex-row justify-between items-center shadow-sm"
+                        className="flex-row justify-between items-center px-6 py-5"
                     >
-                        <Text className="text-base font-bold text-red-600">Eliminar cuenta</Text>
-                        <Text className="text-red-500 font-bold">×</Text>
+                        <Text className="text-[17px] font-medium text-red-600">Eliminar cuenta</Text>
+                        <ChevronRight color="#fca5a5" size={20} />
                     </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity
-                    onPress={handleSignOut}
-                    className="flex-row items-center justify-center bg-red-50 py-4 rounded-xl border border-red-100"
-                >
-                    <LogOut className="text-red-500 mr-2" size={20} />
-                    <Text className="text-red-600 font-bold text-base">Cerrar Sesión</Text>
-                </TouchableOpacity>
+                <View className="px-6 mt-10 mb-6">
+                    <TouchableOpacity
+                        onPress={handleSignOut}
+                        className="flex-row items-center justify-center bg-white py-4 rounded-xl border border-gray-200 shadow-sm"
+                    >
+                        <LogOut className="text-gray-600 mr-2" size={20} />
+                        <Text className="text-gray-800 font-bold text-base">Cerrar Sesión</Text>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
         </SafeAreaView>
     );

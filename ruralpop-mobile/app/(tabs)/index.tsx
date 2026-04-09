@@ -70,9 +70,11 @@ export default function Home() {
                   category,
                   description,
                   user_id,
-                  status
+                  status,
+                  is_featured
                 `)
                 .eq('status', 'active')
+                .order('is_featured', { ascending: false, nullsFirst: false })
                 .order('created_at', { ascending: false })
                 .range(from, to);
 
@@ -146,7 +148,7 @@ export default function Home() {
                     keyExtractor={(item) => item.id}
                     numColumns={numColumns}
                     renderItem={({ item }) => (
-                        <View className="flex-1 p-2" style={{ maxWidth: `${100 / numColumns}%` }}>
+                        <View className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }}>
                             <ListingCard listing={item} />
                         </View>
                     )}

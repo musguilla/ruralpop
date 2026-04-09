@@ -229,7 +229,7 @@ export default async function BrandCatalogPage(props: Props) {
                 {BRAND_SEO_TEXT[brandSlug] && (
                     <div className="mt-8 mb-12 py-8 border-t border-[var(--ag-sys-color-border)]">
                         <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-3">
-                            Sobre los tractores {brandData.name}
+                            Preguntas frecuentes sobre los tractores {brandData.name}
                         </h2>
                         <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">
                             {BRAND_SEO_TEXT[brandSlug]}

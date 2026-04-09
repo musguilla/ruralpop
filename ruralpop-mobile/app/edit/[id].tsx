@@ -217,7 +217,7 @@ export default function EditListingScreen() {
                 .update({
                     title,
                     description,
-                    price: parseFloat(price),
+                    price: parseFloat(price.replace(',', '.')),
                     price_type: priceType,
                     location: fullLocationString,
                     province_id: provinceNumericId,

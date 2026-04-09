@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, Dimensions, RefreshControl, Modal } from 'react-native';
-import { Search, MapPin, List, SlidersHorizontal, ArrowUpDown, ChevronLeft, X, Check } from 'lucide-react-native';
+import { Search, MapPin, List, SlidersHorizontal, ArrowUpDown, ChevronLeft, ArrowLeft, X, Check } from 'lucide-react-native';
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
 import { ListingCard } from '../../src/components/ui/ListingCard';
@@ -69,7 +69,8 @@ export default function SearchScreen() {
           category,
           description,
           user_id,
-          status
+          status,
+          is_featured
         `)
                 .eq('status', 'active');
 
@@ -100,6 +101,8 @@ export default function SearchScreen() {
 
             const from = pageIndex * 30;
             const to = from + 29;
+
+            supabaseQuery = supabaseQuery.order('is_featured', { ascending: false, nullsFirst: false });
 
             if (sortBy === 'newest') {
                 supabaseQuery = supabaseQuery.order('created_at', { ascending: false });
@@ -203,22 +206,23 @@ export default function SearchScreen() {
     return (
         <SafeAreaView className="flex-1 bg-surface-muted">
             {/* Header Search Area */}
-            <View className="bg-white px-4 pt-2 pb-4 border-b border-gray-100 z-10">
+            <View className="bg-white px-4 pt-2 pb-4 border-b border-gray-200 z-10">
 
                 {/* Main Input with Back Button */}
                 <View className="flex-row items-center mb-4 mt-2">
                     <TouchableOpacity
                         onPress={() => router.push('/(tabs)')}
-                        className="mr-1 p-1 rounded-full active:bg-gray-100"
+                        className="mr-3 p-1 rounded-full active:bg-gray-100"
                     >
-                        <ChevronLeft color="#1f2937" size={32} />
+                        <ArrowLeft color="#1f2937" size={26} strokeWidth={2.5} />
                     </TouchableOpacity>
-                    <View className="flex-1 flex-row items-center bg-gray-50 border border-gray-300 rounded-full h-12 px-4 shadow-sm">
-                        <Search color="#9ca3af" size={20} />
+                    <View className="flex-1 flex-row items-center bg-[#f8f9fa] border border-gray-400 rounded-full h-[46px] px-4">
+                        <Search color="#374151" size={20} strokeWidth={2.5} />
                         <TextInput
-                            className="flex-1 text-base text-text"
+                            className="flex-1 ml-2 text-base text-gray-900 font-medium"
                             style={{ paddingVertical: 0, height: '100%' }}
                             placeholder="Buscar tractores, vacas, aperos..."
+                            placeholderTextColor="#9ca3af"
                             value={query}
                             onChangeText={setQuery}
                             onSubmitEditing={handleSearchSubmit}
@@ -230,57 +234,49 @@ export default function SearchScreen() {
                                     setQuery('');
                                     setActiveQuery('');
                                 }}
-                                className="ml-2 bg-gray-300 rounded-full w-6 h-6 items-center justify-center shadow-sm"
+                                className="ml-2 bg-[#4b5563] rounded-full w-[22px] h-[22px] items-center justify-center"
                             >
-                                <X color="#374151" size={14} strokeWidth={3} />
+                                <X color="white" size={14} strokeWidth={3} />
                             </TouchableOpacity>
                         )}
                     </View>
                 </View>
 
-                {/* Filter Chips Container */}
-                <View className="flex-row items-center justify-between" style={{ gap: 8 }}>
+                {/* Filter & Sort Row */}
+                <View className="flex-row items-center py-2 mt-1">
                     {/* Filtros Button */}
                     <TouchableOpacity
                         onPress={() => setIsFiltersModalOpen(true)}
-                        className={`flex-row items-center justify-center px-3 h-10 rounded-full border ${priceMin || priceMax ? 'bg-primary-muted border-primary/50' : 'border-gray-400 bg-white'}`}
+                        className="flex-row items-center justify-center py-2"
+                        style={{ flex: 1 }}
                         activeOpacity={0.7}
                     >
-                        <SlidersHorizontal color={priceMin || priceMax ? "#059669" : "#111827"} className="mr-1.5" size={16} />
-                        <Text className={`text-[14px] font-medium ${priceMin || priceMax ? "text-primary-hover" : "text-gray-800"}`}>Filtros</Text>
+                        <SlidersHorizontal color="#1f2937" size={22} strokeWidth={2.5} />
+                        <View className="w-2" />
+                        <Text className="text-[17px] font-bold text-[#1f2937]">Filtros</Text>
+                        {(!!categoryId || !!locationId || !!priceMin || !!priceMax || sellerType !== 'Todos') && (
+                            <View className="bg-[#1f2937] rounded-full w-[22px] h-[22px] items-center justify-center ml-2">
+                                <Text className="text-white text-xs font-bold">
+                                    {(categoryId ? 1 : 0) + (locationId ? 1 : 0) + (priceMin || priceMax ? 1 : 0) + (sellerType !== 'Todos' ? 1 : 0)}
+                                </Text>
+                            </View>
+                        )}
                     </TouchableOpacity>
 
-                    {/* Category Scroll/Chip */}
-                    <TouchableOpacity
-                        onPress={() => setIsCategoryModalOpen(true)}
-                        className={`flex-[4] flex-row items-center px-4 h-10 rounded-full border ${categoryId ? 'bg-primary-muted border-primary/50' : 'bg-white border-gray-400'}`}
-                    >
-                        <Text className={`text-[14px] font-medium ${categoryId ? 'text-primary-hover' : 'text-gray-800'}`} numberOfLines={1}>
-                            {categoryId ? getCategoryLabel() : 'Todas las categorías'}
-                        </Text>
-                    </TouchableOpacity>
+                    {/* Separator */}
+                    <View className="w-[1px] h-[24px] bg-gray-300 mx-2" />
 
-                    {/* Location Chip */}
-                    <TouchableOpacity
-                        onPress={() => setIsLocationModalOpen(true)}
-                        className={`flex-[3] flex-row items-center px-4 h-10 rounded-full border ${locationId ? 'bg-primary-muted border-primary/50' : 'bg-white border-gray-400'}`}
-                    >
-                        <Text className={`text-[14px] font-medium ${locationId ? 'text-primary-hover' : 'text-gray-800'}`} numberOfLines={1}>
-                            {locationId ? getLocationLabel() : 'Toda España'}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Sort Button */}
-                <View className="flex-row justify-between items-center mt-4 px-1">
-                    <Text className="text-gray-500 font-medium">{listings.length} resultados</Text>
+                    {/* Sort Button */}
                     <TouchableOpacity
                         onPress={() => setIsSortModalOpen(true)}
-                        className="flex-row items-center bg-white border border-gray-200 rounded-full px-3 py-1.5"
+                        className="flex-row items-center justify-center py-2"
+                        style={{ flex: 1 }}
+                        activeOpacity={0.7}
                     >
-                        <ArrowUpDown color="#111827" className="mr-1.5" size={14} />
-                        <Text className="text-sm font-bold text-gray-700">
-                            {sortOptions.find(opt => opt.id === sortBy)?.label || 'Relevancia'}
+                        <ArrowUpDown color="#1f2937" size={20} strokeWidth={2.5} />
+                        <View className="w-2" />
+                        <Text className="text-[17px] font-bold text-[#1f2937]" numberOfLines={1}>
+                            {sortBy === 'newest' ? 'Más recientes' : (sortOptions.find(opt => opt.id === sortBy)?.label || 'Más recientes')}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -298,8 +294,8 @@ export default function SearchScreen() {
                     keyExtractor={(item) => item.id}
                     numColumns={numColumns}
                     renderItem={({ item }) => (
-                        <View className="p-2" style={{ flex: 1, maxWidth: numColumns === 1 ? '100%' : `${100 / numColumns}%` }}>
-                            <ListingCard listing={item} />
+                        <View className="p-1" style={{ flex: 1, maxWidth: numColumns === 1 ? '100%' : `${100 / numColumns}%` }}>
+                            <ListingCard listing={item} isSingleColumn={numColumns === 1} />
                         </View>
                     )}
                     contentContainerStyle={{ padding: 8, paddingBottom: 40 }}

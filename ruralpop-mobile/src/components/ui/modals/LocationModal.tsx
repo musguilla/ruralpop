@@ -44,8 +44,8 @@ export function LocationModal({ visible, onClose, selectedLocation, onSelect }: 
                 </View>
 
                 {/* Search Bar */}
-                <View className="px-6 py-4 border-b border-gray-50">
-                    <View className="flex-row items-center bg-white border border-primary rounded-xl h-12 px-4 shadow-sm">
+                <View className="px-6 pt-4 pb-6 border-b border-gray-100">
+                    <View className="flex-row items-center bg-white border border-gray-300 focus:border-primary rounded-xl h-12 px-4">
                         <Search color="#10b981" size={20} />
                         <TextInput
                             className="flex-1 ml-3 text-base text-gray-800"
@@ -58,7 +58,7 @@ export function LocationModal({ visible, onClose, selectedLocation, onSelect }: 
                     </View>
                 </View>
 
-                <ScrollView className="flex-1 px-6 pt-4" keyboardShouldPersistTaps="handled">
+                <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
                     {/* Toda España */}
                     {(!searchQuery || "toda españa".includes(searchQuery.toLowerCase())) && (
                         <TouchableOpacity
@@ -80,14 +80,15 @@ export function LocationModal({ visible, onClose, selectedLocation, onSelect }: 
                     {/* Restricted to provinces for simplicity in this view, as per web */}
                     {activeList
                         .filter((loc: any) => loc.type === 'province')
-                        .map((prov: any) => {
+                        .map((prov: any, index: number, array: any[]) => {
                             const isSelected = selectedLocation === prov.id || selectedLocation === prov.name;
+                            const isLast = index === array.length - 1;
 
                             return (
                                 <TouchableOpacity
                                     key={prov.id}
                                     onPress={() => handleSelect(prov.name)}
-                                    className="flex-row items-center justify-between py-4 mb-2"
+                                    className={`flex-row items-center justify-between py-4 ${!isLast ? 'border-b border-gray-100' : ''}`}
                                 >
                                     <View className="flex-row items-center">
                                         <Text className={`text-[17px] ${isSelected ? 'font-bold text-primary' : 'text-gray-800'}`}>

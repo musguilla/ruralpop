@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { Image } from 'expo-image';
+import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { useAuth } from '../../src/contexts/AuthContext';
@@ -23,6 +25,7 @@ export default function ChatScreen() {
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
     const [otherUserName, setOtherUserName] = useState<string>('Usuario');
+    const [otherUserAvatar, setOtherUserAvatar] = useState<string | null>(null);
     const flatListRef = useRef<FlatList>(null);
 
     useEffect(() => {
@@ -74,8 +77,11 @@ export default function ChatScreen() {
 
     async function fetchOtherUser() {
         if (!otherUserId) return;
-        const { data } = await supabase.from('users').select('name').eq('id', otherUserId).single();
-        if (data) setOtherUserName(data.name || 'Usuario');
+        const { data } = await supabase.from('users').select('name, avatar_url').eq('id', otherUserId).single();
+        if (data) {
+            setOtherUserName(data.name || 'Usuario');
+            setOtherUserAvatar(data.avatar_url);
+        }
     }
 
     async function markAsRead() {
@@ -193,6 +199,13 @@ export default function ChatScreen() {
                 <TouchableOpacity onPress={() => router.back()} className="mr-3">
                     <ChevronLeft color="#374151" size={28} />
                 </TouchableOpacity>
+                <View className="w-10 h-10 rounded-full bg-primary-muted items-center justify-center mr-3 overflow-hidden border border-gray-100">
+                    {otherUserAvatar ? (
+                        <Image source={{ uri: getOptimizedImageUrl(otherUserAvatar, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                    ) : (
+                        <Text className="text-lg font-bold text-primary uppercase">{otherUserName.charAt(0)}</Text>
+                    )}
+                </View>
                 <View className="flex-1">
                     <Text className="text-lg font-bold text-text truncate max-w-[85%]">{otherUserName}</Text>
                 </View>

@@ -113,7 +113,7 @@ export default async function SeoLandingPage(props: {
 
             {/* SEO Content & FAQs (Full Width to match grid) */}
             <div className="w-full mt-24 bg-[var(--ag-sys-color-surface)] p-6 sm:p-10 rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm">
-                <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">Sobre {landing.title}</h2>
+                <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">Preguntas frecuentes sobre {landing.title.toLowerCase()}</h2>
                 <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed text-lg mb-12">
                     {landing.description}
                 </p>

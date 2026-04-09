@@ -131,9 +131,6 @@ export default function MessagesScreen() {
         <SafeAreaView className="flex-1 bg-surface-muted">
             <View className="px-4 py-4 bg-white border-b border-gray-100 flex-row justify-between items-center">
                 <Text className="text-2xl font-extrabold text-text">Mensajes</Text>
-                <TouchableOpacity onPress={fetchConversations}>
-                    <Search color="#6b7280" size={24} />
-                </TouchableOpacity>
             </View>
 
             {fetching ? (
@@ -154,9 +151,9 @@ export default function MessagesScreen() {
                         >
                             <View className="w-14 h-14 bg-primary-muted rounded-full items-center justify-center mr-4 border border-gray-100 overflow-hidden">
                                 {item.other_user_avatar ? (
-                                    <Image source={{ uri: getOptimizedImageUrl(item.other_user_avatar, { width: 100 }) || undefined }} className="w-full h-full" contentFit="cover" />
+                                    <Image source={{ uri: getOptimizedImageUrl(item.other_user_avatar, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 ) : (
-                                    <UserIcon className="text-primary" size={24} />
+                                    <Text className="text-xl font-bold text-primary uppercase">{item.other_user_name.charAt(0)}</Text>
                                 )}
                             </View>
                             <View className="flex-1">

@@ -71,8 +71,8 @@ export function MunicipalityModal({ visible, onClose, provinceId, selectedMunici
                 </View>
 
                 {/* Search Bar */}
-                <View className="px-6 py-4 border-b border-gray-50">
-                    <View className="flex-row items-center bg-white border border-primary rounded-xl h-12 px-4 shadow-sm">
+                <View className="px-6 pt-4 pb-6 border-b border-gray-100">
+                    <View className="flex-row items-center bg-white border border-gray-300 focus:border-primary rounded-xl h-12 px-4">
                         <Search color="#10b981" size={20} />
                         <TextInput
                             className="flex-1 ml-3 text-base text-gray-800"
@@ -91,7 +91,7 @@ export function MunicipalityModal({ visible, onClose, provinceId, selectedMunici
                         <Text className="text-gray-500 mt-4">Cargando localidades...</Text>
                     </View>
                 ) : (
-                    <ScrollView className="flex-1 px-6 pt-4" keyboardShouldPersistTaps="handled">
+                    <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
                         {/* Cualquier localidad */}
                         {(!searchQuery || "cualquier localidad".includes(searchQuery.toLowerCase())) && (
                             <TouchableOpacity
@@ -110,14 +110,15 @@ export function MunicipalityModal({ visible, onClose, provinceId, selectedMunici
                             </TouchableOpacity>
                         )}
 
-                        {activeList.map((mun) => {
+                        {activeList.map((mun, index, array) => {
                             const isSelected = selectedMunicipality?.id === mun.id;
+                            const isLast = index === array.length - 1;
 
                             return (
                                 <TouchableOpacity
                                     key={mun.id}
                                     onPress={() => handleSelect(mun)}
-                                    className="flex-row items-center justify-between py-4 mb-2"
+                                    className={`flex-row items-center justify-between py-4 ${!isLast ? 'border-b border-gray-100' : ''}`}
                                 >
                                     <View className="flex-row items-center">
                                         <Text className={`text-[17px] ${isSelected ? 'font-bold text-primary' : 'text-gray-800'}`}>

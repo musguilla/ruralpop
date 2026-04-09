@@ -109,7 +109,7 @@ export default function FavoritesScreen() {
                     keyExtractor={(item) => item.id}
                     numColumns={numColumns}
                     renderItem={({ item }) => (
-                        <View className="p-2" style={{ flex: 1, maxWidth: `${100 / numColumns}%` }}>
+                        <View className="p-1" style={{ flex: 1, maxWidth: `${100 / numColumns}%` }}>
                             <ListingCard listing={item} />
                         </View>
                     )}

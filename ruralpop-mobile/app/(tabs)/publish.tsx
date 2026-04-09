@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert, SafeAreaView } from 'react-native';
 import { Image } from 'expo-image';
 import { useAuth } from '../../src/contexts/AuthContext';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Key, Camera, X, CheckCircle2, ChevronDown, Info } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -35,15 +35,17 @@ export default function PublishScreen() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    React.useEffect(() => {
-        if (user?.id && session) {
-            async function fetchPhone() {
-                const { data } = await supabase.from('users').select('phone').eq('id', user?.id).single();
-                if (data?.phone) setPhone(data.phone);
+    useFocusEffect(
+        React.useCallback(() => {
+            if (user?.id && session) {
+                async function fetchPhone() {
+                    const { data } = await supabase.from('users').select('phone').eq('id', user?.id).single();
+                    if (data?.phone) setPhone(data.phone);
+                }
+                fetchPhone();
             }
-            fetchPhone();
-        }
-    }, [user, session]);
+        }, [user?.id, session])
+    );
 
     if (isLoading) return null;
 
@@ -180,7 +182,7 @@ export default function PublishScreen() {
                 .insert({
                     title,
                     description,
-                    price: parseFloat(price),
+                    price: parseFloat(price.replace(',', '.')),
                     price_type: priceType,
                     location: fullLocationString,
                     province_id: provinceNumericId,
@@ -242,7 +244,7 @@ export default function PublishScreen() {
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
                         {images.map((uri, index) => (
                             <View key={index} className="relative w-24 h-24 rounded-xl overflow-hidden mr-3 border border-gray-200">
-                                <Image source={{ uri }} className="w-full h-full" contentFit="cover" />
+                                <Image source={{ uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 <TouchableOpacity
                                     onPress={() => removeImage(index)}
                                     className="absolute top-1 right-1 bg-black/50 rounded-full p-1"
@@ -264,8 +266,8 @@ export default function PublishScreen() {
                     </ScrollView>
                 </View>
 
-                <View className="space-y-4">
-                    <View>
+                <View>
+                    <View className="mb-6">
                         <Text className="text-sm font-bold text-text mb-2">Título del anuncio *</Text>
                         <TextInput
                             value={title}
@@ -275,7 +277,7 @@ export default function PublishScreen() {
                         />
                     </View>
 
-                    <View>
+                    <View className="mb-6">
                         <Text className="text-sm font-bold text-text mb-2">Categoría y Subcategoría *</Text>
                         <TouchableOpacity
                             onPress={() => setIsCategoryModalOpen(true)}
@@ -288,7 +290,7 @@ export default function PublishScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    <View>
+                    <View className="mb-6">
                         <Text className="text-sm font-bold text-text mb-2">Descripción detallada *</Text>
                         <TextInput
                             value={description}
@@ -301,7 +303,7 @@ export default function PublishScreen() {
                         />
                     </View>
 
-                    <View className="flex-row space-x-3">
+                    <View className="flex-row space-x-3 mb-6">
                         <View className="flex-[0.8]">
                             <Text className="text-sm font-bold text-text mb-2">Precio (€) *</Text>
                             <TextInput
@@ -330,7 +332,7 @@ export default function PublishScreen() {
                         </View>
                     </View>
 
-                    <View>
+                    <View className="mb-6">
                         <Text className="text-sm font-bold text-text mb-2">Provincia *</Text>
                         <TouchableOpacity
                             onPress={() => setIsLocationModalOpen(true)}
@@ -343,7 +345,7 @@ export default function PublishScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    <View>
+                    <View className="mb-6">
                         <Text className="text-sm font-bold text-text mb-2">Localidad</Text>
                         <TouchableOpacity
                             onPress={() => locationId ? setIsMunicipalityModalOpen(true) : Alert.alert('Aviso', 'Selecciona primero una provincia')}
@@ -356,7 +358,7 @@ export default function PublishScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    <View>
+                    <View className="mb-6">
                         <Text className="text-sm font-bold text-text mb-2">Teléfono de contacto</Text>
                         <TextInput
                             value={phone}
@@ -365,9 +367,6 @@ export default function PublishScreen() {
                             keyboardType="phone-pad"
                             className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text"
                         />
-                        <Text className="text-xs text-text-muted mt-2">
-                            Al publicar, este número se guardará en tu perfil para futuros anuncios.
-                        </Text>
                     </View>
 
                 </View>

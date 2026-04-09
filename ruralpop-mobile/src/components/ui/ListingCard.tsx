@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import { Link, useRouter } from 'expo-router';
-import { MapPin, Heart, ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react-native';
+import { MapPin, Heart, ChevronLeft, ChevronRight, ImageIcon, Crown } from 'lucide-react-native';
 import { Listing } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
 import { useFavorites } from '../../contexts/FavoritesContext';
 import { getOptimizedImageUrl } from '../../lib/image-optimization';
+import { formatPrice } from '../../lib/formatters';
 
 interface ListingCardProps {
     listing: Listing;
+    isSingleColumn?: boolean;
 }
 
-export function ListingCard({ listing }: ListingCardProps) {
+export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
     const { user } = useAuth();
     const { favorites, toggleFavorite } = useFavorites();
     const router = useRouter();
@@ -44,9 +46,7 @@ export function ListingCard({ listing }: ListingCardProps) {
     };
 
     // Safe formatting for price
-    const formattedPrice = listing.price
-        ? new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(listing.price)
-        : 'A consultar';
+    const formattedPrice = formatPrice(listing.price);
 
     return (
         <Link href={`/anuncio/${listing.id}`} asChild>
@@ -100,6 +100,16 @@ export function ListingCard({ listing }: ListingCardProps) {
 
                 </View>
 
+                {/* Featured Badge Overlay on top-left of the image */}
+                {listing.is_featured && (
+                    <View style={{ position: 'absolute', top: 12, left: 12, zIndex: 20, backgroundColor: 'rgba(31,41,55,0.85)', borderRadius: 20 }} className="px-2 py-1.5 flex-row items-center">
+                        <Crown color="white" size={18} />
+                        {isSingleColumn && (
+                            <Text className="text-white ml-1.5 font-bold text-xs tracking-wide">Destacado</Text>
+                        )}
+                    </View>
+                )}
+
                 {/* Favorite Button Overlay on top-right of the image */}
                 <TouchableOpacity
                     onPress={handleFavoritePress}
@@ -118,7 +128,7 @@ export function ListingCard({ listing }: ListingCardProps) {
                             </View>
                         )}
                     </View>
-                    <Text className="text-text font-bold text-lg mb-2 leading-tight" numberOfLines={2}>
+                    <Text className={`text-text font-bold mb-2 leading-tight ${isSingleColumn ? 'text-xl' : 'text-[19px]'}`} numberOfLines={2}>
                         {listing.title}
                     </Text>
 

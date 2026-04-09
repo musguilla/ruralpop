@@ -11,6 +11,7 @@ export interface Listing {
     user_id: string;
     status: 'active' | 'sold' | 'draft';
     contact_phone?: string;
+    is_featured?: boolean;
 }
 
 export interface User {
