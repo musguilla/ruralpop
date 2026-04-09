@@ -129,8 +129,12 @@ export default async function ListingDetailPage(props: Props) {
     const isProfessional = listing.seller?.role === 'profesional';
     
     // Fallback para el nombre del vendedor si no existe en la tabla users
-    const rawSellerName = isProfessional && listing.seller?.commercial_name ? listing.seller.commercial_name : (listing.seller?.name || "Usuario de Ruralpop");
-    const sellerJoinedDate = listing.seller?.created_at ? new Date(listing.seller.created_at).getFullYear() : "";
+    const rawSellerName = isProfessional && listing.seller?.commercial_name ? listing.seller.commercial_name : (listing.seller?.name || "Usuario");
+    
+    const joinedDateObj = listing.seller?.created_at ? new Date(listing.seller.created_at) : null;
+    const sellerJoinedDate = joinedDateObj
+        ? `${joinedDateObj.toLocaleString('es-ES', { month: 'long' })} ${joinedDateObj.getFullYear()}`
+        : "";
 
     // Schema Markup for Google (JSON-LD)
     const validUntilDate = new Date();
