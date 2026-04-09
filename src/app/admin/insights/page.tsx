@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { AdminStatCard } from "@/components/admin/AdminStatCard";
 import { Users, LayoutDashboard, Package, MapPin, Eye, Heart, MessageSquare } from "lucide-react";
 
@@ -17,9 +18,13 @@ export default async function InsightsPage() {
         }));
     }
 
-    // Requisito 2: Usuarios que más se conectan
     // Utilizamos auth.admin.listUsers para obtener los last_sign_in_at
-    const { data: usersAuthData } = await supabase.auth.admin.listUsers();
+    // Necesitamos el service_role_key para usar el admin api
+    const supabaseAdmin = createAdminClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data: usersAuthData } = await supabaseAdmin.auth.admin.listUsers();
     let topConnectedUsers: any[] = [];
     if (usersAuthData?.users) {
         topConnectedUsers = [...usersAuthData.users]
