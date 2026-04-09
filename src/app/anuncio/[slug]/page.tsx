@@ -112,6 +112,9 @@ export default async function ListingDetailPage(props: Props) {
     const userFavs = await getUserFavoriteIds();
     const isFavorited = userFavs.includes(id);
 
+    // Registramos la visita de forma asíncrona ("fuego y olvida" para no penalizar carga)
+    supabase.rpc('increment_listing_visits', { listing_id: id }).catch(console.error);
+
     // Obtenemos el anuncio con los datos del vendedor (join con la tabla users)
     const { data: listing, error } = await supabase
         .from("listings")

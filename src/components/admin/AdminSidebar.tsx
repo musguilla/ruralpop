@@ -12,7 +12,8 @@ import {
     DownloadCloud,
     Share2,
     FileText,
-    Mail
+    Mail,
+    LineChart
 } from "lucide-react";
 
 export function AdminSidebar() {
@@ -30,6 +31,7 @@ export function AdminSidebar() {
 
             <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 <AdminNavLink href="/admin" icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" />
+                <AdminNavLink href="/admin/insights" icon={<LineChart className="w-5 h-5" />} label="Insights" />
                 <AdminNavLink href="/admin/users" icon={<Users className="w-5 h-5" />} label="Usuarios" />
                 <AdminNavLink href="/admin/listings" icon={<Package className="w-5 h-5" />} label="Anuncios" />
 
