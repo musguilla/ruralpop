@@ -156,11 +156,11 @@ export default async function SeoLandingPage(props: {
             </div>
 
             {/* Related Searches for Tractores and Machinery */}
-            {["tractores-segunda-mano", "segunda-mano-tractores", "comprar-maquinaria-agricola"].includes(params.slug) && (
+            {["tractores-segunda-mano", "segunda-mano-tractores", "comprar-maquinaria-agricola", "tractores-segunda-mano-asturias", "tractores-segunda-mano-galicia", "tractores-usados-madrid", "tractor-segunda-mano-bilbao", "tractor-usado-valencia"].includes(params.slug) && (
                 <div className="mt-10 px-2 sm:px-4 flex flex-col sm:flex-row items-center sm:justify-start gap-4 text-center sm:text-left">
                     <span className="font-bold text-[var(--ag-sys-color-text)]">Otros usuarios han buscado:</span>
                     <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                        {params.slug !== "tractores-segunda-mano" && (
+                                                {params.slug !== "tractores-segunda-mano" && (
                             <a href="https://www.ruralpop.com/s/tractores-segunda-mano" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
                                 Tractores segunda mano
                             </a>
@@ -173,6 +173,31 @@ export default async function SeoLandingPage(props: {
                         {params.slug !== "comprar-maquinaria-agricola" && (
                             <a href="https://www.ruralpop.com/s/comprar-maquinaria-agricola" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
                                 Comprar maquinaria agrícola
+                            </a>
+                        )}
+                        {params.slug !== "tractores-segunda-mano-asturias" && (
+                            <a href="https://www.ruralpop.com/s/tractores-segunda-mano-asturias" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                                Asturias
+                            </a>
+                        )}
+                        {params.slug !== "tractores-segunda-mano-galicia" && (
+                            <a href="https://www.ruralpop.com/s/tractores-segunda-mano-galicia" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                                Galicia
+                            </a>
+                        )}
+                        {params.slug !== "tractores-usados-madrid" && (
+                            <a href="https://www.ruralpop.com/s/tractores-usados-madrid" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                                Madrid
+                            </a>
+                        )}
+                        {params.slug !== "tractor-segunda-mano-bilbao" && (
+                            <a href="https://www.ruralpop.com/s/tractor-segunda-mano-bilbao" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                                Bilbao
+                            </a>
+                        )}
+                        {params.slug !== "tractor-usado-valencia" && (
+                            <a href="https://www.ruralpop.com/s/tractor-usado-valencia" className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-black/5 transition-colors">
+                                Valencia
                             </a>
                         )}
                     </div>

@@ -43,6 +43,11 @@ const rawLandings = [
     { title: "Comprar ganado en Extremadura", category: "ganaderia", province: "Cáceres" },
     { title: "Comprar ganado en País Vasco", category: "ganaderia", province: "Álava" },
     { title: "Comprar ganado en Cantabria", category: "ganaderia", province: "Cantabria" },
+    { title: "Tractores segunda mano Asturias", category: "maquinaria", province: "Asturias", searchQuery: "tractor" },
+    { title: "Tractores segunda mano Galicia", category: "maquinaria", province: "A Coruña", searchQuery: "tractor" },
+    { title: "Tractores usados Madrid", category: "maquinaria", province: "Madrid", searchQuery: "tractor" },
+    { title: "Tractor segunda mano Bilbao", category: "maquinaria", province: "Bizkaia", searchQuery: "tractor" },
+    { title: "Tractor usado Valencia", category: "maquinaria", province: "Valencia", searchQuery: "tractor" },
 ];
 
 export const SEO_LANDINGS: SeoLanding[] = rawLandings.map((item) => ({
