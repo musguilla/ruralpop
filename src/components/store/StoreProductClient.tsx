@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useCartStore } from '@/stores/cartStore';
-import { Minus, Plus, ShoppingCart, Check } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, Check, X, Ruler } from 'lucide-react';
 import Image from 'next/image';
 
 interface StoreProductClientProps {
@@ -21,6 +21,7 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
   const [size, setSize] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
   
   const { addItem } = useCartStore();
 
@@ -89,7 +90,15 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
           {/* Tallas */}
           {isTshirt ? (
             <div className="mb-6">
-              <span className="block font-semibold text-[var(--ag-sys-color-text)] mb-3">Talla</span>
+              <div className="flex items-center justify-between mb-3">
+                  <span className="font-semibold text-[var(--ag-sys-color-text)]">Talla</span>
+                  <button 
+                    onClick={() => setIsSizeModalOpen(true)}
+                    className="text-sm text-[var(--ag-sys-color-primary)] hover:underline flex items-center gap-1 font-medium"
+                  >
+                    <Ruler className="w-4 h-4" /> Guía de tallas
+                  </button>
+              </div>
               <div className="flex gap-3">
                 {['S', 'M', 'L', 'XL'].map(s => (
                   <button 
@@ -145,6 +154,33 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
           </button>
         </div>
       </div>
+
+      {/* Modal Guía de Tallas */}
+      {isSizeModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsSizeModalOpen(false)}>
+            <div 
+                className="relative bg-[var(--ag-sys-color-background)] rounded-2xl max-w-2xl w-full p-2 overflow-hidden shadow-2xl"
+                onClick={e => e.stopPropagation()}
+            >
+                <div className="flex justify-end p-2 absolute right-0 top-0 z-10 w-full bg-gradient-to-b from-black/50 to-transparent">
+                    <button 
+                        onClick={() => setIsSizeModalOpen(false)}
+                        className="bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors backdrop-blur-md"
+                    >
+                        <X className="w-6 h-6" />
+                    </button>
+                </div>
+                <div className="relative w-full h-[60vh] md:h-[70vh]">
+                    <Image 
+                        src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/products/tallas-camisetas.jpg" 
+                        alt="Guía de tallas" 
+                        fill 
+                        className="object-contain rounded-xl"
+                    />
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 }
