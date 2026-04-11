@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
 import { HomeSearchHero } from "@/components/ui/HomeSearchHero";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
+import { HomeStoreSection } from "@/components/store/HomeStoreSection";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -33,6 +34,11 @@ export default async function Home(props: {
       {/* Grid Server-side */}
       <Suspense fallback={<GridSkeleton />}>
         <ListingsGrid searchParams={searchParams} />
+      </Suspense>
+
+      {/* Store Section */}
+      <Suspense fallback={null}>
+        <HomeStoreSection />
       </Suspense>
 
     </div>
