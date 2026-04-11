@@ -21,7 +21,7 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
   const [size, setSize] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   
   const { addItem } = useCartStore();
 
@@ -50,7 +50,7 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
       {/* Columna Galería */}
       <div className="lg:col-span-7 flex flex-col gap-4">
-        <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)]">
+        <div className="relative aspect-square w-[85%] md:w-[75%] mx-auto rounded-2xl overflow-hidden bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)]">
           <Image 
             src={product.imageUrls[activeImageIndex] || '/default-og.jpg'}
             alt={product.title}
@@ -85,7 +85,7 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
           <p>{product.description}</p>
         </div>
 
-        <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 mt-auto">
+        <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 mb-8">
           
           {/* Tallas */}
           {isTshirt ? (
@@ -93,12 +93,26 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
               <div className="flex items-center justify-between mb-3">
                   <span className="font-semibold text-[var(--ag-sys-color-text)]">Talla</span>
                   <button 
-                    onClick={() => setIsSizeModalOpen(true)}
+                    onClick={() => setIsSizeGuideOpen(!isSizeGuideOpen)}
                     className="text-sm text-[var(--ag-sys-color-primary)] hover:underline flex items-center gap-1 font-medium"
                   >
                     <Ruler className="w-4 h-4" /> Guía de tallas
                   </button>
               </div>
+
+              {isSizeGuideOpen && (
+                <div className="w-full relative bg-white border border-[var(--ag-sys-color-border)] rounded-xl overflow-hidden mb-4 p-2 transition-all">
+                   <div className="relative w-full h-[200px] sm:h-[300px]">
+                      <Image 
+                          src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/products/tallas-camisetas.jpg" 
+                          alt="Guía de tallas" 
+                          fill 
+                          className="object-contain"
+                      />
+                   </div>
+                </div>
+              )}
+
               <div className="flex gap-3">
                 {['S', 'M', 'L', 'XL'].map(s => (
                   <button 
@@ -154,33 +168,6 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
           </button>
         </div>
       </div>
-
-      {/* Modal Guía de Tallas */}
-      {isSizeModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setIsSizeModalOpen(false)}>
-            <div 
-                className="relative bg-[var(--ag-sys-color-background)] rounded-2xl max-w-2xl w-full p-2 overflow-hidden shadow-2xl"
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="flex justify-end p-2 absolute right-0 top-0 z-10 w-full bg-gradient-to-b from-black/50 to-transparent">
-                    <button 
-                        onClick={() => setIsSizeModalOpen(false)}
-                        className="bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors backdrop-blur-md"
-                    >
-                        <X className="w-6 h-6" />
-                    </button>
-                </div>
-                <div className="relative w-full h-[60vh] md:h-[70vh]">
-                    <Image 
-                        src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/products/tallas-camisetas.jpg" 
-                        alt="Guía de tallas" 
-                        fill 
-                        className="object-contain rounded-xl"
-                    />
-                </div>
-            </div>
-        </div>
-      )}
     </div>
   );
 }
