@@ -21,13 +21,15 @@ export default async function TiendaPage() {
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen pb-16">
             <div className="bg-[var(--ag-sys-color-surface)] border-b border-[var(--ag-sys-color-border)] mb-12">
-                <div className="container mx-auto px-4 py-16 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] mb-6">
-                        <ShoppingBag className="w-8 h-8" />
+                <div className="container mx-auto px-4 py-12 md:py-16 text-center">
+                    <div className="flex items-center justify-center gap-4 mb-4">
+                        <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)]">
+                            <ShoppingBag className="w-6 h-6 md:w-8 md:h-8" />
+                        </div>
+                        <h1 className="text-3xl md:text-5xl font-extrabold text-[var(--ag-sys-color-text)]">
+                            Tienda Ruralpop
+                        </h1>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">
-                        Tienda Ruralpop
-                    </h1>
                     <p className="text-lg text-[var(--ag-sys-color-text-muted)] max-w-2xl mx-auto">
                         Lleva el estilo rural allá donde vayas. Descubre nuestra colección exclusiva de gorras con los mejores diseños de campo.
                     </p>
