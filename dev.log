@@ -1,0 +1,22 @@
+
+> ruralpopv1@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.146:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 899ms
+Image with src "https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/listings/6c223af2-bee3-46c0-b792-edbd9cc9900a-1775860818484-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/listings/6c223af2-bee3-46c0-b792-edbd9cc9900a-1775860820237-1.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/listings/6c223af2-bee3-46c0-b792-edbd9cc9900a-1775860821206-2.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/listings/6c223af2-bee3-46c0-b792-edbd9cc9900a-1775860822156-3.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+ GET /anuncio/mini-ordenadora-6rMwBi15mr6XfqBX1egQTZ 200 in 4.0s (compile: 3.1s, proxy.ts: 53ms, render: 772ms)
+[?25h

@@ -113,7 +113,8 @@ export default async function ListingDetailPage(props: Props) {
     const isFavorited = userFavs.includes(id);
 
     // Registramos la visita (debemos hacer await para que Vercel no cierre el contexto prematuramente)
-    await supabase.rpc('increment_listing_visits', { listing_id: id }).catch(console.error);
+    const { error: visitErr } = await supabase.rpc('increment_listing_visits', { listing_id: id });
+    if (visitErr) console.error(visitErr);
 
     // Obtenemos el anuncio con los datos del vendedor (join con la tabla users)
     const { data: listing, error } = await supabase
