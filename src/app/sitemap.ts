@@ -62,6 +62,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         });
     });
 
+    // 5.5 Términos de búsqueda populares y directos
+    const POPULAR_SEARCHES = [
+        "vaca", "toro", "ternero",
+        "caballo", "yegua", "potro",
+        "cabra", "oveja", "cordero",
+        "cerdo", "gallina", "perro",
+        "tractor", "remolque", "cosechadora", 
+        "empacadora", "desbrozadora", "arado",
+        "sembradora", "abonadora",
+        "paja", "alfalfa", "avena", "cebada", "maiz"
+    ];
+
+    POPULAR_SEARCHES.forEach(term => {
+        addEntry(buildSeoUrl({ q: term }), 0.85);
+    });
+
     // 6. Magazine
     addEntry('/magazine', 0.9);
 
