@@ -40,7 +40,7 @@ export async function Header() {
                     href="/"
                     className="flex items-center hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-md px-1 flex-shrink-0"
                 >
-                    <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain w-auto h-6 sm:h-8" priority />
+                    <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain w-auto h-6 sm:h-8 md:h-[40px]" priority />
                 </Link>
 
                 {/* Empty flex-1 to push actions to the right */}
