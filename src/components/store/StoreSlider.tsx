@@ -85,7 +85,7 @@ export function StoreSlider({ products }: { products: any[] }) {
                 style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {products.map((product) => (
-                    <div key={product.id} className="min-w-[260px] sm:min-w-[300px] max-w-[300px] flex-shrink-0 snap-start">
+                    <div key={product.id} className="w-[260px] sm:w-[280px] lg:w-[calc(25%-1.125rem)] flex-shrink-0 snap-start">
                         <ProductCard 
                             id={product.id}
                             slug={product.slug}
