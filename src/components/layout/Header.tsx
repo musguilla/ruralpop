@@ -38,16 +38,16 @@ export async function Header() {
                 {/* Logo and Brand */}
                 <Link
                     href="/"
-                    className="flex items-center hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-md px-1"
+                    className="flex items-center hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-md px-1 flex-shrink-0"
                 >
-                    <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain" priority />
+                    <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain w-auto h-6 sm:h-8" priority />
                 </Link>
 
                 {/* Empty flex-1 to push actions to the right */}
-                <div className="flex-1 mx-4" />
+                <div className="flex-1 min-w-2 sm:mx-4" />
 
                 {/* Actions Navigation */}
-                <nav className="flex items-center gap-4">
+                <nav className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                     <Link
                         href={isGhost ? "/profesionales?ghost_claim=true" : "/upload"}
                         className="group flex items-center justify-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base font-medium bg-[var(--ag-sys-color-primary)] text-white rounded-full hover:bg-[var(--ag-sys-color-primary-hover)] transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)]"
@@ -55,7 +55,8 @@ export async function Header() {
                         <div className="bg-white/20 rounded-full p-0.5 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110">
                             <Plus className="w-4 h-4" />
                         </div>
-                        {isGhost ? "Finalizar Activación" : "Vender"}
+                        <span className="hidden sm:inline">{isGhost ? "Finalizar Activación" : "Vender"}</span>
+                        <span className="sm:hidden">{isGhost ? "Activar" : "Vender"}</span>
                     </Link>
 
                     {user ? (

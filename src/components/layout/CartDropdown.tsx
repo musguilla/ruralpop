@@ -25,6 +25,12 @@ export function CartDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Avoid hydration mismatch by waiting for mount or just checking length
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted || count === 0) return null;
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button 
