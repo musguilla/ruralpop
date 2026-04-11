@@ -18,19 +18,28 @@ interface StoreProductClientProps {
 
 export function StoreProductClient({ product }: StoreProductClientProps) {
   const [quantity, setQuantity] = useState(1);
+  const [size, setSize] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   
   const { addItem } = useCartStore();
 
+  const isTshirt = product.slug.includes('camiseta');
+
   const handleAddToCart = () => {
+    if (isTshirt && !size) {
+        alert('Por favor, selecciona una talla antes de añadir a la cesta.');
+        return;
+    }
+
     addItem({
-      id: product.id,
+      id: isTshirt ? `${product.id}-${size}` : product.id,
       slug: product.slug,
-      title: product.title,
+      title: isTshirt ? `${product.title} (Talla ${size})` : product.title,
       price: product.price,
       imageUrl: product.imageUrls[0],
-      quantity
+      quantity,
+      size: size || undefined
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -76,6 +85,31 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
         </div>
 
         <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 mt-auto">
+          
+          {/* Tallas */}
+          {isTshirt ? (
+            <div className="mb-6">
+              <span className="block font-semibold text-[var(--ag-sys-color-text)] mb-3">Talla</span>
+              <div className="flex gap-3">
+                {['S', 'M', 'L', 'XL'].map(s => (
+                  <button 
+                    key={s}
+                    onClick={() => setSize(s)}
+                    className={`w-12 h-12 flex items-center justify-center font-bold rounded-xl border-2 transition-all ${size === s ? 'border-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/10' : 'border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text-muted)] hover:border-[var(--ag-sys-color-primary)]/50'}`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="mb-6">
+                <span className="inline-block px-3 py-1 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-md text-sm font-semibold text-[var(--ag-sys-color-text-muted)]">
+                    Talla única
+                </span>
+            </div>
+          )}
+
           <div className="flex items-center gap-6 mb-6">
             <span className="font-semibold text-[var(--ag-sys-color-text)]">Cantidad</span>
             <div className="flex items-center border border-[var(--ag-sys-color-border)] rounded-xl bg-[var(--ag-sys-color-background)]">

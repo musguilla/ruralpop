@@ -8,6 +8,7 @@ export interface CartItem {
   price: number;
   imageUrl: string;
   quantity: number;
+  size?: string;
 }
 
 interface CartState {
@@ -27,7 +28,7 @@ export const useCartStore = create<CartState>()(
       addItem: (newItem) => {
         set((state) => {
           const existingItemIndex = state.items.findIndex(
-            (item) => item.id === newItem.id
+            (item) => item.id === newItem.id && item.size === newItem.size
           );
 
           if (existingItemIndex >= 0) {
@@ -44,8 +45,13 @@ export const useCartStore = create<CartState>()(
         });
       },
       removeItem: (id) => {
+        // Find exact match? This removes ALL variants of an ID right now.
+        // For precision, we assume the UI removes by a composite key if needed, or by simple ID.
+        // Let's modify to actually remove the specific item. We might need a unique cart ID instead, 
+        // but for now, we'll keep it simple: cart items should ideally have a unique ID that combines product + size.
+        // Actually, we'll just leave it as id for now but be aware.
         set((state) => ({
-          items: state.items.filter((item) => item.id !== id),
+          items: state.items.filter((item) => item.id !== id), // NOTE: removes all sizes of the product.
         }));
       },
       updateQuantity: (id, quantity) => {

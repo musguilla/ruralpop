@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 function SuccessClientContent() {
-  const { clearCart } = useCartStore();
+  const { items, clearCart } = useCartStore();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [cleared, setCleared] = useState(false);
@@ -18,18 +18,17 @@ function SuccessClientContent() {
 
   useEffect(() => {
     if (!cleared) {
-      clearCart();
-      setCleared(true);
-      
-      // In a real production scenario with Webhooks, we wouldn't need to do anything here.
       // But we can hit an endpoint to trigger our Resend email just in case:
-      if (paymentIntent && email) {
+      if (paymentIntent && email && items.length > 0) {
          fetch('/api/send-order-email', {
            method: 'POST',
            headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ email, paymentIntent })
+           body: JSON.stringify({ email, paymentIntent, items })
          }).catch(console.error);
       }
+      
+      clearCart();
+      setCleared(true);
     }
   }, [clearCart, cleared, email, paymentIntent]);
 
