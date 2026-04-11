@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 import { logout } from "@/app/auth/actions";
 import { ChatBadge } from "@/components/chat/ChatBadge";
 import { UserMenu } from "@/components/layout/UserMenu";
+import { CartDropdown } from "@/components/layout/CartDropdown";
 
 export async function Header() {
     const supabase = await createClient();
@@ -76,6 +77,7 @@ export async function Header() {
                                 >
                                     <ChatBadge initialCount={unreadCount || 0} userId={user.id} />
                                 </Link>
+                                <CartDropdown />
                             </div>
 
                             {/* Componente Cliente para el Menú Desplegable */}
@@ -97,6 +99,9 @@ export async function Header() {
                             <UserCircle className="w-8 h-8" />
                         </Link>
                     )}
+                    
+                    {/* Para usuarios anónimos mostramos la cesta también */}
+                    {!user && <CartDropdown />}
                 </nav>
             </div>
 

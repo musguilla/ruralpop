@@ -1,0 +1,82 @@
+import { createClient } from "@/utils/supabase/server";
+import { notFound } from "next/navigation";
+import { StoreProductClient } from "@/components/store/StoreProductClient";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { Metadata, ResolvingMetadata } from "next";
+
+type Props = {
+    params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata(
+    { params }: Props,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const { slug } = await params;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data: product } = await supabase
+        .from('products')
+        .select('title, description, image_urls, price')
+        .eq('slug', slug)
+        .single();
+
+    if (!product) return { title: "Producto no encontrado | Tienda Ruralpop" };
+
+    const mainImage = product.image_urls?.[0] || 'https://www.ruralpop.com/default-og.jpg';
+    return {
+        title: `${product.title} | Tienda Ruralpop`,
+        description: product.description || `Compra ${product.title} en la tienda oficial de Ruralpop por solo ${product.price}€.`,
+        openGraph: {
+            title: `${product.title} | Tienda Ruralpop`,
+            description: product.description || `Compra ${product.title} en la tienda oficial de Ruralpop por solo ${product.price}€.`,
+            url: `https://www.ruralpop.com/tienda/${slug}`,
+            images: [{ url: mainImage, width: 1200, height: 630 }],
+        }
+    };
+}
+
+export default async function ProductDetailPage(props: Props) {
+    const { slug } = await props.params;
+    const supabase = await createClient();
+
+    const { data: product, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+
+    if (error || !product || product.status !== 'active') {
+        notFound();
+    }
+
+    return (
+        <div className="bg-[var(--ag-sys-color-background)] min-h-screen">
+            <div className="container mx-auto px-4 py-8">
+                {/* Volver */}
+                <div className="mb-8">
+                    <Link
+                        href="/tienda"
+                        className="inline-flex items-center gap-2 text-sm font-medium text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group"
+                    >
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        Volver a la tienda
+                    </Link>
+                </div>
+
+                <StoreProductClient product={{
+                  id: product.id,
+                  slug: product.slug,
+                  title: product.title,
+                  price: product.price,
+                  imageUrls: product.image_urls,
+                  description: product.description,
+                }} />
+            </div>
+        </div>
+    );
+}

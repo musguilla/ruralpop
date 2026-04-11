@@ -5,6 +5,7 @@ import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { parseSeoUrl } from "@/utils/seoUtils";
 import { LOCATIONS } from "@/constants/locations";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const params = await props.params;
@@ -66,6 +67,13 @@ export default async function SearchResultsPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     const params = await props.params;
+    
+    // Explicit protection against catching known folders if the dev server hasn't hot-reloaded the tree perfectly
+    const reservedRoutes = ['tienda', 'checkout', 'admin', 'auth', 'favoritos'];
+    if (reservedRoutes.includes(params.slug)) {
+        notFound();
+    }
+
     const searchParams = await props.searchParams;
 
     const parsedSlug = parseSeoUrl(params.slug);

@@ -34,6 +34,9 @@ export function Footer() {
                         <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
                             Conexión Rural
                         </span>
+                        {/* <Link href="/tienda" className="text-base font-bold text-[var(--ag-sys-color-primary)] hover:opacity-80 transition-opacity">
+                            Tienda Ruralpop
+                        </Link> */}
                         <Link href="/magazine" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                             Ruralpop Magazine
                         </Link>
