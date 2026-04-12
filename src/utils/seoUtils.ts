@@ -64,7 +64,13 @@ export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlPar
     // Location
     if (province_id) {
         const locSlug = locationIdMap.get(province_id);
-        if (locSlug) parts.push(locSlug);
+        if (locSlug) {
+            // Append connector 'en' if not already present gracefully
+            if (parts.length > 0 && parts[0] !== 'anuncios') {
+                parts.push('en');
+            }
+            parts.push(locSlug);
+        }
     }
 
     // If there were no params and no query, it redirects home
@@ -115,6 +121,11 @@ export function parseSeoUrl(slug: string): SeoUrlParams {
         }
     }
     if (matchedCatSize > 0) parts = parts.slice(0, parts.length - matchedCatSize);
+
+    // X. Strip dangling 'en' connector if it exists just before the location was stripped
+    if (parts.length > 0 && parts[parts.length - 1] === 'en') {
+        parts.pop();
+    }
 
     // 4. Query is whatever is left
     if (parts.length > 0) {
