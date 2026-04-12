@@ -13,14 +13,37 @@ export async function GET() {
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-    const { data: listings, error } = await supabase.from('listings').select('id, title, created_at').eq('status', 'active');
+    let listings: any[] = [];
+    let from = 0;
+    const step = 1000;
+    let hasMore = true;
 
-    if (error) {
-        xml += `  <!-- Error fetching: ${error.message} -->\n`;
-        xml += `  <!-- Url: ${supabaseUrl ? 'Present' : 'Missing'}, Key: ${supabaseKey ? 'Present' : 'Missing'} -->\n`;
-    } else if (!listings || listings.length === 0) {
+    while (hasMore) {
+        const { data, error } = await supabase
+            .from('listings')
+            .select('id, title, created_at')
+            .eq('status', 'active')
+            .range(from, from + step - 1);
+
+        if (error) {
+            xml += `  <!-- Error fetching: ${error.message} -->\n`;
+            xml += `  <!-- Url: ${supabaseUrl ? 'Present' : 'Missing'}, Key: ${supabaseKey ? 'Present' : 'Missing'} -->\n`;
+            break;
+        }
+
+        if (data && data.length > 0) {
+            listings.push(...data);
+            from += step;
+            if (data.length < step) {
+                hasMore = false;
+            }
+        } else {
+            hasMore = false; // No more data
+        }
+    }
+
+    if (listings.length === 0) {
         xml += `  <!-- No listings found -->\n`;
-        xml += `  <!-- Url: ${supabaseUrl ? 'Present' : 'Missing'}, Key: ${supabaseKey ? 'Present' : 'Missing'} -->\n`;
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
