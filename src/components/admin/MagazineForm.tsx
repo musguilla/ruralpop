@@ -14,7 +14,7 @@ type MagazinePostProps = {
         excerpt: string;
         content: string;
         is_published: boolean;
-        created_at?: string;
+        published_at?: string;
     };
     actionPromise: (formData: FormData) => Promise<void>;
 };
@@ -175,8 +175,8 @@ export function MagazineForm({ initialData, actionPromise }: MagazinePostProps) 
                     <label className="block text-sm font-bold text-gray-700 mb-2">Fecha de Creación / Publicación</label>
                     <input
                         type="text"
-                        name="created_at"
-                        defaultValue={initialData?.created_at ? new Date(initialData.created_at).toISOString().slice(0, 16).replace('T', ' ') : ""}
+                        name="published_at"
+                        defaultValue={initialData?.published_at ? new Date(initialData.published_at).toISOString().slice(0, 16).replace('T', ' ') : ""}
                         className="w-full md:w-1/2 border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
                         placeholder="Ej: 2024-03-01 12:00"
                     />

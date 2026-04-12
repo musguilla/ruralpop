@@ -54,7 +54,7 @@ export async function createMagazinePost(formData: FormData) {
     const image = formData.get("image") as File;
     const image_url = await uploadImage(image);
     
-    let created_at = formData.get("created_at") as string | null;
+    let published_at_input = formData.get("published_at") as string | null;
     let payload: any = {
         title,
         slug,
@@ -65,13 +65,12 @@ export async function createMagazinePost(formData: FormData) {
         is_published,
     };
 
-    if (created_at && created_at.trim() !== '') {
+    if (published_at_input && published_at_input.trim() !== '') {
         try {
-            // Replace space with T to allow "YYYY-MM-DD HH:mm" parsing if needed
-            const parsedDate = new Date(created_at.replace(' ', 'T')).toISOString();
-            payload.created_at = parsedDate;
+            const parsedDate = new Date(published_at_input.replace(' ', 'T')).toISOString();
+            payload.published_at = parsedDate;
         } catch (e) {
-            console.error("Invalid date format, using now()");
+            console.error("Invalid date format, using default");
         }
     }
 
@@ -102,7 +101,7 @@ export async function updateMagazinePost(id: string, formData: FormData) {
 
     const image = formData.get("image") as File;
     let image_url = formData.get("existing_image_url") as string || "";
-    let created_at = formData.get("created_at") as string | null;
+    let published_at_input = formData.get("published_at") as string | null;
 
     if (image && image.size > 0) {
         const uploadedUrl = await uploadImage(image);
@@ -126,12 +125,12 @@ export async function updateMagazinePost(id: string, formData: FormData) {
         updated_at: new Date().toISOString(),
     };
 
-    if (created_at && created_at.trim() !== '') {
+    if (published_at_input && published_at_input.trim() !== '') {
         try {
-            const parsedDate = new Date(created_at.replace(' ', 'T')).toISOString();
-            payload.created_at = parsedDate;
+            const parsedDate = new Date(published_at_input.replace(' ', 'T')).toISOString();
+            payload.published_at = parsedDate;
         } catch (e) {
-            console.error("Invalid date format, ignoring created_at update");
+            console.error("Invalid date format, ignoring published_at update");
         }
     }
 
