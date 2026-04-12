@@ -53,12 +53,9 @@ export async function createMagazinePost(formData: FormData) {
 
     const image = formData.get("image") as File;
     const image_url = await uploadImage(image);
-
-    if (!title || !slug || !category || !image_url || !excerpt) {
-        throw new Error("Missing required fields or image could not be uploaded.");
-    }
-
-    const { error } = await supabase.from("magazine_posts").insert({
+    
+    let created_at = formData.get("created_at") as string | null;
+    let payload: any = {
         title,
         slug,
         category,
@@ -66,7 +63,23 @@ export async function createMagazinePost(formData: FormData) {
         excerpt,
         content: content || "",
         is_published,
-    });
+    };
+
+    if (created_at && created_at.trim() !== '') {
+        try {
+            // Replace space with T to allow "YYYY-MM-DD HH:mm" parsing if needed
+            const parsedDate = new Date(created_at.replace(' ', 'T')).toISOString();
+            payload.created_at = parsedDate;
+        } catch (e) {
+            console.error("Invalid date format, using now()");
+        }
+    }
+
+    if (!title || !slug || !category || !image_url || !excerpt) {
+        throw new Error("Missing required fields or image could not be uploaded.");
+    }
+
+    const { error } = await supabase.from("magazine_posts").insert(payload);
 
     if (error) {
         console.error("Error creating post:", error);
@@ -89,6 +102,7 @@ export async function updateMagazinePost(id: string, formData: FormData) {
 
     const image = formData.get("image") as File;
     let image_url = formData.get("existing_image_url") as string || "";
+    let created_at = formData.get("created_at") as string | null;
 
     if (image && image.size > 0) {
         const uploadedUrl = await uploadImage(image);
@@ -101,18 +115,29 @@ export async function updateMagazinePost(id: string, formData: FormData) {
         throw new Error("Missing required fields");
     }
 
+    let payload: any = {
+        title,
+        slug,
+        category,
+        image_url,
+        excerpt,
+        content: content || "",
+        is_published,
+        updated_at: new Date().toISOString(),
+    };
+
+    if (created_at && created_at.trim() !== '') {
+        try {
+            const parsedDate = new Date(created_at.replace(' ', 'T')).toISOString();
+            payload.created_at = parsedDate;
+        } catch (e) {
+            console.error("Invalid date format, ignoring created_at update");
+        }
+    }
+
     const { error } = await supabase
         .from("magazine_posts")
-        .update({
-            title,
-            slug,
-            category,
-            image_url,
-            excerpt,
-            content: content || "",
-            is_published,
-            updated_at: new Date().toISOString(),
-        })
+        .update(payload)
         .eq("id", id);
 
     if (error) {

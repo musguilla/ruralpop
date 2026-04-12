@@ -14,6 +14,7 @@ type MagazinePostProps = {
         excerpt: string;
         content: string;
         is_published: boolean;
+        created_at?: string;
     };
     actionPromise: (formData: FormData) => Promise<void>;
 };
@@ -168,6 +169,18 @@ export function MagazineForm({ initialData, actionPromise }: MagazinePostProps) 
                     <label htmlFor="is_published" className="text-gray-700 font-medium cursor-pointer">
                         Publicado inmediatamente visible al público
                     </label>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">Fecha de Creación / Publicación</label>
+                    <input
+                        type="text"
+                        name="created_at"
+                        defaultValue={initialData?.created_at ? new Date(initialData.created_at).toISOString().slice(0, 16).replace('T', ' ') : ""}
+                        className="w-full md:w-1/2 border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
+                        placeholder="Ej: 2024-03-01 12:00"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Formato recomendado: YYYY-MM-DD HH:mm (Déjalo en blanco para usar la fecha actual al crear nuevos).</p>
                 </div>
 
                 <div className="flex justify-end pt-4">
