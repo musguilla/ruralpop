@@ -5,10 +5,10 @@ export async function GET() {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <sitemap>
-        <loc>${baseUrl}/seo/sitemap/0.xml</loc>
+        <loc>${baseUrl}/sitemap_0.xml</loc>
     </sitemap>
     <sitemap>
-        <loc>${baseUrl}/seo/sitemap/1.xml</loc>
+        <loc>${baseUrl}/sitemap_1.xml</loc>
     </sitemap>
     <sitemap>
         <loc>${baseUrl}/sitemap_anuncios.xml</loc>
