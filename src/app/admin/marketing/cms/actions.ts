@@ -54,7 +54,7 @@ export async function createMagazinePost(formData: FormData) {
     const image = formData.get("image") as File;
     const image_url = await uploadImage(image);
     
-    let published_at_input = formData.get("published_at") as string | null;
+    let published_at_input = (formData.get("published_at") || formData.get("created_at")) as string | null;
     let payload: any = {
         title,
         slug,
@@ -101,7 +101,7 @@ export async function updateMagazinePost(id: string, formData: FormData) {
 
     const image = formData.get("image") as File;
     let image_url = formData.get("existing_image_url") as string || "";
-    let published_at_input = formData.get("published_at") as string | null;
+    let published_at_input = (formData.get("published_at") || formData.get("created_at")) as string | null;
 
     if (image && image.size > 0) {
         const uploadedUrl = await uploadImage(image);
