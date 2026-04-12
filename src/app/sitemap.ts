@@ -14,9 +14,12 @@ export async function generateSitemaps() {
     return [{ id: 0 }, { id: 1 }];
 }
 
-export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
+export default async function sitemap({ id }: { id?: string | number } = {}): Promise<MetadataRoute.Sitemap> {
     // Definimos la base URL, en producción debería ser una variable de entorno
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
+
+    // Parse ID safely
+    const parsedId = Number(id) || 0;
 
     const sitemapEntries: MetadataRoute.Sitemap = [];
 
@@ -123,7 +126,7 @@ export default async function sitemap({ id }: { id: number }): Promise<MetadataR
 
     // Dividimos en bloques de máximo 40.000 para cumplir holgadamente con el límite de 50.000 de Google
     const SLICE_SIZE = 40000;
-    const start = id * SLICE_SIZE;
+    const start = parsedId * SLICE_SIZE;
     const end = start + SLICE_SIZE;
 
     return sitemapEntries.slice(start, end);
