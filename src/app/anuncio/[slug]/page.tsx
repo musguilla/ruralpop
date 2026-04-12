@@ -12,7 +12,6 @@ import { FavoriteDetailButton } from "@/components/ui/FavoriteDetailButton";
 import { ShareButtons } from "@/components/ui/ShareButtons";
 import { PhoneRevealButton } from "@/components/ui/PhoneRevealButton";
 import { buildSeoUrl, slugify } from "@/utils/seoUtils";
-import { ListingDetailAd } from "@/components/ads/ListingDetailAd";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -321,9 +320,6 @@ export default async function ListingDetailPage(props: Props) {
                                 </p>
                             </div>
                         </div>
-
-                        {/* Publicidad AdSense */}
-                        <ListingDetailAd />
 
                     </div>
                 </div>
