@@ -25,7 +25,7 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         );
     }
 
-    const buildQuery = () => {
+    const buildQuery = (fallbackLevel = 0) => {
         let query = supabase
             .from("listings")
             .select(`
@@ -74,15 +74,26 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         const textQuery = searchParams.q as string;
         if (textQuery) {
             let sanitizedQuery = textQuery.trim().toLowerCase();
+            
+            if (fallbackLevel === 2) {
+                sanitizedQuery = sanitizedQuery.replace(/[aeiouáéíóúü]/gi, '_');
+            }
+
             let queryTerms = sanitizedQuery.split(/[\s\-]+/).filter(t => t.length > 2);
             
             if (queryTerms.length <= 1) {
                 query = query.or(`title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%,location.ilike.%${sanitizedQuery}%`);
             } else {
-                // Strict AND Logic for multi-word queries. All words must match somewhere.
-                queryTerms.forEach(term => {
-                    query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`);
-                });
+                if (fallbackLevel === 0) {
+                    // AND Logic (default)
+                    queryTerms.forEach(term => {
+                        query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`);
+                    });
+                } else {
+                    // OR Logic Fallback (fallbackLevel 1 and 2)
+                    const orConditions = queryTerms.map(term => `title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`).join(',');
+                    query = query.or(orConditions);
+                }
             }
         }
 
@@ -114,9 +125,29 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         return query;
     };
 
-    // Build query with STRICT AND logic
-    let query = buildQuery();
+    // Attempt primary strict AND search
+    let query = buildQuery(0);
     let { data: listings, error, count } = await query.range(from, to);
+
+    const isMultiWordSearch = typeof searchParams.q === 'string' && searchParams.q.trim().split(/[\s\-]+/).filter(t => t.length > 2).length > 1;
+
+    // Retry with OR fallback if needed
+    if (!error && (!listings || listings.length === 0) && isMultiWordSearch) {
+        query = buildQuery(1);
+        const fallbackRes = await query.range(from, to);
+        listings = fallbackRes.data;
+        count = fallbackRes.count;
+        error = fallbackRes.error;
+    }
+
+    // Ultra fallback: Retry with Accent/Vowel wildcards if still no results
+    if (!error && (!listings || listings.length === 0) && typeof searchParams.q === 'string') {
+        query = buildQuery(2);
+        const wildcardRes = await query.range(from, to);
+        listings = wildcardRes.data;
+        count = wildcardRes.count;
+        error = wildcardRes.error;
+    }
 
     if (error) {
         console.error("Supabase Error fetching listings:", error);
