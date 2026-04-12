@@ -85,6 +85,7 @@ export async function createMagazinePost(formData: FormData) {
         throw new Error(error.message);
     }
 
+    revalidatePath("/");
     revalidatePath("/admin/marketing/cms");
     revalidatePath("/magazine");
 }
@@ -144,6 +145,7 @@ export async function updateMagazinePost(id: string, formData: FormData) {
         throw new Error(error.message);
     }
 
+    revalidatePath("/");
     revalidatePath("/admin/marketing/cms");
     revalidatePath("/magazine");
     revalidatePath(`/magazine/${slug}`);
@@ -159,6 +161,7 @@ export async function deleteMagazinePost(id: string) {
         throw new Error(error.message);
     }
 
+    revalidatePath("/");
     revalidatePath("/admin/marketing/cms");
     revalidatePath("/magazine");
 }
