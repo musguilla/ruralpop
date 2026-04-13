@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Users, Package, MapPin, Heart, MessageSquare, X, BarChart2 } from "lucide-react";
+import { Users, Package, MapPin, Heart, MessageSquare, ArrowLeft, BarChart2 } from "lucide-react";
 import Link from "next/link";
 
-type ModalData = {
+type DetailData = {
     title: string;
     items: any[];
     labelKey: string;
@@ -23,9 +23,9 @@ export function InsightsPanels({
     topLikesListings,
     topListingsChats
 }: any) {
-    const [modalData, setModalData] = useState<ModalData | null>(null);
+    const [detailView, setDetailView] = useState<DetailData | null>(null);
 
-    const openModal = (
+    const openDetail = (
         title: string,
         items: any[],
         labelKey: string,
@@ -34,243 +34,263 @@ export function InsightsPanels({
         colorClass: string,
         isLink: boolean = false
     ) => {
-        setModalData({ title, items, labelKey, valueKey, icon, colorClass, isLink });
+        setDetailView({ title, items, labelKey, valueKey, icon, colorClass, isLink });
+        // Scroll to top of the area slightly
+        window.scrollTo({ top: 100, behavior: 'smooth' });
     };
 
-    const renderChartRow = (item: any, maxVal: number, data: ModalData, index: number) => {
-        const val = item[data.valueKey] || 0;
-        const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
-        
-        const content = (
-            <div className="relative z-10 flex justify-between items-center px-4 py-2 text-sm h-full">
-                <span className="font-medium text-gray-800 truncate pr-4">
-                    <span className="text-gray-400 mr-2">{index + 1}.</span> {item[data.labelKey]}
-                </span>
-                <span className="font-bold text-gray-900 whitespace-nowrap flex items-center gap-1">
-                    {data.icon && <span className="opacity-70">{data.icon}</span>}
-                    {val}
-                </span>
+    if (detailView) {
+        const maxVal = Math.max(...detailView.items.map(i => i[detailView.valueKey] || 0));
+
+        return (
+            <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 shadow-sm animate-in slide-in-from-right-4 duration-300">
+                <div className="flex items-center gap-4 mb-8">
+                    <button 
+                        onClick={() => setDetailView(null)}
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 flex items-center justify-center bg-gray-50 border border-gray-200"
+                        title="Volver"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                            <BarChart2 className="w-6 h-6 text-gray-500" />
+                            {detailView.title}
+                        </h2>
+                        <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider">Top 100 resultados - Gráfico vertical</p>
+                    </div>
+                </div>
+
+                {detailView.items.length === 0 ? (
+                    <div className="text-center py-20 text-gray-400">No hay datos disponibles</div>
+                ) : (
+                    <>
+                        {/* Vertical Bar Chart */}
+                        <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 md:p-6 mb-8 overflow-hidden">
+                            <div className="flex gap-1.5 overflow-x-auto items-end h-[300px] border-b border-gray-200 pb-2 px-1 relative custom-scrollbar">
+                                {detailView.items.map((item, index) => {
+                                    const val = item[detailView.valueKey] || 0;
+                                    const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                                    
+                                    return (
+                                        <div key={index} className="w-8 md:w-10 flex-shrink-0 flex flex-col justify-end group cursor-pointer relative h-full">
+                                            {/* Tooltip */}
+                                            <div className="absolute -top-14 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-gray-900 text-white text-xs px-3 py-1.5 rounded z-10 whitespace-nowrap pointer-events-none transition-opacity flex flex-col items-center shadow-lg">
+                                                <span className="font-bold text-[14px]">{val}</span>
+                                                <span className="truncate max-w-[150px] font-medium text-gray-300">{item[detailView.labelKey]}</span>
+                                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                                            </div>
+                                            
+                                            {/* Bar */}
+                                            <div 
+                                                className={`w-full rounded-t-sm transition-all duration-700 ease-in-out ${detailView.colorClass} opacity-70 group-hover:opacity-100 shadow-sm`}
+                                                style={{ height: `${Math.max(pct, 1)}%` }}
+                                            />
+                                            {/* Label under X-axis */}
+                                            <div className="text-[10px] md:text-xs text-gray-400 text-center mt-2 font-medium">
+                                                {index + 1}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Detail List */}
+                        <div>
+                            <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Listado detallado</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                {detailView.items.map((item, index) => {
+                                    const content = (
+                                        <div className="bg-gray-50 border border-gray-100 rounded-lg p-3 flex justify-between items-center hover:bg-gray-100 transition-colors group/item h-full">
+                                            <div className="truncate pr-3 flex items-center gap-2">
+                                                <span className="text-gray-400 text-xs font-bold w-5">{index + 1}.</span>
+                                                <span className="text-sm font-medium text-gray-800 truncate group-hover/item:text-gray-900">{item[detailView.labelKey]}</span>
+                                            </div>
+                                            <span className="font-bold text-gray-900 text-sm whitespace-nowrap flex items-center gap-1">
+                                                {detailView.icon && <span className="opacity-50">{detailView.icon}</span>}
+                                                {item[detailView.valueKey] || 0}
+                                            </span>
+                                        </div>
+                                    );
+
+                                    if (detailView.isLink && item.user_id) {
+                                        return (
+                                            <Link href={`/admin/listings?userId=${item.user_id}`} key={index} className="block">
+                                                {content}
+                                            </Link>
+                                        );
+                                    }
+                                    return <div key={index}>{content}</div>;
+                                })}
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         );
-
-        const row = (
-            <div key={index} className="relative overflow-hidden rounded-lg bg-gray-50 border border-gray-100 hover:border-gray-200 transition-colors h-10 w-full group">
-                <div 
-                    className={`absolute inset-y-0 left-0 opacity-20 ${data.colorClass} group-hover:opacity-40 transition-opacity`} 
-                    style={{ width: `${Math.max(pct, 1)}%` }}
-                />
-                {content}
-            </div>
-        );
-
-        if (data.isLink && item.user_id) {
-            return (
-                <Link href={`/admin/listings?userId=${item.user_id}`} key={index} className="block w-full">
-                    {row}
-                </Link>
-            );
-        }
-        return row;
-    };
+    }
 
     return (
-        <>
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                {/* Panel Usuarios */}
-                <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 shadow-sm">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)]">
-                            <Users className="w-5 h-5" />
-                        </div>
-                        <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">Insights Usuarios</h2>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 animate-in fade-in duration-300">
+            {/* Panel Usuarios */}
+            <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 shadow-sm">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)]">
+                        <Users className="w-5 h-5" />
                     </div>
-
-                    <div className="space-y-6">
-                        {/* Provinces */}
-                        <section>
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Provincia con más Usuarios</h3>
-                                <button onClick={() => openModal('Provincias con más Usuarios', topProvinces, 'name', 'users_count', null, 'bg-emerald-500')} 
-                                className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline">
-                                    <BarChart2 className="w-3 h-3"/> Ver todo
-                                </button>
-                            </div>
-                            <div className="space-y-2">
-                                {topProvinces.slice(0,5).map((prov: any, i: number) => (
-                                    <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                        <div className="flex items-center gap-2">
-                                            <MapPin className="w-4 h-4 text-[var(--ag-sys-color-text-muted)]" />
-                                            <span className="font-medium text-[var(--ag-sys-color-text)]">{prov.name}</span>
-                                        </div>
-                                        <span className="font-bold text-[var(--ag-sys-color-primary)]">{prov.users_count} usr</span>
-                                    </div>
-                                ))}
-                                {topProvinces.length === 0 && <p className="text-xs text-gray-500">Cargando o sin datos...</p>}
-                            </div>
-                        </section>
-
-                        {/* Recent Connected */}
-                        <section>
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Usuarios más conectados hoy</h3>
-                            </div>
-                            <div className="space-y-2">
-                                {topConnectedUsers.map((usr: any, i: number) => (
-                                    <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                        <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{usr.name}</span>
-                                        <span className="text-xs text-[var(--ag-sys-color-text-muted)]">
-                                            {usr.last_sign_in_at ? new Date(usr.last_sign_in_at).toLocaleDateString() : 'Desconocido'}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-
-                        {/* Top Listings */}
-                        <section>
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más anuncios publicados</h3>
-                                <button onClick={() => openModal('Usuarios con más Anuncios', topUsersListings, 'name', 'listings_count', null, 'bg-emerald-500', true)} 
-                                className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline">
-                                    <BarChart2 className="w-3 h-3"/> Ver todo
-                                </button>
-                            </div>
-                            <div className="space-y-2">
-                                {topUsersListings.slice(0,5).map((usr: any, i: number) => (
-                                    <Link href={`/admin/listings?userId=${usr.user_id}`} key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3 hover:bg-gray-50 transition-colors group">
-                                        <span className="font-medium text-[var(--ag-sys-color-text)] truncate group-hover:text-[var(--ag-sys-color-primary)] transition-colors">{usr.name}</span>
-                                        <span className="font-bold text-[var(--ag-sys-color-primary)]">{usr.listings_count} anuncios</span>
-                                    </Link>
-                                ))}
-                            </div>
-                        </section>
-
-                        {/* Top Chats */}
-                        <section>
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más chats</h3>
-                                <button onClick={() => openModal('Usuarios con más Chats', topUsersChats, 'name', 'chats_count', <MessageSquare className="w-3 h-3"/>, 'bg-blue-500')} 
-                                className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline">
-                                    <BarChart2 className="w-3 h-3"/> Ver todo
-                                </button>
-                            </div>
-                            <div className="space-y-2">
-                                {topUsersChats.slice(0,5).map((usr: any, i: number) => (
-                                    <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                        <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{usr.name}</span>
-                                        <span className="font-bold text-[var(--ag-sys-color-primary)]">{usr.chats_count} chats</span>
-                                    </div>
-                                ))}
-                                {topUsersChats.length === 0 && <p className="text-xs text-gray-500">Sin datos de chats...</p>}
-                            </div>
-                        </section>
-                    </div>
+                    <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">Insights Usuarios</h2>
                 </div>
 
-                {/* Panel Anuncios */}
-                <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 shadow-sm">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)]">
-                            <Package className="w-5 h-5" />
+                <div className="space-y-6">
+                    {/* Provinces */}
+                    <section>
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Provincia con más Usuarios</h3>
+                            <button onClick={() => openDetail('Provincias con más Usuarios', topProvinces, 'name', 'users_count', null, 'bg-emerald-500')} 
+                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
+                                <BarChart2 className="w-3 h-3"/> Ver todo
+                            </button>
                         </div>
-                        <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">Insights Anuncios</h2>
-                    </div>
-
-                    <div className="space-y-6">
-                        <section>
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Más visitados</h3>
-                                <button onClick={() => openModal('Anuncios más visitados', topVisitedListings, 'title', 'visits_count', null, 'bg-emerald-500')} 
-                                className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline">
-                                    <BarChart2 className="w-3 h-3"/> Ver todo
-                                </button>
-                            </div>
-                            <div className="space-y-2">
-                                {topVisitedListings?.slice(0,5).map((lst: any, i: number) => (
-                                    <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                        <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
-                                        <span className="font-bold text-[var(--ag-sys-color-primary)]">{lst.visits_count || 0} views</span>
+                        <div className="space-y-2">
+                            {topProvinces.slice(0,5).map((prov: any, i: number) => (
+                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
+                                    <div className="flex items-center gap-2">
+                                        <MapPin className="w-4 h-4 text-[var(--ag-sys-color-text-muted)]" />
+                                        <span className="font-medium text-[var(--ag-sys-color-text)]">{prov.name}</span>
                                     </div>
-                                ))}
-                                {(!topVisitedListings || topVisitedListings.length === 0) && <p className="text-xs text-gray-500">Sin datos de visitas...</p>}
-                            </div>
-                        </section>
+                                    <span className="font-bold text-[var(--ag-sys-color-primary)]">{prov.users_count} usr</span>
+                                </div>
+                            ))}
+                            {topProvinces.length === 0 && <p className="text-xs text-gray-500">Cargando o sin datos...</p>}
+                        </div>
+                    </section>
 
-                        <section>
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más likes</h3>
-                                <button onClick={() => openModal('Anuncios con más likes', topLikesListings, 'title', 'likes_count', <Heart className="w-3 h-3 fill-current"/>, 'bg-red-500')} 
-                                className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline">
-                                    <BarChart2 className="w-3 h-3"/> Ver todo
-                                </button>
-                            </div>
-                            <div className="space-y-2">
-                                {topLikesListings.slice(0,5).map((lst: any, i: number) => (
-                                    <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                        <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
-                                        <span className="font-bold text-red-500 flex items-center gap-1"><Heart className="w-4 h-4 fill-current"/> {lst.likes_count}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
+                    {/* Recent Connected */}
+                    <section>
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Usuarios más conectados hoy</h3>
+                        </div>
+                        <div className="space-y-2">
+                            {topConnectedUsers.map((usr: any, i: number) => (
+                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{usr.name}</span>
+                                    <span className="text-xs text-[var(--ag-sys-color-text-muted)]">
+                                        {usr.last_sign_in_at ? new Date(usr.last_sign_in_at).toLocaleDateString() : 'Desconocido'}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
 
-                        <section>
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más interacciones (chats)</h3>
-                                <button onClick={() => openModal('Anuncios con más interacciones', topListingsChats, 'title', 'chats_count', <MessageSquare className="w-3 h-3"/>, 'bg-blue-500')} 
-                                className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline">
-                                    <BarChart2 className="w-3 h-3"/> Ver todo
-                                </button>
-                            </div>
-                            <div className="space-y-2">
-                                {topListingsChats.slice(0,5).map((lst: any, i: number) => (
-                                    <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                        <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
-                                        <span className="font-bold text-blue-500 flex items-center gap-1"><MessageSquare className="w-4 h-4" /> {lst.chats_count}</span>
-                                    </div>
-                                ))}
-                                {topListingsChats.length === 0 && <p className="text-xs text-gray-500">Sin datos de chats...</p>}
-                            </div>
-                        </section>
-                    </div>
+                    {/* Top Listings */}
+                    <section>
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más anuncios publicados</h3>
+                            <button onClick={() => openDetail('Usuarios con más Anuncios', topUsersListings, 'name', 'listings_count', null, 'bg-emerald-500', true)} 
+                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
+                                <BarChart2 className="w-3 h-3"/> Ver todo
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {topUsersListings.slice(0,5).map((usr: any, i: number) => (
+                                <Link href={`/admin/listings?userId=${usr.user_id}`} key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3 hover:bg-gray-50 transition-colors group">
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate group-hover:text-[var(--ag-sys-color-primary)] transition-colors">{usr.name}</span>
+                                    <span className="font-bold text-[var(--ag-sys-color-primary)]">{usr.listings_count} anuncios</span>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Top Chats */}
+                    <section>
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más chats</h3>
+                            <button onClick={() => openDetail('Usuarios con más Chats', topUsersChats, 'name', 'chats_count', <MessageSquare className="w-3 h-3"/>, 'bg-blue-500')} 
+                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
+                                <BarChart2 className="w-3 h-3"/> Ver todo
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {topUsersChats.slice(0,5).map((usr: any, i: number) => (
+                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{usr.name}</span>
+                                    <span className="font-bold text-[var(--ag-sys-color-primary)]">{usr.chats_count} chats</span>
+                                </div>
+                            ))}
+                            {topUsersChats.length === 0 && <p className="text-xs text-gray-500">Sin datos de chats...</p>}
+                        </div>
+                    </section>
                 </div>
             </div>
 
-            {/* Modal for Chart View */}
-            {modalData && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in" onClick={() => setModalData(null)}>
-                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-                        {/* Header */}
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-gray-50/50">
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                                    <BarChart2 className="w-5 h-5 text-gray-500" />
-                                    {modalData.title}
-                                </h2>
-                                <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider">Top 100 resultados - Gráfica ordenada</p>
-                            </div>
-                            <button 
-                                onClick={() => setModalData(null)}
-                                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors text-gray-600"
-                            >
-                                <X className="w-5 h-5" />
+            {/* Panel Anuncios */}
+            <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 shadow-sm">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)]">
+                        <Package className="w-5 h-5" />
+                    </div>
+                    <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">Insights Anuncios</h2>
+                </div>
+
+                <div className="space-y-6">
+                    <section>
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Más visitados</h3>
+                            <button onClick={() => openDetail('Anuncios más visitados', topVisitedListings, 'title', 'visits_count', null, 'bg-emerald-500')} 
+                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
+                                <BarChart2 className="w-3 h-3"/> Ver todo
                             </button>
                         </div>
-
-                        {/* Body / Chart */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-2.5 bg-white">
-                            {modalData.items.length === 0 ? (
-                                <div className="text-center py-12 text-gray-400">No hay datos disponibles</div>
-                            ) : (
-                                (() => {
-                                    const maxVal = Math.max(...modalData.items.map(i => i[modalData.valueKey] || 0));
-                                    return modalData.items.map((item, index) => renderChartRow(item, maxVal, modalData, index));
-                                })()
-                            )}
+                        <div className="space-y-2">
+                            {topVisitedListings?.slice(0,5).map((lst: any, i: number) => (
+                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
+                                    <span className="font-bold text-[var(--ag-sys-color-primary)]">{lst.visits_count || 0} views</span>
+                                </div>
+                            ))}
+                            {(!topVisitedListings || topVisitedListings.length === 0) && <p className="text-xs text-gray-500">Sin datos de visitas...</p>}
                         </div>
-                    </div>
+                    </section>
+
+                    <section>
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más likes</h3>
+                            <button onClick={() => openDetail('Anuncios con más likes', topLikesListings, 'title', 'likes_count', <Heart className="w-3 h-3 fill-current"/>, 'bg-red-500')} 
+                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
+                                <BarChart2 className="w-3 h-3"/> Ver todo
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {topLikesListings.slice(0,5).map((lst: any, i: number) => (
+                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
+                                    <span className="font-bold text-red-500 flex items-center gap-1"><Heart className="w-4 h-4 fill-current"/> {lst.likes_count}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section>
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más interacciones (chats)</h3>
+                            <button onClick={() => openDetail('Anuncios con más interacciones', topListingsChats, 'title', 'chats_count', <MessageSquare className="w-3 h-3"/>, 'bg-blue-500')} 
+                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
+                                <BarChart2 className="w-3 h-3"/> Ver todo
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {topListingsChats.slice(0,5).map((lst: any, i: number) => (
+                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
+                                    <span className="font-bold text-blue-500 flex items-center gap-1"><MessageSquare className="w-4 h-4" /> {lst.chats_count}</span>
+                                </div>
+                            ))}
+                            {topListingsChats.length === 0 && <p className="text-xs text-gray-500">Sin datos de chats...</p>}
+                        </div>
+                    </section>
                 </div>
-            )}
-        </>
+            </div>
+        </div>
     );
 }
