@@ -24,6 +24,7 @@ export function InsightsPanels({
     topListingsChats
 }: any) {
     const [detailView, setDetailView] = useState<DetailData | null>(null);
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     const openDetail = (
         title: string,
@@ -35,29 +36,30 @@ export function InsightsPanels({
         isLink: boolean = false
     ) => {
         setDetailView({ title, items, labelKey, valueKey, icon, colorClass, isLink });
-        // Scroll to top of the area slightly
+        setHoveredIndex(null);
         window.scrollTo({ top: 100, behavior: 'smooth' });
     };
 
     if (detailView) {
         const maxVal = Math.max(...detailView.items.map(i => i[detailView.valueKey] || 0));
+        const hoveredData = hoveredIndex !== null ? detailView.items[hoveredIndex] : null;
 
         return (
             <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 shadow-sm animate-in slide-in-from-right-4 duration-300">
-                <div className="flex items-center gap-4 mb-8">
+                <div className="flex items-center gap-4 mb-2">
                     <button 
                         onClick={() => setDetailView(null)}
-                        className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 flex items-center justify-center bg-gray-50 border border-gray-200"
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 flex items-center justify-center bg-gray-50 border border-gray-200 shrink-0"
                         title="Volver"
                     >
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                        <h2 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
                             <BarChart2 className="w-6 h-6 text-gray-500" />
                             {detailView.title}
                         </h2>
-                        <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider">Top 100 resultados - Gráfico vertical</p>
+                        <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider">Top {detailView.items.length} resultados - Gráfico vertical</p>
                     </div>
                 </div>
 
@@ -65,29 +67,46 @@ export function InsightsPanels({
                     <div className="text-center py-20 text-gray-400">No hay datos disponibles</div>
                 ) : (
                     <>
+                        {/* Dynamic Tooltip Display Area */}
+                        <div className="h-10 mb-2 flex items-center px-2">
+                            {hoveredData ? (
+                                <div className="text-sm md:text-base font-medium text-gray-800 flex items-center gap-3 animate-in fade-in duration-200">
+                                    <span className="font-bold text-gray-400">#{hoveredIndex! + 1}</span>
+                                    <span className="truncate max-w-[200px] md:max-w-[400px]">{hoveredData[detailView.labelKey]}</span>
+                                    <span className={`px-2 py-1 rounded-md bg-gray-100 text-gray-900 font-bold flex items-center gap-1`}>
+                                        {hoveredData[detailView.valueKey]} {detailView.icon && <span className="opacity-60">{detailView.icon}</span>}
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className="text-sm text-gray-400 italic flex items-center gap-2">
+                                    Pasa el ratón sobre una barra para ver detalles
+                                </div>
+                            )}
+                        </div>
+
                         {/* Vertical Bar Chart */}
                         <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 md:p-6 mb-8 overflow-hidden">
-                            <div className="flex gap-1.5 overflow-x-auto items-end h-[300px] border-b border-gray-200 pb-2 px-1 relative custom-scrollbar">
+                            <div className="flex gap-1.5 overflow-x-auto items-end h-[300px] border-b border-gray-200 pb-2 px-1 custom-scrollbar">
                                 {detailView.items.map((item, index) => {
                                     const val = item[detailView.valueKey] || 0;
                                     const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                                    const isHovered = hoveredIndex === index;
                                     
                                     return (
-                                        <div key={index} className="w-8 md:w-10 flex-shrink-0 flex flex-col justify-end group cursor-pointer relative h-full">
-                                            {/* Tooltip */}
-                                            <div className="absolute -top-14 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-gray-900 text-white text-xs px-3 py-1.5 rounded z-10 whitespace-nowrap pointer-events-none transition-opacity flex flex-col items-center shadow-lg">
-                                                <span className="font-bold text-[14px]">{val}</span>
-                                                <span className="truncate max-w-[150px] font-medium text-gray-300">{item[detailView.labelKey]}</span>
-                                                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
-                                            </div>
-                                            
+                                        <div 
+                                            key={index} 
+                                            className="w-8 md:w-10 flex-shrink-0 flex flex-col justify-end group cursor-pointer relative h-full transition-all"
+                                            onMouseEnter={() => setHoveredIndex(index)}
+                                            onMouseLeave={() => setHoveredIndex(null)}
+                                            onTouchStart={() => setHoveredIndex(index)}
+                                        >
                                             {/* Bar */}
                                             <div 
-                                                className={`w-full rounded-t-sm transition-all duration-700 ease-in-out ${detailView.colorClass} opacity-70 group-hover:opacity-100 shadow-sm`}
+                                                className={`w-full rounded-t-sm transition-all duration-700 ease-in-out ${detailView.colorClass} shadow-sm ${isHovered ? 'opacity-100 ring-2 ring-offset-1 ring-gray-300' : 'opacity-70 group-hover:opacity-100'}`}
                                                 style={{ height: `${Math.max(pct, 1)}%` }}
                                             />
                                             {/* Label under X-axis */}
-                                            <div className="text-[10px] md:text-xs text-gray-400 text-center mt-2 font-medium">
+                                            <div className={`text-[10px] md:text-xs text-center mt-2 font-medium ${isHovered ? 'text-gray-800' : 'text-gray-400'}`}>
                                                 {index + 1}
                                             </div>
                                         </div>
@@ -102,7 +121,11 @@ export function InsightsPanels({
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                 {detailView.items.map((item, index) => {
                                     const content = (
-                                        <div className="bg-gray-50 border border-gray-100 rounded-lg p-3 flex justify-between items-center hover:bg-gray-100 transition-colors group/item h-full">
+                                        <div 
+                                            className={`bg-gray-50 border rounded-lg p-3 flex justify-between items-center transition-colors group/item h-full ${hoveredIndex === index ? 'border-gray-400 bg-gray-100' : 'border-gray-100 hover:bg-gray-100'}`}
+                                            onMouseEnter={() => setHoveredIndex(index)}
+                                            onMouseLeave={() => setHoveredIndex(null)}
+                                        >
                                             <div className="truncate pr-3 flex items-center gap-2">
                                                 <span className="text-gray-400 text-xs font-bold w-5">{index + 1}.</span>
                                                 <span className="text-sm font-medium text-gray-800 truncate group-hover/item:text-gray-900">{item[detailView.labelKey]}</span>
@@ -170,9 +193,13 @@ export function InsightsPanels({
                     <section>
                         <div className="flex justify-between items-center mb-3">
                             <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Usuarios más conectados hoy</h3>
+                            <button onClick={() => openDetail('Usuarios más conectados hoy', topConnectedUsers, 'name', 'time_label', null, 'bg-emerald-500')} 
+                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full" style={{display: 'none'}}>
+                                <BarChart2 className="w-3 h-3"/> Ver todo
+                            </button>
                         </div>
                         <div className="space-y-2">
-                            {topConnectedUsers.map((usr: any, i: number) => (
+                            {topConnectedUsers.slice(0,5).map((usr: any, i: number) => (
                                 <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
                                     <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{usr.name}</span>
                                     <span className="text-xs text-[var(--ag-sys-color-text-muted)]">

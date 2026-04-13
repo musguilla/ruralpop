@@ -7,20 +7,29 @@ import { InsightsPanels } from "@/components/admin/InsightsPanels";
 export default async function InsightsPage() {
     const supabase = await createClient();
 
-    // Requisito 1: Usuarios por provincia
+    // 1. Usuarios por provincia (Top 100)
     let topProvinces: any[] = [];
-    const { data: provData, error: provErr } = await supabase.rpc('get_insights_top_provinces');
-    if (!provErr && provData) {
-        // Fetch province names
-        const { data: provNames } = await supabase.from('provinces').select('id, name').in('id', provData.map((p: any) => p.province_id));
-        topProvinces = provData.map((p: any) => ({
-            ...p,
-            name: provNames?.find((n: any) => n.id === p.province_id)?.name || `Provincia ${p.province_id}`
-        }));
+    const { data: usersData } = await supabase.from('users').select('province_id');
+    if (usersData) {
+        const provCounts: Record<number, number> = {};
+        usersData.forEach((u: any) => {
+            if (u.province_id) provCounts[u.province_id] = (provCounts[u.province_id] || 0) + 1;
+        });
+        const sortedProvs = Object.entries(provCounts)
+            .map(([id, users_count]) => ({ province_id: Number(id), users_count }))
+            .sort((a, b) => b.users_count - a.users_count)
+            .slice(0, 100);
+        
+        if (sortedProvs.length > 0) {
+            const { data: provNames } = await supabase.from('provinces').select('id, name').in('id', sortedProvs.map(p => p.province_id));
+            topProvinces = sortedProvs.map(p => ({
+                ...p,
+                name: provNames?.find((n: any) => n.id === p.province_id)?.name || `Provincia ${p.province_id}`
+            }));
+        }
     }
 
-    // Utilizamos auth.admin.listUsers para obtener los last_sign_in_at
-    // Necesitamos el service_role_key para usar el admin api
+    // 2. Usuarios más conectados hoy
     const supabaseAdmin = createAdminClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -31,68 +40,102 @@ export default async function InsightsPage() {
         topConnectedUsers = [...usersAuthData.users]
             .filter(u => u.last_sign_in_at)
             .sort((a, b) => new Date(b.last_sign_in_at!).getTime() - new Date(a.last_sign_in_at!).getTime())
-            .slice(0, 5)
+            .slice(0, 100)
             .map(u => ({ id: u.id, email: u.email, last_sign_in_at: u.last_sign_in_at }));
         
-        // Obtener nombres de esos usuarios
         if (topConnectedUsers.length > 0) {
-            const { data: userProfiles } = await supabase.from('users').select('id, name, email').in('id', topConnectedUsers.map(u => u.id));
+            const { data: userProfiles } = await supabase.from('users').select('id, name').in('id', topConnectedUsers.map(u => u.id));
             topConnectedUsers = topConnectedUsers.map(u => ({
                 ...u,
-                name: userProfiles?.find((p: any) => p.id === u.id)?.name || u.email
+                name: userProfiles?.find((p: any) => p.id === u.id)?.name || u.email,
+                time_label: new Date(u.last_sign_in_at).toLocaleDateString()
             }));
         }
     }
 
-    // Requisito 3: Usuarios con más anuncios
+    // 3. Usuarios con más anuncios
     let topUsersListings: any[] = [];
-    const { data: ulData, error: ulErr } = await supabase.rpc('get_insights_top_users_listings');
-    if (!ulErr && ulData) {
-        const { data: userProfiles } = await supabase.from('users').select('id, name, email').in('id', ulData.map((u: any) => u.user_id));
-        topUsersListings = ulData.map((u: any) => ({
-            ...u,
-            name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
-        }));
+    const { data: listingsData } = await supabase.from('listings').select('user_id');
+    if (listingsData) {
+        const listCounts: Record<string, number> = {};
+        listingsData.forEach((l: any) => {
+            if (l.user_id) listCounts[l.user_id] = (listCounts[l.user_id] || 0) + 1;
+        });
+        const sortedListUsers = Object.entries(listCounts)
+            .map(([user_id, listings_count]) => ({ user_id, listings_count }))
+            .sort((a, b) => b.listings_count - a.listings_count)
+            .slice(0, 100);
+
+        if (sortedListUsers.length > 0) {
+            const { data: userProfiles } = await supabase.from('users').select('id, name, email').in('id', sortedListUsers.map(u => u.user_id));
+            topUsersListings = sortedListUsers.map(u => ({
+                ...u,
+                name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
+            }));
+        }
     }
 
-    // Requisito 4: Usuarios con más chats
+    // 4. Usuarios Y Anuncios con más chats (Aprovechamos un solo fetch)
     let topUsersChats: any[] = [];
-    const { data: ucData, error: ucErr } = await supabase.rpc('get_insights_top_users_chats');
-    if (!ucErr && ucData) {
-        const { data: userProfiles } = await supabase.from('users').select('id, name, email').in('id', ucData.map((u: any) => u.user_id));
-        topUsersChats = ucData.map((u: any) => ({
-            ...u,
-            name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
-        }));
+    let topListingsChats: any[] = [];
+    const { data: msgsData } = await supabase.from('messages').select('sender_id, receiver_id, listing_id');
+    if (msgsData) {
+        const userChatsCounts: Record<string, number> = {};
+        const listChatsCounts: Record<string, number> = {};
+        
+        msgsData.forEach((m: any) => {
+            if (m.sender_id) userChatsCounts[m.sender_id] = (userChatsCounts[m.sender_id] || 0) + 1;
+            if (m.receiver_id) userChatsCounts[m.receiver_id] = (userChatsCounts[m.receiver_id] || 0) + 1;
+            if (m.listing_id) listChatsCounts[m.listing_id] = (listChatsCounts[m.listing_id] || 0) + 1;
+        });
+
+        const sortedUserChats = Object.entries(userChatsCounts).map(([user_id, chats_count]) => ({ user_id, chats_count })).sort((a, b) => b.chats_count - a.chats_count).slice(0, 100);
+        const sortedListChats = Object.entries(listChatsCounts).map(([listing_id, chats_count]) => ({ listing_id, chats_count })).sort((a, b) => b.chats_count - a.chats_count).slice(0, 100);
+
+        if (sortedUserChats.length > 0) {
+            const { data: userProfiles } = await supabase.from('users').select('id, name, email').in('id', sortedUserChats.map(u => u.user_id));
+            topUsersChats = sortedUserChats.map(u => ({
+                ...u,
+                name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
+            }));
+        }
+
+        if (sortedListChats.length > 0) {
+            const { data: listProfiles } = await supabase.from('listings').select('id, title').in('id', sortedListChats.map(l => l.listing_id));
+            topListingsChats = sortedListChats.map(l => ({
+                ...l,
+                title: listProfiles?.find((p: any) => p.id === l.listing_id)?.title || 'Desconocido'
+            }));
+        }
     }
 
-    // Requisito 5: Anuncios más visitados
-    const { data: topVisitedListings, error: visitedErr } = await supabase
+    // 5. Anuncios más visitados
+    const { data: topVisitedListings } = await supabase
         .from('listings')
         .select('id, title, visits_count')
         .order('visits_count', { ascending: false, nullsFirst: false })
-        .limit(5);
+        .limit(100);
 
-    // Requisito 6: Anuncios con más likes
+    // 6. Anuncios con más likes
     let topLikesListings: any[] = [];
-    const { data: llData, error: llErr } = await supabase.rpc('get_insights_top_listings_likes');
-    if (!llErr && llData) {
-        const { data: listProfiles } = await supabase.from('listings').select('id, title').in('id', llData.map((l: any) => l.listing_id));
-        topLikesListings = llData.map((l: any) => ({
-            ...l,
-            title: listProfiles?.find((p: any) => p.id === l.listing_id)?.title || 'Desconocido'
-        }));
-    }
+    const { data: favsData } = await supabase.from('favorites').select('listing_id');
+    if (favsData) {
+        const likeCounts: Record<string, number> = {};
+        favsData.forEach((f: any) => {
+            if (f.listing_id) likeCounts[f.listing_id] = (likeCounts[f.listing_id] || 0) + 1;
+        });
+        const sortedLikes = Object.entries(likeCounts)
+            .map(([listing_id, likes_count]) => ({ listing_id, likes_count }))
+            .sort((a, b) => b.likes_count - a.likes_count)
+            .slice(0, 100);
 
-    // Requisito 7: Anuncios con más chats
-    let topListingsChats: any[] = [];
-    const { data: lcData, error: lcErr } = await supabase.rpc('get_insights_top_listings_chats');
-    if (!lcErr && lcData) {
-        const { data: listProfiles } = await supabase.from('listings').select('id, title').in('id', lcData.map((l: any) => l.listing_id));
-        topListingsChats = lcData.map((l: any) => ({
-            ...l,
-            title: listProfiles?.find((p: any) => p.id === l.listing_id)?.title || 'Desconocido'
-        }));
+        if (sortedLikes.length > 0) {
+            const { data: listProfiles } = await supabase.from('listings').select('id, title').in('id', sortedLikes.map(l => l.listing_id));
+            topLikesListings = sortedLikes.map(l => ({
+                ...l,
+                title: listProfiles?.find((p: any) => p.id === l.listing_id)?.title || 'Desconocido'
+            }));
+        }
     }
 
     return (
