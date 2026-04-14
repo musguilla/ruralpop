@@ -100,7 +100,7 @@ export function CheckoutFormClient() {
   }, [items, router, isReadyToPay]);
 
   const cartTotal = getCartTotal();
-  const shippingCost = 5.50;
+  const shippingCost = 0.00;
   const finalTotal = cartTotal + shippingCost;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -229,9 +229,9 @@ export function CheckoutFormClient() {
             <span>Subtotal de productos</span>
             <span>{cartTotal.toFixed(2)}€</span>
           </div>
-          <div className="flex justify-between text-sm text-[var(--ag-sys-color-text-muted)]">
-            <span>Gastos de envío (Península)</span>
-            <span>{shippingCost.toFixed(2)}€</span>
+          <div className="flex justify-between text-sm font-semibold text-[var(--ag-sys-color-primary)]">
+            <span>Envío (Península)</span>
+            <span>Gratis</span>
           </div>
           <div className="flex justify-between text-xl font-extrabold pt-2 mt-2 border-t border-[var(--ag-sys-color-border)]">
             <span>Total</span>

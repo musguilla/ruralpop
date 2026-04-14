@@ -11,8 +11,8 @@ export async function POST(req: Request) {
         }
 
         // Calculate order total securely on server to prevent manipulation
-        // For now, all hats are 15 EUR + fixed shipping 5.50 EUR
-        let totalAmount = 5.5; // Starts with shipping cost
+        // For now, all hats are 15 EUR + fixed shipping 0 EUR (Free shipping promo)
+        let totalAmount = 0; // Starts with shipping cost (Free for now)
         items.forEach((item: any) => {
             totalAmount += (15.00 * item.quantity); // Hardware price validation!
         });

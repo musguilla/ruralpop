@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       </tr>
     `).join('');
 
-    const total = items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) + 5.50; // Envío
+    const total = items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0) + 0; // Envío gratis
 
     const emailHtmlBody = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
@@ -35,8 +35,8 @@ export async function POST(req: Request) {
             <table style="width: 100%; border-collapse: collapse;">
             ${itemsHtml}
             <tr>
-                <td style="padding: 10px; text-align: right; font-weight: bold;">Gastos de envío:</td>
-                <td style="padding: 10px; text-align: right;">5.50€</td>
+                <td style="padding: 10px; text-align: right; font-weight: bold;">Envío:</td>
+                <td style="padding: 10px; text-align: right;">Gratis</td>
             </tr>
             <tr>
                 <td style="padding: 10px; text-align: right; font-weight: bold; font-size: 1.2em;">Total:</td>

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useCartStore } from '@/stores/cartStore';
-import { Minus, Plus, ShoppingCart, Check, X, Ruler } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, Check, X, Ruler, Truck } from 'lucide-react';
 import Image from 'next/image';
 
 interface StoreProductClientProps {
@@ -79,7 +79,12 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
       {/* Columna Info y Compra */}
       <div className="lg:col-span-5 flex flex-col">
         <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">{product.title}</h1>
-        <p className="text-3xl font-extrabold text-[var(--ag-sys-color-primary)] mb-6">{product.price.toFixed(2)}€</p>
+        <div className="mb-6">
+          <p className="text-3xl font-extrabold text-[var(--ag-sys-color-primary)]">{product.price.toFixed(2)}€</p>
+          <p className="text-sm font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wide mt-1 opacity-90 inline-flex items-center gap-1">
+            <Truck className="w-4 h-4" /> Envío gratis
+          </p>
+        </div>
         
         <div className="prose prose-sm md:prose-base dark:prose-invert text-[var(--ag-sys-color-text)] mb-8">
           <p>{product.description}</p>
