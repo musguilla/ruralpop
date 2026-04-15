@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { User, List, Heart, MessageSquare, Briefcase, HelpCircle, LogOut, ChevronDown, UserCircle2 } from "lucide-react";
 import { ChatBadge } from "@/components/chat/ChatBadge";
+import { getImageUrl } from "@/utils/mediaUtils";
 
 interface UserMenuProps {
     userFullName: string;
@@ -38,7 +39,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
             >
                 <div className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-500 text-white font-semibold text-sm overflow-hidden">
                     {avatarUrl ? (
-                        <img src={avatarUrl} alt={userFullName || 'Avatar'} className="w-full h-full object-cover" />
+                        <img src={getImageUrl(avatarUrl)} alt={userFullName || 'Avatar'} className="w-full h-full object-cover" />
                     ) : userFullName ? (
                         userFullName.charAt(0).toUpperCase()
                     ) : (

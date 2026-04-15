@@ -4,6 +4,7 @@ import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { Building2, MapPin, ShieldCheck, BadgeCheck, Sparkles, ArrowRight, Globe, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { CompanySearchInput } from "./CompanySearchInput";
+import { getImageUrl } from "@/utils/mediaUtils";
 
 export const revalidate = 60; // Revalidate every minute
 
@@ -115,7 +116,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                                 <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-gray-100 flex items-center justify-center shadow-sm border border-gray-200 overflow-hidden">
                                     {company.avatar_url ? (
                                         /* eslint-disable-next-line @next/next/no-img-element */
-                                        <img src={company.avatar_url} alt={company.commercial_name || "Logo empresa"} className="w-full h-full object-cover" />
+                                        <img src={getImageUrl(company.avatar_url)} alt={company.commercial_name || "Logo empresa"} className="w-full h-full object-cover" />
                                     ) : (
                                         <Building2 className="w-12 h-12 text-gray-400" />
                                     )}
