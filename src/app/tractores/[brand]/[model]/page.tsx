@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
 import { ArrowLeft, Download, FileText, Tractor, ChevronRight } from "lucide-react";
 import { getTractorFormattedName, generateTractorFriendlySlug, TRACTOR_DESCRIPTIONS } from "@/lib/tractores-data";
 
@@ -59,15 +60,32 @@ export default async function BrandModelDetail(props: Props) {
         notFound();
     }
 
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const s3Client = new S3Client({
+        region: "auto",
+        endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+        credentials: {
+            accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+            secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+        },
+    });
 
-    // Instead of querying everything, let's just generate the paths and get their public urls.
-    // However, to know *if* the cover exists, we need to list or just assume the urls.
-    // Let's just assume the URL exists, or we can check the storage.
-    const { data: files } = await supabase.storage.from("tractores").list(folderName, { limit: 200 });
+    const listCommand = new ListObjectsV2Command({
+        Bucket: process.env.R2_BUCKET_NAME!,
+        Prefix: `tractores/${folderName}/`,
+    });
+
+    let files: { name: string }[] = [];
+    try {
+        const { Contents } = await s3Client.send(listCommand);
+        if (Contents) {
+            files = Contents.map(c => {
+                const name = c.Key?.split('/').pop() || "";
+                return { name };
+            }).filter(f => f.name !== "");
+        }
+    } catch (err) {
+        console.error("Error fetching files from S3:", err);
+    }
 
     if (!files || files.length === 0) {
         notFound();
@@ -91,7 +109,7 @@ export default async function BrandModelDetail(props: Props) {
         if (fSlug === decodedModel) {
             foundFormattedName = fName; // Same for all items in this slug
             const ext = f.name.substring(f.name.lastIndexOf(".") + 1).toLowerCase();
-            const publicUrl = supabase.storage.from("tractores").getPublicUrl(`${folderName}/${f.name}`).data.publicUrl;
+            const publicUrl = `${process.env.NEXT_PUBLIC_R2_URL}/tractores/${encodeURIComponent(folderName)}/${encodeURIComponent(f.name)}`;
 
             if (ext === 'pdf') {
                 pdfUrl = publicUrl;
