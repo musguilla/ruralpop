@@ -115,7 +115,8 @@ export default async function BrandCatalogPage(props: Props) {
         }
 
         const item = itemsMap.get(friendlySlug)!;
-        const publicUrl = `${process.env.NEXT_PUBLIC_R2_URL}/tractores/${encodeURIComponent(folderName)}/${encodeURIComponent(file.name)}`;
+        const r2BaseUrl = process.env.NEXT_PUBLIC_R2_URL || "https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev";
+        const publicUrl = `${r2BaseUrl}/tractores/${encodeURIComponent(folderName)}/${encodeURIComponent(file.name)}`;
         const extension = file.name.substring(file.name.lastIndexOf(".") + 1).toLowerCase();
 
         if (extension === "pdf") {

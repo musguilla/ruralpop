@@ -109,7 +109,8 @@ export default async function BrandModelDetail(props: Props) {
         if (fSlug === decodedModel) {
             foundFormattedName = fName; // Same for all items in this slug
             const ext = f.name.substring(f.name.lastIndexOf(".") + 1).toLowerCase();
-            const publicUrl = `${process.env.NEXT_PUBLIC_R2_URL}/tractores/${encodeURIComponent(folderName)}/${encodeURIComponent(f.name)}`;
+            const r2BaseUrl = process.env.NEXT_PUBLIC_R2_URL || "https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev";
+            const publicUrl = `${r2BaseUrl}/tractores/${encodeURIComponent(folderName)}/${encodeURIComponent(f.name)}`;
 
             if (ext === 'pdf') {
                 pdfUrl = publicUrl;
