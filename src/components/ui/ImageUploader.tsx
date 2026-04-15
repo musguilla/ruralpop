@@ -14,10 +14,11 @@ interface ImageUploaderProps {
 
 export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [] }: ImageUploaderProps) {
     const { showAlert } = useNotification();
-    const [files, setFiles] = useState<{ id: string; url: string; uploading: boolean }[]>(() => {
+    const [files, setFiles] = useState<{ id: string; url: string; preview?: string; uploading: boolean }[]>(() => {
         return initialImages.map(url => ({
             id: Math.random().toString(36).substring(7),
             url,
+            preview: url, // Initial images use their real url as preview
             uploading: false
         }));
     });
@@ -25,11 +26,12 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
 
     // Notificar al componente padre solo cuando las URLs cambien
     useEffect(() => {
+        // En onImagesChange filtramos la db por url global, NO por preview local!
         const allUrls = files.filter(f => !f.uploading && f.url).map(f => f.url);
         onImagesChange(allUrls);
     }, [files, onImagesChange]);
 
-    const uploadFile = async (file: File, tempId: string) => {
+    const uploadFile = async (file: File, tempId: string, localPreview: string) => {
         try {
             // Optimizar imagen antes de subir (Redimensionar y comprimir)
             console.log(`📸 Optimizando imagen original: ${(file.size / 1024).toFixed(2)} KB`);
@@ -73,9 +75,9 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
                 throw new Error(`Error subiendo a R2: ${errText}`);
             }
 
-            // 3. ¡Éxito! Actualizamos el estado con la public URL
+            // 3. ¡Éxito! Actualizamos el estado con la public URL para que onImagesChange la lea, pero mantenemos localPreview!
             setFiles((prev) =>
-                prev.map(f => f.id === tempId ? { ...f, uploading: false, url: publicUrl } : f)
+                prev.map(f => f.id === tempId ? { ...f, uploading: false, url: publicUrl, preview: localPreview } : f)
             );
         } catch (error) {
             console.error("Error uploading image:", error);
@@ -103,8 +105,9 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
 
         newFiles.forEach((file) => {
             const tempId = Math.random().toString(36).substring(7);
-            setFiles((prev) => [...prev, { id: tempId, url: "", uploading: true }]);
-            uploadFile(file, tempId);
+            const localPreview = URL.createObjectURL(file); // Generar preview ultra-rápida nativa
+            setFiles((prev) => [...prev, { id: tempId, url: "", preview: localPreview, uploading: true }]);
+            uploadFile(file, tempId, localPreview);
         });
     };
 
@@ -123,7 +126,7 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
                                 <span className="text-[10px] mt-1 font-medium text-[var(--ag-sys-color-text-muted)]">Subiendo...</span>
                             </div>
                         ) : (
-                            <img src={fileObj.url} alt="Preview" className="w-full h-full object-cover" />
+                            <img src={fileObj.preview || fileObj.url} alt="Preview" className="w-full h-full object-cover" />
                         )}
                         <button
                             type="button"
