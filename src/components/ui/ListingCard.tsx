@@ -9,6 +9,7 @@ import { slugify } from "@/utils/seoUtils";
 import { encodeId } from "@/utils/idUtils";
 import { FavoriteButton } from "./FavoriteButton";
 import supabaseLoader from "@/utils/supabase-image-loader";
+import { getImageUrl } from "@/utils/mediaUtils";
 
 export interface Listing {
     id: string;
@@ -42,7 +43,8 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
         }
     };
 
-    const mainImage = listing.image_urls?.[currentImageIndex] || listing.image_urls?.[0];
+    const resolvedImageUrls = (listing.image_urls || []).map(url => getImageUrl(url));
+    const mainImage = resolvedImageUrls[currentImageIndex] || resolvedImageUrls[0];
 
     const listingSlug = slugify(listing.title);
     const shortId = encodeId(listing.id);

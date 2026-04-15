@@ -12,6 +12,7 @@ import { FavoriteDetailButton } from "@/components/ui/FavoriteDetailButton";
 import { ShareButtons } from "@/components/ui/ShareButtons";
 import { PhoneRevealButton } from "@/components/ui/PhoneRevealButton";
 import { buildSeoUrl, slugify } from "@/utils/seoUtils";
+import { getImageUrl } from "@/utils/mediaUtils";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -50,7 +51,8 @@ export async function generateMetadata(
     }
 
     const previousImages = (await parent).openGraph?.images || [];
-    const mainImage = listing.image_urls?.[0] || 'https://www.ruralpop.com/default-og.jpg';
+    const resolvedImageUrls = (listing.image_urls || []).map((url: string) => getImageUrl(url));
+    const mainImage = resolvedImageUrls[0] || 'https://www.ruralpop.com/default-og.jpg';
 
     const fullTitle = `${listing.title} - Vender y comprar ganado | Ruralpop`;
 
@@ -143,11 +145,13 @@ export default async function ListingDetailPage(props: Props) {
     const validUntilDate = new Date();
     validUntilDate.setFullYear(validUntilDate.getFullYear() + 1);
 
+    const resolvedImageUrls = (listing.image_urls || []).map((url: string) => getImageUrl(url));
+
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": listing.title,
-        "image": listing.image_urls,
+        "image": resolvedImageUrls,
         "description": listing.description,
         "sku": id,
         "aggregateRating": {
@@ -205,7 +209,7 @@ export default async function ListingDetailPage(props: Props) {
 
                     {/* Columna Izquierda: Galería e Información */}
                     <div className="lg:col-span-8 space-y-8">
-                        <ImageGallery images={listing.image_urls} title={listing.title} />
+                        <ImageGallery images={resolvedImageUrls} title={listing.title} />
 
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 sm:p-8 border border-[var(--ag-sys-color-border)] shadow-sm">
                             <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
