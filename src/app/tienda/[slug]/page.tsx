@@ -4,6 +4,7 @@ import { StoreProductClient } from "@/components/store/StoreProductClient";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Metadata, ResolvingMetadata } from "next";
+import { getImageUrl } from "@/utils/mediaUtils";
 
 type Props = {
     params: Promise<{ slug: string }>;
@@ -21,13 +22,14 @@ export async function generateMetadata(
 
     const { data: product } = await supabase
         .from('products')
-        .select('title, description, image_urls, price')
+        .select('title, description, image_urls, media, price')
         .eq('slug', slug)
         .single();
 
     if (!product) return { title: "Producto no encontrado | Tienda Ruralpop" };
 
-    const mainImage = product.image_urls?.[0] || 'https://www.ruralpop.com/default-og.jpg';
+    const firstMedia = product.media?.[0] || product.image_urls?.[0];
+    const mainImage = firstMedia ? getImageUrl(firstMedia) : 'https://www.ruralpop.com/default-og.jpg';
     return {
         title: `${product.title} | Tienda Ruralpop`,
         description: product.description || `Compra ${product.title} en la tienda oficial de Ruralpop por solo ${product.price}€.`,
@@ -35,7 +37,7 @@ export async function generateMetadata(
             title: `${product.title} | Tienda Ruralpop`,
             description: product.description || `Compra ${product.title} en la tienda oficial de Ruralpop por solo ${product.price}€.`,
             url: `https://www.ruralpop.com/tienda/${slug}`,
-            images: [{ url: mainImage, width: 1200, height: 630 }],
+            images: [{ url: mainImage.startsWith('http') ? mainImage : `https://www.ruralpop.com${mainImage}`, width: 1200, height: 630 }],
         }
     };
 }
@@ -74,6 +76,7 @@ export default async function ProductDetailPage(props: Props) {
                   title: product.title,
                   price: product.price,
                   imageUrls: product.image_urls,
+                  media: product.media,
                   description: product.description,
                 }} />
             </div>

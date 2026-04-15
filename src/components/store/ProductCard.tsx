@@ -2,17 +2,24 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { getImageUrl, MediaObject } from '@/utils/mediaUtils';
+
 interface ProductCardProps {
   id: string;
   slug: string;
   title: string;
   price: number;
   imageUrls: string[];
+  media?: MediaObject[];
 }
 
-export function ProductCard({ id, slug, title, price, imageUrls }: ProductCardProps) {
-  const mainImage = imageUrls[0] || '/default-og.jpg';
-  const hoverImage = imageUrls[1] || mainImage; // If no second image, fallback to first
+export function ProductCard({ id, slug, title, price, imageUrls, media = [] }: ProductCardProps) {
+  // Use media if it exists, otherwise use imageUrls (legacy)
+  const imageSourceFirst = media.length > 0 ? media[0] : imageUrls[0];
+  const imageSourceSecond = media.length > 1 ? media[1] : (imageUrls[1] || imageSourceFirst);
+
+  const mainImage = getImageUrl(imageSourceFirst) || '/default-og.jpg';
+  const hoverImage = getImageUrl(imageSourceSecond) || mainImage;
 
   return (
     <Link href={`/tienda/${slug}`} className="group block bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300">

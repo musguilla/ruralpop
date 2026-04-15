@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../src";
 
 :root {
   --ag-sys-color-background: #f8fafc;

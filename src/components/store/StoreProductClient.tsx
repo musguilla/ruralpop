@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useCartStore } from '@/stores/cartStore';
 import { Minus, Plus, ShoppingCart, Check, X, Ruler, Truck } from 'lucide-react';
 import Image from 'next/image';
+import { getImageUrl, MediaObject } from '@/utils/mediaUtils';
 
 interface StoreProductClientProps {
   product: {
@@ -12,6 +13,7 @@ interface StoreProductClientProps {
     title: string;
     price: number;
     imageUrls: string[];
+    media?: MediaObject[];
     description: string | null;
   };
 }
@@ -27,6 +29,12 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
 
   const isTshirt = product.slug.includes('camiseta');
 
+  // Normalizar las URLs de imágenes usando la función centralizada
+  const resolvedImages = product.media && product.media.length > 0 
+    ? product.media.map(m => getImageUrl(m)) 
+    : product.imageUrls.map(u => getImageUrl(u));
+
+
   const handleAddToCart = () => {
     if (isTshirt && !size) {
         alert('Por favor, selecciona una talla antes de añadir a la cesta.');
@@ -38,7 +46,7 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
       slug: product.slug,
       title: isTshirt ? `${product.title} (Talla ${size})` : product.title,
       price: product.price,
-      imageUrl: product.imageUrls[0],
+      imageUrl: resolvedImages[0] || '/default-og.jpg',
       quantity,
       size: size || undefined
     });
@@ -52,7 +60,7 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
       <div className="lg:col-span-7 flex flex-col gap-4">
         <div className="relative aspect-square w-[85%] md:w-[75%] mx-auto rounded-2xl overflow-hidden bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)]">
           <Image 
-            src={product.imageUrls[activeImageIndex] || '/default-og.jpg'}
+            src={resolvedImages[activeImageIndex] || '/default-og.jpg'}
             alt={product.title}
             fill
             className="object-cover"
@@ -61,9 +69,9 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
         </div>
         
         {/* Miniaturas */}
-        {product.imageUrls.length > 1 && (
+        {resolvedImages.length > 1 && (
           <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
-            {product.imageUrls.map((url, idx) => (
+            {resolvedImages.map((url, idx) => (
               <button 
                 key={idx}
                 onClick={() => setActiveImageIndex(idx)}

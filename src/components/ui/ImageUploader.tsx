@@ -37,19 +37,43 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
             console.log(`✅ Imagen optimizada: ${(optimizedBlob.size / 1024).toFixed(2)} KB`);
 
             const fileExt = "jpg"; // Forzamos jpg tras la optimización
-            const fileName = `${Math.random()}.${fileExt}`;
-            const filePath = `listings/${fileName}`;
+            const fileName = `${Math.random().toString(36).substring(7)}.${fileExt}`;
+            
+            // 1. Obtener la URL pre-firmada desde nuestro backend
+            const presignRes = await fetch("/api/upload/presign", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    filename: fileName,
+                    contentType: "image/jpeg",
+                    folder: "listings",
+                }),
+            });
 
-            const { error: uploadError } = await supabase.storage
-                .from("listings")
-                .upload(filePath, optimizedBlob);
+            if (!presignRes.ok) {
+                 const errText = await presignRes.text();
+                 throw new Error(`Error en pre-firma: ${errText}`);
+            }
 
-            if (uploadError) throw uploadError;
+            const { presignedUrl, publicUrl } = await presignRes.json();
 
-            const { data: { publicUrl } } = supabase.storage
-                .from("listings")
-                .getPublicUrl(filePath);
+            // 2. Subir el binario directamente a Cloudflare R2 usando la url pre-firmada
+            const uploadRes = await fetch(presignedUrl, {
+                method: "PUT",
+                body: optimizedBlob,
+                headers: {
+                    "Content-Type": "image/jpeg",
+                },
+            });
 
+            if (!uploadRes.ok) {
+                const errText = await uploadRes.text();
+                throw new Error(`Error subiendo a R2: ${errText}`);
+            }
+
+            // 3. ¡Éxito! Actualizamos el estado con la public URL
             setFiles((prev) =>
                 prev.map(f => f.id === tempId ? { ...f, uploading: false, url: publicUrl } : f)
             );

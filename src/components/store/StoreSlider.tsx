@@ -86,13 +86,14 @@ export function StoreSlider({ products }: { products: any[] }) {
             >
                 {products.map((product) => (
                     <div key={product.id} className="w-[260px] sm:w-[280px] lg:w-[calc(25%-1.125rem)] flex-shrink-0 snap-start">
-                        <ProductCard 
-                            id={product.id}
-                            slug={product.slug}
-                            title={product.title}
-                            price={product.price}
-                            imageUrls={product.image_urls}
-                        />
+                            <ProductCard 
+                                id={product.id}
+                                slug={product.slug}
+                                title={product.title}
+                                price={product.price}
+                                imageUrls={product.image_urls}
+                                media={product.media}
+                            />
                     </div>
                 ))}
             </div>
