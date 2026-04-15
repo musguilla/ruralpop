@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export async function updateUserData(field: string, value: string) {
     const supabase = await createClient();
@@ -90,20 +91,30 @@ export async function uploadAvatar(formData: FormData) {
         }
 
         const fileExt = file.name.split('.').pop() || 'jpg';
-        // Unique filename to prevent cache issues
-        const filePath = `${user.id}/avatar_${Date.now()}.${fileExt}`;
+        const filePath = `users/${user.id}-avatar-${Date.now()}.${fileExt}`;
 
-        // 1. Upload file
-        const { error: uploadError } = await supabase.storage
-            .from('users')
-            .upload(filePath, file, { upsert: true });
+        // 1. Upload file to R2
+        const s3Client = new S3Client({
+            region: 'auto',
+            endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+            credentials: {
+                accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+                secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+            },
+        });
 
-        if (uploadError) throw uploadError;
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        await s3Client.send(new PutObjectCommand({
+            Bucket: process.env.R2_BUCKET_NAME!,
+            Key: filePath,
+            Body: buffer,
+            ContentType: file.type,
+        }));
 
         // 2. Get public URL
-        const { data: { publicUrl } } = supabase.storage
-            .from('users')
-            .getPublicUrl(filePath);
+        const publicUrl = `${process.env.NEXT_PUBLIC_R2_URL}/${filePath}`;
 
         // 3. Update auth metadata
         const { error: updateError } = await supabase.auth.updateUser({
