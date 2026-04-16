@@ -62,17 +62,17 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
         // Filter based on search params
         const categoryFilter = searchParams.category as string;
-        if (categoryFilter) {
+        if (categoryFilter && fallbackLevel < 4) {
             query = query.eq("category", categoryFilter);
         }
 
         const subcategoryFilter = searchParams.subcategory as string;
-        if (subcategoryFilter) {
+        if (subcategoryFilter && fallbackLevel < 3) {
             query = query.ilike("subcategory", subcategoryFilter);
         }
 
         const textQuery = searchParams.q as string;
-        if (textQuery) {
+        if (textQuery && fallbackLevel < 3) {
             let sanitizedQuery = textQuery.trim().toLowerCase();
             
             if (fallbackLevel === 2) {
@@ -98,17 +98,17 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         }
 
         const priceMin = searchParams.price_min as string;
-        if (priceMin) {
+        if (priceMin && fallbackLevel < 3) {
             query = query.gte("price", priceMin);
         }
 
         const priceMax = searchParams.price_max as string;
-        if (priceMax) {
+        if (priceMax && fallbackLevel < 3) {
             query = query.lte("price", priceMax);
         }
 
         const locationFilter = searchParams.province_id as string;
-        if (locationFilter) {
+        if (locationFilter && fallbackLevel < 3) {
             if (locationFilter.startsWith('m')) {
                 const muni = LOCATIONS.find((l: { id: string }) => l.id === locationFilter);
                 if (muni) {
@@ -131,6 +131,8 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     const isMultiWordSearch = typeof searchParams.q === 'string' && searchParams.q.trim().split(/[\s\-]+/).filter(t => t.length > 2).length > 1;
 
+    let fallbackMessage = "";
+
     // Retry with OR fallback if needed
     if (!error && (!listings || listings.length === 0) && isMultiWordSearch) {
         query = buildQuery(1);
@@ -147,6 +149,33 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         listings = wildcardRes.data;
         count = wildcardRes.count;
         error = wildcardRes.error;
+    }
+
+    // SEO Fallback 1: Keep only Category, drop subcategory, search and location
+    if (!error && (!listings || listings.length === 0) && searchParams.category) {
+        query = buildQuery(3);
+        const catRes = await query.range(from, to);
+        listings = catRes.data;
+        count = catRes.count;
+        error = catRes.error;
+        
+        if (listings && listings.length > 0) {
+             const catName = typeof searchParams.category === 'string' ? searchParams.category.charAt(0).toUpperCase() + searchParams.category.slice(1) : 'esta categoría';
+             fallbackMessage = `No hay resultados exactos con esos filtros, pero aquí tienes los anuncios recientes de ${catName}.`;
+        }
+    }
+
+    // SEO Fallback 2: Drop absolutely everything to prevent 0 results (Soft 404 Google warning)
+    if (!error && (!listings || listings.length === 0)) {
+        query = buildQuery(4);
+        const globalRes = await query.range(from, to);
+        listings = globalRes.data;
+        count = globalRes.count;
+        error = globalRes.error;
+        
+        if (listings && listings.length > 0) {
+             fallbackMessage = `No hay resultados exactos, pero aquí tienes los anuncios más recientes de Ruralpop.`;
+        }
     }
 
     if (error) {
@@ -178,6 +207,11 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     return (
         <>
+            {fallbackMessage && (
+                <div className="mb-6 p-4 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-primary)]/20 rounded-xl font-medium text-center">
+                    {fallbackMessage}
+                </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {listings.map((listing: Listing) => (
                     <ListingCard key={listing.id} listing={listing} isFavorited={userFavs.includes(listing.id)} isGhostPreview={isGhostProfile} />
