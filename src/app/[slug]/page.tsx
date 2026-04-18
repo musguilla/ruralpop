@@ -6,6 +6,9 @@ import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { parseSeoUrl } from "@/utils/seoUtils";
 import { LOCATIONS } from "@/constants/locations";
 import { notFound } from "next/navigation";
+import { getCatalogSeoData } from "@/utils/seoCatalogUtils";
+import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
+import { DynamicFaqs } from "@/components/seo/DynamicFaqs";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const params = await props.params;
@@ -53,9 +56,15 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
         }
     }
 
+    const { count } = await getCatalogSeoData(parsed);
+
     return {
         title: pageTitle,
         description: `Aplicación gratis para ${parts.join(" ") || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`,
+        robots: {
+            index: count >= 8,
+            follow: true
+        },
         alternates: {
             canonical: `/${params.slug}`
         }
@@ -78,6 +87,12 @@ export default async function SearchResultsPage(props: {
 
     const parsedSlug = parseSeoUrl(params.slug);
 
+    let locationName = "";
+    if (parsedSlug.province_id) {
+        const loc = LOCATIONS.find(l => l.id === parsedSlug.province_id);
+        if (loc) locationName = loc.name;
+    }
+
     // Merge parsed slug with query params (e.g. page, price_min, price_max)
     const combinedParams: { [key: string]: string | string[] | undefined } = {
         ...searchParams
@@ -96,6 +111,21 @@ export default async function SearchResultsPage(props: {
 
             <Suspense fallback={<GridSkeleton />}>
                 <ListingsGrid searchParams={combinedParams} />
+            </Suspense>
+
+            <Suspense fallback={<div className="h-48 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mt-12 rounded-2xl" />}>
+                <DynamicSeoBlock 
+                    parsedSlug={parsedSlug} 
+                    locationName={locationName} 
+                    categoryQuery={parsedSlug.subcategory || parsedSlug.category || parsedSlug.q || "anuncios"} 
+                />
+            </Suspense>
+
+            <Suspense fallback={null}>
+                <DynamicFaqs 
+                    categoryQuery={parsedSlug.subcategory || parsedSlug.category || parsedSlug.q || "anuncios"} 
+                    provinceName={locationName} 
+                />
             </Suspense>
         </div>
     );

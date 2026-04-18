@@ -6,6 +6,10 @@ import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
 import { ListingCardSkeleton } from "@/components/ui/ListingCard";
 import type { Metadata } from "next";
+import { getCatalogSeoData } from "@/utils/seoCatalogUtils";
+import { parseSeoUrl } from "@/utils/seoUtils";
+import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
+import { DynamicFaqs } from "@/components/seo/DynamicFaqs";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const params = await props.params;
@@ -36,9 +40,22 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     // Making the description even more punchy and keyword rich
     const optimizedDescription = `Descubre los mejores anuncios de ${landing.title.toLowerCase()} en nuestra App gratis. El gran mercado agrícola de España para descargar y buscar, comprar y vender ganado, vacas, toros, caballos, maquinaria y más.`;
 
+    const parsed = {
+        category: landing.category,
+        subcategory: landing.subcategory,
+        q: landing.searchQuery,
+        province_id: landing.province ? LOCATIONS.find(l => l.name === landing.province)?.id : undefined
+    };
+
+    const { count } = await getCatalogSeoData(parsed);
+
     return {
         title: pageTitle,
         description: optimizedDescription,
+        robots: {
+            index: count >= 8,
+            follow: true
+        },
         alternates: {
             canonical: `/s/${params.slug}`
         },
@@ -89,26 +106,8 @@ export default async function SeoLandingPage(props: {
         }
     }
 
-    const faqSchema = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": landing.faqs.map((faq) => ({
-            "@type": "Question",
-            "name": faq.question,
-            "acceptedAnswer": {
-                "@type": "Answer",
-                "text": faq.answer
-            }
-        }))
-    };
-
     return (
         <div className="container mx-auto px-4 pt-0 pb-16 sm:py-8 min-h-screen">
-            {/* Inject JSON-LD FAQ Schema */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-            />
             <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
                 <ActiveSearchBar />
             </Suspense>
@@ -122,49 +121,20 @@ export default async function SeoLandingPage(props: {
                 <ListingsGrid searchParams={combinedParams} />
             </Suspense>
 
-            {/* SEO Content & FAQs (Full Width to match grid) */}
-            <div className="w-full mt-24 bg-[var(--ag-sys-color-surface)] p-6 sm:p-10 rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm">
-                <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">Preguntas frecuentes sobre {landing.title.toLowerCase()}</h2>
-                <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed text-lg mb-12">
-                    {landing.description}
-                </p>
+            <Suspense fallback={<div className="h-48 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mt-12 rounded-2xl" />}>
+                <DynamicSeoBlock 
+                    parsedSlug={combinedParams} 
+                    locationName={landing.province} 
+                    categoryQuery={landing.category || landing.searchQuery || landing.title} 
+                />
+            </Suspense>
 
-                {/* Custom Content for Tractores */}
-                {params.slug === "tractores-segunda-mano" && (
-                    <div className="mb-12 text-[var(--ag-sys-color-text)]">
-                        <h2 className="text-2xl font-extrabold mb-4">Comprar y vender animales tractores de segunda mano</h2>
-                        <p className="text-[var(--ag-sys-color-text-muted)] text-lg mb-4 leading-relaxed">
-                            Comprar y vender animales y <strong className="font-bold text-[var(--ag-sys-color-text)]">tractores de segunda mano</strong> nunca había sido tan fácil como hoy en día. Cada vez más profesionales del sector rural, ganaderos y agricultores recurren a plataformas online para encontrar oportunidades reales cerca de su zona, ahorrar costes y dar salida a sus productos o maquinaria de forma rápida.
-                        </p>
-                        <p className="text-[var(--ag-sys-color-text-muted)] text-lg mb-4 leading-relaxed">
-                            Si estás pensando en comprar animales o tractores de segunda mano, es importante contar con un espacio donde la oferta sea variada y actualizada, con vendedores reales y opciones que se adapten a tus necesidades. En Ruralpop puedes comparar desde tractores hasta maquinaria agrícola, puedes comparar, negociar directamente y encontrar precios mucho más competitivos que en el mercado tradicional.
-                        </p>
-                        <p className="text-[var(--ag-sys-color-text-muted)] text-lg leading-relaxed">
-                            Por otro lado, si lo que buscas es vender, este tipo de canales te permiten llegar a miles de personas interesadas en el entorno rural y la búsqueda de maquinaria o tractores. Publicar un anuncio es sencillo y en poco tiempo puedes empezar a recibir contactos de potenciales compradores, sin intermediarios y con total libertad para gestionar tus ventas.
-                        </p>
-                    </div>
-                )}
-
-                <h3 className="text-xl font-extrabold text-[var(--ag-sys-color-text)] mb-8">Preguntas frecuentes</h3>
-                <div className="space-y-4">
-                    {landing.faqs.map((faq, idx) => (
-                        <details
-                            key={idx}
-                            className="group bg-[var(--ag-sys-color-surface-muted)] rounded-2xl border border-[var(--ag-sys-color-border)] overflow-hidden"
-                        >
-                            <summary className="flex justify-between items-center font-bold cursor-pointer list-none p-6 text-[var(--ag-sys-color-text)] hover:bg-black/5 transition-colors">
-                                <span>{faq.question}</span>
-                                <span className="transition-transform duration-300 group-open:-rotate-180">
-                                    <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
-                                </span>
-                            </summary>
-                            <div className="p-6 pt-0 text-[var(--ag-sys-color-text-muted)] leading-relaxed">
-                                {faq.answer}
-                            </div>
-                        </details>
-                    ))}
-                </div>
-            </div>
+            <Suspense fallback={null}>
+                <DynamicFaqs 
+                    categoryQuery={landing.category || landing.searchQuery || landing.title} 
+                    provinceName={landing.province} 
+                />
+            </Suspense>
 
             {/* Related Searches for Tractores and Machinery */}
             {["tractores-segunda-mano", "segunda-mano-tractores", "comprar-maquinaria-agricola", "tractores-segunda-mano-asturias", "tractores-segunda-mano-galicia", "tractores-usados-madrid", "tractor-segunda-mano-bilbao", "tractor-usado-valencia"].includes(params.slug) && (

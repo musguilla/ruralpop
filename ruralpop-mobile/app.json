@@ -18,7 +18,9 @@
       "bundleIdentifier": "com.ruralpop.ruralpopapp",
       "buildNumber": "27",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleDevelopmentRegion": "es",
+        "CFBundleAllowMixedLocalizations": true
       }
     },
     "android": {
