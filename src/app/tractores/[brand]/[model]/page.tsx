@@ -155,7 +155,7 @@ export default async function BrandModelDetail(props: Props) {
                     {/* Left: Content Info */}
                     <div className="flex-1 p-8 sm:p-10 order-2 md:order-1 flex flex-col justify-center">
                         <h1 className="text-3xl sm:text-5xl font-black text-[var(--ag-sys-color-text)] tracking-tight mb-6 leading-tight">
-                            {formattedModelName}
+                            Tractor {brandData.name} {formattedModelName}
                         </h1>
 
                         <div className="prose prose-lg text-[var(--ag-sys-color-text-muted)] mb-10">
