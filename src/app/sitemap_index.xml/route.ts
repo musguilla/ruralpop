@@ -13,6 +13,9 @@ export async function GET() {
     <sitemap>
         <loc>${baseUrl}/sitemap_anuncios.xml</loc>
     </sitemap>
+    <sitemap>
+        <loc>${baseUrl}/sitemap_tractores.xml</loc>
+    </sitemap>
 </sitemapindex>`.trim();
 
     return new Response(xml, {
