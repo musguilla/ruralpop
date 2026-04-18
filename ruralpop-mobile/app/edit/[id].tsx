@@ -136,6 +136,7 @@ export default function EditListingScreen() {
 
     const uploadImages = async (): Promise<string[]> => {
         const urls: string[] = [];
+        const ruralpopDomain = 'https://www.ruralpop.com';
 
         for (let i = 0; i < images.length; i++) {
             const base64Img = images[i];
@@ -151,23 +152,33 @@ export default function EditListingScreen() {
                 const base64Str = base64Img.split(',')[1];
                 const fileName = `${user.id}-${Date.now()}-${i}.jpg`;
 
-                const { data, error } = await supabase.storage
-                    .from('listings')
-                    .upload(fileName, decode(base64Str), {
-                        contentType: 'image/jpeg',
+                try {
+                    const presignRes = await fetch(`${ruralpopDomain}/api/upload/presign`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            filename: fileName,
+                            contentType: "image/jpeg",
+                            folder: "listings"
+                        }),
                     });
 
-                if (error) {
-                    console.error("Upload error", error);
-                    continue;
-                }
+                    if (!presignRes.ok) throw new Error("Presign Error");
 
-                const { data: publicUrlData } = supabase.storage
-                    .from('listings')
-                    .getPublicUrl(fileName);
+                    const { presignedUrl, publicUrl } = await presignRes.json();
+                    
+                    const binaryData = decode(base64Str);
+                    const uploadRes = await fetch(presignedUrl, {
+                        method: "PUT",
+                        headers: { "Content-Type": "image/jpeg" },
+                        body: binaryData as any
+                    });
 
-                if (publicUrlData) {
-                    urls.push(publicUrlData.publicUrl);
+                    if (!uploadRes.ok) throw new Error("Upload Error");
+
+                    urls.push(publicUrl);
+                } catch (e: any) {
+                    console.error("Upload error", e);
                 }
             }
         }

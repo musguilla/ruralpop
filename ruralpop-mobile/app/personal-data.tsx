@@ -139,18 +139,38 @@ export default function PersonalDataScreen() {
             const fileExt = asset.uri.split('.').pop() || 'jpg';
             const fileName = `${user.id}/avatar_${Date.now()}.${fileExt}`;
 
-            const { error: uploadError } = await supabase.storage
-                .from('users')
-                .upload(fileName, decode(asset.base64), {
+            // Fetch presign URL from backend
+            const ruralpopDomain = 'https://www.ruralpop.com'; 
+            const presignRes = await fetch(`${ruralpopDomain}/api/upload/presign`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    filename: fileName,
                     contentType: `image/${fileExt === 'png' ? 'png' : 'jpeg'}`,
-                    upsert: true
-                });
+                    folder: "users"
+                }),
+            });
 
-            if (uploadError) throw uploadError;
+            if (!presignRes.ok) {
+                 const errText = await presignRes.text();
+                 throw new Error(`Error en pre-firma: ${errText}`);
+            }
 
-            const { data: { publicUrl } } = supabase.storage
-                .from('users')
-                .getPublicUrl(fileName);
+            const { presignedUrl, publicUrl } = await presignRes.json();
+
+            // Native Fetch PUT binary blob in React Native
+            const binaryData = decode(asset.base64);
+            const uploadRes = await fetch(presignedUrl, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": `image/${fileExt === 'png' ? 'png' : 'jpeg'}`,
+                },
+                body: binaryData as any
+            });
+
+            if (!uploadRes.ok) {
+                throw new Error("Error físico al escribir en R2 Edge.");
+            }
 
             // Fetch publicUrl again to prevent caching issues if same name (we use timestamp so it shouldn't happen)
             setAvatarUrl(publicUrl);
