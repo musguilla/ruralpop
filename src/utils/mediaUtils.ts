@@ -26,6 +26,12 @@ export function getImageUrl(image: string | MediaObject | null | undefined): str
 
     // 2. Si es una migración Legacy (texto plano apuntando a supabase)
     if (typeof image === 'string') {
+        // Corrección de seguridad: Si la app móvil subió la URL literal con un enviroment fallido
+        if (image.startsWith('undefined/')) {
+            const cleanPath = image.substring(10); // Quita 'undefined/'
+            const r2BaseUrl = process.env.NEXT_PUBLIC_R2_URL || 'https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev';
+            return `${r2BaseUrl.replace(/\/+$/, '')}/${cleanPath}`;
+        }
         return image;
     }
 
