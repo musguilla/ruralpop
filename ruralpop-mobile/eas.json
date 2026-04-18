@@ -19,7 +19,8 @@
       "env": {
         "npm_config_legacy_peer_deps": "true",
         "EXPO_PUBLIC_SUPABASE_URL": "https://zrpucbuvojskcwrhwevv.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_qRuIoHNLVeV3zaGW0Q7A-Q_aYdwNLtj"
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_qRuIoHNLVeV3zaGW0Q7A-Q_aYdwNLtj",
+        "EXPO_PUBLIC_R2_URL": "https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev"
       }
     }
   },

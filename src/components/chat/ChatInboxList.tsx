@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Tractor, ChevronRight, MessageSquare, User } from "lucide-react";
 import { formatRelativeTime } from "@/utils/format";
+import { getImageUrl } from "@/utils/mediaUtils";
 
 interface Message {
     id: string;
@@ -150,7 +151,7 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="relative w-5 h-5 rounded-full bg-[var(--ag-sys-color-background)] flex items-center justify-center text-[var(--ag-sys-color-primary)] overflow-hidden border border-[var(--ag-sys-color-border)]">
                                     {thread.otherUser?.avatar_url ? (
-                                        <Image src={thread.otherUser.avatar_url} alt="" fill className="object-cover" sizes="20px" />
+                                        <img src={getImageUrl(thread.otherUser.avatar_url)} alt="" className="w-full h-full object-cover" />
                                     ) : (
                                         <User className="w-3 h-3" />
                                     )}

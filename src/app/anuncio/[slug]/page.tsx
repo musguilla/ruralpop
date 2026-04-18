@@ -267,7 +267,7 @@ export default async function ListingDetailPage(props: Props) {
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="relative w-16 h-16 rounded-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] overflow-hidden flex flex-shrink-0 items-center justify-center text-[var(--ag-sys-color-primary)]">
                                     {listing.seller?.avatar_url ? (
-                                        <Image src={listing.seller.avatar_url} alt={rawSellerName} fill className="object-cover" sizes="64px" />
+                                        <img src={getImageUrl(listing.seller.avatar_url)} alt={rawSellerName} className="w-full h-full object-cover" />
                                     ) : (
                                         isProfessional ? <Building2 className="w-8 h-8" /> : <User className="w-8 h-8" />
                                     )}
