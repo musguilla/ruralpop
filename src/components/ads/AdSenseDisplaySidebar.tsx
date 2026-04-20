@@ -30,11 +30,9 @@ export function AdSenseDisplaySidebar() {
             {isClient && (
                 <ins
                     className="adsbygoogle"
-                    style={{ display: 'block', width: '100%', height: '100%' }}
+                    style={{ display: 'inline-block', width: '360px', height: '800px' }}
                     data-ad-client="ca-pub-2042067618462129"
-                    data-ad-slot="5164598314"
-                    data-ad-format="auto"
-                    data-full-width-responsive="true"
+                    data-ad-slot="7104365948"
                 />
             )}
         </div>
