@@ -6,7 +6,6 @@ import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
 import { ListingCardSkeleton } from "@/components/ui/ListingCard";
 import type { Metadata } from "next";
-import { getCatalogSeoData } from "@/utils/seoCatalogUtils";
 import { parseSeoUrl } from "@/utils/seoUtils";
 import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
 import { DynamicFaqs } from "@/components/seo/DynamicFaqs";
@@ -40,22 +39,9 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     // Making the description even more punchy and keyword rich
     const optimizedDescription = `Descubre los mejores anuncios de ${landing.title.toLowerCase()} en nuestra App gratis. El gran mercado agrícola de España para descargar y buscar, comprar y vender ganado, vacas, toros, caballos, maquinaria y más.`;
 
-    const parsed = {
-        category: landing.category,
-        subcategory: landing.subcategory,
-        q: landing.searchQuery,
-        province_id: landing.province ? LOCATIONS.find(l => l.name === landing.province)?.id : undefined
-    };
-
-    const { count } = await getCatalogSeoData(parsed);
-
     return {
         title: pageTitle,
         description: optimizedDescription,
-        robots: {
-            index: count >= 8,
-            follow: true
-        },
         alternates: {
             canonical: `/s/${params.slug}`
         },
