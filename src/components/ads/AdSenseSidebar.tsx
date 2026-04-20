@@ -24,9 +24,11 @@ export function AdSenseSidebar() {
             />
             <ins
                 className="adsbygoogle"
-                style={{ display: 'inline-block', width: '360px', height: '800px' }}
+                style={{ display: 'block' }}
                 data-ad-client="ca-pub-2042067618462129"
-                data-ad-slot="1649071318"
+                data-ad-slot="2259220062"
+                data-ad-format="auto"
+                data-full-width-responsive="true"
             />
         </div>
     );
