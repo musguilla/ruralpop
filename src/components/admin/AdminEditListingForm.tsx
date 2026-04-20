@@ -107,7 +107,6 @@ export default function AdminEditListingForm({ listing, initialProvinces, initia
                     message: res.error,
                     type: "error"
                 });
-                setIsPending(false);
             } else if (res?.success) {
                 showAlert({
                     title: "Anuncio modificado",
@@ -115,7 +114,12 @@ export default function AdminEditListingForm({ listing, initialProvinces, initia
                     type: "success"
                 });
                 router.push("/admin/listings");
-                router.refresh();
+            } else {
+                showAlert({
+                    title: "Error inesperado",
+                    message: "No se recibió una respuesta válida del servidor.",
+                    type: "warning"
+                });
             }
         } catch (err) {
             console.error(err);
@@ -124,6 +128,8 @@ export default function AdminEditListingForm({ listing, initialProvinces, initia
                 message: "Hubo un problema al conectar con el servidor. Inténtalo de nuevo.",
                 type: "error"
             });
+        } finally {
+            // Siempre restaurar el estado del botón independientemente de si navegamos o falló
             setIsPending(false);
         }
     }
