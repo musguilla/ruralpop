@@ -16,9 +16,9 @@ export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery 
     if (count === 0) {
         return (
             <div className="w-full mt-16 bg-[var(--ag-sys-color-surface)] p-6 sm:p-10 rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm text-center">
-                <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">Actualmente no hay resultados exactos</h2>
+                <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">Encuentra más resultados</h2>
                 <p className="text-[var(--ag-sys-color-text-muted)] text-lg mb-6">
-                    Aún no tenemos ofertas que coincidan al 100% con tu búsqueda de {categoryQuery} {locationName ? `en ${locationName}` : ''}.
+                    También puedes encontrar anuncios de {categoryQuery} {locationName ? `en ${locationName}` : ''} en ...
                 </p>
                 {locationName && NEIGHBORING_PROVINCES[locationName] && (
                     <div>
