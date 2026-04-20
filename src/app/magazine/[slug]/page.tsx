@@ -88,15 +88,22 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
     const wordCount = (post.content || post.excerpt).split(/\s+/).length;
     const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 
-    // Split content to inject AdSense after the 2nd paragraph
+    // Split content to inject AdSense (1: after 2nd paragraph, 2: before antepenultimate paragraph)
     let contentPart1 = post.content || "";
     let contentPart2 = "";
+    let contentPart3 = "";
 
     if (post.content) {
-        const parts = post.content.split(/<\/p>/i);
-        if (parts.length > 2) {
-            contentPart1 = parts[0] + '</p>' + parts[1] + '</p>';
-            contentPart2 = parts.slice(2).join('</p>');
+        const rawParts = post.content.split(/<\/p>/i);
+        const validParts = rawParts[rawParts.length - 1].trim() === '' ? rawParts.slice(0, -1) : rawParts;
+
+        if (validParts.length >= 6) {
+            contentPart1 = validParts.slice(0, 2).join('</p>') + '</p>';
+            contentPart2 = validParts.slice(2, validParts.length - 3).join('</p>') + '</p>';
+            contentPart3 = validParts.slice(validParts.length - 3).join('</p>') + '</p>';
+        } else if (validParts.length > 2) {
+            contentPart1 = validParts.slice(0, 2).join('</p>') + '</p>';
+            contentPart2 = validParts.slice(2).join('</p>') + '</p>';
         }
     }
 
@@ -148,6 +155,8 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                         <div dangerouslySetInnerHTML={{ __html: contentPart1 }} />
                         {contentPart2 && <AdSenseArticle />}
                         {contentPart2 && <div dangerouslySetInnerHTML={{ __html: contentPart2 }} />}
+                        {contentPart3 && <AdSenseArticle />}
+                        {contentPart3 && <div dangerouslySetInnerHTML={{ __html: contentPart3 }} />}
                     </div>
                 ) : (
                     <div className="text-center py-20">
