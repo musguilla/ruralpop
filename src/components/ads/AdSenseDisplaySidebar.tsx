@@ -19,7 +19,7 @@ export function AdSenseDisplaySidebar() {
     // Evitamos renderizar el ins directamente en SSR para prevenir CLS si no carga, 
     // pero como el layout lo manejamos en el wrapper principal, podemos pintarlo directamente.
     return (
-        <div className="w-full min-h-[600px] flex justify-center bg-[var(--ag-sys-color-background)] rounded-2xl overflow-hidden border border-transparent hover:border-[var(--ag-sys-color-border)] transition-colors text-center">
+        <div className="w-full min-h-[600px] flex justify-center text-center">
             <Script
                 id={`adsense-display-sidebar-${Math.random().toString(36).substring(7)}`}
                 async

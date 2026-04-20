@@ -109,7 +109,7 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
     }
 
     return (
-        <article className="min-h-screen bg-[var(--ag-sys-color-surface)] pb-24">
+        <article className="w-full min-h-screen bg-[var(--ag-sys-color-surface)] pb-24">
             {/* Header / Intro */}
             <div className="w-full relative h-[50vh] min-h-[400px] overflow-hidden">
                 <Image
@@ -150,7 +150,7 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
             </div>
 
             {/* Layout a 3 columnas: L-Sidebar | Content | R-Sidebar */}
-            <div className="container mx-auto px-4 mt-12 max-w-7xl flex flex-col lg:flex-row gap-8 items-start relative">
+            <div className="w-full px-4 md:px-8 xl:px-12 mt-12 max-w-[1920px] mx-auto flex flex-col lg:flex-row gap-8 items-start relative">
                 
                 {/* Left Sidebar (Solo PC) */}
                 <aside className="hidden lg:block w-[300px] flex-shrink-0 sticky top-24">
@@ -158,7 +158,7 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                 </aside>
 
                 {/* Content Body Central */}
-                <div className="flex-1 max-w-3xl w-full mx-auto pb-12">
+                <div className="flex-1 max-w-4xl w-full mx-auto pb-12">
                     {post.content ? (
                         <div className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-[var(--ag-sys-color-text)] prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-a:underline max-w-none text-[var(--ag-sys-color-text)] leading-relaxed">
                             <div dangerouslySetInnerHTML={{ __html: contentPart1 }} />
