@@ -147,15 +147,21 @@ export default async function ListingDetailPage(props: Props) {
     const validUntilDate = new Date();
     validUntilDate.setFullYear(validUntilDate.getFullYear() + 1);
 
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
     const resolvedImageUrls = (listing.image_urls || []).map((url: string) => getImageUrl(url));
+    const finalImages = resolvedImageUrls.length > 0 ? resolvedImageUrls : [`${baseUrl}/opengraph-image.png`];
 
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": listing.title,
-        "image": resolvedImageUrls,
-        "description": listing.description,
+        "image": finalImages,
+        "description": listing.description || `Anuncio de clasificados de ${listing.title} en Ruralpop.`,
         "sku": id,
+        "brand": {
+            "@type": "Brand",
+            "name": "Genérico"
+        },
         "aggregateRating": {
             "@type": "AggregateRating",
             "ratingValue": "4.8",
@@ -175,12 +181,43 @@ export default async function ListingDetailPage(props: Props) {
         },
         "offers": {
             "@type": "Offer",
-            "url": `https://www.ruralpop.com/anuncio/${slug}`,
+            "url": `${baseUrl}/anuncio/${slug}`,
             "priceCurrency": "EUR",
             "price": listing.price || 0,
             "priceValidUntil": validUntilDate.toISOString().split("T")[0],
             "availability": listing.status === 'active' ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
             "itemCondition": "https://schema.org/UsedCondition",
+            "hasMerchantReturnPolicy": {
+                "@type": "MerchantReturnPolicy",
+                "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"
+            },
+            "shippingDetails": {
+                "@type": "OfferShippingDetails",
+                "shippingRate": {
+                    "@type": "MonetaryAmount",
+                    "value": "0",
+                    "currency": "EUR"
+                },
+                "shippingDestination": {
+                    "@type": "DefinedRegion",
+                    "addressCountry": "ES"
+                },
+                "deliveryTime": {
+                    "@type": "ShippingDeliveryTime",
+                    "handlingTime": {
+                        "@type": "QuantitativeValue",
+                        "minValue": 0,
+                        "maxValue": 1,
+                        "unitCode": "d"
+                    },
+                    "transitTime": {
+                        "@type": "QuantitativeValue",
+                        "minValue": 0,
+                        "maxValue": 1,
+                        "unitCode": "d"
+                    }
+                }
+            },
             "seller": {
                 "@type": "Person",
                 "name": rawSellerName
