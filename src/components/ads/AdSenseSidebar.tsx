@@ -24,8 +24,7 @@ export function AdSenseSidebar() {
             />
             <ins
                 className="adsbygoogle"
-                style={{ display: 'block' }}
-                data-ad-format="autorelaxed"
+                style={{ display: 'inline-block', width: '360px', height: '800px' }}
                 data-ad-client="ca-pub-2042067618462129"
                 data-ad-slot="1649071318"
             />
