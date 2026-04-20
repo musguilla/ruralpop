@@ -14,6 +14,7 @@ import { PhoneRevealButton } from "@/components/ui/PhoneRevealButton";
 import { buildSeoUrl, slugify } from "@/utils/seoUtils";
 import { getImageUrl } from "@/utils/mediaUtils";
 import { AdSenseSidebar } from "@/components/ads/AdSenseSidebar";
+import { AdSenseGalleryBottom } from "@/components/ads/AdSenseGalleryBottom";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -211,6 +212,8 @@ export default async function ListingDetailPage(props: Props) {
                     {/* Columna Izquierda: Galería e Información */}
                     <div className="lg:col-span-8 space-y-8">
                         <ImageGallery images={resolvedImageUrls} title={listing.title} />
+                        
+                        <AdSenseGalleryBottom />
 
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 sm:p-8 border border-[var(--ag-sys-color-border)] shadow-sm">
                             <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
