@@ -5,6 +5,7 @@ import { ListingCard, type Listing } from "@/components/ui/ListingCard";
 import { Tractor } from "lucide-react";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { LOCATIONS } from "@/constants/locations";
+import { AdSenseInFeed } from "@/components/ads/AdSenseInFeed";
 
 export async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     let supabase = await createClient();
@@ -205,6 +206,28 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     const userFavs = await getUserFavoriteIds();
 
+    // Determinar 4 posiciones para anuncios In-Feed basados en el número de página (para evitar problemas de hidratación)
+    const adPositions = new Set<number>();
+    const maxIndex = listings.length;
+    if (maxIndex > 4) {
+        adPositions.add((currentPage * 3) % maxIndex);
+        adPositions.add((currentPage * 8 + 2) % maxIndex);
+        adPositions.add((currentPage * 13 + 1) % maxIndex);
+        adPositions.add((currentPage * 21 + 3) % maxIndex);
+    } else if (maxIndex > 1) {
+        adPositions.add(1);
+    }
+
+    const gridItems: React.ReactNode[] = [];
+    listings.forEach((listing: Listing, index: number) => {
+        if (adPositions.has(index)) {
+            gridItems.push(<AdSenseInFeed key={`ad-${listing.id}-${index}`} />);
+        }
+        gridItems.push(
+            <ListingCard key={listing.id} listing={listing} isFavorited={userFavs.includes(listing.id)} isGhostPreview={isGhostProfile} />
+        );
+    });
+
     return (
         <>
             {fallbackMessage && (
@@ -213,9 +236,7 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
                 </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {listings.map((listing: Listing) => (
-                    <ListingCard key={listing.id} listing={listing} isFavorited={userFavs.includes(listing.id)} isGhostPreview={isGhostProfile} />
-                ))}
+                {gridItems}
             </div>
 
             <Pagination currentPage={currentPage} totalPages={totalPages} />
