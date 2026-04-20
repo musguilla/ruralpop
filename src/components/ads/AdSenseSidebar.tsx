@@ -15,12 +15,6 @@ export function AdSenseSidebar() {
 
     return (
         <div className="w-full mt-6 overflow-hidden block text-center">
-            <style>
-                {`
-                .ad-sidebar { display: inline-block; width: 300px; height: 600px; }
-                @media(min-width: 768px) { .ad-sidebar { width: 360px; height: 800px; } }
-                `}
-            </style>
             <Script
                 id={`adsense-sidebar-${Math.random().toString(36).substring(7)}`}
                 async
@@ -29,9 +23,12 @@ export function AdSenseSidebar() {
                 strategy="lazyOnload"
             />
             <ins
-                className="adsbygoogle ad-sidebar"
+                className="adsbygoogle"
+                style={{ display: 'block', width: '100%' }}
                 data-ad-client="ca-pub-2042067618462129"
                 data-ad-slot="2259220062"
+                data-ad-format="auto"
+                data-full-width-responsive="true"
             />
         </div>
     );
