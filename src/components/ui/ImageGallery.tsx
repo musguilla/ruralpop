@@ -19,7 +19,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
 
     if (!images || images.length === 0) {
         return (
-            <div className="aspect-[4/3] w-full bg-[var(--ag-sys-color-background)] rounded-3xl flex items-center justify-center border border-[var(--ag-sys-color-border)]">
+            <div className="aspect-[4/3] w-full bg-[var(--ag-sys-color-background)] rounded-2xl flex items-center justify-center border border-[var(--ag-sys-color-border)]">
                 <span className="text-[var(--ag-sys-color-text-muted)]">Sin imágenes</span>
             </div>
         );
@@ -64,7 +64,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
     return (
         <div className="space-y-4 overflow-hidden">
             {/* Contenedor Físico (Framer Motion) */}
-            <div className="relative aspect-[4/3] w-full bg-[var(--ag-sys-color-background)] rounded-3xl overflow-hidden border border-[var(--ag-sys-color-border)] group select-none flex items-center justify-center">
+            <div className="relative aspect-[4/3] w-full bg-[var(--ag-sys-color-background)] rounded-2xl overflow-hidden border border-[var(--ag-sys-color-border)] group select-none flex items-center justify-center">
                 <AnimatePresence initial={false} custom={direction}>
                     <motion.div
                         key={page}

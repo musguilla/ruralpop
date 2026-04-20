@@ -215,7 +215,7 @@ export default async function ListingDetailPage(props: Props) {
                         
                         <AdSenseGalleryBottom />
 
-                        <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 sm:p-8 border border-[var(--ag-sys-color-border)] shadow-sm">
+                        <div className="bg-[var(--ag-sys-color-surface)] rounded-2xl p-6 sm:p-8 border border-[var(--ag-sys-color-border)]">
                             <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
                                 <div>
                                     <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] uppercase mb-2">
@@ -267,7 +267,7 @@ export default async function ListingDetailPage(props: Props) {
                     <div className="w-full lg:max-w-[360px] flex-1 space-y-6">
 
                         {/* Tarjeta Vendedor */}
-                        <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 border border-[var(--ag-sys-color-border)] shadow-sm">
+                        <div className="bg-[var(--ag-sys-color-surface)] rounded-2xl p-6 border border-[var(--ag-sys-color-border)]">
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="relative w-16 h-16 rounded-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] overflow-hidden flex flex-shrink-0 items-center justify-center text-[var(--ag-sys-color-primary)]">
                                     {listing.seller?.avatar_url ? (
