@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
 import { AdSenseArticle } from "@/components/ads/AdSenseArticle";
+import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 
 import { createClient } from "@/utils/supabase/server";
 
@@ -148,31 +149,45 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                 </div>
             </div>
 
-            {/* Content Body */}
-            <div className="container mx-auto px-4 mt-12 max-w-3xl">
-                {post.content ? (
-                    <div className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-[var(--ag-sys-color-text)] prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-a:underline max-w-none text-[var(--ag-sys-color-text)] leading-relaxed">
-                        <div dangerouslySetInnerHTML={{ __html: contentPart1 }} />
-                        {contentPart2 && <AdSenseArticle />}
-                        {contentPart2 && <div dangerouslySetInnerHTML={{ __html: contentPart2 }} />}
-                        {contentPart3 && <AdSenseArticle />}
-                        {contentPart3 && <div dangerouslySetInnerHTML={{ __html: contentPart3 }} />}
-                    </div>
-                ) : (
-                    <div className="text-center py-20">
-                        <p className="text-[var(--ag-sys-color-text-muted)] text-xl">
-                            {post.excerpt}
-                        </p>
-                        <p className="text-sm mt-4 text-[var(--ag-sys-color-primary)] italic">Contenido en redacción...</p>
-                    </div>
-                )}
+            {/* Layout a 3 columnas: L-Sidebar | Content | R-Sidebar */}
+            <div className="container mx-auto px-4 mt-12 max-w-7xl flex flex-col lg:flex-row gap-8 items-start relative">
+                
+                {/* Left Sidebar (Solo PC) */}
+                <aside className="hidden lg:block w-[300px] flex-shrink-0 sticky top-24">
+                    <AdSenseDisplaySidebar />
+                </aside>
 
-                {/* Tags / Share Actions */}
-                <div className="mt-16 pt-8 border-t border-[var(--ag-sys-color-border)] flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex gap-2">
-                        <span className="px-3 py-1 bg-[var(--ag-sys-color-surface-sunken)] rounded-md text-sm border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)]">{post.category}</span>
+                {/* Content Body Central */}
+                <div className="flex-1 max-w-3xl w-full mx-auto pb-12">
+                    {post.content ? (
+                        <div className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-[var(--ag-sys-color-text)] prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-a:underline max-w-none text-[var(--ag-sys-color-text)] leading-relaxed">
+                            <div dangerouslySetInnerHTML={{ __html: contentPart1 }} />
+                            {contentPart2 && <AdSenseArticle />}
+                            {contentPart2 && <div dangerouslySetInnerHTML={{ __html: contentPart2 }} />}
+                            {contentPart3 && <AdSenseArticle />}
+                            {contentPart3 && <div dangerouslySetInnerHTML={{ __html: contentPart3 }} />}
+                        </div>
+                    ) : (
+                        <div className="text-center py-20">
+                            <p className="text-[var(--ag-sys-color-text-muted)] text-xl">
+                                {post.excerpt}
+                            </p>
+                            <p className="text-sm mt-4 text-[var(--ag-sys-color-primary)] italic">Contenido en redacción...</p>
+                        </div>
+                    )}
+
+                    {/* Tags / Share Actions */}
+                    <div className="mt-16 pt-8 border-t border-[var(--ag-sys-color-border)] flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex gap-2">
+                            <span className="px-3 py-1 bg-[var(--ag-sys-color-surface-sunken)] rounded-md text-sm border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)]">{post.category}</span>
+                        </div>
                     </div>
                 </div>
+
+                {/* Right Sidebar (Solo PC anchos) */}
+                <aside className="hidden xl:block w-[300px] flex-shrink-0 sticky top-24">
+                    <AdSenseDisplaySidebar />
+                </aside>
             </div>
 
             {/* Artículos Relacionados */}
