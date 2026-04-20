@@ -318,6 +318,9 @@ export default async function ListingDetailPage(props: Props) {
                         </div>
                         <ShareButtons title={listing.title} url={`https://www.ruralpop.com/anuncio/${slug}`} />
 
+                        {/* Publicidad Google AdSense */}
+                        <AdSenseSidebar />
+
                         {/* Garantía Ruralpop Simple */}
                         <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-2xl p-4 flex gap-3">
                             <ShieldCheck className="w-6 h-6 text-green-600 flex-shrink-0" />
@@ -328,9 +331,6 @@ export default async function ListingDetailPage(props: Props) {
                                 </p>
                             </div>
                         </div>
-
-                        {/* Publicidad Google AdSense */}
-                        <AdSenseSidebar />
 
                     </div>
                 </div>
