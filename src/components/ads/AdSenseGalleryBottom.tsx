@@ -15,6 +15,12 @@ export function AdSenseGalleryBottom() {
 
     return (
         <div className="w-full flex justify-center mt-2 mb-4 overflow-hidden">
+            <style>
+                {`
+                .ad-gallery-bottom { display: inline-block; width: 320px; height: 100px; }
+                @media(min-width: 768px) { .ad-gallery-bottom { width: 728px; height: 90px; } }
+                `}
+            </style>
             <Script
                 id={`adsense-gallery-${Math.random().toString(36).substring(7)}`}
                 async
@@ -23,8 +29,7 @@ export function AdSenseGalleryBottom() {
                 strategy="lazyOnload"
             />
             <ins
-                className="adsbygoogle"
-                style={{ display: 'inline-block', width: '728px', height: '90px' }}
+                className="adsbygoogle ad-gallery-bottom"
                 data-ad-client="ca-pub-2042067618462129"
                 data-ad-slot="1497028078"
             />
