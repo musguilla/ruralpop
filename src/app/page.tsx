@@ -33,7 +33,7 @@ export default async function Home(props: {
 
       {/* Grid Server-side */}
       <Suspense fallback={<GridSkeleton />}>
-        <ListingsGrid searchParams={searchParams} />
+        <ListingsGrid searchParams={searchParams} isHome={true} />
       </Suspense>
 
       {/* Store Section */}

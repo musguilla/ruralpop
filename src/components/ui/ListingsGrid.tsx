@@ -8,7 +8,7 @@ import { LOCATIONS } from "@/constants/locations";
 import { AdSenseInFeed } from "@/components/ads/AdSenseInFeed";
 import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 
-export async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+export async function ListingsGrid({ searchParams, isHome = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean }) {
     let supabase = await createClient();
     const PAGE_SIZE = 40;
     const currentPage = Number(searchParams.page) || 1;
@@ -230,7 +230,20 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         );
     });
 
-    return (
+    return isHome ? (
+        <>
+            {fallbackMessage && (
+                <div className="mb-6 p-4 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-primary)]/20 rounded-xl font-medium text-center">
+                    {fallbackMessage}
+                </div>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {gridItems}
+            </div>
+
+            <Pagination currentPage={currentPage} totalPages={totalPages} />
+        </>
+    ) : (
         <div className="flex flex-col xl:flex-row gap-8 items-start">
             <div className="flex-1 w-full max-w-full min-w-0">
                 {fallbackMessage && (
