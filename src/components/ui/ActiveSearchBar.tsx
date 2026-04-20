@@ -22,6 +22,12 @@ export function ActiveSearchBar() {
     const subcategory = parsedSlug ? parsedSlug.subcategory : searchParams.get("subcategory");
     const location = parsedSlug ? parsedSlug.province_id : searchParams.get("province_id");
 
+    const [inputValue, setInputValue] = useState(query || "");
+
+    React.useEffect(() => {
+        setInputValue(query || "");
+    }, [query]);
+
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
     const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
@@ -54,6 +60,25 @@ export function ActiveSearchBar() {
         });
 
         // Maintain any extra query params like price max/min
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("q");
+        params.delete("category");
+        params.delete("subcategory");
+        params.delete("province_id");
+
+        const queryStr = params.toString();
+        router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+    };
+
+    const handleClearSearch = () => {
+        setInputValue("");
+        const url = buildSeoUrl({
+            q: undefined,
+            category: category || undefined,
+            subcategory: subcategory || undefined,
+            province_id: location || undefined
+        });
+
         const params = new URLSearchParams(searchParams.toString());
         params.delete("q");
         params.delete("category");
@@ -193,10 +218,20 @@ export function ActiveSearchBar() {
                     <input
                         type="text"
                         name="q"
-                        defaultValue={query || ""}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
                         placeholder="Buscar en anuncios..."
-                        className="w-full h-full pl-12 pr-4 bg-transparent outline-none text-[var(--ag-sys-color-text)] placeholder:text-gray-400"
+                        className="w-full h-full pl-12 pr-12 bg-transparent outline-none text-[var(--ag-sys-color-text)] placeholder:text-gray-400"
                     />
+                    {inputValue && (
+                        <button
+                            type="button"
+                            onClick={handleClearSearch}
+                            className="absolute right-4 p-1 text-gray-400 hover:text-[var(--ag-sys-color-text)] transition-colors rounded-full"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    )}
                 </form>
 
                 {/* Filters Button */}
