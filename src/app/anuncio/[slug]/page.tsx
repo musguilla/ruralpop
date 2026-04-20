@@ -189,7 +189,7 @@ export default async function ListingDetailPage(props: Props) {
     };
 
     return (
-        <div className="bg-[var(--ag-sys-color-background)] min-h-screen">
+        <div className="bg-[var(--ag-sys-color-background)] min-h-screen w-full max-w-[100vw] overflow-x-hidden">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
