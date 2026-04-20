@@ -14,7 +14,7 @@ export function AdSenseArticle() {
     }, []);
 
     return (
-        <div className="w-full my-8 bg-[var(--ag-sys-color-background)] border-y border-[var(--ag-sys-color-border)] py-4 overflow-hidden">
+        <div className="w-full my-8 overflow-hidden block">
             <Script
                 id="adsense-script-article"
                 async

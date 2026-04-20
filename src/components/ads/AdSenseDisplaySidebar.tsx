@@ -4,10 +4,7 @@ import { useEffect, useState } from 'react';
 import Script from 'next/script';
 
 export function AdSenseDisplaySidebar() {
-    const [isClient, setIsClient] = useState(false);
-
     useEffect(() => {
-        setIsClient(true);
         try {
             // @ts-ignore
             (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -27,16 +24,14 @@ export function AdSenseDisplaySidebar() {
                 crossOrigin="anonymous"
                 strategy="lazyOnload"
             />
-            {isClient && (
-                <ins
-                    className="adsbygoogle"
-                    style={{ display: 'block', width: '100%', height: '100%' }}
-                    data-ad-client="ca-pub-2042067618462129"
-                    data-ad-slot="5164598314"
-                    data-ad-format="auto"
-                    data-full-width-responsive="true"
-                />
-            )}
+            <ins
+                className="adsbygoogle"
+                style={{ display: 'block', width: '100%', height: '100%' }}
+                data-ad-client="ca-pub-2042067618462129"
+                data-ad-slot="5164598314"
+                data-ad-format="auto"
+                data-full-width-responsive="true"
+            />
         </div>
     );
 }
