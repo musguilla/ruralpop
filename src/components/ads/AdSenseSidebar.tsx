@@ -14,7 +14,7 @@ export function AdSenseSidebar() {
     }, []);
 
     return (
-        <div className="w-full flex justify-center mt-6 overflow-hidden">
+        <div className="w-full mt-6 overflow-hidden block text-center">
             <Script
                 id="adsense-script"
                 async
@@ -24,7 +24,7 @@ export function AdSenseSidebar() {
             />
             <ins
                 className="adsbygoogle"
-                style={{ display: 'block' }}
+                style={{ display: 'block', width: '100%' }}
                 data-ad-client="ca-pub-2042067618462129"
                 data-ad-slot="2259220062"
                 data-ad-format="auto"

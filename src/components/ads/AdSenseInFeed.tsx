@@ -22,7 +22,7 @@ export function AdSenseInFeed() {
                 crossOrigin="anonymous"
                 strategy="lazyOnload"
             />
-            <div className="w-full h-full min-h-[300px] flex items-center justify-center bg-[var(--ag-sys-color-background)]">
+            <div className="w-full h-full min-h-[300px] block bg-[var(--ag-sys-color-background)]">
                 <ins
                     className="adsbygoogle"
                     style={{ display: 'block', width: '100%', height: '100%' }}
