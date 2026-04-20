@@ -10,7 +10,7 @@ import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 
 export async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     let supabase = await createClient();
-    const PAGE_SIZE = 39;
+    const PAGE_SIZE = 40;
     const currentPage = Number(searchParams.page) || 1;
     const from = (currentPage - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
@@ -207,7 +207,7 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
 
     const userFavs = await getUserFavoriteIds();
 
-    // Determinar 4 posiciones para anuncios In-Feed basados en el número de página (para evitar problemas de hidratación)
+    // Determinar 5 posiciones para anuncios In-Feed basados en el número de página (para evitar problemas de hidratación)
     const adPositions = new Set<number>();
     const maxIndex = listings.length;
     if (maxIndex > 4) {
@@ -215,6 +215,7 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
         adPositions.add((currentPage * 8 + 2) % maxIndex);
         adPositions.add((currentPage * 13 + 1) % maxIndex);
         adPositions.add((currentPage * 21 + 3) % maxIndex);
+        adPositions.add((currentPage * 29 + 4) % maxIndex);
     } else if (maxIndex > 1) {
         adPositions.add(1);
     }
