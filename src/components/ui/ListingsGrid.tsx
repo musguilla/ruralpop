@@ -6,10 +6,11 @@ import { Tractor } from "lucide-react";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { LOCATIONS } from "@/constants/locations";
 import { AdSenseInFeed } from "@/components/ads/AdSenseInFeed";
+import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 
 export async function ListingsGrid({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
     let supabase = await createClient();
-    const PAGE_SIZE = 40;
+    const PAGE_SIZE = 39;
     const currentPage = Number(searchParams.page) || 1;
     const from = (currentPage - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
@@ -229,17 +230,23 @@ export async function ListingsGrid({ searchParams }: { searchParams: { [key: str
     });
 
     return (
-        <>
-            {fallbackMessage && (
-                <div className="mb-6 p-4 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-primary)]/20 rounded-xl font-medium text-center">
-                    {fallbackMessage}
+        <div className="flex flex-col xl:flex-row gap-8 items-start">
+            <div className="flex-1 w-full max-w-full min-w-0">
+                {fallbackMessage && (
+                    <div className="mb-6 p-4 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-primary)]/20 rounded-xl font-medium text-center">
+                        {fallbackMessage}
+                    </div>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {gridItems}
                 </div>
-            )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {gridItems}
+
+                <Pagination currentPage={currentPage} totalPages={totalPages} />
             </div>
 
-            <Pagination currentPage={currentPage} totalPages={totalPages} />
-        </>
+            <aside className="hidden xl:block w-[300px] flex-shrink-0 sticky top-24">
+                <AdSenseDisplaySidebar />
+            </aside>
+        </div>
     );
 }

@@ -187,7 +187,7 @@ export function ActiveSearchBar() {
                 {/* Search Bar */}
                 <form
                     onSubmit={handleSubmit}
-                    className="flex-1 relative flex items-center bg-white border border-[var(--ag-sys-color-border)] rounded-full shadow-sm focus-within:ring-2 focus-within:ring-[var(--ag-sys-color-primary)] transition-all overflow-hidden h-14"
+                    className="flex-1 relative flex items-center bg-white border border-[#505050] rounded-full focus-within:ring-2 focus-within:ring-[var(--ag-sys-color-primary)] transition-all overflow-hidden h-14"
                 >
                     <Search className="w-5 h-5 text-gray-400 absolute left-4" />
                     <input
@@ -202,7 +202,7 @@ export function ActiveSearchBar() {
                 {/* Filters Button */}
                 <button
                     onClick={() => setIsFiltersOpen(true)}
-                    className="flex items-center gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full px-4 sm:px-6 h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
+                    className="flex items-center gap-2 bg-white border border-[#505050] rounded-full px-4 sm:px-6 h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
                 >
                     <SlidersHorizontal className="w-5 h-5" />
                     <span className="hidden sm:inline">Filtros</span>
@@ -216,7 +216,7 @@ export function ActiveSearchBar() {
                 {/* Sort Button */}
                 <button
                     onClick={() => setIsSortModalOpen(true)}
-                    className="flex justify-center items-center w-14 sm:w-auto sm:px-6 sm:gap-2 bg-white border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md rounded-full h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
+                    className="flex justify-center items-center w-14 sm:w-auto sm:px-6 sm:gap-2 bg-white border border-[#505050] rounded-full h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
                 >
                     <ArrowDownUp className="w-5 h-5" />
                     <span className="hidden sm:inline">Ordenar</span>
