@@ -24,11 +24,9 @@ export function AdSenseGalleryBottom() {
             />
             <ins
                 className="adsbygoogle"
-                style={{ display: 'block', width: '100%', minHeight: '100px' }}
+                style={{ display: 'inline-block', width: '728px', height: '90px' }}
                 data-ad-client="ca-pub-2042067618462129"
                 data-ad-slot="1497028078"
-                data-ad-format="auto"
-                data-full-width-responsive="true"
             />
         </div>
     );
