@@ -153,7 +153,7 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
             <div className="w-full px-4 md:px-8 xl:px-12 mt-12 max-w-[1920px] mx-auto flex flex-col lg:flex-row gap-8 items-start relative">
                 
                 {/* Left Sidebar (Solo PC) */}
-                <aside className="hidden lg:block w-[360px] flex-shrink-0 sticky top-24">
+                <aside className="hidden lg:block w-[200px] xl:w-[300px] flex-shrink-0 sticky top-24">
                     <AdSenseDisplaySidebar />
                 </aside>
 
@@ -184,8 +184,8 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                     </div>
                 </div>
 
-                {/* Right Sidebar (Solo PC extra anchos) */}
-                <aside className="hidden xl:block w-[360px] flex-shrink-0 sticky top-24">
+                {/* Right Sidebar (Solo PC) */}
+                <aside className="hidden lg:block w-[200px] xl:w-[300px] flex-shrink-0 sticky top-24">
                     <AdSenseDisplaySidebar />
                 </aside>
             </div>
