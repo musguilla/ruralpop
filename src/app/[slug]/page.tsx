@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ListingCardSkeleton } from "@/components/ui/ListingCard";
 import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
-import { parseSeoUrl } from "@/utils/seoUtils";
+import { parseSeoUrl, buildSeoUrl } from "@/utils/seoUtils";
 import { LOCATIONS } from "@/constants/locations";
 import { notFound } from "next/navigation";
 import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
@@ -59,7 +59,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
         title: pageTitle,
         description: `Aplicación gratis para ${parts.join(" ") || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`,
         alternates: {
-            canonical: `/${params.slug}`
+            canonical: buildSeoUrl(parsed)
         }
     };
 }
