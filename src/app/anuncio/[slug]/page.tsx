@@ -210,7 +210,7 @@ export default async function ListingDetailPage(props: Props) {
                 <div className="flex flex-col lg:flex-row gap-8 justify-center items-start lg:max-w-[1120px] mx-auto">
 
                     {/* Columna Izquierda: Galería e Información */}
-                    <div className="w-full lg:w-[728px] lg:max-w-[728px] flex-shrink-0 space-y-8">
+                    <div className="w-full min-w-0 lg:w-[728px] lg:max-w-[728px] flex-shrink-0 space-y-8">
                         <ImageGallery images={resolvedImageUrls} title={listing.title} />
                         
                         <AdSenseGalleryBottom />
@@ -264,7 +264,7 @@ export default async function ListingDetailPage(props: Props) {
                     </div>
 
                     {/* Columna Derecha: Vendedor y Acciones */}
-                    <div className="w-full lg:max-w-[360px] flex-1 space-y-6">
+                    <div className="w-full min-w-0 lg:max-w-[360px] flex-1 space-y-6">
 
                         {/* Tarjeta Vendedor */}
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-2xl p-6 border border-[var(--ag-sys-color-border)]">
