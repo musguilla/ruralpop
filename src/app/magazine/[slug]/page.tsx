@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Metadata } from "next";
+import { AdSenseArticle } from "@/components/ads/AdSenseArticle";
 
 import { createClient } from "@/utils/supabase/server";
 
@@ -86,6 +87,19 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
 
     const wordCount = (post.content || post.excerpt).split(/\s+/).length;
     const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+    // Split content to inject AdSense after the 2nd paragraph
+    let contentPart1 = post.content || "";
+    let contentPart2 = "";
+
+    if (post.content) {
+        const parts = post.content.split(/<\/p>/i);
+        if (parts.length > 2) {
+            contentPart1 = parts[0] + '</p>' + parts[1] + '</p>';
+            contentPart2 = parts.slice(2).join('</p>');
+        }
+    }
+
     return (
         <article className="min-h-screen bg-[var(--ag-sys-color-surface)] pb-24">
             {/* Header / Intro */}
@@ -130,10 +144,11 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
             {/* Content Body */}
             <div className="container mx-auto px-4 mt-12 max-w-3xl">
                 {post.content ? (
-                    <div
-                        className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-[var(--ag-sys-color-text)] prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-a:underline max-w-none text-[var(--ag-sys-color-text)] leading-relaxed"
-                        dangerouslySetInnerHTML={{ __html: post.content }}
-                    />
+                    <div className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-[var(--ag-sys-color-text)] prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-a:underline max-w-none text-[var(--ag-sys-color-text)] leading-relaxed">
+                        <div dangerouslySetInnerHTML={{ __html: contentPart1 }} />
+                        {contentPart2 && <AdSenseArticle />}
+                        {contentPart2 && <div dangerouslySetInnerHTML={{ __html: contentPart2 }} />}
+                    </div>
                 ) : (
                     <div className="text-center py-20">
                         <p className="text-[var(--ag-sys-color-text-muted)] text-xl">
