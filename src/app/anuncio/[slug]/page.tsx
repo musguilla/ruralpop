@@ -13,6 +13,7 @@ import { ShareButtons } from "@/components/ui/ShareButtons";
 import { PhoneRevealButton } from "@/components/ui/PhoneRevealButton";
 import { buildSeoUrl, slugify } from "@/utils/seoUtils";
 import { getImageUrl } from "@/utils/mediaUtils";
+import { AdSenseSidebar } from "@/components/ads/AdSenseSidebar";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -324,6 +325,9 @@ export default async function ListingDetailPage(props: Props) {
                                 </p>
                             </div>
                         </div>
+
+                        {/* Publicidad Google AdSense */}
+                        <AdSenseSidebar />
 
                     </div>
                 </div>
