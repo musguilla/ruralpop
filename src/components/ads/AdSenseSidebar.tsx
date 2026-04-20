@@ -14,7 +14,7 @@ export function AdSenseSidebar() {
     }, []);
 
     return (
-        <div className="w-full flex justify-center mt-6 overflow-hidden rounded-2xl bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)]">
+        <div className="w-full flex justify-center mt-6 overflow-hidden">
             <Script
                 id="adsense-script"
                 async
