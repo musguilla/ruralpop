@@ -10,7 +10,8 @@ import {
     Eye,
     UserCheck,
     Edit,
-    Heart
+    Heart,
+    Search
 } from "lucide-react";
 import Image from "next/image";
 import SupabaseImage from "@/components/ui/SupabaseImage";
@@ -44,6 +45,10 @@ export default async function AdminListingsPage(props: {
         query = query.eq('status', 'sold');
     }
 
+    if (searchParams.q && typeof searchParams.q === 'string') {
+        query = query.ilike('title', `%${searchParams.q}%`);
+    }
+
     if (searchParams.status === 'top-likes') {
         // Remove range to get all available for JS sorting
         query = supabase
@@ -53,6 +58,10 @@ export default async function AdminListingsPage(props: {
             
         if (searchParams.userId && typeof searchParams.userId === 'string') {
             query = query.eq("user_id", searchParams.userId);
+        }
+
+        if (searchParams.q && typeof searchParams.q === 'string') {
+            query = query.ilike('title', `%${searchParams.q}%`);
         }
     }
 
@@ -82,11 +91,25 @@ export default async function AdminListingsPage(props: {
 
     return (
         <div className="space-y-8">
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight">Moderación de Anuncios</h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-1">Supervisión técnica de contenidos y reportes.</p>
                 </div>
+                
+                <form action="/admin/listings" method="GET" className="relative w-full sm:w-auto flex-shrink-0">
+                    {searchParams.status && <input type="hidden" name="status" value={searchParams.status as string} />}
+                    {searchParams.userId && <input type="hidden" name="userId" value={searchParams.userId as string} />}
+                    
+                    <input 
+                        type="text" 
+                        name="q" 
+                        defaultValue={searchParams.q as string || ""}
+                        placeholder="Buscar por título..." 
+                        className="w-full sm:w-72 pl-10 pr-4 py-2.5 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-full text-sm outline-none focus:border-[var(--ag-sys-color-primary)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/10 transition-all font-medium text-[var(--ag-sys-color-text)] placeholder:font-normal placeholder:opacity-60 shadow-sm hover:shadow-md"
+                    />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ag-sys-color-text-muted)]" />
+                </form>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-4">
