@@ -56,18 +56,25 @@ export default async function InsightsPage() {
     // 3. Usuarios con más anuncios y conteo de categorías
     let topUsersListings: any[] = [];
     let topCategories: any[] = [];
-    const { data: listingsData } = await supabase.from('listings').select('user_id, category');
+    const { data: listingsData } = await supabase.from('listings').select('user_id, category, subcategory');
     if (listingsData) {
         const listCounts: Record<string, number> = {};
         const catCounts: Record<string, number> = {};
         listingsData.forEach((l: any) => {
             if (l.user_id) listCounts[l.user_id] = (listCounts[l.user_id] || 0) + 1;
-            if (l.category) catCounts[l.category] = (catCounts[l.category] || 0) + 1;
+            if (l.category) {
+                let catName = l.category.charAt(0).toUpperCase() + l.category.slice(1);
+                if (l.subcategory) {
+                    const subName = l.subcategory.charAt(0).toUpperCase() + l.subcategory.slice(1);
+                    catName = `${catName} > ${subName}`;
+                }
+                catCounts[catName] = (catCounts[catName] || 0) + 1;
+            }
         });
         
         topCategories = Object.entries(catCounts)
             .map(([name, count]) => ({ 
-                name: name.charAt(0).toUpperCase() + name.slice(1), 
+                name, 
                 count 
             }))
             .sort((a, b) => b.count - a.count);
