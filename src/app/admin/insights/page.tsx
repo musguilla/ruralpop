@@ -53,14 +53,25 @@ export default async function InsightsPage() {
         }
     }
 
-    // 3. Usuarios con más anuncios
+    // 3. Usuarios con más anuncios y conteo de categorías
     let topUsersListings: any[] = [];
-    const { data: listingsData } = await supabase.from('listings').select('user_id');
+    let topCategories: any[] = [];
+    const { data: listingsData } = await supabase.from('listings').select('user_id, category');
     if (listingsData) {
         const listCounts: Record<string, number> = {};
+        const catCounts: Record<string, number> = {};
         listingsData.forEach((l: any) => {
             if (l.user_id) listCounts[l.user_id] = (listCounts[l.user_id] || 0) + 1;
+            if (l.category) catCounts[l.category] = (catCounts[l.category] || 0) + 1;
         });
+        
+        topCategories = Object.entries(catCounts)
+            .map(([name, count]) => ({ 
+                name: name.charAt(0).toUpperCase() + name.slice(1), 
+                count 
+            }))
+            .sort((a, b) => b.count - a.count);
+
         const sortedListUsers = Object.entries(listCounts)
             .map(([user_id, listings_count]) => ({ user_id, listings_count }))
             .sort((a, b) => b.listings_count - a.listings_count)
@@ -147,10 +158,10 @@ export default async function InsightsPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <AdminStatCard label="Total Usuarios Top" value={topConnectedUsers.length} icon={<Users />} color="green" />
-                <AdminStatCard label="Eventos Favoritos" value={topLikesListings.reduce((acc: number, curr: any) => acc + curr.likes_count, 0)} icon={<Heart />} color="purple" />
-                <AdminStatCard label="T. Clicks / Visitas" value={topVisitedListings?.reduce((acc: number, curr: any) => acc + (curr.visits_count || 0), 0) || 0} icon={<Eye />} color="blue" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <AdminStatCard label="Usuarios Activos Hoy" value={topConnectedUsers.length} icon={<Users />} color="green" />
+                <AdminStatCard label="Anuncios Analizados" value={listingsData?.length || 0} icon={<Package />} color="purple" />
+                <AdminStatCard label="Tráfico Acumulado" value={topVisitedListings?.reduce((acc: number, curr: any) => acc + (curr.visits_count || 0), 0) || 0} icon={<Eye />} color="blue" />
             </div>
 
             <InsightsPanels 
@@ -161,6 +172,7 @@ export default async function InsightsPage() {
                 topVisitedListings={topVisitedListings}
                 topLikesListings={topLikesListings}
                 topListingsChats={topListingsChats}
+                topCategories={topCategories}
             />
         </div>
     );

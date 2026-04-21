@@ -21,7 +21,8 @@ export function InsightsPanels({
     topUsersChats,
     topVisitedListings,
     topLikesListings,
-    topListingsChats
+    topListingsChats,
+    topCategories
 }: any) {
     const [detailView, setDetailView] = useState<DetailData | null>(null);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -261,6 +262,26 @@ export function InsightsPanels({
                 </div>
 
                 <div className="space-y-6">
+                    {/* Top Categories */}
+                    <section>
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Distribución por Categorías</h3>
+                            <button onClick={() => openDetail('Categorías con más anuncios', topCategories, 'name', 'count', <Package className="w-3 h-3"/>, 'bg-amber-500')} 
+                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
+                                <BarChart2 className="w-3 h-3"/> Ver todo
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {topCategories?.slice(0,5).map((cat: any, i: number) => (
+                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate flex items-center gap-2"><Package className="w-4 h-4 text-gray-400"/> {cat.name}</span>
+                                    <span className="font-bold text-[var(--ag-sys-color-primary)]">{cat.count} anuncios</span>
+                                </div>
+                            ))}
+                            {(!topCategories || topCategories.length === 0) && <p className="text-xs text-gray-500">Sin categorías...</p>}
+                        </div>
+                    </section>
+                    
                     <section>
                         <div className="flex justify-between items-center mb-3">
                             <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Más visitados</h3>
