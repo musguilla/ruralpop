@@ -10,9 +10,10 @@ interface ImageUploaderProps {
     onImagesChange: (urls: string[]) => void;
     maxFiles?: number;
     initialImages?: string[];
+    onUploadingStateChange?: (isUploading: boolean) => void;
 }
 
-export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [] }: ImageUploaderProps) {
+export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [], onUploadingStateChange }: ImageUploaderProps) {
     const { showAlert } = useNotification();
     const [files, setFiles] = useState<{ id: string; url: string; preview?: string; uploading: boolean }[]>(() => {
         return initialImages.map(url => ({
@@ -29,7 +30,25 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
         // En onImagesChange filtramos la db por url global, NO por preview local!
         const allUrls = files.filter(f => !f.uploading && f.url).map(f => f.url);
         onImagesChange(allUrls);
-    }, [files, onImagesChange]);
+        
+        const isUploading = files.some(f => f.uploading);
+        if (onUploadingStateChange) {
+            onUploadingStateChange(isUploading);
+        } else {
+            // Fallback robusto para bloquear sumisión de formularios si el padre no implementa la prop
+            const form = document.querySelector('form');
+            if (form) {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    if (isUploading) {
+                        submitBtn.setAttribute('disabled', 'true');
+                    } else {
+                        submitBtn.removeAttribute('disabled');
+                    }
+                }
+            }
+        }
+    }, [files, onImagesChange, onUploadingStateChange]);
 
     const uploadFile = async (file: File, tempId: string, localPreview: string) => {
         try {
