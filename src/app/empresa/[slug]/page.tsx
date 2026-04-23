@@ -29,7 +29,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title: `${name} - Anuncios y Perfil Profesional | Ruralpop`,
         description: description,
-        robots: company?.is_ghost ? { index: false, follow: false } : undefined,
     };
 }
 
