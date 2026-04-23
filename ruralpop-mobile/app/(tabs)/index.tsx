@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, FlatList, ActivityIndicator, RefreshControl, Dimensions } from 'react-native';
 import { CategoriesSlider } from '../../src/components/ui/CategoriesSlider';
 import { ListingCard } from '../../src/components/ui/ListingCard';
+import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
+import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
 import { Search } from 'lucide-react-native';
@@ -30,7 +32,9 @@ const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit }: { searchQue
 
         <CategoriesSlider />
 
-        <View className="px-4 mb-4">
+        <RectangularBanner />
+
+        <View className="px-4 mb-4 mt-2">
             <Text className="text-xl font-bold text-text">Últimos anuncios</Text>
         </View>
     </View>
@@ -130,6 +134,20 @@ export default function Home() {
         }
     };
 
+    const dataWithAds = useMemo(() => {
+        const result: any[] = [];
+        listings.forEach((item, index) => {
+            if (index === 9) {
+                result.push({ isAd: true, id: 'ad-10' });
+            }
+            if (index === 20) {
+                result.push({ isAd: true, id: 'ad-21' });
+            }
+            result.push(item);
+        });
+        return result;
+    }, [listings]);
+
     // Header is handled by HomeHeader component Above
     return (
         <View className="flex-1 bg-surface-muted pt-12">
@@ -144,14 +162,23 @@ export default function Home() {
                 </View>
             ) : (
                 <FlatList
-                    data={listings}
+                    data={dataWithAds}
                     keyExtractor={(item) => item.id}
                     numColumns={numColumns}
-                    renderItem={({ item }) => (
-                        <View className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }}>
-                            <ListingCard listing={item} />
-                        </View>
-                    )}
+                    renderItem={({ item }) => {
+                        if (item.isAd) {
+                            return (
+                                <View className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }}>
+                                    <NativeAdCard />
+                                </View>
+                            );
+                        }
+                        return (
+                            <View className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }}>
+                                <ListingCard listing={item as Listing} />
+                            </View>
+                        );
+                    }}
                     ListHeaderComponent={
                         <HomeHeader
                             searchQuery={searchQuery}

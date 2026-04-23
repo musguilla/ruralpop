@@ -4,6 +4,7 @@ import { Search, MapPin, List, SlidersHorizontal, ArrowUpDown, ChevronLeft, Arro
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
 import { ListingCard } from '../../src/components/ui/ListingCard';
+import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
 import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
 import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { FiltersModal } from '../../src/components/ui/modals/FiltersModal';
@@ -80,12 +81,15 @@ export default function SearchScreen() {
             }
 
             if (categoryId) {
-                const isMainCategory = CATEGORIES.some(c => c.id === categoryId);
+                const normalizedCategory = categoryId.toLowerCase();
+                const isMainCategory = CATEGORIES.some(c => c.id.toLowerCase() === normalizedCategory);
                 if (isMainCategory) {
-                    supabaseQuery = supabaseQuery.eq('category', categoryId);
+                    // Match main category exactly
+                    supabaseQuery = supabaseQuery.eq('category', normalizedCategory);
                 } else {
-                    // It must be a subcategory
-                    supabaseQuery = supabaseQuery.ilike('subcategory', `%${categoryId}%`);
+                    // Match subcategory exactly (using ilike for case insensitivity) 
+                    // This prevents '%Ovino%' from matching 'Bovino'
+                    supabaseQuery = supabaseQuery.ilike('subcategory', categoryId);
                 }
             }
             // Simple location filter for demo. In production, needs a related province table.
@@ -293,6 +297,7 @@ export default function SearchScreen() {
                     data={listings}
                     keyExtractor={(item) => item.id}
                     numColumns={numColumns}
+                    ListHeaderComponent={<RectangularBanner />}
                     renderItem={({ item }) => (
                         <View className="p-1" style={{ flex: 1, maxWidth: numColumns === 1 ? '100%' : `${100 / numColumns}%` }}>
                             <ListingCard listing={item} isSingleColumn={numColumns === 1} />
