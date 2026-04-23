@@ -10,7 +10,7 @@ import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 
 export async function ListingsGrid({ searchParams, isHome = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean }) {
     let supabase = await createClient();
-    const PAGE_SIZE = 40;
+    const PAGE_SIZE = isHome ? 43 : 40;
     const currentPage = Number(searchParams.page) || 1;
     const from = (currentPage - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
