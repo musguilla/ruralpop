@@ -10,7 +10,7 @@ export function RectangularBanner() {
         <View className="items-center justify-center py-4 w-full bg-surface-muted">
             <BannerAd
                 unitId={adUnitId}
-                size={BannerAdSize.MEDIUM_RECTANGLE}
+                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
                 requestOptions={{
                     requestNonPersonalizedAdsOnly: true,
                 }}

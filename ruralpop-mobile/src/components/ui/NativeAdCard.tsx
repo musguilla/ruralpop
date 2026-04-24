@@ -6,10 +6,11 @@ export function NativeAdCard() {
     // Usamos tu ID de "Anuncio Nativo" (aunque estemos usando el componente Banner, 
     // en algunas cuentas AdMob permite que un bloque nativo se sirva como banner MREC si se configura).
     // Si falla, tendrías que crear un bloque "Banner" de AdMob para estas posiciones en la consola de AdMob.
-    const adUnitID = __DEV__ ? TestIds.BANNER : "ca-app-pub-2042067618462129/1936921903";
+    // Usamos el ID del bloque "Banner" que funciona bien arriba
+    const adUnitID = __DEV__ ? TestIds.BANNER : "ca-app-pub-2042067618462129/3189662937";
 
     return (
-        <View className="bg-surface rounded-2xl overflow-hidden border border-gray-200 mb-4 shadow-sm w-[100%] max-w-[400px] items-center justify-center p-2 bg-gray-50">
+        <View className="bg-surface rounded-2xl overflow-hidden border border-gray-200 mb-4 shadow-sm items-center justify-center p-2 bg-gray-50 self-center">
             <BannerAd
                 unitId={adUnitID}
                 size={BannerAdSize.MEDIUM_RECTANGLE}

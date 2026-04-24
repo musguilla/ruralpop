@@ -135,17 +135,48 @@ export default function Home() {
     };
 
     const dataWithAds = useMemo(() => {
-        const result: any[] = [];
-        listings.forEach((item, index) => {
-            if (index === 9) {
-                result.push({ isAd: true, id: 'ad-10' });
+        const rows: any[] = [];
+        let adCount = 0;
+        let itemsSinceLastAd = 0;
+        let totalItems = 0;
+        
+        let currentRow: Listing[] = [];
+        
+        listings.forEach((item) => {
+            currentRow.push(item);
+            totalItems++;
+            itemsSinceLastAd++;
+            
+            if (currentRow.length === numColumns) {
+                rows.push({ isRow: true, id: `row-${totalItems}`, items: currentRow });
+                currentRow = [];
+                
+                // Lógica de inserción de anuncios:
+                // 1º anuncio después de 8 items
+                // 2º anuncio después de 10 items (desde el último anuncio)
+                // 3º anuncio después de 12 items (desde el último anuncio)
+                if (adCount === 0 && itemsSinceLastAd >= 8) {
+                    rows.push({ isAd: true, id: `ad-${totalItems}` });
+                    adCount++;
+                    itemsSinceLastAd = 0;
+                } else if (adCount === 1 && itemsSinceLastAd >= 10) {
+                    rows.push({ isAd: true, id: `ad-${totalItems}` });
+                    adCount++;
+                    itemsSinceLastAd = 0;
+                } else if (adCount === 2 && itemsSinceLastAd >= 12) {
+                    rows.push({ isAd: true, id: `ad-${totalItems}` });
+                    adCount++;
+                    itemsSinceLastAd = 0;
+                }
             }
-            if (index === 20) {
-                result.push({ isAd: true, id: 'ad-21' });
-            }
-            result.push(item);
         });
-        return result;
+        
+        // Añadir la última fila si quedó incompleta
+        if (currentRow.length > 0) {
+            rows.push({ isRow: true, id: `row-last`, items: currentRow });
+        }
+        
+        return rows;
     }, [listings]);
 
     // Header is handled by HomeHeader component Above
@@ -164,20 +195,31 @@ export default function Home() {
                 <FlatList
                     data={dataWithAds}
                     keyExtractor={(item) => item.id}
-                    numColumns={numColumns}
+                    // Quitamos numColumns={numColumns} porque ahora renderizamos filas manualmente
                     renderItem={({ item }) => {
                         if (item.isAd) {
                             return (
-                                <View className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }}>
+                                <View className="w-full items-center justify-center py-4 my-2 bg-gray-50/50">
                                     <NativeAdCard />
                                 </View>
                             );
                         }
-                        return (
-                            <View className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }}>
-                                <ListingCard listing={item as Listing} />
-                            </View>
-                        );
+                        if (item.isRow) {
+                            return (
+                                <View className="flex-row w-full px-1">
+                                    {item.items.map((listing: Listing) => (
+                                        <View key={listing.id} className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }}>
+                                            <ListingCard listing={listing} />
+                                        </View>
+                                    ))}
+                                    {/* Rellenar espacios vacíos si la fila está incompleta */}
+                                    {Array.from({ length: numColumns - item.items.length }).map((_, i) => (
+                                        <View key={`empty-${i}`} className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }} />
+                                    ))}
+                                </View>
+                            );
+                        }
+                        return null;
                     }}
                     ListHeaderComponent={
                         <HomeHeader
