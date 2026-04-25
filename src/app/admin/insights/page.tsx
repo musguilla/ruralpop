@@ -5,9 +5,12 @@ import { Users, LayoutDashboard, Package, MapPin, Eye, Heart, MessageSquare } fr
 import { InsightsPanels } from "@/components/admin/InsightsPanels";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 export default async function InsightsPage() {
-    const supabase = await createClient();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const supabase = await createClient(); // Kept to avoid unused import errors if any
     const supabaseAdmin = createAdminClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -27,7 +30,7 @@ export default async function InsightsPage() {
             .slice(0, 100);
         
         if (sortedProvs.length > 0) {
-            const { data: provNames } = await supabase.from('provinces').select('id, name').in('id', sortedProvs.map(p => p.province_id));
+            const { data: provNames } = await supabaseAdmin.from('provinces').select('id, name').in('id', sortedProvs.map(p => p.province_id));
             topProvinces = sortedProvs.map(p => ({
                 ...p,
                 name: provNames?.find((n: any) => n.id === p.province_id)?.name || `Provincia ${p.province_id}`
@@ -53,7 +56,7 @@ export default async function InsightsPage() {
             .map(u => ({ id: u.id, email: u.email, last_sign_in_at: u.last_sign_in_at }));
         
         if (topConnectedUsers.length > 0) {
-            const { data: userProfiles } = await supabase.from('users').select('id, name').in('id', topConnectedUsers.map(u => u.id));
+            const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name').in('id', topConnectedUsers.map(u => u.id));
             topConnectedUsers = topConnectedUsers.map(u => ({
                 ...u,
                 name: userProfiles?.find((p: any) => p.id === u.id)?.name || u.email,
@@ -94,7 +97,7 @@ export default async function InsightsPage() {
             .slice(0, 100);
 
         if (sortedListUsers.length > 0) {
-            const { data: userProfiles } = await supabase.from('users').select('id, name, email').in('id', sortedListUsers.map(u => u.user_id));
+            const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name, email').in('id', sortedListUsers.map(u => u.user_id));
             topUsersListings = sortedListUsers.map(u => ({
                 ...u,
                 name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
@@ -120,7 +123,7 @@ export default async function InsightsPage() {
         const sortedListChats = Object.entries(listChatsCounts).map(([listing_id, chats_count]) => ({ listing_id, chats_count })).sort((a, b) => b.chats_count - a.chats_count).slice(0, 100);
 
         if (sortedUserChats.length > 0) {
-            const { data: userProfiles } = await supabase.from('users').select('id, name, email').in('id', sortedUserChats.map(u => u.user_id));
+            const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name, email').in('id', sortedUserChats.map(u => u.user_id));
             topUsersChats = sortedUserChats.map(u => ({
                 ...u,
                 name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
@@ -128,7 +131,7 @@ export default async function InsightsPage() {
         }
 
         if (sortedListChats.length > 0) {
-            const { data: listProfiles } = await supabase.from('listings').select('id, title').in('id', sortedListChats.map(l => l.listing_id));
+            const { data: listProfiles } = await supabaseAdmin.from('listings').select('id, title').in('id', sortedListChats.map(l => l.listing_id));
             topListingsChats = sortedListChats.map(l => ({
                 ...l,
                 title: listProfiles?.find((p: any) => p.id === l.listing_id)?.title || 'Desconocido'
@@ -157,7 +160,7 @@ export default async function InsightsPage() {
             .slice(0, 100);
 
         if (sortedLikes.length > 0) {
-            const { data: listProfiles } = await supabase.from('listings').select('id, title').in('id', sortedLikes.map(l => l.listing_id));
+            const { data: listProfiles } = await supabaseAdmin.from('listings').select('id, title').in('id', sortedLikes.map(l => l.listing_id));
             topLikesListings = sortedLikes.map(l => ({
                 ...l,
                 title: listProfiles?.find((p: any) => p.id === l.listing_id)?.title || 'Desconocido'
