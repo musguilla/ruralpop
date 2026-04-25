@@ -81,10 +81,10 @@ export default async function AdminDashboard() {
     // We fetch more than the default 1000 limit (5000) to ensure we don't truncate histograms
     const [
         { data: usersData, count: totalUsers },
-        { data: listingsData, count: activeListings },
+        { data: listingsData, count: totalListings },
     ] = await Promise.all([
         supabase.from("users").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
-        supabase.from("listings").select("created_at", { count: 'exact' }).eq("status", "active").order('created_at', { ascending: false }).limit(5000),
+        supabase.from("listings").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
     ]);
 
     const userDates = usersData?.map((u: any) => ({ date: u.created_at })) || [];
@@ -131,10 +131,10 @@ export default async function AdminDashboard() {
                     showFilters={true}
                 />
 
-                {/* CARD 2: Anuncios Activos (REAL DATA) */}
+                {/* CARD 2: Anuncios Totales (REAL DATA) */}
                 <AdminStatCard
-                    label="Anuncios Activos"
-                    value={activeListings || 0}
+                    label="Anuncios Totales"
+                    value={totalListings || 0}
                     icon={<Package className="w-7 h-7" />}
                     color="green"
                     histograms={realListingsHistograms}
