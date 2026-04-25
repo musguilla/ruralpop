@@ -12,6 +12,7 @@ export function AdminStatCard({
     color,
     histograms,
     showFilters,
+    subtext,
 }: {
     label: string;
     value: number | string;
@@ -19,6 +20,7 @@ export function AdminStatCard({
     color: string;
     histograms?: Histograms;
     showFilters?: boolean;
+    subtext?: React.ReactNode;
 }) {
     const [filter, setFilter] = useState<'days' | 'weeks' | 'months'>('days');
 
@@ -44,6 +46,7 @@ export function AdminStatCard({
                     <p className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] mb-1 leading-none">{label}</p>
                     <div className="flex items-baseline gap-2">
                         <h4 className="text-3xl font-black text-[var(--ag-sys-color-text)] leading-none">{value}</h4>
+                        {subtext && <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)]">{subtext}</span>}
                     </div>
                 </div>
             </div>

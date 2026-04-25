@@ -82,9 +82,11 @@ export default async function AdminDashboard() {
     const [
         { data: usersData, count: totalUsers },
         { data: listingsData, count: totalListings },
+        { count: activeListings },
     ] = await Promise.all([
         supabase.from("users").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
         supabase.from("listings").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
+        supabase.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active"),
     ]);
 
     const userDates = usersData?.map((u: any) => ({ date: u.created_at })) || [];
@@ -135,6 +137,7 @@ export default async function AdminDashboard() {
                 <AdminStatCard
                     label="Anuncios Totales"
                     value={totalListings || 0}
+                    subtext={`(${activeListings || 0} activos)`}
                     icon={<Package className="w-7 h-7" />}
                     color="green"
                     histograms={realListingsHistograms}
