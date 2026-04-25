@@ -5,16 +5,8 @@ import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import { FavoritesProvider } from "../src/contexts/FavoritesContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import mobileAds from 'react-native-google-mobile-ads';
-import { useEffect } from "react";
 
 export default function RootLayout() {
-    useEffect(() => {
-        mobileAds().initialize().then(adapterStatuses => {
-            console.log('Mobile Ads initialized', adapterStatuses);
-        });
-    }, []);
-
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <AuthProvider>
