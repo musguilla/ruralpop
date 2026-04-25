@@ -44,9 +44,9 @@ export function AdminStatCard({
                 </div>
                 <div className="flex-1">
                     <p className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] mb-1 leading-none">{label}</p>
-                    <div className="flex items-baseline gap-2">
+                    <div className="flex flex-col gap-1">
                         <h4 className="text-3xl font-black text-[var(--ag-sys-color-text)] leading-none">{value}</h4>
-                        {subtext && <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)]">{subtext}</span>}
+                        {subtext && <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] leading-none">{subtext}</span>}
                     </div>
                 </div>
             </div>

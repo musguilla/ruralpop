@@ -76,6 +76,13 @@ function generateHistograms(items: { date: string, amount?: number }[], isCurren
 
 export default async function AdminDashboard() {
     const supabase = await createClient();
+    
+    // Create an admin client to bypass RLS for accurate absolute counts across the database
+    const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
+    const adminClient = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     // Fetch metrics and all creation dates to build histograms
     // We fetch more than the default 1000 limit (5000) to ensure we don't truncate histograms
@@ -84,9 +91,9 @@ export default async function AdminDashboard() {
         { data: listingsData, count: totalListings },
         { count: activeListings },
     ] = await Promise.all([
-        supabase.from("users").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
-        supabase.from("listings").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
-        supabase.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active"),
+        adminClient.from("users").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
+        adminClient.from("listings").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
+        adminClient.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active"),
     ]);
 
     const userDates = usersData?.map((u: any) => ({ date: u.created_at })) || [];
@@ -137,7 +144,7 @@ export default async function AdminDashboard() {
                 <AdminStatCard
                     label="Anuncios Totales"
                     value={totalListings || 0}
-                    subtext={`(${activeListings || 0} activos)`}
+                    subtext={`${activeListings || 0} activos`}
                     icon={<Package className="w-7 h-7" />}
                     color="green"
                     histograms={realListingsHistograms}
