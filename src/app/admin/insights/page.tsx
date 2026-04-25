@@ -8,10 +8,14 @@ export const dynamic = "force-dynamic";
 
 export default async function InsightsPage() {
     const supabase = await createClient();
+    const supabaseAdmin = createAdminClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     // 1. Usuarios por provincia (Top 100)
     let topProvinces: any[] = [];
-    const { data: usersData } = await supabase.from('users').select('province_id');
+    const { data: usersData } = await supabaseAdmin.from('users').select('province_id').limit(10000);
     if (usersData) {
         const provCounts: Record<number, number> = {};
         usersData.forEach((u: any) => {
@@ -32,15 +36,18 @@ export default async function InsightsPage() {
     }
 
     // 2. Usuarios más conectados hoy
-    const supabaseAdmin = createAdminClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
     const { data: usersAuthData } = await supabaseAdmin.auth.admin.listUsers();
     let topConnectedUsers: any[] = [];
+    let activeUsersTodayCount = 0;
+    
     if (usersAuthData?.users) {
-        topConnectedUsers = [...usersAuthData.users]
-            .filter(u => u.last_sign_in_at)
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+
+        const activeToday = [...usersAuthData.users].filter(u => u.last_sign_in_at && new Date(u.last_sign_in_at) >= todayStart);
+        activeUsersTodayCount = activeToday.length;
+
+        topConnectedUsers = activeToday
             .sort((a, b) => new Date(b.last_sign_in_at!).getTime() - new Date(a.last_sign_in_at!).getTime())
             .slice(0, 100)
             .map(u => ({ id: u.id, email: u.email, last_sign_in_at: u.last_sign_in_at }));
@@ -58,7 +65,7 @@ export default async function InsightsPage() {
     // 3. Usuarios con más anuncios y conteo de categorías
     let topUsersListings: any[] = [];
     let topCategories: any[] = [];
-    const { data: listingsData } = await supabase.from('listings').select('user_id, category, subcategory');
+    const { data: listingsData } = await supabaseAdmin.from('listings').select('user_id, category, subcategory').limit(15000);
     if (listingsData) {
         const listCounts: Record<string, number> = {};
         const catCounts: Record<string, number> = {};
@@ -98,7 +105,7 @@ export default async function InsightsPage() {
     // 4. Usuarios Y Anuncios con más chats (Aprovechamos un solo fetch)
     let topUsersChats: any[] = [];
     let topListingsChats: any[] = [];
-    const { data: msgsData } = await supabase.from('messages').select('sender_id, receiver_id, listing_id');
+    const { data: msgsData } = await supabaseAdmin.from('messages').select('sender_id, receiver_id, listing_id').limit(50000);
     if (msgsData) {
         const userChatsCounts: Record<string, number> = {};
         const listChatsCounts: Record<string, number> = {};
@@ -130,7 +137,7 @@ export default async function InsightsPage() {
     }
 
     // 5. Anuncios más visitados
-    const { data: topVisitedListings } = await supabase
+    const { data: topVisitedListings } = await supabaseAdmin
         .from('listings')
         .select('id, title, visits_count')
         .order('visits_count', { ascending: false, nullsFirst: false })
@@ -138,7 +145,7 @@ export default async function InsightsPage() {
 
     // 6. Anuncios con más likes
     let topLikesListings: any[] = [];
-    const { data: favsData } = await supabase.from('favorites').select('listing_id');
+    const { data: favsData } = await supabaseAdmin.from('favorites').select('listing_id').limit(50000);
     if (favsData) {
         const likeCounts: Record<string, number> = {};
         favsData.forEach((f: any) => {
@@ -168,7 +175,7 @@ export default async function InsightsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <AdminStatCard label="Usuarios Activos Hoy" value={topConnectedUsers.length} icon={<Users />} color="green" />
+                <AdminStatCard label="Usuarios Activos Hoy" value={activeUsersTodayCount} icon={<Users />} color="green" />
                 <AdminStatCard label="Anuncios Analizados" value={listingsData?.length || 0} icon={<Package />} color="purple" />
                 <AdminStatCard label="Tráfico Acumulado" value={topVisitedListings?.reduce((acc: number, curr: any) => acc + (curr.visits_count || 0), 0) || 0} icon={<Eye />} color="blue" />
             </div>
