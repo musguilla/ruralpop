@@ -36,10 +36,12 @@ export async function updateSession(request: NextRequest) {
         }
     );
 
-    // refreshing the auth token
-    // En fase de build o pre-renderizado, esto puede colgarse si la red no está disponible
     try {
-        await supabase.auth.getUser();
+        // Envolvemos en Promise.race para evitar timeouts de 10s en Vercel (Error 504)
+        await Promise.race([
+            supabase.auth.getUser(),
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Supabase auth timeout")), 3000))
+        ]);
     } catch (e) {
         // Ignorar fallos de red durante el build
     }
