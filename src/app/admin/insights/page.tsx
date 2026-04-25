@@ -4,6 +4,8 @@ import { AdminStatCard } from "@/components/admin/AdminStatCard";
 import { Users, LayoutDashboard, Package, MapPin, Eye, Heart, MessageSquare } from "lucide-react";
 import { InsightsPanels } from "@/components/admin/InsightsPanels";
 
+export const dynamic = "force-dynamic";
+
 export default async function InsightsPage() {
     const supabase = await createClient();
 
