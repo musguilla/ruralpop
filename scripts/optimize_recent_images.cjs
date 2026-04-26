@@ -18,7 +18,7 @@ async function run() {
         .from('listings')
         .select('id, user_id, image_urls, title')
         .order('created_at', { ascending: false })
-        .limit(150);
+        .limit(50);
 
     if (error) {
         console.error("❌ Error fetching listings:", error);

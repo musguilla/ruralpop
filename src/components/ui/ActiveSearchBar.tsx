@@ -3,12 +3,13 @@
 import React, { useState } from "react";
 import { useRouter, useSearchParams, usePathname, useParams } from "next/navigation";
 import { Search, X, SlidersHorizontal, MapPin, ArrowDownUp } from "lucide-react";
-import { CATEGORIES } from "@/constants/categories";
 import { LOCATIONS } from "@/constants/locations";
+import { useCategories } from "@/context/CategoriesContext";
 import { parseSeoUrl, buildSeoUrl } from "@/utils/seoUtils";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 
 export function ActiveSearchBar() {
+    const CATEGORIES = useCategories();
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();

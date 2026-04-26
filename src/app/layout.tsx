@@ -4,6 +4,8 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { NotificationProvider } from "@/context/NotificationContext";
+import { CategoriesProvider } from "@/context/CategoriesContext";
+import { getCategories } from "@/utils/categoriesFetcher";
 import { SeoFooterTabs } from "@/components/layout/SeoFooterTabs";
 import Script from "next/script";
 
@@ -53,11 +55,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const categories = await getCategories();
+
   return (
     <html lang="es">
       <head>
@@ -90,15 +94,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col font-sans antialiased`}
       >
-        <NotificationProvider>
-          <Header />
-          <main className="flex-1 w-full flex flex-col items-center">
-            {children}
-          </main>
-          <SeoFooterTabs />
-          <Footer />
-          <CookieBanner />
-        </NotificationProvider>
+        <CategoriesProvider categories={categories}>
+          <NotificationProvider>
+            <Header />
+            <main className="flex-1 w-full flex flex-col items-center">
+              {children}
+            </main>
+            <SeoFooterTabs />
+            <Footer />
+            <CookieBanner />
+          </NotificationProvider>
+        </CategoriesProvider>
       </body>
     </html>
   );

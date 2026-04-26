@@ -3,13 +3,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { LOCATIONS } from "@/constants/locations";
-import { CATEGORIES } from "@/constants/categories";
+import { useCategories } from "@/context/CategoriesContext";
 import { buildSeoUrl } from "@/utils/seoUtils";
 
 import { SEO_LANDINGS } from "@/constants/seoLandings";
 import { usePathname } from "next/navigation";
 
 export function SeoFooterTabs() {
+    const CATEGORIES = useCategories();
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<"provinces" | "categories" | "popular">("provinces");
 

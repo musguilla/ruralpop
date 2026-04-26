@@ -2,9 +2,10 @@
 
 import React from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { CATEGORIES } from "@/constants/categories";
+import { useCategories } from "@/context/CategoriesContext";
 
 export function FiltersBar() {
+    const CATEGORIES = useCategories();
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();

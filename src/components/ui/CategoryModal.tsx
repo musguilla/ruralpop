@@ -7,7 +7,7 @@ import {
     Cloud, PiggyBank, Bird, Dog, Rabbit, Milk,
     Truck, Stethoscope, Anvil
 } from "lucide-react";
-import { CATEGORIES } from "@/constants/categories";
+import { useCategories } from "@/context/CategoriesContext";
 
 // Custom icons to match HomeSearchHero
 const CowIcon = ({ className }: { className?: string }) => (
@@ -68,6 +68,7 @@ export function CategoryModal({
     selectedCategory = "",
     selectedSubcategory = ""
 }: CategoryModalProps) {
+    const CATEGORIES = useCategories();
     const [searchTerm, setSearchTerm] = useState("");
     const [activeParent, setActiveParent] = useState<string | null>(null);
 

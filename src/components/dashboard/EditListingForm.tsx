@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CATEGORIES, PRICE_TYPES } from "@/constants/categories";
+import { PRICE_TYPES } from "@/constants/categories";
+import { useCategories } from "@/context/CategoriesContext";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import { updateListing } from "@/app/dashboard/actions";
 import { getMunicipalities } from "@/app/upload/actions";
@@ -20,6 +21,7 @@ interface EditListingFormProps {
 }
 
 export default function EditListingForm({ listing, savedPhone, initialProvinces, initialMunicipalities }: EditListingFormProps) {
+    const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();
 

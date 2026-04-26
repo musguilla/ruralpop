@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CATEGORIES, PRICE_TYPES } from "@/constants/categories";
+import { PRICE_TYPES } from "@/constants/categories";
+import { useCategories } from "@/context/CategoriesContext";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import { adminUpdateListing } from "@/app/admin/listings/actions";
 import { getMunicipalities } from "@/app/upload/actions";
@@ -19,6 +20,7 @@ interface AdminEditListingFormProps {
 }
 
 export default function AdminEditListingForm({ listing, initialProvinces, initialMunicipalities }: AdminEditListingFormProps) {
+    const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();
 
@@ -166,7 +168,7 @@ export default function AdminEditListingForm({ listing, initialProvinces, initia
                             Fotografías del anuncio
                         </h3>
                         <ImageUploader
-                            onImagesChange={(urls) => setImageUrls(urls)}
+                            onImagesChange={setImageUrls}
                             initialImages={imageUrls}
                         />
                     </section>

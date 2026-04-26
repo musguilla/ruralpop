@@ -8,7 +8,7 @@ import {
     Cloud, PiggyBank, Bird, Dog, Rabbit, Milk,
     ChevronLeft, ChevronRight, Truck, Stethoscope, Anvil, Briefcase
 } from "lucide-react";
-import { CATEGORIES } from "@/constants/categories";
+import { useCategories } from "@/context/CategoriesContext";
 
 // Define a unified list for the slider
 const VISUAL_CATEGORIES = [
@@ -33,6 +33,7 @@ import { LocationModal } from "./LocationModal";
 import { buildSeoUrl } from "@/utils/seoUtils";
 
 export function HomeSearchHero() {
+    const CATEGORIES = useCategories();
     const router = useRouter();
     const [query, setQuery] = useState("");
     const [category, setCategory] = useState("");

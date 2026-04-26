@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CATEGORIES, PRICE_TYPES } from "@/constants/categories";
+import { PRICE_TYPES } from "@/constants/categories";
+import { useCategories } from "@/context/CategoriesContext";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import { createListing, getMunicipalities } from "./actions";
 import { Tractor, MapPin, Euro, Phone, Info, Loader2 } from "lucide-react";
@@ -16,6 +17,7 @@ interface UploadFormProps {
 }
 
 export default function UploadForm({ savedPhone, initialProvinces }: UploadFormProps) {
+    const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();
     const [selectedCategory, setSelectedCategory] = useState("");
