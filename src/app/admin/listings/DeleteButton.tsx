@@ -8,9 +8,10 @@ import { useNotification } from "@/context/NotificationContext";
 interface DeleteButtonProps {
     listingId: string;
     title: string;
+    iconOnly?: boolean;
 }
 
-export function DeleteButton({ listingId, title }: DeleteButtonProps) {
+export function DeleteButton({ listingId, title, iconOnly }: DeleteButtonProps) {
     const { showAlert, showConfirm } = useNotification();
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -50,14 +51,19 @@ export function DeleteButton({ listingId, title }: DeleteButtonProps) {
         <button
             onClick={handleDelete}
             disabled={isDeleting}
-            className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 text-xs font-bold rounded-xl hover:bg-red-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Borrar anuncio"
+            className={`flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                iconOnly 
+                ? "w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-100 border border-red-100" 
+                : "gap-2 px-4 py-2 bg-red-500/10 text-red-500 text-xs font-bold rounded-xl hover:bg-red-500/20"
+            }`}
         >
             {isDeleting ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <Loader2 className={`${iconOnly ? "w-4 h-4" : "w-3.5 h-3.5"} animate-spin`} />
             ) : (
-                <XCircle className="w-3.5 h-3.5" />
+                <XCircle className={iconOnly ? "w-4 h-4" : "w-3.5 h-3.5"} />
             )}
-            {isDeleting ? "Borrando..." : "Borrar"}
+            {!iconOnly && (isDeleting ? "Borrando..." : "Borrar")}
         </button>
     );
 }

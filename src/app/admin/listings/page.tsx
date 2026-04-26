@@ -171,16 +171,6 @@ export default async function AdminListingsPage(props: {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-4 mb-1 flex-wrap">
                                             <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] line-clamp-1">{l.title}</h3>
-                                            {/* Actions Moderation */}
-                                            <div className="flex items-center gap-2 flex-shrink-0">
-                                                <Link href={`/admin/listings/edit/${encodeId(l.id)}`} className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ag-sys-color-background)] text-[10px] font-bold text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-border)] rounded-lg hover:bg-[var(--ag-sys-color-border)] transition-all whitespace-nowrap">
-                                                    <Edit className="w-3 h-3" /> Editar
-                                                </Link>
-                                                <Link href={`/item/${encodeId(l.id)}`} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ag-sys-color-background)] text-[10px] font-bold text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-lg hover:bg-[var(--ag-sys-color-border)] transition-all whitespace-nowrap">
-                                                    <Eye className="w-3 h-3" /> Ver
-                                                </Link>
-                                                <DeleteButton listingId={l.id} title={l.title} />
-                                            </div>
                                         </div>
                                         <div className="flex items-center gap-3 text-xs text-[var(--ag-sys-color-text-muted)] font-bold flex-wrap">
                                             <span className="flex items-center gap-1 whitespace-nowrap"><MapPin className="w-3 h-3" /> {l.location}</span>
@@ -200,14 +190,26 @@ export default async function AdminListingsPage(props: {
                                 </p>
 
                                 <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-[var(--ag-sys-color-border)]">
-                                    {/* Seller Info */}
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] flex items-center justify-center text-[var(--ag-sys-color-primary)] overflow-hidden">
-                                            {(l.seller as Record<string, string | null>)?.avatar_url ? <Image src={(l.seller as Record<string, string | null>).avatar_url as string} alt="" width={32} height={32} /> : <UserCheck className="w-4 h-4" />}
+                                    {/* Seller Info & Actions */}
+                                    <div className="flex items-center justify-between w-full">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] flex items-center justify-center text-[var(--ag-sys-color-primary)] overflow-hidden flex-shrink-0">
+                                                {(l.seller as Record<string, string | null>)?.avatar_url ? <Image src={(l.seller as Record<string, string | null>).avatar_url as string} alt="" width={32} height={32} /> : <UserCheck className="w-4 h-4" />}
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-[var(--ag-sys-color-text)] leading-none mb-1">{(l.seller as Record<string, string | null>)?.name || 'Vendedor'}</p>
+                                                <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider font-bold">{formatRelativeTime(l.created_at)}</span>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="text-xs font-bold text-[var(--ag-sys-color-text)] leading-none">{(l.seller as Record<string, string | null>)?.name || 'Vendedor'}</p>
-                                            <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider font-bold">{formatRelativeTime(l.created_at)}</span>
+                                        
+                                        <div className="flex items-center gap-2">
+                                            <Link href={`/admin/listings/edit/${encodeId(l.id)}`} title="Editar anuncio" className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-600 border border-blue-100 rounded-full hover:bg-blue-100 transition-all">
+                                                <Edit className="w-4 h-4" />
+                                            </Link>
+                                            <Link href={`/item/${encodeId(l.id)}`} target="_blank" title="Ver anuncio" className="flex items-center justify-center w-8 h-8 bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-full hover:bg-[var(--ag-sys-color-border)] transition-all">
+                                                <Eye className="w-4 h-4" />
+                                            </Link>
+                                            <DeleteButton listingId={l.id} title={l.title} iconOnly={true} />
                                         </div>
                                     </div>
                                 </div>
