@@ -75,26 +75,86 @@ export function SeoFooterTabs() {
                     )}
 
                     {activeTab === "categories" && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-8 gap-x-6">
-                            {CATEGORIES.map((cat) => (
-                                <div key={cat.id} className="flex flex-col gap-2">
-                                    <Link
-                                        href={buildSeoUrl({ category: cat.id })}
-                                        className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2"
-                                    >
-                                        {cat.label}
-                                    </Link>
-                                    {cat.subcategories.map((sub) => (
-                                        <Link
-                                            key={sub}
-                                            href={buildSeoUrl({ category: cat.id, subcategory: sub })}
-                                            className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors"
-                                        >
-                                            {sub}
-                                        </Link>
-                                    ))}
-                                </div>
-                            ))}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-6">
+                            {/* Columna 1: Ganadería */}
+                            <div className="flex flex-col gap-2">
+                                {(() => {
+                                    const cat = CATEGORIES.find(c => c.id === "ganaderia");
+                                    if (!cat) return null;
+                                    return (
+                                        <>
+                                            <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                                {cat.label}
+                                            </Link>
+                                            {cat.subcategories.map((sub) => (
+                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                    {sub}
+                                                </Link>
+                                            ))}
+                                        </>
+                                    );
+                                })()}
+                            </div>
+
+                            {/* Columna 2: Maquinaria */}
+                            <div className="flex flex-col gap-2">
+                                {(() => {
+                                    const cat = CATEGORIES.find(c => c.id === "maquinaria");
+                                    if (!cat) return null;
+                                    return (
+                                        <>
+                                            <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                                {cat.label}
+                                            </Link>
+                                            {cat.subcategories.map((sub) => (
+                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                    {sub}
+                                                </Link>
+                                            ))}
+                                        </>
+                                    );
+                                })()}
+                            </div>
+
+                            {/* Columna 3: Servicios */}
+                            <div className="flex flex-col gap-2">
+                                {(() => {
+                                    const cat = CATEGORIES.find(c => c.id === "servicios");
+                                    if (!cat) return null;
+                                    return (
+                                        <>
+                                            <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                                {cat.label}
+                                            </Link>
+                                            {cat.subcategories.map((sub) => (
+                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                    {sub}
+                                                </Link>
+                                            ))}
+                                        </>
+                                    );
+                                })()}
+                            </div>
+
+                            {/* Columna 4: Fincas, Forraje, Alimentos */}
+                            <div className="flex flex-col gap-8">
+                                {["fincas", "forraje", "alimentos"].map(catId => {
+                                    const cat = CATEGORIES.find(c => c.id === catId);
+                                    if (!cat) return null;
+                                    return (
+                                        <div key={cat.id} className="flex flex-col gap-2">
+                                            <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                                {cat.label}
+                                            </Link>
+                                            {cat.subcategories.map((sub) => (
+                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                    {sub}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         </div>
                     )}
 
