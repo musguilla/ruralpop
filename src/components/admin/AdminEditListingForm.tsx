@@ -110,11 +110,6 @@ export default function AdminEditListingForm({ listing, initialProvinces, initia
                     type: "error"
                 });
             } else if (res?.success) {
-                showAlert({
-                    title: "Anuncio modificado",
-                    message: "Los cambios de moderación se han guardado correctamente.",
-                    type: "success"
-                });
                 router.push("/admin/listings");
             } else {
                 showAlert({
