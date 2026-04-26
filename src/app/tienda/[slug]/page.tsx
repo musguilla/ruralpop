@@ -10,6 +10,25 @@ type Props = {
     params: Promise<{ slug: string }>;
 };
 
+
+export const revalidate = 3600; // Revalidar cada hora
+
+export async function generateStaticParams() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+    const { createClient } = await import('@supabase/supabase-js');
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data: products } = await supabase
+        .from('products')
+        .select('slug')
+        .eq('status', 'active');
+
+    return (products || []).map((p) => ({
+        slug: p.slug,
+    }));
+}
+
 export async function generateMetadata(
     { params }: Props,
     parent: ResolvingMetadata
