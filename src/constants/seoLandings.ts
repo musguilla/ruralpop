@@ -55,10 +55,14 @@ const rawLandings = [
     { title: "Fincas en Galicia", category: "fincas", province: "A Coruña" },
     { title: "Material de Apicultura", category: "ganaderia", subcategory: "Apicultura" },
     { title: "Cosechadoras de segunda mano", category: "maquinaria", subcategory: "Cosechadoras" },
+    { title: "Segadoras de ocasión", category: "maquinaria", subcategory: "Segadoras" },
     { title: "Desbrozadoras forestales y agrícolas", category: "maquinaria", subcategory: "Desbrozadoras" },
     { title: "Servicios de Desbroce", category: "servicios", subcategory: "Desbroce" },
     { title: "Remolques agrícolas usados", category: "maquinaria", subcategory: "Remolques agrícolas" },
     { title: "Alimentos Km0", category: "alimentos" },
+    { title: "Venta de Fincas", category: "fincas", subcategory: "Venta" },
+    { title: "Alquiler de Fincas", category: "fincas", subcategory: "Alquiler" },
+    { title: "Traspasos de Explotaciones", category: "fincas", subcategory: "Traspasos explotaciones" },
 ];
 
 export const SEO_LANDINGS: SeoLanding[] = rawLandings.map((item) => ({

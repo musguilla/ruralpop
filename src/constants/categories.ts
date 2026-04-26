@@ -29,6 +29,7 @@ export const CATEGORIES = [
             "Remolques agrícolas",
             "Sembradoras",
             "Sulfatadoras",
+            "Segadoras",
             "Trituradoras",
             "Volteadoras",
             "Otra maquinaria agrícola"
@@ -42,7 +43,11 @@ export const CATEGORIES = [
     {
         id: "fincas",
         label: "Fincas",
-        subcategories: [],
+        subcategories: [
+            "Venta",
+            "Alquiler",
+            "Traspasos explotaciones"
+        ],
     },
     {
         id: "servicios",
