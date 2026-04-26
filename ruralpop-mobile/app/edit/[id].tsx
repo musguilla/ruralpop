@@ -120,12 +120,12 @@ export default function EditListingScreen() {
             // Resize and compress
             const manipResult = await ImageManipulator.manipulateAsync(
                 asset.uri,
-                [{ resize: { width: 1200 } }],
-                { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+                [{ resize: { width: 600 } }],
+                { compress: 0.7, format: ImageManipulator.SaveFormat.WEBP, base64: true }
             );
 
             if (manipResult.base64) {
-                setImages([...images, `data:image/jpeg;base64,${manipResult.base64}`]);
+                setImages([...images, `data:image/webp;base64,${manipResult.base64}`]);
             }
         }
     };

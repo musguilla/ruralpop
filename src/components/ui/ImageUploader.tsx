@@ -57,7 +57,7 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
             const optimizedBlob = await optimizeImage(file);
             console.log(`✅ Imagen optimizada: ${(optimizedBlob.size / 1024).toFixed(2)} KB`);
 
-            const fileExt = "jpg"; // Forzamos jpg tras la optimización
+            const fileExt = "webp"; // Usamos webp tras la optimización ultra
             const fileName = `${Math.random().toString(36).substring(7)}.${fileExt}`;
             
             // 1. Obtener la URL pre-firmada desde nuestro backend
@@ -68,7 +68,7 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
                 },
                 body: JSON.stringify({
                     filename: fileName,
-                    contentType: "image/jpeg",
+                    contentType: "image/webp",
                     folder: "listings",
                 }),
             });
@@ -85,7 +85,7 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
                 method: "PUT",
                 body: optimizedBlob,
                 headers: {
-                    "Content-Type": "image/jpeg",
+                    "Content-Type": "image/webp",
                 },
             });
 

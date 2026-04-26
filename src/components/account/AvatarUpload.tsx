@@ -6,6 +6,8 @@ import { User, Camera, Loader2 } from "lucide-react";
 import { uploadAvatar } from "@/app/account/actions";
 import { useNotification } from "@/context/NotificationContext";
 
+import { optimizeImage } from "@/utils/image-optimization";
+
 interface AvatarUploadProps {
     initialAvatarUrl: string;
 }
@@ -33,8 +35,12 @@ export function AvatarUpload({ initialAvatarUrl }: AvatarUploadProps) {
 
         setIsPending(true);
         try {
+            // Optimizar la imagen antes de subirla
+            const optimizedBlob = await optimizeImage(file);
+            const optimizedFile = new File([optimizedBlob], "avatar.webp", { type: "image/webp" });
+
             const formData = new FormData();
-            formData.append("file", file);
+            formData.append("file", optimizedFile);
 
             const result = await uploadAvatar(formData);
             if (result.success && result.url) {

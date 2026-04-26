@@ -14,8 +14,8 @@ export async function optimizeImage(file: File): Promise<Blob> {
                 let width = img.width;
                 let height = img.height;
 
-                // Max width de 1200px manteniendo proporción
-                const MAX_WIDTH = 1200;
+                // Max width de 600px manteniendo proporción
+                const MAX_WIDTH = 600;
                 if (width > MAX_WIDTH) {
                     height = (MAX_WIDTH / width) * height;
                     width = MAX_WIDTH;
@@ -29,7 +29,7 @@ export async function optimizeImage(file: File): Promise<Blob> {
 
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Exportar como JPEG con calidad 0.7 para optimizar a KB
+                // Exportar como WebP con calidad 0.7 para optimización extrema (<100KB)
                 canvas.toBlob(
                     (blob) => {
                         if (blob) {
@@ -38,7 +38,7 @@ export async function optimizeImage(file: File): Promise<Blob> {
                             reject(new Error("Error al comprimir la imagen"));
                         }
                     },
-                    "image/jpeg",
+                    "image/webp",
                     0.7
                 );
             };

@@ -121,7 +121,7 @@ export default function PersonalDataScreen() {
             const manipResult = await ImageManipulator.manipulateAsync(
                 asset.uri,
                 [{ resize: { width: 500 } }], // Smaller size for avatars
-                { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+                { compress: 0.7, format: ImageManipulator.SaveFormat.WEBP, base64: true }
             );
 
             if (manipResult.base64) {
@@ -146,7 +146,7 @@ export default function PersonalDataScreen() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     filename: fileName,
-                    contentType: `image/${fileExt === 'png' ? 'png' : 'jpeg'}`,
+                    contentType: `image/${fileExt === 'png' ? 'png' : fileExt === 'webp' ? 'webp' : 'jpeg'}`,
                     folder: "users"
                 }),
             });
@@ -163,7 +163,7 @@ export default function PersonalDataScreen() {
             const uploadRes = await fetch(presignedUrl, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": `image/${fileExt === 'png' ? 'png' : 'jpeg'}`,
+                    "Content-Type": `image/${fileExt === 'png' ? 'png' : fileExt === 'webp' ? 'webp' : 'jpeg'}`,
                 },
                 body: binaryData as any
             });
