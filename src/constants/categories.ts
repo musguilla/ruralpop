@@ -26,7 +26,7 @@ export const CATEGORIES = [
             "Encintadoras",
             "Empacadoras",
             "Motocultores",
-            "Remolques agrícolas",
+            "Remolques",
             "Sembradoras",
             "Sulfatadoras",
             "Segadoras",

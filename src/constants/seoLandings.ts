@@ -62,7 +62,7 @@ const rawLandings = [
     { title: "Construcción rural", category: "servicios", subcategory: "Construcción rural" },
     { title: "Servicios de Esquiladores", category: "servicios", subcategory: "Esquiladores" },
     { title: "Servicios forestales", category: "servicios", subcategory: "Servicios forestales" },
-    { title: "Remolques agrícolas usados", category: "maquinaria", subcategory: "Remolques agrícolas" },
+    { title: "Remolques agrícolas usados", category: "maquinaria", subcategory: "Remolques" },
     { title: "Alimentos Km0", category: "alimentos" },
     { title: "Venta de Fincas", category: "fincas", subcategory: "Venta" },
     { title: "Alquiler de Fincas", category: "fincas", subcategory: "Alquiler" },
