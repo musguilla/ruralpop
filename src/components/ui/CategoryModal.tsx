@@ -5,9 +5,10 @@ import {
     X, Search, ChevronRight, Check, List,
     Tractor, Leaf, Apple, Hammer, Briefcase,
     Cloud, PiggyBank, Bird, Dog, Rabbit, Milk,
-    Truck, Stethoscope, Anvil
+    Truck, Stethoscope, Anvil, MapPin
 } from "lucide-react";
 import { useCategories } from "@/context/CategoriesContext";
+import Image from "next/image";
 
 // Custom icons to match HomeSearchHero
 const CowIcon = ({ className }: { className?: string }) => (
@@ -32,11 +33,12 @@ const HorseIcon = ({ className }: { className?: string }) => (
 
 // Map icons to categories and subcategories
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-    "ganaderia": <Tractor className="w-5 h-5" />,
-    "maquinaria": <Hammer className="w-5 h-5" />,
-    "forraje": <Leaf className="w-5 h-5" />,
-    "alimentos": <Apple className="w-5 h-5" />,
-    "servicios": <Briefcase className="w-5 h-5" />,
+    "ganaderia": <Image src="/icon-bovino.png" alt="Ganadería" width={20} height={20} className="w-5 h-5 object-contain" />,
+    "maquinaria": <Image src="/icon-tractor.png" alt="Maquinaria" width={20} height={20} className="w-5 h-5 object-contain" />,
+    "forraje": <Image src="/icon-forraje.png" alt="Forraje" width={20} height={20} className="w-5 h-5 object-contain" />,
+    "alimentos": <Image src="/icon-alimentos.png" alt="Alimentos" width={20} height={20} className="w-5 h-5 object-contain" />,
+    "servicios": <Image src="/icon-transportes.png" alt="Servicios" width={20} height={20} className="w-5 h-5 object-contain" />,
+    "fincas": <MapPin className="w-5 h-5" />,
 };
 
 const SUBCATEGORY_ICONS: Record<string, React.ReactNode> = {
