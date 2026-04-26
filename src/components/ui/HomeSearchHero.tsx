@@ -211,7 +211,7 @@ export function HomeSearchHero() {
             </form>
 
             {/* Categories Slider */}
-            <div className="w-full max-w-5xl mt-12 flex flex-col gap-6">
+            <div className="w-full max-w-7xl mt-12 flex flex-col gap-6">
 
                 {/* Header with Title and Arrows */}
                 <div className="flex items-center justify-between w-full px-2">
