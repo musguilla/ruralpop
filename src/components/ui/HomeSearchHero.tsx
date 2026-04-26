@@ -21,7 +21,7 @@ const VISUAL_CATEGORIES = [
     { id: "Perros", type: "subcategory", label: "Perros", icon: <Image src="/icon-perro.png" alt="Perros" width={48} height={48} className="object-contain" /> },
     { id: "Conejos", type: "subcategory", label: "Conejos", icon: <Image src="/icon-conejos.png" alt="Conejos" width={48} height={48} className="object-contain" /> },
     { id: "maquinaria", type: "category", label: "Maquinaria", icon: <Image src="/icon-tractor.png" alt="Maquinaria" width={48} height={48} className="object-contain" /> },
-    { id: "fincas", type: "category", label: "Fincas", icon: <Image src="/icon-fincas.webp" alt="Fincas" width={48} height={48} className="object-contain" /> },
+    { id: "fincas", type: "category", label: "Fincas", icon: <MapPin className="w-12 h-12 text-[var(--ag-sys-color-primary)] opacity-80" strokeWidth={1.5} /> },
     { id: "forraje", type: "category", label: "Forraje", icon: <Image src="/icon-forraje.png" alt="Forraje" width={48} height={48} className="object-contain" /> },
     { id: "alimentos", type: "category", label: "Km0", icon: <Image src="/icon-alimentos.png" alt="Km0" width={48} height={48} className="object-contain" /> },
     { id: "Transporte", type: "subcategory", label: "Transporte", icon: <Image src="/icon-transportes.png" alt="Transporte" width={48} height={48} className="object-contain" /> },
