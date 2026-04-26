@@ -53,10 +53,14 @@ export const CATEGORIES = [
         id: "servicios",
         label: "Servicios",
         subcategories: [
-            "Desbroce",
+            "Cerramientos y vallados",
+            "Construcción rural",
+            "Esquiladores",
+            "Herradores",
+            "Mantenimiento de fincas",
+            "Servicios forestales",
             "Transporte",
-            "Veterinarios",
-            "Herradores"
+            "Veterinarios"
         ],
     },
     {
