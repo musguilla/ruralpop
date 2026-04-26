@@ -167,20 +167,31 @@ export default async function AdminListingsPage(props: {
 
                             {/* Info Wrapper */}
                             <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div>
-                                        <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] line-clamp-1 mb-1">{l.title}</h3>
-                                        <div className="flex items-center gap-3 text-xs text-[var(--ag-sys-color-text-muted)] font-bold">
-                                            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {l.location}</span>
-                                            <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full"></span>
-                                            <span className="flex items-center gap-1"><Tag className="w-3 h-3" /> {l.category}</span>
-                                            <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full"></span>
-                                            <span className="flex items-center gap-1 text-red-500"><Heart className="w-3 h-3 fill-current" /> {l.favorites?.[0]?.count || 0}</span>
+                                <div className="flex justify-between items-start mb-4 gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-4 mb-1 flex-wrap">
+                                            <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] line-clamp-1">{l.title}</h3>
+                                            {/* Actions Moderation */}
+                                            <div className="flex items-center gap-2 flex-shrink-0">
+                                                <Link href={`/admin/listings/edit/${encodeId(l.id)}`} className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ag-sys-color-background)] text-[10px] font-bold text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-border)] rounded-lg hover:bg-[var(--ag-sys-color-border)] transition-all whitespace-nowrap">
+                                                    <Edit className="w-3 h-3" /> Editar
+                                                </Link>
+                                                <Link href={`/item/${encodeId(l.id)}`} target="_blank" className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ag-sys-color-background)] text-[10px] font-bold text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-lg hover:bg-[var(--ag-sys-color-border)] transition-all whitespace-nowrap">
+                                                    <Eye className="w-3 h-3" /> Ver
+                                                </Link>
+                                                <DeleteButton listingId={l.id} title={l.title} />
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3 text-xs text-[var(--ag-sys-color-text-muted)] font-bold flex-wrap">
+                                            <span className="flex items-center gap-1 whitespace-nowrap"><MapPin className="w-3 h-3" /> {l.location}</span>
+                                            <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full flex-shrink-0"></span>
+                                            <span className="flex items-center gap-1 whitespace-nowrap"><Tag className="w-3 h-3" /> {l.category}{l.subcategory ? ` > ${l.subcategory}` : ''}</span>
+                                            <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full flex-shrink-0"></span>
+                                            <span className="flex items-center gap-1 text-red-500 whitespace-nowrap"><Heart className="w-3 h-3 fill-current" /> {l.favorites?.[0]?.count || 0}</span>
                                         </div>
                                     </div>
-                                    <div className="text-right">
+                                    <div className="text-right flex-shrink-0">
                                         <p className="text-2xl font-black text-[var(--ag-sys-color-primary)]">{formatCurrency(l.price)}</p>
-                                        <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-bold uppercase">{l.price_type}</span>
                                     </div>
                                 </div>
 
@@ -198,17 +209,6 @@ export default async function AdminListingsPage(props: {
                                             <p className="text-xs font-bold text-[var(--ag-sys-color-text)] leading-none">{(l.seller as Record<string, string | null>)?.name || 'Vendedor'}</p>
                                             <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider font-bold">{formatRelativeTime(l.created_at)}</span>
                                         </div>
-                                    </div>
-
-                                    {/* Actions Moderation */}
-                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                                        <Link href={`/admin/listings/edit/${encodeId(l.id)}`} className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all whitespace-nowrap">
-                                            <Edit className="w-3.5 h-3.5" /> Editar
-                                        </Link>
-                                        <button className="flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-background)] text-xs font-bold text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-xl hover:bg-[var(--ag-sys-color-border)] transition-all whitespace-nowrap">
-                                            <Eye className="w-3.5 h-3.5" /> Ver
-                                        </button>
-                                        <DeleteButton listingId={l.id} title={l.title} />
                                     </div>
                                 </div>
                             </div>
