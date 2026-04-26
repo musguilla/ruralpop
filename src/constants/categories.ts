@@ -9,14 +9,30 @@ export const CATEGORIES = [
             "Ovino",
             "Porcino",
             "Avicultura",
+            "Apicultura",
             "Perros",
             "Conejos",
+            "Otros",
         ],
     },
     {
         id: "maquinaria",
         label: "Maquinaria y herramientas",
-        subcategories: [],
+        subcategories: [
+            "Tractores",
+            "Abonadoras",
+            "Cosechadoras",
+            "Desbrozadoras",
+            "Encintadoras",
+            "Empacadoras",
+            "Motocultores",
+            "Remolques agrícolas",
+            "Sembradoras",
+            "Sulfatadoras",
+            "Trituradoras",
+            "Volteadoras",
+            "Otra maquinaria agrícola"
+        ],
     },
     {
         id: "forraje",
@@ -24,9 +40,15 @@ export const CATEGORIES = [
         subcategories: [],
     },
     {
+        id: "fincas",
+        label: "Fincas",
+        subcategories: [],
+    },
+    {
         id: "servicios",
         label: "Servicios",
         subcategories: [
+            "Desbroce",
             "Transporte",
             "Veterinarios",
             "Herradores"

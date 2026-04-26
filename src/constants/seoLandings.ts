@@ -48,12 +48,23 @@ const rawLandings = [
     { title: "Tractores usados Madrid", category: "maquinaria", province: "Madrid", searchQuery: "tractor" },
     { title: "Tractor segunda mano Bilbao", category: "maquinaria", province: "Bizkaia", searchQuery: "tractor" },
     { title: "Tractor usado Valencia", category: "maquinaria", province: "Valencia", searchQuery: "tractor" },
+    
+    // --- NUEVAS CATEGORIAS HARDCODEADAS PARA SEO ---
+    { title: "Fincas rústicas", category: "fincas", description: "Encuentra fincas rústicas, terrenos y parcelas agrícolas en venta y alquiler." },
+    { title: "Fincas en Andalucía", category: "fincas", province: "Sevilla" },
+    { title: "Fincas en Galicia", category: "fincas", province: "A Coruña" },
+    { title: "Material de Apicultura", category: "ganaderia", subcategory: "Apicultura" },
+    { title: "Cosechadoras de segunda mano", category: "maquinaria", subcategory: "Cosechadoras" },
+    { title: "Desbrozadoras forestales y agrícolas", category: "maquinaria", subcategory: "Desbrozadoras" },
+    { title: "Servicios de Desbroce", category: "servicios", subcategory: "Desbroce" },
+    { title: "Remolques agrícolas usados", category: "maquinaria", subcategory: "Remolques agrícolas" },
+    { title: "Alimentos Km0", category: "alimentos" },
 ];
 
 export const SEO_LANDINGS: SeoLanding[] = rawLandings.map((item) => ({
     ...item,
     slug: slugify(item.title),
-    description: `Descubre los mejores anuncios de ${item.title.toLowerCase()} en Ruralpop. El gran mercado agrícola y ganadero de España. Si estás interesado en comprar o vender, aquí encontrarás el mejor entorno de compraventa directo. Encuentra las mejores opciones verificadas y contacta con el vendedor sin intermediarios. Actualizado a diario con clasificados de ${item.title.toLowerCase()}.`,
+    description: (item as any).description || `Descubre los mejores anuncios de ${item.title.toLowerCase()} en Ruralpop. El gran mercado agrícola y ganadero de España. Si estás interesado en comprar o vender, aquí encontrarás el mejor entorno de compraventa directo. Encuentra las mejores opciones verificadas y contacta con el vendedor sin intermediarios. Actualizado a diario con clasificados de ${item.title.toLowerCase()}.`,
     faqs: [
         {
             question: "¿Cómo me registro?",
