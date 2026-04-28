@@ -112,7 +112,7 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ m
                         {latestPrices.map(price => (
                             <Link 
                                 key={price.id}
-                                href={`/precios-ganado/vacuno/${mercado}/${price.normalized_category}`}
+                                href={`/precios-ganado/vacuno/mercados/${mercado}/${price.normalized_category}`}
                                 className="px-4 py-2 rounded-xl bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] text-sm font-semibold hover:border-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary)] transition-colors"
                             >
                                 {price.category_name}

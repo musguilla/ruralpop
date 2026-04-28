@@ -92,7 +92,7 @@ export default async function MarketCategoryDetailPage({ params }: { params: Pro
         <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
             <div className="container mx-auto max-w-5xl px-4 md:px-6 lg:px-8 py-12">
                 
-                <Link href={`/precios-ganado/vacuno/${mercado}`} className="inline-flex items-center gap-2 text-sm font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors mb-8">
+                <Link href={`/precios-ganado/vacuno/mercados/${mercado}`} className="inline-flex items-center gap-2 text-sm font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors mb-8">
                     <ArrowLeft className="w-4 h-4" />
                     Volver a {market.name}
                 </Link>
