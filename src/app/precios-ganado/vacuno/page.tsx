@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/server';
 import { PriceTable } from '@/components/livestock/PriceTable';
-import { TrendingUp, BarChart2, ShieldCheck, Clock } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 
 export const revalidate = 3600; // Revalidate every hour
@@ -64,30 +64,6 @@ export default async function BovinePricesHubPage() {
             </section>
 
             <div className="container mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-16 space-y-20">
-                {/* Statistics Bento Grid */}
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] p-6 rounded-3xl flex flex-col items-start hover:border-[var(--ag-sys-color-primary)]/50 transition-colors">
-                        <div className="w-12 h-12 bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center mb-4">
-                            <BarChart2 className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight">{markets?.length || 0}</h3>
-                        <p className="font-semibold text-[var(--ag-sys-color-text-muted)] mt-1">Mercados Activos</p>
-                    </div>
-                    <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] p-6 rounded-3xl flex flex-col items-start hover:border-[var(--ag-sys-color-primary)]/50 transition-colors">
-                        <div className="w-12 h-12 bg-green-500/10 text-green-500 rounded-2xl flex items-center justify-center mb-4">
-                            <ShieldCheck className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight">{latestPrices.length}</h3>
-                        <p className="font-semibold text-[var(--ag-sys-color-text-muted)] mt-1">Categorías Normalizadas</p>
-                    </div>
-                    <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] p-6 rounded-3xl flex flex-col items-start hover:border-[var(--ag-sys-color-primary)]/50 transition-colors">
-                        <div className="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center mb-4">
-                            <Clock className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight">24h</h3>
-                        <p className="font-semibold text-[var(--ag-sys-color-text-muted)] mt-1">Frecuencia de Ingesta</p>
-                    </div>
-                </section>
 
                 {/* Main Table Section */}
                 <section>
