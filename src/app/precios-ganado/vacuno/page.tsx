@@ -22,11 +22,11 @@ export default async function BovinePricesHubPage() {
 
 
     return (
-        <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
+        <div className="min-h-screen bg-[var(--ag-sys-color-background)] w-full">
             {/* Hero Section */}
             <section className="relative w-full pt-32 pb-20 px-4 md:px-6 lg:px-8 border-b border-[var(--ag-sys-color-border)] overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-[var(--ag-sys-color-primary)]/10 to-transparent pointer-events-none"></div>
-                <div className="container mx-auto relative z-10 flex flex-col items-center text-center">
+                <div className="container mx-auto w-full relative z-10 flex flex-col items-center text-center">
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] font-bold text-xs uppercase tracking-widest mb-6">
                         <TrendingUp className="w-4 h-4" />
                         <span>Cotizaciones Nacionales</span>
@@ -40,9 +40,7 @@ export default async function BovinePricesHubPage() {
                 </div>
             </section>
 
-            <div className="container mx-auto px-4 md:px-6 lg:px-8 py-16 space-y-20">
-
-
+            <div className="container mx-auto w-full px-4 md:px-6 lg:px-8 py-16 space-y-20">
 
                 {/* Market Explorer */}
                 <section>
