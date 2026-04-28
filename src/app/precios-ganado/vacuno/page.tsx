@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/server';
-import { PriceTable } from '@/components/livestock/PriceTable';
 import { TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 
@@ -20,29 +19,7 @@ export default async function BovinePricesHubPage() {
         .select('*')
         .eq('active', true);
 
-    // 2. Fetch Latest Prices for each active market (getting the max date per market)
-    // For simplicity without a complex SQL query, we can fetch all from the last 15 days 
-    // and filter the latest date per market in JS.
-    const fifteenDaysAgo = new Date();
-    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
-    const { data: recentPrices } = await supabase
-        .from('livestock_prices')
-        .select('*, market_sources(name, region)')
-        .gte('date', fifteenDaysAgo.toISOString())
-        .order('date', { ascending: false });
-
-    // Deduplicate to get only the latest snapshot per market + category combination
-    const latestPricesMap = new Map();
-    if (recentPrices) {
-        for (const price of recentPrices) {
-            const key = `${price.market_source_id}-${price.category_name}`;
-            if (!latestPricesMap.has(key)) {
-                latestPricesMap.set(key, price);
-            }
-        }
-    }
-    const latestPrices = Array.from(latestPricesMap.values());
 
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
@@ -65,17 +42,7 @@ export default async function BovinePricesHubPage() {
 
             <div className="container mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-16 space-y-20">
 
-                {/* Main Table Section */}
-                <section>
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                        <div>
-                            <h2 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight mb-2">Últimas Cotizaciones</h2>
-                            <p className="text-[var(--ag-sys-color-text-muted)]">Explora los precios medios más recientes por categoría.</p>
-                        </div>
-                    </div>
 
-                    <PriceTable prices={latestPrices} />
-                </section>
 
                 {/* Market Explorer */}
                 <section>
