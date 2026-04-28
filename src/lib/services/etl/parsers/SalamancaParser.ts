@@ -6,9 +6,9 @@ export class SalamancaParser {
     // In Salamanca, "BOVINO DE CARNE" and "BOVINO DE VIDA" are the products
     
     static async parse(source: MarketSource): Promise<ETLParserResult> {
-        // Fetch the latest 500 records from the CKAN API
-        // Ordered by _id desc to get the latest dates first
-        const url = `https://datosabiertossalamanca.es/api/3/action/datastore_search?resource_id=e0dcd22f-bf4b-4c97-87e4-aae2806b82e6&limit=1000&sort=_id%20desc`;
+        // Fetch the records from the CKAN API
+        // limit=30000 to get all historical data since 2005
+        const url = `https://datosabiertossalamanca.es/api/3/action/datastore_search?resource_id=e0dcd22f-bf4b-4c97-87e4-aae2806b82e6&limit=30000&sort=_id%20desc`;
         
         const response = await fetch(url);
         if (!response.ok) {
@@ -20,9 +20,7 @@ export class SalamancaParser {
         
         const prices = [];
         
-        // Find the latest distinct date for Bovino to avoid processing historical data pointlessly
-        let latestBovinoDate: Date | null = null;
-        
+
         for (const record of records) {
             const dataStr = record['<data>'];
             if (!dataStr) continue;
@@ -32,7 +30,7 @@ export class SalamancaParser {
             const mesaMatch = dataStr.match(/<MESA>(.*?)<\/MESA>/);
             const productoMatch = dataStr.match(/<PRODUCTO>(.*?)<\/PRODUCTO>/);
             const categoriaMatch = dataStr.match(/<CATEGORIA>(.*?)<\/CATEGORIA>/);
-            const valor1Match = dataStr.match(/<VALOR1>(.*?)<\/VALOR1>/);
+            const valor1Match = dataStr.match(/<VALOR1>(.*?)(?:<\/VALOR1>|$)/);
             
             if (!fechaMatch || !mesaMatch || !productoMatch || !categoriaMatch || !valor1Match) {
                 continue;
@@ -45,19 +43,10 @@ export class SalamancaParser {
             
             const fecha = new Date(fechaMatch[1]);
             
-            // If we found a newer date, or if we are still on the newest date, process it
-            // Assuming records are ordered descending by _id, the first bovino we see is the latest
-            if (!latestBovinoDate) {
-                latestBovinoDate = fecha;
-            }
+            const productoStr = productoMatch[1].trim();
+            const categoriaStr = categoriaMatch[1].trim();
             
-            // Only take the latest snapshot
-            if (fecha.getTime() !== latestBovinoDate.getTime()) {
-                continue;
-            }
-            
-            const producto = productoMatch[1].toUpperCase();
-            const categoria = categoriaMatch[1];
+            const fullCategoryName = `${productoStr} ${categoriaStr}`;
             const valor1 = parseFloat(valor1Match[1].replace(',', '.')); // Handle decimal comma if present
             
             if (isNaN(valor1) || valor1 === 0) continue; // Skip empty prices
@@ -65,12 +54,12 @@ export class SalamancaParser {
             let segment: SegmentType = 'abasto';
             let unit: UnitType = 'eur_kg_vivo';
             
-            if (producto.includes('VIDA')) {
+            if (mesa.toUpperCase().includes('VIDA')) {
                 segment = 'vida';
                 unit = 'eur_unidad'; // In Spain, vida is usually per unit or kg vivo. Let's assume eur_unidad but normalize if needed
                 // If the string says kg, override
-                if (categoria.toLowerCase().includes('kg')) unit = 'eur_kg_vivo';
-            } else if (producto.includes('CARNE')) {
+                if (categoriaStr.toLowerCase().includes('kg')) unit = 'eur_kg_vivo';
+            } else if (mesa.toUpperCase().includes('CARNE')) {
                 segment = 'carne';
                 unit = 'eur_kg_canal';
             }
@@ -79,8 +68,8 @@ export class SalamancaParser {
                 date: fecha,
                 species: 'bovino',
                 segment,
-                category_name: categoria,
-                normalized_category: SalamancaParser.normalizeCategory(categoria),
+                category_name: fullCategoryName,
+                normalized_category: SalamancaParser.normalizeCategory(fullCategoryName),
                 price_avg: valor1,
                 unit,
                 trend: 'unknown' as TrendType, // Will be computed by ETL orchestrator comparing to DB
