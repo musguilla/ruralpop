@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/expire-featured",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/fetch-bovino-prices",
+      "schedule": "0 2 * * *"
     }
   ]
 }

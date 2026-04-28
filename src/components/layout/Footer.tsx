@@ -43,6 +43,9 @@ export function Footer() {
                         <Link href="/tractores" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                             Catálogos de Tractores
                         </Link>
+                        <Link href="/precios-ganado/vacuno" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            Precios Mercados Vacuno
+                        </Link>
                     </div>
 
                     {/* Vertical line 2 */}

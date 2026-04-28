@@ -1,0 +1,130 @@
+import { createClient } from '@supabase/supabase-js';
+import { MarketSource, ETLParserResult } from '@/types/livestock';
+import { SalamancaParser } from './parsers/SalamancaParser';
+import { LeonParser } from './parsers/LeonParser';
+import { SieroParser } from './parsers/SieroParser';
+import { SantiagoParser } from './parsers/SantiagoParser';
+import { TalaveraParser } from './parsers/TalaveraParser';
+import crypto from 'crypto';
+
+// Initialize Supabase Service Role client to bypass RLS
+const getAdminClient = () => {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+};
+
+export class MarketETLService {
+    
+    static async run() {
+        console.log('Starting Market ETL Service...');
+        const supabase = getAdminClient();
+        
+        // 1. Fetch active sources
+        const { data: sources, error } = await supabase
+            .from('market_sources')
+            .select('*')
+            .eq('active', true);
+            
+        if (error || !sources) {
+            console.error('Error fetching market sources:', error);
+            return;
+        }
+        
+        console.log(`Found ${sources.length} active sources.`);
+        
+        for (const source of sources) {
+            try {
+                console.log(`Processing source: ${source.name} (${source.source_type})`);
+                
+                // 2. Route to correct parser
+                let result: ETLParserResult;
+                
+                if (source.name.includes('Salamanca')) {
+                    result = await SalamancaParser.parse(source);
+                } else if (source.name.includes('León')) {
+                    result = await LeonParser.parse(source);
+                } else if (source.name.includes('Siero')) {
+                    result = await SieroParser.parse(source);
+                } else if (source.name.includes('Santiago')) {
+                    result = await SantiagoParser.parse(source);
+                } else if (source.name.includes('Talavera')) {
+                    result = await TalaveraParser.parse(source);
+                } else {
+                    console.warn(`No parser configured for source: ${source.name}`);
+                    continue;
+                }
+                
+                // 3. Compute Checksum of raw content to prevent duplicate snapshots
+                const checksum = crypto.createHash('sha256').update(result.rawContent).digest('hex');
+                
+                // Check if this snapshot already exists
+                const { data: existingSnapshot } = await supabase
+                    .from('raw_market_snapshots')
+                    .select('id')
+                    .eq('market_source_id', source.id)
+                    .eq('checksum', checksum)
+                    .single();
+                    
+                if (existingSnapshot) {
+                    console.log(`Skipping ${source.name}: Content has not changed since last successful fetch (checksum match).`);
+                    
+                    // Update last success at
+                    await supabase
+                        .from('market_sources')
+                        .update({ last_success_at: new Date().toISOString() })
+                        .eq('id', source.id);
+                        
+                    continue;
+                }
+                
+                // 4. Save Raw Snapshot
+                await supabase.from('raw_market_snapshots').insert({
+                    market_source_id: source.id,
+                    source_url: source.source_url,
+                    content_type: result.contentType,
+                    raw_content: result.rawContent,
+                    parsed_successfully: result.prices.length > 0,
+                    parser_version: '1.0.0',
+                    checksum: checksum
+                });
+                
+                // 5. Insert Prices (Upsert / Ignore duplicates using unique constraint)
+                if (result.prices.length > 0) {
+                    const pricesToInsert = result.prices.map(p => ({
+                        ...p,
+                        market_source_id: source.id,
+                    }));
+                    
+                    // Upsert ignoring existing (market_source_id, date, category_name, unit) 
+                    const { error: insertError } = await supabase
+                        .from('livestock_prices')
+                        .upsert(pricesToInsert, { onConflict: 'market_source_id, date, category_name, unit', ignoreDuplicates: true });
+                        
+                    if (insertError) {
+                        console.error(`Error inserting prices for ${source.name}:`, insertError);
+                    } else {
+                        console.log(`Inserted up to ${result.prices.length} prices for ${source.name}`);
+                    }
+                }
+                
+                // Update success timestamp
+                await supabase
+                    .from('market_sources')
+                    .update({ last_success_at: new Date().toISOString() })
+                    .eq('id', source.id);
+                    
+            } catch (err: any) {
+                console.error(`Error processing source ${source.name}:`, err);
+                // Update error timestamp
+                await supabase
+                    .from('market_sources')
+                    .update({ last_error_at: new Date().toISOString() })
+                    .eq('id', source.id);
+            }
+        }
+        
+        console.log('Market ETL Service finished.');
+    }
+}
