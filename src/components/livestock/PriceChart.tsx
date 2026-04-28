@@ -14,7 +14,7 @@ interface PriceChartProps {
     unit?: string;
 }
 
-type AggregationMode = 'dias' | 'semanas' | 'meses';
+type AggregationMode = 'semanas' | 'meses';
 
 function getWeekKey(d: Date) {
     const date = new Date(d.getTime());
@@ -38,8 +38,6 @@ export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
 
     const aggregatedData = useMemo(() => {
         const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        
-        if (mode === 'dias') return sortedData;
 
         const map = new Map<string, { sum: number; count: number; date: string }>();
         
@@ -79,7 +77,7 @@ export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
                 {title && <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)]">{title}</h3>}
                 
                 <div className="flex items-center gap-1 bg-[var(--ag-sys-color-background)] p-1 rounded-xl border border-[var(--ag-sys-color-border)]">
-                    {(['dias', 'semanas', 'meses'] as AggregationMode[]).map(m => (
+                    {(['semanas', 'meses'] as AggregationMode[]).map(m => (
                         <button
                             key={m}
                             onClick={() => setMode(m)}
