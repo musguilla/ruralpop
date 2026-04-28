@@ -51,9 +51,7 @@ export class SalamancaParser {
             
             if (mesa.toUpperCase().includes('VIDA')) {
                 segment = 'vida';
-                unit = 'eur_unidad'; // In Spain, vida is usually per unit or kg vivo. Let's assume eur_unidad but normalize if needed
-                // If the string says kg, override
-                if (categoriaStr.toLowerCase().includes('kg')) unit = 'eur_kg_vivo';
+                unit = 'eur_kg_vivo';
             } else if (mesa.toUpperCase().includes('CARNE')) {
                 segment = 'carne';
                 unit = 'eur_kg_canal';
