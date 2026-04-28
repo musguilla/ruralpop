@@ -26,10 +26,10 @@ export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
     // Sort data chronologically just in case
     const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-    // Format date for display
+    // Format date for display including year to avoid Recharts categorical axis overlaps across years
     const formattedData = sortedData.map(d => ({
         ...d,
-        displayDate: new Date(d.date).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })
+        displayDate: new Date(d.date).toLocaleDateString('es-ES', { year: '2-digit', month: 'short', day: 'numeric' })
     }));
 
     return (
