@@ -35,7 +35,7 @@ export default async function BovinePricesHubPage() {
                         Precios de Mercado de <span className="text-[var(--ag-sys-color-primary)]">Ganado Bovino</span>
                     </h1>
                     <p className="text-lg md:text-xl text-[var(--ag-sys-color-text-muted)] max-w-3xl leading-relaxed">
-                        Sistema ETL automático que normaliza y consolida las cotizaciones de vida, abasto y carne de las principales lonjas y mercados ganaderos de España. Actualizado diariamente.
+                        Accede a todos los precios de los mercados y lonjas de ganado bovino de España.
                     </p>
                 </div>
             </section>
