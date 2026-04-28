@@ -44,19 +44,23 @@ export default async function MarketCategoryDetailPage({ params }: { params: Pro
         notFound();
     }
 
-    // Fetch all prices for this category in this market ordered chronologically
-    const { data: prices } = await supabase
+    // Fetch prices for this category ordered by date descending to get the most recent ones first
+    // (Supabase has a default limit of 1000 rows, so ascending would cut off recent years if data > 1000 rows)
+    const { data: pricesDesc } = await supabase
         .from('livestock_prices')
         .select('*')
         .eq('market_source_id', mercado)
         .eq('normalized_category', categoria)
-        .order('date', { ascending: true }); // Ascending for the chart
+        .order('date', { ascending: false })
+        .limit(2000);
 
-    if (!prices || prices.length === 0) {
+    if (!pricesDesc || pricesDesc.length === 0) {
         // Fallback if the normalized category doesn't strictly match but exists
-        // Might happen if normalization rules changed
         notFound();
     }
+
+    // Reverse to chronological order for the chart
+    const prices = pricesDesc.reverse();
 
     const latestPrice = prices[prices.length - 1];
     const previousPrice = prices.length > 1 ? prices[prices.length - 2] : null;
