@@ -1,12 +1,14 @@
 import * as cheerio from 'cheerio';
 import { PDFParse } from 'pdf-parse';
 import { ETLParserResult, TrendType, UnitType, MarketSource, SegmentType } from '@/types/livestock';
+import { Agent } from 'undici';
 
 export class SantiagoParser {
     
     static async parse(source: MarketSource): Promise<ETLParserResult> {
         // 1. Fetch Santiago Market Page
-        const response = await fetch(source.source_url);
+        const dispatcher = new Agent({ connect: { rejectUnauthorized: false } });
+        const response = await fetch(source.source_url, { dispatcher } as any);
         if (!response.ok) {
             throw new Error(`Santiago API returned ${response.status}`);
         }
@@ -33,7 +35,7 @@ export class SantiagoParser {
         // Process only the first (latest) PDF
         const latestPdfUrl = pdfLinks[0].startsWith('http') ? pdfLinks[0] : `https://santiagodecompostela.gal${pdfLinks[0]}`;
         
-        const pdfRes = await fetch(latestPdfUrl);
+        const pdfRes = await fetch(latestPdfUrl, { dispatcher } as any);
         if (!pdfRes.ok) {
             throw new Error(`Santiago API returned ${pdfRes.status} for PDF`);
         }
