@@ -62,10 +62,10 @@ export function Footer() {
                             ¿Eres profesional?
                         </Link>
                     </div>
-                    
-                    {/* Vertical line 3 */}
-                    <div className="hidden md:block w-px h-32 bg-[var(--ag-sys-color-border)] mt-1"></div>
                 </div>
+
+                {/* Vertical line 3 */}
+                <div className="hidden lg:block w-px h-20 bg-[var(--ag-sys-color-border)] shrink-0"></div>
 
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-4 mt-4 sm:mt-0 shrink-0">
                     {/* Apple App Store Native SVG Badge */}
