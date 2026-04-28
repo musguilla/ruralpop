@@ -8,6 +8,7 @@ import { LOCATIONS } from "@/constants/locations";
 import { notFound } from "next/navigation";
 import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
 import { DynamicFaqs } from "@/components/seo/DynamicFaqs";
+import { generateSeoH1 } from "@/utils/h1Generator";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const params = await props.params;
@@ -98,6 +99,10 @@ export default async function SearchResultsPage(props: {
 
     return (
         <div className="container mx-auto px-4 pt-0 pb-8 sm:py-8 min-h-screen">
+            <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-3 pt-2 sm:pt-0">
+                {generateSeoH1(parsedSlug, locationName)}
+            </h1>
+
             <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
                 <ActiveSearchBar />
             </Suspense>

@@ -6,6 +6,8 @@ import { HomeSearchHero } from "@/components/ui/HomeSearchHero";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { HomeStoreSection } from "@/components/store/HomeStoreSection";
 import { Metadata } from "next";
+import { generateSeoH1 } from "@/utils/h1Generator";
+import { LOCATIONS } from "@/constants/locations";
 
 export const metadata: Metadata = {
   alternates: {
@@ -18,6 +20,18 @@ export default async function Home(props: {
 }) {
   const searchParams = await props.searchParams;
 
+  const parsedSlug = {
+    q: searchParams.q as string | undefined,
+    category: searchParams.category as string | undefined,
+    subcategory: searchParams.subcategory as string | undefined
+  };
+
+  let locationName = "";
+  if (searchParams.province_id) {
+    const loc = LOCATIONS.find(l => l.id === searchParams.province_id);
+    if (loc) locationName = loc.name;
+  }
+
   // Pasamos los searchParams como Server Component prop.
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen">
@@ -26,9 +40,14 @@ export default async function Home(props: {
       {Object.keys(searchParams).length === 0 ? (
         <HomeSearchHero />
       ) : (
-        <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
-          <ActiveSearchBar />
-        </Suspense>
+        <>
+          <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-3 pt-2 sm:pt-0">
+            {generateSeoH1(parsedSlug, locationName)}
+          </h1>
+          <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
+            <ActiveSearchBar />
+          </Suspense>
+        </>
       )}
 
       {/* Grid Server-side */}
