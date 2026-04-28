@@ -6,9 +6,9 @@ export class SalamancaParser {
     // In Salamanca, "BOVINO DE CARNE" and "BOVINO DE VIDA" are the products
     
     static async parse(source: MarketSource): Promise<ETLParserResult> {
-        // Fetch the records from the CKAN API
+        // Fetch the records from the CKAN API using the new CSV resource ID
         // limit=30000 to get all historical data since 2005
-        const url = `https://datosabiertossalamanca.es/api/3/action/datastore_search?resource_id=e0dcd22f-bf4b-4c97-87e4-aae2806b82e6&limit=30000&sort=_id%20desc`;
+        const url = `https://datosabiertossalamanca.es/api/3/action/datastore_search?resource_id=042beb52-4d80-4380-b073-e170364f65e7&limit=30000&sort=_id%20desc`;
         
         const response = await fetch(url);
         if (!response.ok) {
@@ -20,34 +20,29 @@ export class SalamancaParser {
         
         const prices = [];
         
-
         for (const record of records) {
-            const dataStr = record['<data>'];
-            if (!dataStr) continue;
+            const fechaStr = record.FECHA;
+            const mesa = record.MESA;
+            const producto = record.PRODUCTO;
+            const categoria = record.CATEGORIA;
+            const valor1Str = record.VALOR1;
             
-            // Extract using regex
-            const fechaMatch = dataStr.match(/<FECHA>(.*?)<\/FECHA>/);
-            const mesaMatch = dataStr.match(/<MESA>(.*?)<\/MESA>/);
-            const productoMatch = dataStr.match(/<PRODUCTO>(.*?)<\/PRODUCTO>/);
-            const categoriaMatch = dataStr.match(/<CATEGORIA>(.*?)<\/CATEGORIA>/);
-            const valor1Match = dataStr.match(/<VALOR1>(.*?)(?:<\/VALOR1>|$)/);
-            
-            if (!fechaMatch || !mesaMatch || !productoMatch || !categoriaMatch || !valor1Match) {
+            if (!fechaStr || !mesa || !producto || !categoria || !valor1Str) {
                 continue;
             }
-            
-            const mesa = mesaMatch[1];
             
             // Only process BOVINO
             if (!mesa.toUpperCase().includes('BOVINO')) continue;
             
-            const fecha = new Date(fechaMatch[1]);
+            const fecha = new Date(fechaStr);
             
-            const productoStr = productoMatch[1].trim();
-            const categoriaStr = categoriaMatch[1].trim();
+            const productoStr = producto.trim();
+            const categoriaStr = categoria.trim();
             
             const fullCategoryName = `${productoStr} ${categoriaStr}`;
-            const valor1 = parseFloat(valor1Match[1].replace(',', '.')); // Handle decimal comma if present
+            
+            // The CSV JSON returns '6,77', we need to replace comma with dot
+            const valor1 = parseFloat(valor1Str.replace(',', '.'));
             
             if (isNaN(valor1) || valor1 === 0) continue; // Skip empty prices
             
