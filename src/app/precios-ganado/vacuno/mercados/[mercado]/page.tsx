@@ -105,21 +105,7 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ m
                     <PriceTable prices={latestPrices} showMarketColumn={false} />
                 </div>
                 
-                {/* Advanced: We could add a list of categories here linking to /precios-ganado/vacuno/[mercado]/[categoria] */}
-                <div className="mt-16">
-                    <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Histórico por Categoría</h3>
-                    <div className="flex flex-wrap gap-3">
-                        {latestPrices.map((price: any) => (
-                            <Link 
-                                key={price.id}
-                                href={`/precios-ganado/vacuno/mercados/${mercado}/${price.normalized_category}`}
-                                className="px-4 py-2 rounded-xl bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] text-sm font-semibold hover:border-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary)] transition-colors"
-                            >
-                                {price.category_name}
-                            </Link>
-                        ))}
-                    </div>
-                </div>
+
 
             </div>
         </div>
