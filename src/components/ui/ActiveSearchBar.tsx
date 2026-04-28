@@ -208,8 +208,8 @@ export function ActiveSearchBar() {
     ];
 
     return (
-        <div className="w-full flex flex-col items-center py-4 sm:py-6 mb-4 sm:mb-2">
-            <div className="flex gap-3 w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
+        <div className="w-full flex flex-col items-center pt-1 pb-4 sm:pt-2 sm:pb-6 mb-4 sm:mb-2">
+            <div className="flex gap-3 w-full mx-auto">
                 {/* Search Bar */}
                 <form
                     onSubmit={handleSubmit}

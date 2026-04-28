@@ -1,10 +1,32 @@
+function pluralizeSpanish(text: string): string {
+    if (!text) return text;
+    
+    const stopwords = ['de', 'del', 'la', 'las', 'el', 'los', 'un', 'una', 'con', 'para', 'y', 'o', 'en', 'sin'];
+    
+    return text.split(' ').map(word => {
+        const lowerWord = word.toLowerCase();
+        if (stopwords.includes(lowerWord)) return word;
+        if (lowerWord.endsWith('s')) return word;
+        if (lowerWord.endsWith('z')) return word.slice(0, -1) + 'ces';
+        
+        const lastChar = lowerWord.slice(-1);
+        const vowels = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
+        if (vowels.includes(lastChar)) {
+            return word + 's';
+        } else {
+            return word + 'es';
+        }
+    }).join(' ');
+}
+
 export function generateSeoH1(parsedSlug: { q?: string, category?: string, subcategory?: string }, locationName: string = "") {
     const { q, category, subcategory } = parsedSlug;
     let h1 = "";
 
     if (q) {
-        // palabra de la URL o búsqueda + en venta
-        h1 = `${q} en venta`;
+        // palabra de la URL o búsqueda en plural + en venta
+        const pluralizedQ = pluralizeSpanish(q);
+        h1 = `${pluralizedQ} en venta`;
     } else if (subcategory) {
         const sub = subcategory.toLowerCase();
         

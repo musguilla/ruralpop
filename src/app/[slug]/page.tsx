@@ -99,7 +99,7 @@ export default async function SearchResultsPage(props: {
 
     return (
         <div className="container mx-auto px-4 pt-0 pb-8 sm:py-8 min-h-screen">
-            <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-3 pt-2 sm:pt-0">
+            <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2 pt-2 sm:pt-0">
                 {generateSeoH1(parsedSlug, locationName)}
             </h1>
 

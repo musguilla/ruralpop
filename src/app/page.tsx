@@ -41,7 +41,7 @@ export default async function Home(props: {
         <HomeSearchHero />
       ) : (
         <>
-          <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-3 pt-2 sm:pt-0">
+          <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2 pt-2 sm:pt-0">
             {generateSeoH1(parsedSlug, locationName)}
           </h1>
           <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
