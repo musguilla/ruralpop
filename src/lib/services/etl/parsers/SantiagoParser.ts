@@ -43,8 +43,8 @@ export class SantiagoParser {
         
         // Extract text
         const parser = new PDFParse(buffer);
-        const text = await parser.getText();
-        rawContentMerged = text;
+        const result = await parser.getText();
+        rawContentMerged = result.text;
         
         // Extract Date from URL
         // Example: Cotizacións%2C%2022.04.2026_0.pdf
@@ -56,7 +56,7 @@ export class SantiagoParser {
         }
         
         // Basic Line Parsing
-        const lines = text.split('\n');
+        const lines = result.text.split('\n');
         let currentSegment: SegmentType = 'abasto';
         let currentUnit: UnitType = 'eur_kg_canal';
         

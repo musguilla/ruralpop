@@ -52,8 +52,8 @@ export class SieroParser {
                 
                 // Extract text
                 const parser = new PDFParse(buffer);
-                const text = await parser.getText();
-                rawContentMerged += `\n\n--- PDF: ${link.url} ---\n${text}`;
+                const result = await parser.getText();
+                rawContentMerged += `\n\n--- PDF: ${link.url} ---\n${result.text}`;
                 
                 // Extract Date from URL or text
                 // URL usually has date: precios-lunes-vida-20-10-25.pdf
@@ -66,7 +66,7 @@ export class SieroParser {
                 }
                 
                 // Basic Line Parsing
-                const lines = text.split('\n');
+                const lines = result.text.split('\n');
                 
                 for (const line of lines) {
                     // Try to match lines with numbers at the end
