@@ -15,6 +15,7 @@ interface PriceChartProps {
 }
 
 type AggregationMode = 'semanas' | 'meses';
+type TimeRange = '1 año' | '2 años' | '5 años' | 'Todo';
 
 function getWeekKey(d: Date) {
     const date = new Date(d.getTime());
@@ -27,6 +28,7 @@ function getWeekKey(d: Date) {
 
 export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
     const [mode, setMode] = useState<AggregationMode>('semanas');
+    const [timeRange, setTimeRange] = useState<TimeRange>('1 año');
 
     if (!data || data.length === 0) {
         return (
@@ -38,10 +40,21 @@ export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
 
     const aggregatedData = useMemo(() => {
         const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        
+        let filteredData = sortedData;
+        if (timeRange !== 'Todo' && sortedData.length > 0) {
+            const latestDate = new Date(sortedData[sortedData.length - 1].date);
+            const cutoffDate = new Date(latestDate);
+            if (timeRange === '1 año') cutoffDate.setFullYear(latestDate.getFullYear() - 1);
+            else if (timeRange === '2 años') cutoffDate.setFullYear(latestDate.getFullYear() - 2);
+            else if (timeRange === '5 años') cutoffDate.setFullYear(latestDate.getFullYear() - 5);
+            
+            filteredData = sortedData.filter(d => new Date(d.date) >= cutoffDate);
+        }
 
         const map = new Map<string, { sum: number; count: number; date: string }>();
         
-        sortedData.forEach(d => {
+        filteredData.forEach(d => {
             const date = new Date(d.date);
             let key = '';
             
@@ -63,7 +76,7 @@ export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
             date: v.date,
             price: v.sum / v.count
         }));
-    }, [data, mode]);
+    }, [data, mode, timeRange]);
 
     // Format date for display including year to avoid Recharts categorical axis overlaps across years
     const formattedData = aggregatedData.map(d => ({
@@ -76,20 +89,38 @@ export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 {title && <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)]">{title}</h3>}
                 
-                <div className="flex items-center gap-1 bg-[var(--ag-sys-color-background)] p-1 rounded-xl border border-[var(--ag-sys-color-border)]">
-                    {(['semanas', 'meses'] as AggregationMode[]).map(m => (
-                        <button
-                            key={m}
-                            onClick={() => setMode(m)}
-                            className={`px-4 py-1.5 rounded-lg text-xs font-bold capitalize transition-colors ${
-                                mode === m 
-                                    ? 'bg-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-background)] shadow-sm' 
-                                    : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-surface)]'
-                            }`}
-                        >
-                            {m}
-                        </button>
-                    ))}
+                <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-1 bg-[var(--ag-sys-color-background)] p-1 rounded-xl border border-[var(--ag-sys-color-border)]">
+                        {(['1 año', '2 años', '5 años', 'Todo'] as TimeRange[]).map(tr => (
+                            <button
+                                key={tr}
+                                onClick={() => setTimeRange(tr)}
+                                className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                                    timeRange === tr 
+                                        ? 'bg-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-background)] shadow-sm' 
+                                        : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-surface)]'
+                                }`}
+                            >
+                                {tr}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="flex items-center gap-1 bg-[var(--ag-sys-color-background)] p-1 rounded-xl border border-[var(--ag-sys-color-border)]">
+                        {(['semanas', 'meses'] as AggregationMode[]).map(m => (
+                            <button
+                                key={m}
+                                onClick={() => setMode(m)}
+                                className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold capitalize transition-colors ${
+                                    mode === m 
+                                        ? 'bg-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-background)] shadow-sm' 
+                                        : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-surface)]'
+                                }`}
+                            >
+                                {m}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
