@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { ArrowUpRight, ArrowDownRight, Minus, Search, Filter } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Minus, Search, Filter, ChevronRight } from 'lucide-react';
 import { LivestockPrice, MarketSource } from '@/types/livestock';
+import Link from 'next/link';
 
 interface PriceTableProps {
     prices: (LivestockPrice & { market_sources?: Partial<MarketSource> })[];
@@ -126,6 +127,7 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Precio Medio</th>
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Var.</th>
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Fecha</th>
+                                <th className="py-4 px-6"></th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[var(--ag-sys-color-border)]">
@@ -134,7 +136,7 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                     <React.Fragment key={segment}>
                                         {/* Segment Header Row */}
                                         <tr className="bg-[var(--ag-sys-color-background)]">
-                                            <td colSpan={showMarketColumn ? 5 : 4} className="py-4 px-6">
+                                            <td colSpan={showMarketColumn ? 6 : 5} className="py-4 px-6">
                                                 <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] tracking-tight capitalize">Bovino de {segment}</h3>
                                             </td>
                                         </tr>
@@ -143,7 +145,7 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                             <React.Fragment key={product}>
                                                 {/* Product Group Header Row */}
                                                 <tr className="bg-[var(--ag-sys-color-surface)] border-b border-[var(--ag-sys-color-border)]/50">
-                                                    <td colSpan={showMarketColumn ? 5 : 4} className="py-3 px-6">
+                                                    <td colSpan={showMarketColumn ? 6 : 5} className="py-3 px-6">
                                                         <span className="text-sm font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wide">{product}</span>
                                                     </td>
                                                 </tr>
@@ -182,6 +184,15 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                                                 {new Date(price.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
                                                             </span>
                                                         </td>
+                                                        <td className="py-4 px-6 text-right">
+                                                            <Link 
+                                                                href={`/precios-ganado/vacuno/mercados/${price.market_source_id}/${price.normalized_category}`}
+                                                                className="inline-flex items-center gap-1.5 justify-center px-4 py-2 rounded-xl bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] text-xs font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-background)] transition-colors whitespace-nowrap shadow-sm group/btn"
+                                                            >
+                                                                Ver histórico
+                                                                <ChevronRight className="w-3.5 h-3.5 text-[var(--ag-sys-color-text-muted)] group-hover/btn:text-[var(--ag-sys-color-primary)] transition-colors" />
+                                                            </Link>
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </React.Fragment>
@@ -190,7 +201,7 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={showMarketColumn ? 5 : 4} className="py-12 text-center text-[var(--ag-sys-color-text-muted)] font-medium">
+                                    <td colSpan={showMarketColumn ? 6 : 5} className="py-12 text-center text-[var(--ag-sys-color-text-muted)] font-medium">
                                         No se encontraron cotizaciones para tu búsqueda.
                                     </td>
                                 </tr>
