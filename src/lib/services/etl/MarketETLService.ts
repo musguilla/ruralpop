@@ -97,16 +97,18 @@ export class MarketETLService {
                         market_source_id: source.id,
                     }));
                     
-                    // Upsert ignoring existing (market_source_id, date, category_name, unit) 
-                    const { error: insertError } = await supabase
-                        .from('livestock_prices')
-                        .upsert(pricesToInsert, { onConflict: 'market_source_id, date, category_name, unit', ignoreDuplicates: true });
-                        
-                    if (insertError) {
-                        console.error(`Error inserting prices for ${source.name}:`, insertError);
-                    } else {
-                        console.log(`Inserted up to ${result.prices.length} prices for ${source.name}`);
+                    const CHUNK_SIZE = 5000;
+                    for (let i = 0; i < pricesToInsert.length; i += CHUNK_SIZE) {
+                        const chunk = pricesToInsert.slice(i, i + CHUNK_SIZE);
+                        const { error: insertError } = await supabase
+                            .from('livestock_prices')
+                            .upsert(chunk, { onConflict: 'market_source_id, date, category_name, unit', ignoreDuplicates: true });
+                            
+                        if (insertError) {
+                            console.error(`Error inserting chunk for ${source.name} (index ${i}):`, insertError);
+                        }
                     }
+                    console.log(`Inserted up to ${result.prices.length} prices for ${source.name}`);
                 }
                 
                 // Update success timestamp

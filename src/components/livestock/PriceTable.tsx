@@ -28,6 +28,34 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
         });
     }, [prices, searchTerm, filterSegment, showMarketColumn]);
 
+    // Grouping Logic: Segment -> Product -> Subcategory Items
+    const groupedPrices = useMemo(() => {
+        const groups: Record<string, Record<string, any[]>> = {};
+        
+        filteredPrices.forEach(price => {
+            const seg = price.segment.toLowerCase();
+            if (!groups[seg]) groups[seg] = {};
+            
+            let product = price.category_name;
+            let subcategory = '';
+            
+            // Check if there is a ' - ' separator for grouping
+            if (price.category_name.includes(' - ')) {
+                const parts = price.category_name.split(' - ');
+                product = parts[0].trim();
+                subcategory = parts.slice(1).join(' - ').trim();
+            }
+            
+            if (!groups[seg][product]) groups[seg][product] = [];
+            groups[seg][product].push({
+                ...price,
+                display_name: subcategory || price.category_name
+            });
+        });
+        
+        return groups;
+    }, [filteredPrices]);
+
     const getTrendIcon = (trend: string) => {
         switch (trend) {
             case 'up': return <ArrowUpRight className="w-4 h-4 text-green-500" />;
@@ -101,42 +129,64 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[var(--ag-sys-color-border)]">
-                            {filteredPrices.length > 0 ? (
-                                filteredPrices.map((price, idx) => (
-                                    <tr key={price.id || idx} className="hover:bg-[var(--ag-sys-color-background)] transition-colors group">
-                                        {showMarketColumn && (
-                                            <td className="py-4 px-6">
-                                                <span className="font-semibold text-[var(--ag-sys-color-text)]">{price.market_sources?.name || 'Desconocido'}</span>
+                            {Object.keys(groupedPrices).length > 0 ? (
+                                Object.entries(groupedPrices).sort(([a], [b]) => b.localeCompare(a)).map(([segment, products]) => (
+                                    <React.Fragment key={segment}>
+                                        {/* Segment Header Row */}
+                                        <tr className="bg-[var(--ag-sys-color-background)]">
+                                            <td colSpan={showMarketColumn ? 5 : 4} className="py-4 px-6">
+                                                <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] tracking-tight capitalize">Bovino de {segment}</h3>
                                             </td>
-                                        )}
-                                        <td className="py-4 px-6">
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-[var(--ag-sys-color-text)]">{price.category_name}</span>
-                                                <span className="text-xs text-[var(--ag-sys-color-text-muted)] capitalize">{price.segment}</span>
-                                            </div>
-                                        </td>
-                                        <td className="py-4 px-6 text-right">
-                                            <div className="flex flex-col items-end">
-                                                <span className="font-bold text-lg text-[var(--ag-sys-color-text)]">
-                                                    {price.price_avg.toFixed(2).replace('.', ',')}
-                                                </span>
-                                                <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)]">
-                                                    {formatUnit(price.unit)}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="py-4 px-6 text-right">
-                                            <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold ${getTrendClass(price.trend)}`}>
-                                                {getTrendIcon(price.trend)}
-                                                {price.variation_abs ? Math.abs(price.variation_abs).toFixed(2).replace('.', ',') : '-'}
-                                            </div>
-                                        </td>
-                                        <td className="py-4 px-6">
-                                            <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-text)] transition-colors">
-                                                {new Date(price.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                            </span>
-                                        </td>
-                                    </tr>
+                                        </tr>
+                                        
+                                        {Object.entries(products).sort(([a], [b]) => a.localeCompare(b)).map(([product, items]) => (
+                                            <React.Fragment key={product}>
+                                                {/* Product Group Header Row */}
+                                                <tr className="bg-[var(--ag-sys-color-surface)] border-b border-[var(--ag-sys-color-border)]/50">
+                                                    <td colSpan={showMarketColumn ? 5 : 4} className="py-3 px-6">
+                                                        <span className="text-sm font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wide">{product}</span>
+                                                    </td>
+                                                </tr>
+                                                
+                                                {/* Items */}
+                                                {items.map((price, idx) => (
+                                                    <tr key={price.id || idx} className="hover:bg-[var(--ag-sys-color-background)] transition-colors group">
+                                                        {showMarketColumn && (
+                                                            <td className="py-4 px-6">
+                                                                <span className="font-semibold text-[var(--ag-sys-color-text)]">{price.market_sources?.name || 'Desconocido'}</span>
+                                                            </td>
+                                                        )}
+                                                        <td className="py-4 px-6 pl-10">
+                                                            <div className="flex flex-col">
+                                                                <span className="font-bold text-[var(--ag-sys-color-text)]">{price.display_name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-4 px-6 text-right">
+                                                            <div className="flex flex-col items-end">
+                                                                <span className="font-bold text-lg text-[var(--ag-sys-color-text)]">
+                                                                    {price.price_avg.toFixed(2).replace('.', ',')}
+                                                                </span>
+                                                                <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)]">
+                                                                    {formatUnit(price.unit)}
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-4 px-6 text-right">
+                                                            <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold ${getTrendClass(price.trend)}`}>
+                                                                {getTrendIcon(price.trend)}
+                                                                {price.variation_abs ? Math.abs(price.variation_abs).toFixed(2).replace('.', ',') : '-'}
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-4 px-6">
+                                                            <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-text)] transition-colors">
+                                                                {new Date(price.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </React.Fragment>
+                                        ))}
+                                    </React.Fragment>
                                 ))
                             ) : (
                                 <tr>

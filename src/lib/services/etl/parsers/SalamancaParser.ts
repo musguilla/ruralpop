@@ -7,8 +7,8 @@ export class SalamancaParser {
     
     static async parse(source: MarketSource): Promise<ETLParserResult> {
         // Fetch the records from the CKAN API using the new CSV resource ID
-        // limit=30000 to get all historical data since 2005
-        const url = `https://datosabiertossalamanca.es/api/3/action/datastore_search?resource_id=042beb52-4d80-4380-b073-e170364f65e7&limit=30000&sort=_id%20desc`;
+        // limit=50000 to get all historical data since 2005 (there are around 48k bovino records)
+        const url = `https://datosabiertossalamanca.es/api/3/action/datastore_search?resource_id=042beb52-4d80-4380-b073-e170364f65e7&q=BOVINO&limit=50000`;
         
         const response = await fetch(url);
         if (!response.ok) {
@@ -39,7 +39,7 @@ export class SalamancaParser {
             const productoStr = producto.trim();
             const categoriaStr = categoria.trim();
             
-            const fullCategoryName = `${productoStr} ${categoriaStr}`;
+            const fullCategoryName = `${productoStr} - ${categoriaStr}`;
             
             // The CSV JSON returns '6,77', we need to replace comma with dot
             const valor1 = parseFloat(valor1Str.replace(',', '.'));
