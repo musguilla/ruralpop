@@ -1,5 +1,5 @@
 import * as cheerio from 'cheerio';
-import pdfParse from 'pdf-parse';
+import { PDFParse } from 'pdf-parse';
 import { ETLParserResult, TrendType, UnitType, MarketSource, SegmentType } from '@/types/livestock';
 
 export class SantiagoParser {
@@ -39,11 +39,11 @@ export class SantiagoParser {
         }
         
         const arrayBuffer = await pdfRes.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        const buffer = new Uint8Array(arrayBuffer);
         
         // Extract text
-        const pdfData = await pdfParse(buffer);
-        const text = pdfData.text;
+        const parser = new PDFParse(buffer);
+        const text = await parser.getText();
         rawContentMerged = text;
         
         // Extract Date from URL

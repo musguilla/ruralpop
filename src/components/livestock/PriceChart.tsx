@@ -64,7 +64,7 @@ export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
                                 fontWeight: 'bold'
                             }}
                             itemStyle={{ color: 'var(--ag-sys-color-primary)' }}
-                            formatter={(value: number) => [`${value.toFixed(2)} ${unit}`, 'Precio']}
+                            formatter={(value: any) => [`${Number(value).toFixed(2)} ${unit}`, 'Precio']}
                         />
                         <Legend wrapperStyle={{ paddingTop: '20px' }} />
                         <Line 

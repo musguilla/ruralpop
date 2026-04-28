@@ -105,7 +105,7 @@ export default async function BovinePricesHubPage() {
                 <section>
                     <h2 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight mb-8">Explorar por Mercado</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {markets?.map(market => (
+                        {markets?.map((market: any) => (
                             <Link 
                                 href={`/precios-ganado/vacuno/mercados/${market.id}`} 
                                 key={market.id}

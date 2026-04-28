@@ -61,7 +61,7 @@ export default async function MarketCategoryDetailPage({ params }: { params: Pro
     const latestPrice = prices[prices.length - 1];
     const previousPrice = prices.length > 1 ? prices[prices.length - 2] : null;
     
-    const chartData = prices.map(p => ({
+    const chartData = prices.map((p: any) => ({
         date: p.date,
         price: p.price_avg
     }));

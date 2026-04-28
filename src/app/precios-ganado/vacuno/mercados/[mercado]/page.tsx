@@ -109,7 +109,7 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ m
                 <div className="mt-16">
                     <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Histórico por Categoría</h3>
                     <div className="flex flex-wrap gap-3">
-                        {latestPrices.map(price => (
+                        {latestPrices.map((price: any) => (
                             <Link 
                                 key={price.id}
                                 href={`/precios-ganado/vacuno/mercados/${mercado}/${price.normalized_category}`}
