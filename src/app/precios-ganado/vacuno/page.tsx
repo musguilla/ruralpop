@@ -70,8 +70,7 @@ export default async function BovinePricesHubPage() {
                 </section>
                 
                 {/* SEO Text Block */}
-                <section className="prose prose-lg dark:prose-invert max-w-none text-[var(--ag-sys-color-text-muted)]">
-                    <h3>Sobre los precios de mercado en Ruralpop</h3>
+                <section className="prose prose-sm dark:prose-invert max-w-none text-[var(--ag-sys-color-text-muted)]">
                     <p>
                         Nuestra plataforma recopila de forma automática las cotizaciones oficiales publicadas por los principales mercados nacionales de ganado y lonjas agropecuarias. Los datos mostrados tienen un propósito estrictamente informativo. Ruralpop no altera los precios origen, únicamente los normaliza a un modelo estándar (euros por unidad, euros por kilo vivo o canal) para facilitar su comparación histórica.
                     </p>
