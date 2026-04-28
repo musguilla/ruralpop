@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { ArrowUpRight, ArrowDownRight, Minus, Search, Filter, ChevronRight } from 'lucide-react';
 import { LivestockPrice, MarketSource } from '@/types/livestock';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface PriceTableProps {
     prices: (LivestockPrice & { market_sources?: Partial<MarketSource> })[];
@@ -11,6 +12,7 @@ interface PriceTableProps {
 }
 
 export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps) {
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterSegment, setFilterSegment] = useState<string>('all');
     
@@ -152,7 +154,11 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                                 
                                                 {/* Items */}
                                                 {items.map((price, idx) => (
-                                                    <tr key={price.id || idx} className="hover:bg-[var(--ag-sys-color-background)] transition-colors group">
+                                                    <tr 
+                                                        key={price.id || idx} 
+                                                        onClick={() => router.push(`/precios-ganado/vacuno/mercados/${price.market_source_id}/${price.normalized_category}`)}
+                                                        className="hover:bg-[var(--ag-sys-color-background)] transition-colors group cursor-pointer"
+                                                    >
                                                         {showMarketColumn && (
                                                             <td className="py-4 px-6">
                                                                 <span className="font-semibold text-[var(--ag-sys-color-text)]">{price.market_sources?.name || 'Desconocido'}</span>
@@ -185,13 +191,12 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                                             </span>
                                                         </td>
                                                         <td className="py-4 px-6 text-right">
-                                                            <Link 
-                                                                href={`/precios-ganado/vacuno/mercados/${price.market_source_id}/${price.normalized_category}`}
-                                                                className="inline-flex items-center gap-1.5 justify-center px-4 py-2 rounded-xl bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] text-xs font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-background)] transition-colors whitespace-nowrap shadow-sm group/btn"
+                                                            <div 
+                                                                className="inline-flex items-center gap-1.5 justify-center px-4 py-2 rounded-xl bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] text-xs font-bold text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-text)] group-hover:bg-[var(--ag-sys-color-background)] transition-colors whitespace-nowrap shadow-sm"
                                                             >
                                                                 Ver histórico
-                                                                <ChevronRight className="w-3.5 h-3.5 text-[var(--ag-sys-color-text-muted)] group-hover/btn:text-[var(--ag-sys-color-primary)] transition-colors" />
-                                                            </Link>
+                                                                <ChevronRight className="w-3.5 h-3.5 text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)] transition-colors" />
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 ))}
