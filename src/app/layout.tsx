@@ -53,6 +53,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  other: {
+    "google-adsense-account": "ca-pub-2042067618462129"
+  }
 };
 
 export default async function RootLayout({
@@ -64,11 +67,9 @@ export default async function RootLayout({
 
   return (
     <html lang="es">
-      <head>
-        <meta name="google-adsense-account" content="ca-pub-2042067618462129" />
-        <link rel="icon" href="https://www.ruralpop.com/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" href="https://www.ruralpop.com/favicon.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="https://www.ruralpop.com/apple-touch-icon.png" />
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col font-sans antialiased`}
+      >
         {/* Google Analytics */}
         <Script
           async
@@ -90,10 +91,6 @@ export default async function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2042067618462129"
           crossOrigin="anonymous"
         ></script>
-      </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col font-sans antialiased`}
-      >
         <CategoriesProvider categories={categories}>
           <NotificationProvider>
             <Header />
