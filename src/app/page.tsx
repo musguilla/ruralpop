@@ -9,11 +9,21 @@ import { Metadata } from "next";
 import { generateSeoH1 } from "@/utils/h1Generator";
 import { LOCATIONS } from "@/constants/locations";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/",
-  },
-};
+export async function generateMetadata(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<Metadata> {
+  const searchParams = await props.searchParams;
+  let canonical = "/";
+  if (searchParams.page && typeof searchParams.page === 'string' && searchParams.page !== '1') {
+      canonical += `?page=${searchParams.page}`;
+  }
+
+  return {
+    alternates: {
+      canonical,
+    },
+  };
+}
 
 export default async function Home(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

@@ -10,8 +10,12 @@ import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
 import { DynamicFaqs } from "@/components/seo/DynamicFaqs";
 import { generateSeoH1 } from "@/utils/h1Generator";
 
-export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata(props: { 
+    params: Promise<{ slug: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<Metadata> {
     const params = await props.params;
+    const searchParams = await props.searchParams;
     const parsed = parseSeoUrl(params.slug);
 
     let locationName = "";
@@ -56,11 +60,16 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
         }
     }
 
+    let canonical = buildSeoUrl(parsed);
+    if (searchParams.page && typeof searchParams.page === 'string' && searchParams.page !== '1') {
+        canonical += `?page=${searchParams.page}`;
+    }
+
     return {
         title: pageTitle,
         description: `Aplicación gratis para ${parts.join(" ") || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`,
         alternates: {
-            canonical: buildSeoUrl(parsed)
+            canonical
         }
     };
 }
