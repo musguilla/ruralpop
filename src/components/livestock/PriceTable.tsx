@@ -128,8 +128,8 @@ export function PriceTable({ prices, showMarketColumn = true, showMinMax = false
                                 {showMarketColumn && <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Mercado</th>}
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Categoría</th>
                                 {showMinMax && <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Mínimo</th>}
-                                {showMinMax && <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Máximo</th>}
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Precio Medio</th>
+                                {showMinMax && <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Máximo</th>}
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Var.</th>
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Fecha</th>
                                 <th className="py-4 px-6"></th>
@@ -178,13 +178,6 @@ export function PriceTable({ prices, showMarketColumn = true, showMinMax = false
                                                                 </span>
                                                             </td>
                                                         )}
-                                                        {showMinMax && (
-                                                            <td className="py-4 px-6 text-right">
-                                                                <span className="font-bold text-[var(--ag-sys-color-text-muted)]">
-                                                                    {price.price_max ? price.price_max.toFixed(2).replace('.', ',') : '-'}
-                                                                </span>
-                                                            </td>
-                                                        )}
                                                         <td className="py-4 px-6 text-right">
                                                             <div className="flex flex-col items-end">
                                                                 <span className="font-bold text-lg text-[var(--ag-sys-color-text)]">
@@ -195,6 +188,13 @@ export function PriceTable({ prices, showMarketColumn = true, showMinMax = false
                                                                 </span>
                                                             </div>
                                                         </td>
+                                                        {showMinMax && (
+                                                            <td className="py-4 px-6 text-right">
+                                                                <span className="font-bold text-[var(--ag-sys-color-text-muted)]">
+                                                                    {price.price_max ? price.price_max.toFixed(2).replace('.', ',') : '-'}
+                                                                </span>
+                                                            </td>
+                                                        )}
                                                         <td className="py-4 px-6 text-right">
                                                             <div className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold ${getTrendClass(price.trend)}`}>
                                                                 {getTrendIcon(price.trend)}
