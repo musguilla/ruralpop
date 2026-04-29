@@ -9,9 +9,10 @@ import { useRouter } from 'next/navigation';
 interface PriceTableProps {
     prices: (LivestockPrice & { market_sources?: Partial<MarketSource> })[];
     showMarketColumn?: boolean;
+    showMinMax?: boolean;
 }
 
-export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps) {
+export function PriceTable({ prices, showMarketColumn = true, showMinMax = false }: PriceTableProps) {
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterSegment, setFilterSegment] = useState<string>('all');
@@ -126,6 +127,8 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                             <tr className="bg-[var(--ag-sys-color-background)] border-b border-[var(--ag-sys-color-border)]">
                                 {showMarketColumn && <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Mercado</th>}
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Categoría</th>
+                                {showMinMax && <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Mínimo</th>}
+                                {showMinMax && <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Máximo</th>}
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Precio Medio</th>
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Var.</th>
                                 <th className="py-4 px-6 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Fecha</th>
@@ -136,9 +139,8 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                             {Object.keys(groupedPrices).length > 0 ? (
                                 Object.entries(groupedPrices).sort(([a], [b]) => b.localeCompare(a)).map(([segment, products]) => (
                                     <React.Fragment key={segment}>
-                                        {/* Segment Header Row */}
                                         <tr className="bg-[var(--ag-sys-color-background)]">
-                                            <td colSpan={showMarketColumn ? 6 : 5} className="py-4 px-6">
+                                            <td colSpan={showMarketColumn ? (showMinMax ? 8 : 6) : (showMinMax ? 7 : 5)} className="py-4 px-6">
                                                 <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] tracking-tight capitalize">Bovino de {segment}</h3>
                                             </td>
                                         </tr>
@@ -147,7 +149,7 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                             <React.Fragment key={product}>
                                                 {/* Product Group Header Row */}
                                                 <tr className="bg-[var(--ag-sys-color-surface)] border-b border-[var(--ag-sys-color-border)]/50">
-                                                    <td colSpan={showMarketColumn ? 6 : 5} className="py-3 px-6">
+                                                    <td colSpan={showMarketColumn ? (showMinMax ? 8 : 6) : (showMinMax ? 7 : 5)} className="py-3 px-6">
                                                         <span className="text-sm font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wide">{product}</span>
                                                     </td>
                                                 </tr>
@@ -169,6 +171,20 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                                                 <span className="font-bold text-[var(--ag-sys-color-text)]">{price.display_name}</span>
                                                             </div>
                                                         </td>
+                                                        {showMinMax && (
+                                                            <td className="py-4 px-6 text-right">
+                                                                <span className="font-bold text-[var(--ag-sys-color-text-muted)]">
+                                                                    {price.price_min ? price.price_min.toFixed(2).replace('.', ',') : '-'}
+                                                                </span>
+                                                            </td>
+                                                        )}
+                                                        {showMinMax && (
+                                                            <td className="py-4 px-6 text-right">
+                                                                <span className="font-bold text-[var(--ag-sys-color-text-muted)]">
+                                                                    {price.price_max ? price.price_max.toFixed(2).replace('.', ',') : '-'}
+                                                                </span>
+                                                            </td>
+                                                        )}
                                                         <td className="py-4 px-6 text-right">
                                                             <div className="flex flex-col items-end">
                                                                 <span className="font-bold text-lg text-[var(--ag-sys-color-text)]">
@@ -206,7 +222,7 @@ export function PriceTable({ prices, showMarketColumn = true }: PriceTableProps)
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={showMarketColumn ? 6 : 5} className="py-12 text-center text-[var(--ag-sys-color-text-muted)] font-medium">
+                                    <td colSpan={showMarketColumn ? (showMinMax ? 8 : 6) : (showMinMax ? 7 : 5)} className="py-12 text-center text-[var(--ag-sys-color-text-muted)] font-medium">
                                         No se encontraron cotizaciones para tu búsqueda.
                                     </td>
                                 </tr>

@@ -102,7 +102,11 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ m
 
                 <div className="space-y-8">
                     <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)]">Últimas Cotizaciones Publicadas</h2>
-                    <PriceTable prices={latestPrices} showMarketColumn={false} />
+                    <PriceTable 
+                        prices={latestPrices} 
+                        showMarketColumn={false} 
+                        showMinMax={market.name.toLowerCase().includes('siero')}
+                    />
                 </div>
                 
 
