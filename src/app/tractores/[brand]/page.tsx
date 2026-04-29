@@ -42,6 +42,7 @@ export async function generateMetadata(props: Props) {
     return {
         title: `Catálogos y Fichas Técnicas de Tractores ${brand.name} | Ruralpop`,
         description: `Descarga gratis en PDF todos los catálogos oficiales, manuales y especificaciones técnicas de los modelos de tractores ${brand.name}.`,
+        alternates: { canonical: `/tractores/${brandSlug}` }
     };
 }
 

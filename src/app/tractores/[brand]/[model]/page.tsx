@@ -47,6 +47,7 @@ export async function generateMetadata(props: Props) {
     return {
         title: `Tractor ${brand.name} ${titleFromSlug} - Catálogo PDF | Ruralpop`,
         description: `Conoce todos los detalles del ${brand.name} ${titleFromSlug}. Ficha técnica, descripciones y descarga del catálogo oficial en PDF.`,
+        alternates: { canonical: `/tractores/${brandSlug}/${model}` }
     };
 }
 

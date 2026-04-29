@@ -3,6 +3,13 @@ import Image from "next/image";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { login } from "./actions";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Inicia Sesión | Ruralpop",
+    description: "Inicia sesión en tu cuenta de Ruralpop para publicar y gestionar tus anuncios.",
+    alternates: { canonical: "/login" }
+};
 
 export default async function LoginPage(props: {
     searchParams: Promise<{ error?: string }>;

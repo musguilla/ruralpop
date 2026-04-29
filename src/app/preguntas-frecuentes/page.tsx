@@ -6,6 +6,7 @@ import FAQClient from './FAQClient';
 export const metadata: Metadata = {
     title: 'Preguntas Frecuentes - Ruralpop',
     description: 'Encuentra respuestas a las preguntas más frecuentes sobre cómo usar Ruralpop: registrarse, subir anuncios, cuentas profesionales y seguridad en nuestra plataforma rural.',
+    alternates: { canonical: "/preguntas-frecuentes" }
 };
 
 export default function FAQPage() {

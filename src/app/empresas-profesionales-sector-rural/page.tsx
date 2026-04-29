@@ -6,6 +6,7 @@ import { ProPlanCard } from "@/components/profesionales/ProPlanCard";
 export const metadata = {
     title: "Área Profesionales y Empresas | Ruralpop",
     description: "Destaca tu empresa donde están tus clientes. Activa tu perfil profesional en Ruralpop.",
+    alternates: { canonical: "/empresas-profesionales-sector-rural" }
 };
 
 export default function EmpresasProfesionalesPage() {

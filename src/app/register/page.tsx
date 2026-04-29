@@ -3,6 +3,13 @@ import Image from "next/image";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { signup } from "./actions";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Crea una Cuenta | Ruralpop",
+    description: "Únete a Ruralpop y empieza a comprar y vender en el mercado agrícola y ganadero.",
+    alternates: { canonical: "/register" }
+};
 
 export default async function RegisterPage(props: {
     searchParams: Promise<{ error?: string }>;

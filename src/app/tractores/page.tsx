@@ -5,6 +5,7 @@ import { BookOpen, Tractor, ChevronRight } from "lucide-react";
 export const metadata = {
     title: "Catálogos de Tractores y Fichas Técnicas | Ruralpop",
     description: "Accede a la mayor colección de catálogos en PDF y fichas técnicas de los principales fabricantes de tractores: John Deere, New Holland, Case, Massey Ferguson y más.",
+    alternates: { canonical: "/tractores" }
 };
 
 const BRANDS = [

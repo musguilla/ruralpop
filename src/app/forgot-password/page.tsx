@@ -1,6 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { forgotPassword } from "./actions";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Recuperar Contraseña | Ruralpop",
+    description: "Recupera el acceso a tu cuenta de Ruralpop.",
+    alternates: { canonical: "/forgot-password" }
+};
 
 export default async function ForgotPasswordPage(props: {
     searchParams: Promise<{ error?: string, message?: string }>;
