@@ -90,12 +90,20 @@ export class TalaveraParser {
                     if (unitStr.includes('kg./v.')) unit = 'eur_kg_vivo';
                     else if (unitStr.includes('kg./c.')) unit = 'eur_kg_canal';
                     
+                    let finalCategoryName = categoryName;
+                    const upperCat = categoryName.toUpperCase();
+                    if (upperCat.startsWith('TORO DEL PAIS')) {
+                        finalCategoryName = `TOROS - ${categoryName}`;
+                    } else if (upperCat.startsWith('VACAS')) {
+                        finalCategoryName = `VACAS - ${categoryName}`;
+                    }
+                    
                     if (!isNaN(currentPrice) && currentPrice > 0) {
                         prices.push({
                             date: foundDate,
                             species: 'bovino',
                             segment: currentSegment,
-                            category_name: categoryName,
+                            category_name: finalCategoryName,
                             normalized_category: TalaveraParser.normalizeCategory(categoryName),
                             price_avg: currentPrice,
                             unit: unit,
