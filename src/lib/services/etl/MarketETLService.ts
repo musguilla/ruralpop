@@ -17,15 +17,18 @@ const getAdminClient = () => {
 
 export class MarketETLService {
     
-    static async run() {
+    static async run(sourceId?: string) {
         console.log('Starting Market ETL Service...');
         const supabase = getAdminClient();
         
         // 1. Fetch active sources
-        const { data: sources, error } = await supabase
-            .from('market_sources')
-            .select('*')
-            .eq('active', true);
+        let query = supabase.from('market_sources').select('*').eq('active', true);
+        
+        if (sourceId) {
+            query = query.eq('id', sourceId);
+        }
+        
+        const { data: sources, error } = await query;
             
         if (error || !sources) {
             console.error('Error fetching market sources:', error);
