@@ -13,6 +13,10 @@ export default async function EditListingPage(props: Props) {
     const { id: shortId } = await props.params;
     const id = decodeId(shortId);
 
+    if (!id) {
+        notFound();
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 

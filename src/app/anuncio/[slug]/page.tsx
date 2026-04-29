@@ -33,6 +33,13 @@ export async function generateMetadata(
     const shortId = slugParts.pop() || '';
     const id = decodeId(shortId);
 
+    if (!id) {
+        return {
+            title: "Anuncio no encontrado - Ruralpop",
+            description: "No hemos podido localizar este anuncio."
+        };
+    }
+
     // Evitamos cookies() aquí usando instancia plana para fetching estático
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -106,6 +113,10 @@ export default async function ListingDetailPage(props: Props) {
     const slugParts = slug.split('-');
     const shortId = slugParts.pop() || '';
     const id = decodeId(shortId);
+
+    if (!id) {
+        notFound();
+    }
 
     const supabase = await createClient();
 

@@ -25,6 +25,10 @@ export default async function DestacarAnuncioPage(props: Props) {
     
     const listingId = decodeId(encodedId);
 
+    if (!listingId) {
+        notFound();
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 

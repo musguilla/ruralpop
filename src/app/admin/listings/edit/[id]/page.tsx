@@ -18,6 +18,10 @@ export default async function AdminEditListingPage(props: Props) {
     const { id: shortId } = await props.params;
     const id = decodeId(shortId);
 
+    if (!id) {
+        notFound();
+    }
+
     const supabase = await createClient();
 
     const { data: listing, error } = await supabase

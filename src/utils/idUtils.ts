@@ -25,13 +25,24 @@ export function encodeId(uuid: string): string {
 }
 
 /**
- * Decodes a Base62 string back into its original 36-character UUID format (with hyphens).
+ * Validates if a string is a properly formatted UUID.
  */
-export function decodeId(shortId: string): string {
-    if (!shortId || typeof shortId !== 'string') return '';
+export function isValidUUID(id: string): boolean {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(id);
+}
+
+/**
+ * Decodes a Base62 string back into its original 36-character UUID format (with hyphens).
+ * Returns null if the resulting ID is not a valid UUID, to prevent database casting errors.
+ */
+export function decodeId(shortId: string): string | null {
+    if (!shortId || typeof shortId !== 'string') return null;
     try {
         // If it looks like a standard UUID, return it directly
-        if (shortId.length === 36 && shortId.includes('-')) return shortId;
+        if (shortId.length === 36 && shortId.includes('-')) {
+            return isValidUUID(shortId) ? shortId : null;
+        }
 
         let num = BigInt(0);
         for (let i = 0; i < shortId.length; i++) {
@@ -42,16 +53,18 @@ export function decodeId(shortId: string): string {
         }
 
         let hex = num.toString(16).padStart(32, "0");
-        return [
+        const uuid = [
             hex.slice(0, 8),
             hex.slice(8, 12),
             hex.slice(12, 16),
             hex.slice(16, 20),
             hex.slice(20)
         ].join("-");
+        
+        return isValidUUID(uuid) ? uuid : null;
     } catch (e) {
         console.error("Error decoding Base62 to UUID:", e);
-        return shortId; // Fallback
+        return null; // Safe fallback
     }
 }
 
