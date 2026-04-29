@@ -67,29 +67,50 @@ export class SieroParser {
                 
                 // Basic Line Parsing
                 const lines = result.text.split('\n');
+                let currentHeader = '';
                 
                 for (const line of lines) {
-                    // Try to match lines with numbers at the end
-                    // e.g., "Vacas extra 4,50 5,50" or "Terneros pintos 200 €"
-                    const priceMatch = line.match(/(.+?)\s+([\d,.]+)(?:\s*€|\s+([\d,.]+))?$/);
+                    const rawLine = line.trim();
+                    const upperLine = rawLine.toUpperCase();
+
+                    if (!rawLine) continue;
+
+                    // Check for Headers
+                    if (upperLine.includes('TERNERAS ENTRE 150-250')) { currentHeader = 'Terneras 150-250kg'; continue; }
+                    if (upperLine.includes('TERNEROS ENTRE 150-250')) { currentHeader = 'Terneros 150-250kg'; continue; }
+                    if (upperLine === 'CULONES' || upperLine === 'CULONES\r') { currentHeader = 'Culones Abasto'; continue; }
+                    if (upperLine.includes('VACUNO MAYOR')) { currentHeader = 'Vacuno Mayor'; continue; }
                     
-                    if (priceMatch) {
-                        const rawCategory = priceMatch[1].trim();
-                        if (rawCategory.length < 4 || rawCategory.toLowerCase().includes('precio')) continue; // skip noise
+                    if (upperLine.includes('PASTEROS (HEMBRAS)')) { currentHeader = 'Pasteros Hembras'; continue; }
+                    if (upperLine.includes('PASTEROS (MACHOS)')) { currentHeader = 'Pasteros Machos'; continue; }
+                    if (upperLine.includes('CULONES PARA VIDA - MACHOS')) { currentHeader = 'Culones Vida Machos'; continue; }
+                    if (upperLine.includes('CULONES PARA VIDA- HEMBRAS') || upperLine.includes('CULONES PARA VIDA - HEMBRAS')) { currentHeader = 'Culones Vida Hembras'; continue; }
+                    if (upperLine.includes('NOVILLAS DE CUBRICIÓN') || upperLine.includes('NOVILLAS DE CUBRICION')) { currentHeader = 'Novillas Cubrición'; continue; }
+                    if (upperLine.includes('NOVILLAS PRÓXIMAS 1ER. PARTO') || upperLine.includes('NOVILLAS PRÓXIMAS 1ER PARTO')) { currentHeader = 'Novillas Próximas 1er Parto'; continue; }
+                    if (upperLine.includes('VACAS 1º - 4º PARTO') || upperLine.includes('VACAS 1º-4º PARTO')) { currentHeader = 'Vacas 1-4 Parto'; continue; }
+                    if (upperLine.includes('VACAS 5º PARTO Y SIGUIENTES')) { currentHeader = 'Vacas 5+ Parto'; continue; }
+
+                    // Skip table headers and noise
+                    if (upperLine.includes('DESCRIPCION') || upperLine.includes('DESCRIPCIÓN') || upperLine.includes('EUROS') || upperLine.includes('P. MÍNIMO') || upperLine.includes('PRECIO MÁXIMO') || upperLine.includes('FRECUENTE')) continue;
+                    
+                    // Match Text followed by 1, 2, or 3 numbers
+                    const priceMatch = rawLine.match(/^(.+?)\s+([\d,.]+)(?:\s+([\d,.]+))?(?:\s+([\d,.]+))?$/);
+                    
+                    if (priceMatch && currentHeader) {
+                        let rawCategory = priceMatch[1].trim();
+                        if (rawCategory.length < 2 || rawCategory.toLowerCase().includes('precio')) continue; // skip noise
                         
-                        let priceAvg = 0, priceMin = 0, priceMax = 0;
-                        const val1Str = priceMatch[2].replace(',', '.');
-                        const val1 = parseFloat(val1Str);
+                        // Clean up redundant units from the PDF text to make the title cleaner
+                        rawCategory = rawCategory.replace(/\(K\.C\.\)/i, '').replace(/\(UD\.\)/i, '').trim();
+                        if (!rawCategory || rawCategory.toLowerCase() === 'unidad') rawCategory = 'General';
                         
-                        if (priceMatch[3]) {
-                            const val2Str = priceMatch[3].replace(',', '.');
-                            const val2 = parseFloat(val2Str);
-                            priceMin = Math.min(val1, val2);
-                            priceMax = Math.max(val1, val2);
-                            priceAvg = (priceMin + priceMax) / 2;
-                        } else {
-                            priceAvg = val1;
-                        }
+                        const val1 = parseFloat(priceMatch[2].replace(/\./g, '').replace(',', '.'));
+                        const val2 = priceMatch[3] ? parseFloat(priceMatch[3].replace(/\./g, '').replace(',', '.')) : null;
+                        const val3 = priceMatch[4] ? parseFloat(priceMatch[4].replace(/\./g, '').replace(',', '.')) : null;
+                        
+                        const priceMin = val1;
+                        const priceAvg = val2 !== null ? val2 : val1;
+                        const priceMax = val3 !== null ? val3 : (val2 !== null ? val2 : val1);
                         
                         if (isNaN(priceAvg) || priceAvg <= 0) continue;
                         
@@ -104,14 +125,16 @@ export class SieroParser {
                             unit = 'eur_unidad';
                         }
                         
+                        const categoryName = `${currentHeader} - ${rawCategory}`;
+                        
                         prices.push({
                             date,
                             species: 'bovino',
                             segment,
-                            category_name: rawCategory,
-                            normalized_category: SieroParser.normalizeCategory(rawCategory),
-                            price_min: priceMin || undefined,
-                            price_max: priceMax || undefined,
+                            category_name: categoryName,
+                            normalized_category: SieroParser.normalizeCategory(categoryName),
+                            price_min: priceMin,
+                            price_max: priceMax,
                             price_avg: priceAvg,
                             unit,
                             trend: 'unknown' as TrendType
@@ -132,13 +155,65 @@ export class SieroParser {
     
     static normalizeCategory(raw: string): string {
         const lower = raw.toLowerCase().trim();
-        if (lower.includes('vaca') && lower.includes('extra')) return 'vacas_extra';
-        if (lower.includes('vaca') && lower.includes('primera')) return 'vacas_primera';
-        if (lower.includes('vaca') && lower.includes('segunda')) return 'vacas_segunda';
-        if (lower.includes('vaca') && lower.includes('industrial')) return 'vacas_industria';
-        if (lower.includes('terner') && lower.includes('cruzado')) return 'terneros_cruzados';
-        if (lower.includes('terner') && lower.includes('pinto')) return 'terneros_frisones';
         
+        // Abasto
+        if (lower.includes('vacuno mayor')) {
+            if (lower.includes('extra')) return 'vacuno_mayor_extra';
+            if (lower.includes('primera')) return 'vacuno_mayor_primera';
+            if (lower.includes('segunda')) return 'vacuno_mayor_segunda';
+            if (lower.includes('desecho')) return 'vacuno_mayor_desecho';
+        }
+        
+        if (lower.includes('terneras') && lower.includes('150-250')) {
+            if (lower.includes('primera')) return 'terneras_150_250_primera';
+            if (lower.includes('segunda')) return 'terneras_150_250_segunda';
+        }
+
+        if (lower.includes('terneros') && lower.includes('150-250')) {
+            if (lower.includes('primera')) return 'terneros_150_250_primera';
+            if (lower.includes('segunda')) return 'terneros_150_250_segunda';
+        }
+        
+        if (lower.includes('culones abasto')) {
+            if (lower.includes('<220') || lower.includes('menos 220')) return 'culones_abasto_menos_220';
+            if (lower.includes('220 a 300')) return 'culones_abasto_220_300';
+            if (lower.includes('>= 300') || lower.includes('>=300') || lower.includes('mas 300')) return 'culones_abasto_mas_300';
+        }
+
+        // Vida
+        if (lower.includes('pasteros hembras')) return 'pasteros_hembras';
+        if (lower.includes('pasteros machos')) return 'pasteros_machos';
+        
+        if (lower.includes('culones vida machos')) {
+            if (lower.includes('hasta 3')) return 'culones_vida_machos_hasta_3m';
+            if (lower.includes('de 3 a 6')) return 'culones_vida_machos_3_6m';
+        }
+
+        if (lower.includes('culones vida hembras')) {
+            if (lower.includes('hasta 3')) return 'culones_vida_hembras_hasta_3m';
+            if (lower.includes('de 3 a 6')) return 'culones_vida_hembras_3_6m';
+        }
+        
+        if (lower.includes('novillas cubrición') || lower.includes('novillas cubricion')) {
+            if (lower.includes('asturiana')) return 'novillas_cubricion_asturiana';
+            if (lower.includes('cruces')) return 'novillas_cubricion_cruces';
+        }
+        
+        if (lower.includes('novillas próximas') || lower.includes('1er parto')) {
+            if (lower.includes('asturiana')) return 'novillas_1er_parto_asturiana';
+            if (lower.includes('cruces')) return 'novillas_1er_parto_cruces';
+        }
+        
+        if (lower.includes('vacas 1-4 parto') || lower.includes('vacas 1º - 4º parto')) {
+            if (lower.includes('asturiana')) return 'vacas_1_4_parto_asturiana';
+            if (lower.includes('cruces')) return 'vacas_1_4_parto_cruces';
+        }
+        
+        if (lower.includes('vacas 5+ parto') || lower.includes('5º parto y siguientes')) {
+            if (lower.includes('asturiana')) return 'vacas_5_parto_mas_asturiana';
+            if (lower.includes('cruces')) return 'vacas_5_parto_mas_cruces';
+        }
+
         return 'sin_normalizar_' + lower.replace(/[^a-z0-9]/g, '_').substring(0, 30);
     }
 }
