@@ -2,6 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import { NEIGHBORING_PROVINCES } from '@/constants/neighboringProvinces';
 import { getCatalogSeoData } from '@/utils/seoCatalogUtils';
+import { LOCATIONS } from '@/constants/locations';
+import { buildSeoUrl } from '@/utils/seoUtils';
 
 interface SeoBlockProps {
     parsedSlug: any;
@@ -24,15 +26,25 @@ export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery 
                     <div>
                         <h3 className="font-bold text-[var(--ag-sys-color-text)] mb-3">Quizás te interese buscar en provincias cercanas:</h3>
                         <div className="flex flex-wrap gap-2 justify-center">
-                            {NEIGHBORING_PROVINCES[locationName].slice(0, 4).map(neighbor => (
-                                <Link 
-                                    key={neighbor}
-                                    href={`/anuncios-${categoryQuery.toLowerCase().replace(/\s+/g, '-')}-${neighbor.toLowerCase().replace(/\s+/g, '-')}`}
-                                    className="px-4 py-2 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-[var(--ag-sys-color-primary)]/10 hover:text-[var(--ag-sys-color-primary)] hover:border-[var(--ag-sys-color-primary)] transition-all"
-                                >
-                                    {neighbor}
-                                </Link>
-                            ))}
+                            {NEIGHBORING_PROVINCES[locationName].slice(0, 4).map(neighbor => {
+                                const neighborLoc = LOCATIONS.find(l => l.name === neighbor);
+                                const neighborUrl = buildSeoUrl({
+                                    q: parsedSlug.q,
+                                    category: parsedSlug.category,
+                                    subcategory: parsedSlug.subcategory,
+                                    province_id: neighborLoc ? neighborLoc.id : undefined
+                                });
+
+                                return (
+                                    <Link 
+                                        key={neighbor}
+                                        href={neighborUrl}
+                                        className="px-4 py-2 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium hover:bg-[var(--ag-sys-color-primary)]/10 hover:text-[var(--ag-sys-color-primary)] hover:border-[var(--ag-sys-color-primary)] transition-all"
+                                    >
+                                        {neighbor}
+                                    </Link>
+                                );
+                            })}
                         </div>
                     </div>
                 )}
@@ -62,15 +74,25 @@ export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery 
                 <div className="mt-8 pt-6 border-t border-[var(--ag-sys-color-border)]">
                     <h3 className="font-bold text-[var(--ag-sys-color-text)] mb-3">Amplía tu zona de búsqueda a provincias cercanas:</h3>
                     <div className="flex flex-wrap gap-2">
-                        {NEIGHBORING_PROVINCES[locationName].slice(0, 4).map(neighbor => (
-                            <Link 
-                                key={neighbor}
-                                href={`/anuncios-${categoryQuery.toLowerCase().replace(/\s+/g, '-')}-${neighbor.toLowerCase().replace(/\s+/g, '-')}`}
-                                className="text-[var(--ag-sys-color-primary)] font-semibold hover:underline mr-3"
-                            >
-                                {categoryQuery} en {neighbor}
-                            </Link>
-                        ))}
+                        {NEIGHBORING_PROVINCES[locationName].slice(0, 4).map(neighbor => {
+                            const neighborLoc = LOCATIONS.find(l => l.name === neighbor);
+                            const neighborUrl = buildSeoUrl({
+                                q: parsedSlug.q,
+                                category: parsedSlug.category,
+                                subcategory: parsedSlug.subcategory,
+                                province_id: neighborLoc ? neighborLoc.id : undefined
+                            });
+
+                            return (
+                                <Link 
+                                    key={neighbor}
+                                    href={neighborUrl}
+                                    className="text-[var(--ag-sys-color-primary)] font-semibold hover:underline mr-3"
+                                >
+                                    {categoryQuery} en {neighbor}
+                                </Link>
+                            );
+                        })}
                     </div>
                 </div>
             )}
