@@ -51,6 +51,8 @@ export default async function BovinePricesHubPage() {
                             if (b.name.includes('Salamanca')) return 1;
                             if (a.name.includes('Siero')) return -1;
                             if (b.name.includes('Siero')) return 1;
+                            if (a.name.includes('Talavera')) return -1;
+                            if (b.name.includes('Talavera')) return 1;
                             return a.name.localeCompare(b.name);
                         }).map((market: any) => (
                             <Link 
