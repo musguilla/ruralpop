@@ -5,6 +5,8 @@ interface CatalogSeoData {
     tags: string[];
 }
 
+import { LOCATIONS } from "@/constants/locations";
+
 export async function getCatalogSeoData(parsedSlug: any): Promise<CatalogSeoData> {
     const supabase = await createClient();
     let query = supabase.from("listings").select("title", { count: "exact", head: false }).eq("status", "active").eq("users.is_ghost", false);
@@ -14,7 +16,21 @@ export async function getCatalogSeoData(parsedSlug: any): Promise<CatalogSeoData
 
     if (parsedSlug.category) query = query.eq("category", parsedSlug.category);
     if (parsedSlug.subcategory) query = query.ilike("subcategory", parsedSlug.subcategory);
-    if (parsedSlug.province_id) query = query.eq("province_id", parsedSlug.province_id);
+    
+    if (parsedSlug.province_id) {
+        const locFilter = String(parsedSlug.province_id);
+        if (locFilter.startsWith('m')) {
+            const muni = LOCATIONS.find((l: { id: string }) => l.id === locFilter);
+            if (muni) {
+                query = query.ilike("location", `%${muni.name}%`);
+            } else {
+                const muniId = locFilter.substring(1);
+                query = query.eq("municipality_id", muniId);
+            }
+        } else {
+            query = query.eq("province_id", parsedSlug.province_id);
+        }
+    }
     if (parsedSlug.q) {
         let sanitizedQuery = parsedSlug.q.trim().toLowerCase();
         let queryTerms = sanitizedQuery.split(/[\s\-]+/).filter((t: string) => t.length > 2);
