@@ -8,7 +8,8 @@ export default function robots(): MetadataRoute.Robots {
         },
         sitemap: [
             'https://www.ruralpop.com/sitemap_index.xml',
-            'https://www.ruralpop.com/sitemap_anuncios.xml'
+            'https://www.ruralpop.com/sitemap_anuncios.xml',
+            'https://www.ruralpop.com/sitemap_lonjas.xml'
         ],
     };
 }
