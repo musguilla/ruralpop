@@ -72,15 +72,15 @@ export function Footer() {
                 <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
 
                 {/* Column 4: App Store / Google Play */}
-                <div className="flex flex-row lg:flex-col items-start gap-4 lg:w-1/5 lg:items-end">
+                <div className="flex flex-row lg:flex-col items-center justify-center gap-4 lg:w-1/5 lg:items-center mt-6 lg:mt-0">
                     {/* Google Play Native SVG Badge */}
                     <a href="https://play.google.com/store/apps/details?id=com.ruralpop.app" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer" title="Descargar en Google Play">
-                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/google-play-logo.svg" alt="Descargar en Google Play" className="h-[52px] w-auto" />
+                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/google-play-logo.svg" alt="Descargar en Google Play" className="h-[55px] w-auto" />
                     </a>
 
                     {/* Apple App Store Native SVG Badge */}
                     <a href="https://apps.apple.com/es/app/ruralpop/id6759678666" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer" title="Descargar en el App Store">
-                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/app-store-logo.svg" alt="Descargar en el App Store" className="h-[52px] w-auto" />
+                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/app-store-logo.svg" alt="Descargar en el App Store" className="h-[55px] w-auto" />
                     </a>
                 </div>
 
