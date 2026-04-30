@@ -4,6 +4,7 @@ import { PriceChart } from '@/components/livestock/PriceChart';
 import { ArrowLeft, TrendingUp, TrendingDown, Minus, Info } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { slugify } from '@/lib/utils/slugify';
 
 export const revalidate = 3600;
 
@@ -13,11 +14,12 @@ export async function generateMetadata(
     const { mercado, categoria } = await params;
     const supabase = await createClient();
     
-    const { data } = await supabase
+    const { data: markets } = await supabase
         .from('market_sources')
-        .select('name')
-        .eq('id', mercado)
-        .single();
+        .select('id, name')
+        .eq('active', true);
+        
+    const data = markets?.find((m: any) => slugify(m.name) === mercado);
         
     if (!data) return { title: 'No encontrado' };
     
@@ -34,22 +36,25 @@ export default async function MarketCategoryDetailPage({ params }: { params: Pro
     const { mercado, categoria } = await params;
     const supabase = await createClient();
 
-    const { data: market } = await supabase
+    const { data: markets } = await supabase
         .from('market_sources')
         .select('*')
-        .eq('id', mercado)
-        .single();
+        .eq('active', true);
+
+    const market = markets?.find((m: any) => slugify(m.name) === mercado);
 
     if (!market) {
         notFound();
     }
+    
+    const marketId = market.id;
 
     // Fetch prices for this category ordered by date descending to get the most recent ones first
     // (Supabase has a default limit of 1000 rows, so ascending would cut off recent years if data > 1000 rows)
     const { data: pricesDesc } = await supabase
         .from('livestock_prices')
         .select('*')
-        .eq('market_source_id', mercado)
+        .eq('market_source_id', marketId)
         .eq('normalized_category', categoria)
         .order('date', { ascending: false })
         .limit(2000);

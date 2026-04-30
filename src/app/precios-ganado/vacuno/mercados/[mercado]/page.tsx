@@ -4,6 +4,7 @@ import { PriceTable } from '@/components/livestock/PriceTable';
 import { MapPin, Globe, Clock, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { slugify } from '@/lib/utils/slugify';
 
 export const revalidate = 3600;
 
@@ -13,11 +14,12 @@ export async function generateMetadata(
     const { mercado } = await params;
     const supabase = await createClient();
     
-    const { data } = await supabase
+    const { data: markets } = await supabase
         .from('market_sources')
-        .select('name, region')
-        .eq('id', mercado)
-        .single();
+        .select('id, name, region')
+        .eq('active', true);
+        
+    const data = markets?.find((m: any) => slugify(m.name) === mercado);
         
     if (!data) return { title: 'Mercado no encontrado' };
     
@@ -31,21 +33,25 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ m
     const { mercado } = await params;
     const supabase = await createClient();
 
-    const { data: market } = await supabase
+    const { data: markets } = await supabase
         .from('market_sources')
         .select('*')
-        .eq('id', mercado)
-        .single();
+        .eq('active', true);
+
+    const market = markets?.find((m: any) => slugify(m.name) === mercado);
 
     if (!market) {
         notFound();
     }
+    
+    // mercado variable was the slug, let's use market.id for the query
+    const marketId = market.id;
 
     // Fetch latest prices for this market
     const { data: recentPrices } = await supabase
         .from('livestock_prices')
         .select('*')
-        .eq('market_source_id', mercado)
+        .eq('market_source_id', marketId)
         .order('date', { ascending: false })
         .limit(200);
 
@@ -106,6 +112,7 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ m
                         prices={latestPrices} 
                         showMarketColumn={false} 
                         showMinMax={market.name.toLowerCase().includes('siero') || market.name.toLowerCase().includes('león') || market.name.toLowerCase().includes('leon')}
+                        marketSlug={mercado}
                     />
                 </div>
                 

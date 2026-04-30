@@ -4,15 +4,17 @@ import React, { useState, useMemo } from 'react';
 import { ArrowUpRight, ArrowDownRight, Minus, Search, Filter, ChevronRight } from 'lucide-react';
 import { LivestockPrice, MarketSource } from '@/types/livestock';
 import Link from 'next/link';
+import { slugify } from '@/lib/utils/slugify';
 import { useRouter } from 'next/navigation';
 
 interface PriceTableProps {
     prices: (LivestockPrice & { market_sources?: Partial<MarketSource> })[];
     showMarketColumn?: boolean;
     showMinMax?: boolean;
+    marketSlug?: string;
 }
 
-export function PriceTable({ prices, showMarketColumn = true, showMinMax = false }: PriceTableProps) {
+export function PriceTable({ prices, showMarketColumn = true, showMinMax = false, marketSlug }: PriceTableProps) {
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterSegment, setFilterSegment] = useState<string>('all');
@@ -155,10 +157,12 @@ export function PriceTable({ prices, showMarketColumn = true, showMinMax = false
                                                 </tr>
                                                 
                                                 {/* Items */}
-                                                {items.map((price, idx) => (
+                                                {items.map((price, idx) => {
+                                                    const targetSlug = marketSlug || (price.market_sources?.name ? slugify(price.market_sources.name) : price.market_source_id);
+                                                    return (
                                                     <tr 
                                                         key={price.id || idx} 
-                                                        onClick={() => router.push(`/precios-ganado/vacuno/mercados/${price.market_source_id}/${price.normalized_category}`)}
+                                                        onClick={() => router.push(`/precios-ganado/vacuno/mercados/${targetSlug}/${price.normalized_category}`)}
                                                         className="hover:bg-[var(--ag-sys-color-background)] transition-colors group cursor-pointer"
                                                     >
                                                         {showMarketColumn && (
@@ -215,7 +219,7 @@ export function PriceTable({ prices, showMarketColumn = true, showMinMax = false
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                ))}
+                                                )})}
                                             </React.Fragment>
                                         ))}
                                     </React.Fragment>

@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/server';
 import { TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import { slugify } from '@/lib/utils/slugify';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -56,7 +57,7 @@ export default async function BovinePricesHubPage() {
                             return a.name.localeCompare(b.name);
                         }).map((market: any) => (
                             <Link 
-                                href={`/precios-ganado/vacuno/mercados/${market.id}`} 
+                                href={`/precios-ganado/vacuno/mercados/${slugify(market.name)}`} 
                                 key={market.id}
                                 className="group block bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] p-6 rounded-3xl hover:border-[var(--ag-sys-color-primary)] transition-all hover:shadow-lg hover:shadow-[var(--ag-sys-color-primary)]/5"
                             >
