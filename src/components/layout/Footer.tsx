@@ -70,12 +70,12 @@ export function Footer() {
                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-4 mt-4 sm:mt-0 shrink-0">
                     {/* Apple App Store Native SVG Badge */}
                     <a href="https://apps.apple.com/es/app/ruralpop/id6759678666" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer shrink-0" title="Descargar en el App Store">
-                        <img src="/app-store-logo.svg" alt="Descargar en el App Store" className="h-10 w-auto" />
+                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/app-store-logo.svg" alt="Descargar en el App Store" className="h-10 w-auto" />
                     </a>
 
                     {/* Google Play Native SVG Badge */}
                     <a href="https://play.google.com/store/apps/details?id=com.ruralpop.app" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer shrink-0" title="Descargar en Google Play">
-                        <img src="/google-play-logo.svg" alt="Descargar en Google Play" className="h-10 w-auto" />
+                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/google-play-logo.svg" alt="Descargar en Google Play" className="h-10 w-auto" />
                     </a>
                 </div>
             </div>
