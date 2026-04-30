@@ -100,7 +100,12 @@ export class LeonParser {
             if (col0 && col1) {
                 if (col1 === '=') return; // Skip invalid prices
                 
-                const categoryName = currentParentCategory ? `${currentParentCategory} - ${col0}` : col0;
+                let categoryName = currentParentCategory ? `${currentParentCategory} - ${col0}` : col0;
+                
+                // If it's GANADO VIDA and doesn't have a parent, group it under GANADO VIDA
+                if (currentSegment === 'vida' && !categoryName.includes('-')) {
+                    categoryName = `GANADO VIDA - ${categoryName}`;
+                }
                 
                 let price_min = null;
                 let price_max = null;
