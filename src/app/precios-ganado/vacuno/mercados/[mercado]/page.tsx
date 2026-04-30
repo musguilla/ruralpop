@@ -105,7 +105,7 @@ export default async function MarketDetailPage({ params }: { params: Promise<{ m
                     <PriceTable 
                         prices={latestPrices} 
                         showMarketColumn={false} 
-                        showMinMax={market.name.toLowerCase().includes('siero')}
+                        showMinMax={market.name.toLowerCase().includes('siero') || market.name.toLowerCase().includes('león') || market.name.toLowerCase().includes('leon')}
                     />
                 </div>
                 
