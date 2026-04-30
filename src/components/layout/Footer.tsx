@@ -13,7 +13,7 @@ export function Footer() {
                 
                 {/* Column 1: Conexión Rural */}
                 <div className="flex flex-col items-start gap-3 lg:w-1/4">
-                    <span className="text-[13px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
+                    <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         Conexión Rural
                     </span>
                     <Link href="/tienda" className="text-base font-medium text-[var(--ag-sys-color-primary)] hover:opacity-80 transition-opacity">
@@ -35,7 +35,7 @@ export function Footer() {
 
                 {/* Column 2: Lonjas y Mercados España */}
                 <div className="flex flex-col items-start gap-3 lg:w-1/3 lg:pl-10">
-                    <span className="text-[13px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
+                    <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         Lonjas y Mercados España
                     </span>
                     <Link href="/precios-ganado/vacuno" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
@@ -63,7 +63,7 @@ export function Footer() {
 
                 {/* Column 3: Información */}
                 <div className="flex flex-col items-start gap-3 lg:w-1/5 lg:pl-10">
-                    <span className="text-[13px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
+                    <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         Información
                     </span>
                     <Link href="/preguntas-frecuentes" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
@@ -75,18 +75,18 @@ export function Footer() {
                 </div>
 
                 {/* Vertical Divider 3 */}
-                <div className="hidden lg:block w-px h-32 bg-[var(--ag-sys-color-border)] shrink-0 opacity-0"></div> {/* Invisible divider for spacing, or just use justify-between */}
+                <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
 
                 {/* Column 4: App Store / Google Play */}
                 <div className="flex flex-row lg:flex-col items-start gap-4 lg:w-1/5 lg:items-end">
-                    {/* Apple App Store Native SVG Badge */}
-                    <a href="https://apps.apple.com/es/app/ruralpop/id6759678666" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer" title="Descargar en el App Store">
-                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/app-store-logo.svg" alt="Descargar en el App Store" className="h-[44px] w-auto" />
-                    </a>
-
                     {/* Google Play Native SVG Badge */}
                     <a href="https://play.google.com/store/apps/details?id=com.ruralpop.app" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer" title="Descargar en Google Play">
-                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/google-play-logo.svg" alt="Descargar en Google Play" className="h-[44px] w-auto" />
+                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/google-play-logo.svg" alt="Descargar en Google Play" className="h-[52px] w-auto" />
+                    </a>
+
+                    {/* Apple App Store Native SVG Badge */}
+                    <a href="https://apps.apple.com/es/app/ruralpop/id6759678666" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer" title="Descargar en el App Store">
+                        <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/app-store-logo.svg" alt="Descargar en el App Store" className="h-[52px] w-auto" />
                     </a>
                 </div>
 
