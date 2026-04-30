@@ -13,19 +13,19 @@ export function Footer() {
                 
                 {/* Column 1: Conexión Rural */}
                 <div className="flex flex-col items-start gap-3 lg:w-1/4">
-                    <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
+                    <span className="text-[13px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
                         Conexión Rural
                     </span>
-                    <Link href="/tienda" className="text-base font-bold text-[var(--ag-sys-color-primary)] hover:opacity-80 transition-opacity">
+                    <Link href="/tienda" className="text-base font-medium text-[var(--ag-sys-color-primary)] hover:opacity-80 transition-opacity">
                         Tienda Ruralpop
                     </Link>
-                    <Link href="/magazine" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/magazine" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Ruralpop Magazine
                     </Link>
-                    <Link href="/tractores" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/tractores" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Catálogos de Tractores
                     </Link>
-                    <Link href="/precios-ganado/vacuno" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/precios-ganado/vacuno" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Precios Mercados Vacuno
                     </Link>
                 </div>
@@ -34,26 +34,26 @@ export function Footer() {
                 <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
 
                 {/* Column 2: Lonjas y Mercados España */}
-                <div className="flex flex-col items-start gap-3 lg:w-1/3">
-                    <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
+                <div className="flex flex-col items-start gap-3 lg:w-1/3 lg:pl-10">
+                    <span className="text-[13px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
                         Lonjas y Mercados España
                     </span>
-                    <Link href="/precios-ganado/vacuno" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/precios-ganado/vacuno" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Precios Lonjas y Mercado Bovino
                     </Link>
-                    <Link href="/precios-ganado/vacuno/mercados/lonja-de-salamanca" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/precios-ganado/vacuno/mercados/lonja-de-salamanca" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Lonja de Salamanca
                     </Link>
-                    <Link href="/precios-ganado/vacuno/mercados/mercado-nacional-de-ganado-de-pola-de-siero" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/precios-ganado/vacuno/mercados/mercado-nacional-de-ganado-de-pola-de-siero" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Mercado Ganado Pola de Siero
                     </Link>
-                    <Link href="/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-talavera-de-la-reina" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-talavera-de-la-reina" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Lonja Talavera de la Reina
                     </Link>
-                    <Link href="/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-leon" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-leon" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Lonja Agropecuaria de León
                     </Link>
-                    <Link href="/precios-ganado/vacuno/mercados/mercado-nacional-santiago-de-compostela" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/precios-ganado/vacuno/mercados/mercado-nacional-santiago-de-compostela" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Mercado Nacional Santiago
                     </Link>
                 </div>
@@ -62,14 +62,14 @@ export function Footer() {
                 <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
 
                 {/* Column 3: Información */}
-                <div className="flex flex-col items-start gap-3 lg:w-1/5">
-                    <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
+                <div className="flex flex-col items-start gap-3 lg:w-1/5 lg:pl-10">
+                    <span className="text-[13px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
                         Información
                     </span>
-                    <Link href="/preguntas-frecuentes" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/preguntas-frecuentes" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Preguntas frecuentes
                     </Link>
-                    <Link href="/empresas-profesionales-sector-rural" className="text-base font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <Link href="/empresas-profesionales-sector-rural" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         ¿Eres profesional?
                     </Link>
                 </div>
