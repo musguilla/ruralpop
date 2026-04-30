@@ -109,6 +109,10 @@ export class TalaveraParser {
                         finalCategoryName = `TERNERA CRUZADA (BASE 200 KG) - ${categoryName}`;
                     } else if (upperCat.includes('TERNERO CRUZADO 1ª') || upperCat.includes('TERNERO CRUZADO 2ª')) {
                         finalCategoryName = `TERNERO CRUZADO (BASE 200 KG) - ${categoryName}`;
+                    } else if (upperCat.includes('TERNERO DEL PAIS')) {
+                        finalCategoryName = `TERNERO DEL PAÍS - ${categoryName}`;
+                    } else if (upperCat.includes('TERNERA DEL PAIS')) {
+                        finalCategoryName = `TERNERA DEL PAÍS - ${categoryName}`;
                     } else if (!categoryName.includes('-')) {
                         // If it still doesn't have a dash, we can default to using the first two words as a group
                         const words = categoryName.split(' ');

@@ -7,7 +7,7 @@ export async function triggerEtlAction(sourceId?: string) {
     try {
         await MarketETLService.run(sourceId);
         revalidatePath('/admin/lonjas');
-        revalidatePath('/precios-ganado/vacuno');
+        revalidatePath('/precios-ganado/vacuno', 'layout');
         return { success: true };
     } catch (error: any) {
         console.error('ETL Action Error:', error);
