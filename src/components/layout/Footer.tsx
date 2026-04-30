@@ -82,8 +82,8 @@ export function Footer() {
                     </a>
 
                     {/* Google Play Native SVG Badge */}
-                    <div className="flex flex-col items-center gap-1.5 opacity-60 grayscale cursor-default transition-all shrink-0" title="Próximamente">
-                        <div className="flex items-center bg-black text-white px-4 py-2 rounded-xl border border-gray-800 pointer-events-none">
+                    <a href="https://play.google.com/store/apps/details?id=com.ruralpop.app" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-1.5 hover:opacity-80 transition-all cursor-pointer shrink-0" title="Descargar en Google Play">
+                        <div className="flex items-center bg-black text-white px-4 py-2 rounded-xl border border-gray-800">
                             <svg viewBox="0 0 512 512" width="24" height="24" fill="currentColor" className="mr-3 shrink-0">
                                 <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z" />
                             </svg>
@@ -92,8 +92,7 @@ export function Footer() {
                                 <span className="text-xl font-semibold leading-none tracking-tight">Google Play</span>
                             </div>
                         </div>
-                        <span className="text-[9px] bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text-muted)] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Próximamente</span>
-                    </div>
+                    </a>
                 </div>
             </div>
 
