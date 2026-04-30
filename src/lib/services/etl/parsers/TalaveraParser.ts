@@ -83,7 +83,9 @@ export class TalaveraParser {
                 
                 if (match) {
                     const categoryName = match[1].trim();
-                    const currentPrice = parseFloat(match[3].replace(',', '.'));
+                    // Fix thousand separators (e.g. 2.000,00 -> 2000.00)
+                    const rawPrice = match[3];
+                    const currentPrice = parseFloat(rawPrice.replace(/\./g, '').replace(',', '.'));
                     const unitStr = match[4].toLowerCase();
                     
                     let unit: UnitType = 'eur_unidad';
@@ -92,10 +94,29 @@ export class TalaveraParser {
                     
                     let finalCategoryName = categoryName;
                     const upperCat = categoryName.toUpperCase();
+                    
                     if (upperCat.startsWith('TORO DEL PAIS')) {
-                        finalCategoryName = `TOROS - ${categoryName}`;
-                    } else if (upperCat.startsWith('VACAS')) {
+                        finalCategoryName = `TOROS DEL PAIS - ${categoryName.replace('TORO DEL PAIS ', '')}`;
+                    } else if (upperCat.startsWith('VACAS') && !upperCat.includes('VACA ')) {
                         finalCategoryName = `VACAS - ${categoryName}`;
+                    } else if (upperCat.includes('1 A 3 SEMANAS')) {
+                        finalCategoryName = `TERNEROS 1 A 3 SEMANAS - ${categoryName}`;
+                    } else if (upperCat.includes('6 MESES')) {
+                        finalCategoryName = `TERNEROS 6 MESES - ${categoryName}`;
+                    } else if (upperCat.includes('VACA AVILEÑA') || upperCat.includes('VACA RETINTA') || upperCat.includes('VACA CRUZADA') || upperCat.includes('VACA CHAROLAISE')) {
+                        finalCategoryName = `VACAS DE VIDA - ${categoryName}`;
+                    } else if (upperCat.includes('TERNERA CRUZADA 1ª') || upperCat.includes('TERNERA CRUZADA 2ª')) {
+                        finalCategoryName = `TERNERA CRUZADA (BASE 200 KG) - ${categoryName}`;
+                    } else if (upperCat.includes('TERNERO CRUZADO 1ª') || upperCat.includes('TERNERO CRUZADO 2ª')) {
+                        finalCategoryName = `TERNERO CRUZADO (BASE 200 KG) - ${categoryName}`;
+                    } else if (!categoryName.includes('-')) {
+                        // If it still doesn't have a dash, we can default to using the first two words as a group
+                        const words = categoryName.split(' ');
+                        if (words.length > 2) {
+                            finalCategoryName = `${words[0]} ${words[1]} - ${categoryName}`;
+                        } else {
+                            finalCategoryName = `${words[0]} - ${categoryName}`;
+                        }
                     }
                     
                     if (!isNaN(currentPrice) && currentPrice > 0) {
