@@ -107,8 +107,8 @@ export class LeonParser {
                     categoryName = `GANADO VIDA - ${categoryName}`;
                 }
                 
-                let price_min = null;
-                let price_max = null;
+                let price_min: number | undefined = undefined;
+                let price_max: number | undefined = undefined;
                 let price_avg = 0;
                 
                 // Parse ranges like "4,40/5,40"
