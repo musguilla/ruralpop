@@ -8,11 +8,11 @@ export function Footer() {
 
     return (
         <footer className="w-full border-t border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] py-12 mt-auto">
-            {/* Top Section: 4 Columns */}
-            <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+            {/* Top Section: 4 Columns with Dividers */}
+            <div className="container mx-auto px-4 flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-4 mb-12">
                 
                 {/* Column 1: Conexión Rural */}
-                <div className="flex flex-col items-start gap-3">
+                <div className="flex flex-col items-start gap-3 lg:w-1/4">
                     <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
                         Conexión Rural
                     </span>
@@ -30,8 +30,11 @@ export function Footer() {
                     </Link>
                 </div>
 
+                {/* Vertical Divider 1 */}
+                <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
+
                 {/* Column 2: Lonjas y Mercados España */}
-                <div className="flex flex-col items-start gap-3">
+                <div className="flex flex-col items-start gap-3 lg:w-1/3">
                     <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
                         Lonjas y Mercados España
                     </span>
@@ -55,8 +58,11 @@ export function Footer() {
                     </Link>
                 </div>
 
+                {/* Vertical Divider 2 */}
+                <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
+
                 {/* Column 3: Información */}
-                <div className="flex flex-col items-start gap-3">
+                <div className="flex flex-col items-start gap-3 lg:w-1/5">
                     <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] font-semibold uppercase tracking-wider mb-1">
                         Información
                     </span>
@@ -68,8 +74,11 @@ export function Footer() {
                     </Link>
                 </div>
 
+                {/* Vertical Divider 3 */}
+                <div className="hidden lg:block w-px h-32 bg-[var(--ag-sys-color-border)] shrink-0 opacity-0"></div> {/* Invisible divider for spacing, or just use justify-between */}
+
                 {/* Column 4: App Store / Google Play */}
-                <div className="flex flex-row lg:flex-col items-start gap-4">
+                <div className="flex flex-row lg:flex-col items-start gap-4 lg:w-1/5 lg:items-end">
                     {/* Apple App Store Native SVG Badge */}
                     <a href="https://apps.apple.com/es/app/ruralpop/id6759678666" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer" title="Descargar en el App Store">
                         <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/app-store-logo.svg" alt="Descargar en el App Store" className="h-[44px] w-auto" />
