@@ -25,9 +25,6 @@ export function Footer() {
                     <Link href="/tractores" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Catálogos de Tractores
                     </Link>
-                    <Link href="/precios-ganado/vacuno" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Precios Mercados Vacuno
-                    </Link>
                 </div>
 
                 {/* Vertical Divider 1 */}
@@ -52,9 +49,6 @@ export function Footer() {
                     </Link>
                     <Link href="/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-leon" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Lonja Agropecuaria de León
-                    </Link>
-                    <Link href="/precios-ganado/vacuno/mercados/mercado-nacional-santiago-de-compostela" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Mercado Nacional Santiago
                     </Link>
                 </div>
 
