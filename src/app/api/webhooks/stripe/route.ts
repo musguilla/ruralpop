@@ -178,7 +178,7 @@ export async function POST(req: Request) {
         }
     }
 
-    if (event.type === "transfer.created" || event.type === "transfer.paid") {
+    if (event.type === "transfer.created") {
         const transfer = event.data.object as Stripe.Transfer;
         const escrowOrderId = transfer.metadata?.escrow_order_id;
 
