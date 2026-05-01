@@ -1,6 +1,6 @@
-import { calculateRuralpopFee } from "./src/lib/services/escrow.ts";
+import { calculateRuralpopFee } from "./src/lib/services/escrow";
 
-function runTest(input, expected) {
+function runTest(input: number, expected: number) {
   const result = calculateRuralpopFee(input);
   if (result === expected) {
     console.log(`✅ Passed: ${input} cents -> ${result} cents`);
