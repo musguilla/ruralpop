@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import stripe from "@/lib/stripe";
 
 export async function createStripeOnboardingLink() {
@@ -10,8 +11,14 @@ export async function createStripeOnboardingLink() {
     try {
         if (!user) throw new Error("No autenticado");
 
+        // Use Admin client to bypass RLS for professional_wallets table
+        const supabaseAdmin = createSupabaseClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
         // Check if wallet exists
-        let { data: wallet } = await supabase
+        let { data: wallet } = await supabaseAdmin
             .from("professional_wallets")
             .select("*")
             .eq("user_id", user.id)
@@ -32,10 +39,10 @@ export async function createStripeOnboardingLink() {
             accountId = account.id;
 
             if (wallet) {
-                const { error: updateError } = await supabase.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
+                const { error: updateError } = await supabaseAdmin.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
                 if (updateError) throw new Error("Error actualizando wallet: " + updateError.message);
             } else {
-                const { error: insertError } = await supabase.from("professional_wallets").insert({
+                const { error: insertError } = await supabaseAdmin.from("professional_wallets").insert({
                     user_id: user.id,
                     stripe_connected_account_id: accountId,
                 });
