@@ -72,6 +72,7 @@ export default async function EditListingPage(props: Props) {
             savedPhone={savedPhone}
             initialProvinces={initialProvinces}
             initialMunicipalities={initialMunicipalities}
+            userEmail={user.email}
         />
     );
 }

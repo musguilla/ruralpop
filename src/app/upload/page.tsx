@@ -33,5 +33,5 @@ export default async function UploadPage() {
 
     const initialProvinces = provinces || [];
 
-    return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} />;
+    return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} userEmail={user.email} />;
 }

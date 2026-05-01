@@ -14,10 +14,10 @@ import { useNotification } from "@/context/NotificationContext";
 import Link from "next/link";
 
 interface EditListingFormProps {
-    listing: any;
     savedPhone: string | null;
     initialProvinces: { id: number; name: string }[];
     initialMunicipalities: { id: number; name: string }[];
+    userEmail?: string;
 }
 
 export default function EditListingForm({ listing, savedPhone, initialProvinces, initialMunicipalities }: EditListingFormProps) {
@@ -29,6 +29,8 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
     const [selectedCategory, setSelectedCategory] = useState(listing.category || "");
     const [imageUrls, setImageUrls] = useState<string[]>(listing.image_urls || []);
     const [isPending, setIsPending] = useState(false);
+    const isTestPro = userEmail === "testpro@ruralpop.com";
+    const [sellOnline, setSellOnline] = useState(false);
 
     // Location state
     const [selectedProvince, setSelectedProvince] = useState<number | "">(listing.province_id || "");
@@ -249,28 +251,27 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
 
                             <div>
                                 <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Tipo de precio</label>
-                                <SearchableSelect
-                                    name="price_type"
-                                    value={formDataState.priceType}
-                                    onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
-                                    options={PRICE_TYPES.map(p => ({ id: p.id, name: p.label }))}
-                                    placeholder="Selecciona tipo..."
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
-                                    <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Provincia *
-                                </label>
-                                <SearchableSelect
-                                    name="province_id"
-                                    required
-                                    value={selectedProvince}
-                                    onChange={(val) => setSelectedProvince(val as number | "")}
-                                    options={initialProvinces}
-                                    placeholder="Selecciona provincia..."
-                                    searchPlaceholder="Ej: Salamanca, Asturias..."
-                                />
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <SearchableSelect
+                                            name="price_type"
+                                            value={formDataState.priceType}
+                                            onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
+                                            options={PRICE_TYPES.map(p => ({ id: p.id, name: p.label }))}
+                                            placeholder="Selecciona tipo..."
+                                        />
+                                    </div>
+                                    {isTestPro && (
+                                        <label className="flex items-center gap-2 cursor-pointer flex-shrink-0 bg-green-50 border border-green-100 px-3 py-2 rounded-xl">
+                                            <div className="relative">
+                                                <input type="checkbox" name="vender_online" className="sr-only" checked={sellOnline} onChange={e => setSellOnline(e.target.checked)} value="true" />
+                                                <div className={`block w-10 h-6 rounded-full transition-colors ${sellOnline ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                                                <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${sellOnline ? 'transform translate-x-4' : ''}`}></div>
+                                            </div>
+                                            <span className="text-sm font-bold text-green-700">Vender online</span>
+                                        </label>
+                                    )}
+                                </div>
                             </div>
 
                             <div>
@@ -287,6 +288,21 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                     searchPlaceholder="Ej: Suances, Tineo..."
                                     disabled={selectedProvince === ""}
                                     isLoading={isLoadingMunicipalities}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
+                                    <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Provincia *
+                                </label>
+                                <SearchableSelect
+                                    name="province_id"
+                                    required
+                                    value={selectedProvince}
+                                    onChange={(val) => setSelectedProvince(val as number | "")}
+                                    options={initialProvinces}
+                                    placeholder="Selecciona provincia..."
+                                    searchPlaceholder="Ej: Salamanca, Asturias..."
                                 />
                             </div>
 
