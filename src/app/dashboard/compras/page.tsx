@@ -11,8 +11,8 @@ export default async function ComprasDashboardPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
-        redirect("/login");
+    if (!user || user.email !== "testpro@ruralpop.com") {
+        redirect("/dashboard");
     }
 
     const { data: orders, error } = await supabase
@@ -54,12 +54,14 @@ export default async function ComprasDashboardPage() {
                     >
                         Vendidos
                     </Link>
-                    <Link
-                        href="/dashboard/compras"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]"
-                    >
-                        Compras Seguras
-                    </Link>
+                    {user.email === 'testpro@ruralpop.com' && (
+                        <Link
+                            href="/dashboard/compras"
+                            className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]"
+                        >
+                            Compras Seguras
+                        </Link>
+                    )}
                     {user.email === 'testpro@ruralpop.com' && (
                         <Link
                             href="/dashboard/monedero"
