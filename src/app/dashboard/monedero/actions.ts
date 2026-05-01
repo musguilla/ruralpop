@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import stripe from "@/lib/stripe";
+import { redirect } from "next/navigation";
 
 export async function createStripeOnboardingLink() {
     const supabase = await createClient();
@@ -49,5 +50,5 @@ export async function createStripeOnboardingLink() {
         type: 'account_onboarding',
     });
 
-    return { url: accountLink.url };
+    redirect(accountLink.url);
 }

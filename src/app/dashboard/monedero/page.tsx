@@ -97,11 +97,7 @@ export default async function MonederoDashboardPage() {
                                 </p>
                             </div>
                         </div>
-                        <form action={async () => {
-                            "use server";
-                            const { url } = await createStripeOnboardingLink();
-                            redirect(url);
-                        }}>
+                        <form action={createStripeOnboardingLink}>
                             <button type="submit" className="whitespace-nowrap px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors shadow-sm">
                                 Configurar cobros seguros
                             </button>

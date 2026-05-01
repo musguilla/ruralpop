@@ -86,11 +86,13 @@ export default async function RootLayout({
           `}
         </Script>
         {/* Google AdSense (script nativo en HTML pelado para evitar bloqueos del crawler de Adsense al verificar dominio) */}
+        {/* 
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2042067618462129"
           crossOrigin="anonymous"
         ></script>
+        */}
         <CategoriesProvider categories={categories}>
           <NotificationProvider>
             <Header />
