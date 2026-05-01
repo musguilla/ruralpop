@@ -14,13 +14,14 @@ import { useNotification } from "@/context/NotificationContext";
 import Link from "next/link";
 
 interface EditListingFormProps {
+    listing: any;
     savedPhone: string | null;
     initialProvinces: { id: number; name: string }[];
     initialMunicipalities: { id: number; name: string }[];
     userEmail?: string;
 }
 
-export default function EditListingForm({ listing, savedPhone, initialProvinces, initialMunicipalities }: EditListingFormProps) {
+export default function EditListingForm({ listing, savedPhone, initialProvinces, initialMunicipalities, userEmail }: EditListingFormProps) {
     const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();

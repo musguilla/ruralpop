@@ -17,7 +17,7 @@ interface UploadFormProps {
     userEmail?: string;
 }
 
-export default function UploadForm({ savedPhone, initialProvinces }: UploadFormProps) {
+export default function UploadForm({ savedPhone, initialProvinces, userEmail }: UploadFormProps) {
     const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();
