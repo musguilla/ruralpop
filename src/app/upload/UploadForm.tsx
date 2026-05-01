@@ -264,6 +264,21 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail }: 
 
                         <div>
                             <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
+                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Provincia *
+                            </label>
+                            <SearchableSelect
+                                name="province_id"
+                                required
+                                value={selectedProvince}
+                                onChange={(val) => setSelectedProvince(val as number | "")}
+                                options={initialProvinces}
+                                placeholder="Selecciona provincia..."
+                                searchPlaceholder="Ej: Salamanca, Asturias..."
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
                                 <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Localidad *
                             </label>
                             <SearchableSelect
@@ -276,21 +291,6 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail }: 
                                 searchPlaceholder="Ej: Suances, Tineo..."
                                 disabled={selectedProvince === ""}
                                 isLoading={isLoadingMunicipalities}
-                            />
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
-                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Provincia *
-                            </label>
-                            <SearchableSelect
-                                name="province_id"
-                                required
-                                value={selectedProvince}
-                                onChange={(val) => setSelectedProvince(val as number | "")}
-                                options={initialProvinces}
-                                placeholder="Selecciona provincia..."
-                                searchPlaceholder="Ej: Salamanca, Asturias..."
                             />
                         </div>
 
