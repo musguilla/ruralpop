@@ -321,6 +321,7 @@ export default async function ListingDetailPage(props: Props) {
                                 listingId={listing.id} 
                                 price={listing.price} 
                                 feeCents={calculateRuralpopFee(Math.round(listing.price * 100))} 
+                                isSeller={user?.id === listing.seller?.id}
                             />
                         )}
 

@@ -62,7 +62,13 @@ export async function createEscrowCheckout(listingId: string) {
     .single();
 
   if (walletError || !wallet?.stripe_connected_account_id) {
-    throw new Error("Seller is not ready to receive payments");
+    throw new Error("El vendedor aún no ha configurado sus pagos de forma segura.");
+  }
+
+  // Check if charges are enabled
+  const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
+  if (!account.charges_enabled) {
+    throw new Error("El vendedor aún no ha completado la configuración para recibir pagos.");
   }
 
   // 3. Calculate amounts

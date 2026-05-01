@@ -21,6 +21,18 @@ export default async function MonederoDashboardPage() {
         .eq("user_id", user.id)
         .single();
 
+    // Check Stripe readiness
+    let isStripeReady = false;
+    if (wallet?.stripe_connected_account_id) {
+        try {
+            const stripe = (await import("@/lib/stripe")).default;
+            const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
+            isStripeReady = account.charges_enabled && account.details_submitted;
+        } catch (e) {
+            console.error("Error retrieving Stripe account:", e);
+        }
+    }
+
     // Fetch Escrow Orders for this seller
     const { data: orders } = await supabase
         .from("escrow_orders")
@@ -73,15 +85,27 @@ export default async function MonederoDashboardPage() {
                     </Link>
                 </div>
 
-                {!wallet && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8 flex items-start gap-4">
-                        <Info className="w-6 h-6 text-amber-600 mt-0.5" />
-                        <div>
-                            <h3 className="font-bold text-amber-900 text-lg">Aún no tienes monedero activo</h3>
-                            <p className="text-amber-800/80 mt-1">
-                                Para poder recibir pagos seguros, necesitas configurar tu cuenta conectada de Stripe. (Para activar esto, el administrador debe crear tu wallet o usar el dashboard admin).
-                            </p>
+                {!isStripeReady && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex items-start gap-4">
+                            <Info className="w-6 h-6 text-amber-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                                <h3 className="font-bold text-amber-900 text-lg">Aún no tienes configurado tu monedero</h3>
+                                <p className="text-amber-800/80 mt-1">
+                                    Para poder recibir pagos seguros y vender online, necesitas configurar tu cuenta de cobros en Stripe. Es rápido y 100% seguro.
+                                </p>
+                            </div>
                         </div>
+                        <form action={async () => {
+                            "use server";
+                            const { createStripeOnboardingLink } = await import("./actions");
+                            const { url } = await createStripeOnboardingLink();
+                            redirect(url);
+                        }}>
+                            <button type="submit" className="whitespace-nowrap px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors shadow-sm">
+                                Configurar cobros seguros
+                            </button>
+                        </form>
                     </div>
                 )}
 

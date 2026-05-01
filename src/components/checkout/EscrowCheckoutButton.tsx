@@ -10,9 +10,10 @@ interface EscrowCheckoutButtonProps {
     listingId: string;
     price: number;
     feeCents: number;
+    isSeller?: boolean;
 }
 
-export function EscrowCheckoutButton({ listingId, price, feeCents }: EscrowCheckoutButtonProps) {
+export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller }: EscrowCheckoutButtonProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -66,8 +67,16 @@ export function EscrowCheckoutButton({ listingId, price, feeCents }: EscrowCheck
             </div>
 
             {error && (
-                <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
-                    {error}
+                <div className="mb-4 text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-100 flex flex-col gap-3">
+                    <p>{error}</p>
+                    {isSeller && error.includes("El vendedor aún no ha") && (
+                        <a 
+                            href="/dashboard/monedero" 
+                            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-center transition-colors shadow-sm"
+                        >
+                            Configurar mi monedero
+                        </a>
+                    )}
                 </div>
             )}
 
