@@ -10,7 +10,7 @@ export default async function MonederoDashboardPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user || user.email?.toLowerCase().trim() !== "testpro@ruralpop.com") {
+    if (!user || !['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(user.email?.toLowerCase().trim() || '')) {
         redirect("/dashboard");
     }
 
@@ -69,7 +69,7 @@ export default async function MonederoDashboardPage() {
                     >
                         Vendidos
                     </Link>
-                    {user.email?.toLowerCase().trim() === 'testpro@ruralpop.com' && (
+                    {['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(user.email?.toLowerCase().trim() || '') && (
                         <Link
                             href="/dashboard/compras"
                             className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]"
