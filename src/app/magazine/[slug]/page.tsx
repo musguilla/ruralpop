@@ -176,6 +176,25 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                         </div>
                     )}
 
+                    {slug === "vacapop-ha-cerrado" && (
+                        <div className="mt-12 p-8 bg-gradient-to-br from-[var(--ag-sys-color-primary)]/10 to-transparent border border-[var(--ag-sys-color-primary)]/20 rounded-3xl text-center shadow-sm">
+                            <h3 className="text-2xl md:text-3xl font-black text-[var(--ag-sys-color-text)] mb-4 tracking-tight">
+                                La alternativa moderna a Vacapop
+                            </h3>
+                            <p className="text-[var(--ag-sys-color-text-muted)] mb-8 text-lg font-medium max-w-2xl mx-auto">
+                                Descarga <strong className="text-[var(--ag-sys-color-primary)]">Ruralpop</strong> gratis. Compra y vende ganado y maquinaria agrícola directamente desde tu móvil, sin intermediarios.
+                            </p>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                <a href="https://play.google.com/store/apps/details?id=com.ruralpop.app" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 hover:scale-105 transition-all duration-300 shadow-lg rounded-xl">
+                                    <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/google-play-logo.svg" alt="Descargar en Google Play" className="h-[60px] w-auto" />
+                                </a>
+                                <a href="https://apps.apple.com/es/app/ruralpop/id6759678666" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 hover:scale-105 transition-all duration-300 shadow-lg rounded-xl">
+                                    <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/app-store-logo.svg" alt="Descargar en el App Store" className="h-[60px] w-auto" />
+                                </a>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Tags / Share Actions */}
                     <div className="mt-16 pt-8 border-t border-[var(--ag-sys-color-border)] flex flex-wrap items-center justify-between gap-4">
                         <div className="flex gap-2">
