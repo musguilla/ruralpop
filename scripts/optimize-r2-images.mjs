@@ -29,7 +29,7 @@ async function run() {
         .from('listings')
         .select('id, image_urls, title')
         .order('created_at', { ascending: false })
-        .limit(50);
+        .limit(150);
 
     if (error) {
         console.error("❌ Error fetching listings:", error);
@@ -58,7 +58,7 @@ async function run() {
                 const buffer = Buffer.from(arrayBuffer);
                 const originalSize = buffer.length;
 
-                if (originalSize < 150 * 1024) {
+                if (originalSize < 80 * 1024) {
                     console.log(`  └ ✅ Image ${i+1} is already light (${Math.round(originalSize/1024)} KB). Skipping.`);
                     continue;
                 }
@@ -66,11 +66,11 @@ async function run() {
                 console.log(`  └ 🛠  Image ${i+1} is heavy (${Math.round(originalSize/1024)} KB). Optimizing...`);
 
                 const optimizedBuffer = await sharp(buffer)
-                    .resize(1000, 1000, {
+                    .resize(600, 600, {
                         fit: 'inside',
                         withoutEnlargement: true,
                     })
-                    .webp({ quality: 80 })
+                    .webp({ quality: 70 })
                     .toBuffer();
 
                 const newSize = optimizedBuffer.length;
