@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Wallet, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
+import stripe from "@/lib/stripe";
+import { createStripeOnboardingLink } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +27,6 @@ export default async function MonederoDashboardPage() {
     let isStripeReady = false;
     if (wallet?.stripe_connected_account_id) {
         try {
-            const stripe = (await import("@/lib/stripe")).default;
             const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
             isStripeReady = account.charges_enabled && account.details_submitted;
         } catch (e) {
@@ -98,7 +99,6 @@ export default async function MonederoDashboardPage() {
                         </div>
                         <form action={async () => {
                             "use server";
-                            const { createStripeOnboardingLink } = await import("./actions");
                             const { url } = await createStripeOnboardingLink();
                             redirect(url);
                         }}>

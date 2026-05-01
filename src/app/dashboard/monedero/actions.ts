@@ -41,10 +41,11 @@ export async function createStripeOnboardingLink() {
     }
 
     // Create Account Link
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
     const accountLink = await stripe.accountLinks.create({
         account: accountId,
-        refresh_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/monedero?refresh=true`,
-        return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/monedero?success=true`,
+        refresh_url: `${baseUrl}/dashboard/monedero?refresh=true`,
+        return_url: `${baseUrl}/dashboard/monedero?success=true`,
         type: 'account_onboarding',
     });
 
