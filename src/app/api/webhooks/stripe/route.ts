@@ -125,5 +125,109 @@ export async function POST(req: Request) {
         }
     }
 
+    if (event.type === "checkout.session.completed") {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const escrowOrderId = session.metadata?.escrow_order_id;
+
+        if (escrowOrderId) {
+            try {
+                // Update order status
+                const { data: order, error: orderError } = await supabaseAdmin
+                    .from("escrow_orders")
+                    .update({ status: "paid_held" })
+                    .eq("id", escrowOrderId)
+                    .select()
+                    .single();
+
+                if (orderError || !order) {
+                    console.error("Failed to update escrow order:", orderError);
+                } else {
+                    // Fetch the wallet
+                    const { data: wallet } = await supabaseAdmin
+                        .from("professional_wallets")
+                        .select("id, pending_balance_cents, total_fees_paid_cents")
+                        .eq("user_id", order.seller_id)
+                        .single();
+
+                    if (wallet) {
+                        // Add to pending balance
+                        await supabaseAdmin
+                            .from("professional_wallets")
+                            .update({
+                                pending_balance_cents: wallet.pending_balance_cents + order.seller_net_amount_cents,
+                                total_fees_paid_cents: wallet.total_fees_paid_cents + order.ruralpop_fee_cents
+                            })
+                            .eq("id", wallet.id);
+
+                        // Record transaction for fee paid
+                        await supabaseAdmin
+                            .from("wallet_transactions")
+                            .insert({
+                                wallet_id: wallet.id,
+                                escrow_order_id: order.id,
+                                type: "escrow_paid",
+                                amount_cents: order.seller_net_amount_cents,
+                                description: `Cobro retenido por anuncio ${order.listing_id}`,
+                            });
+                    }
+                    console.log(`✅ Escrow order ${escrowOrderId} marked as paid_held`);
+                }
+            } catch (err: unknown) {
+                console.error("DB Error processing escrow checkout session:", err);
+            }
+        }
+    }
+
+    if (event.type === "transfer.created" || event.type === "transfer.paid") {
+        const transfer = event.data.object as Stripe.Transfer;
+        const escrowOrderId = transfer.metadata?.escrow_order_id;
+
+        if (escrowOrderId) {
+            try {
+                // Fetch order to know who is the seller
+                const { data: order } = await supabaseAdmin
+                    .from("escrow_orders")
+                    .select("seller_id, seller_net_amount_cents")
+                    .eq("id", escrowOrderId)
+                    .single();
+
+                if (order) {
+                    const { data: wallet } = await supabaseAdmin
+                        .from("professional_wallets")
+                        .select("id, pending_balance_cents, available_balance_cents, total_earned_cents")
+                        .eq("user_id", order.seller_id)
+                        .single();
+
+                    if (wallet) {
+                        // Move from pending to available
+                        await supabaseAdmin
+                            .from("professional_wallets")
+                            .update({
+                                pending_balance_cents: Math.max(0, wallet.pending_balance_cents - order.seller_net_amount_cents),
+                                available_balance_cents: wallet.available_balance_cents + order.seller_net_amount_cents,
+                                total_earned_cents: wallet.total_earned_cents + order.seller_net_amount_cents
+                            })
+                            .eq("id", wallet.id);
+
+                        // Record payout released
+                        await supabaseAdmin
+                            .from("wallet_transactions")
+                            .insert({
+                                wallet_id: wallet.id,
+                                escrow_order_id: escrowOrderId,
+                                type: "payout_released",
+                                amount_cents: order.seller_net_amount_cents,
+                                description: `Pago liberado por confirmación del comprador`,
+                            });
+                        
+                        console.log(`✅ Escrow payout released for order ${escrowOrderId}`);
+                    }
+                }
+            } catch (err: unknown) {
+                console.error("DB Error processing transfer:", err);
+            }
+        }
+    }
+
     return new NextResponse(null, { status: 200 });
 }

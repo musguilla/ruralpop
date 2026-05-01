@@ -15,6 +15,8 @@ import { buildSeoUrl, slugify } from "@/utils/seoUtils";
 import { getImageUrl } from "@/utils/mediaUtils";
 import { AdSenseSidebar } from "@/components/ads/AdSenseSidebar";
 import { AdSenseGalleryBottom } from "@/components/ads/AdSenseGalleryBottom";
+import { EscrowCheckoutButton } from "@/components/checkout/EscrowCheckoutButton";
+import { calculateRuralpopFee } from "@/lib/services/escrow";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -135,7 +137,7 @@ export default async function ListingDetailPage(props: Props) {
         .from("listings")
         .select(`
       *,
-      seller:users(id, name, avatar_url, created_at, role, commercial_name)
+      seller:users(id, name, avatar_url, created_at, role, commercial_name, email)
     `)
         .eq("id", id)
         .single();
@@ -313,6 +315,14 @@ export default async function ListingDetailPage(props: Props) {
 
                     {/* Columna Derecha: Vendedor y Acciones */}
                     <div className="w-full min-w-0 lg:max-w-[360px] flex-1 space-y-6">
+
+                        {listing.seller?.email === 'testpro@ruralpop.com' && (
+                            <EscrowCheckoutButton 
+                                listingId={listing.id} 
+                                price={listing.price} 
+                                feeCents={calculateRuralpopFee(Math.round(listing.price * 100))} 
+                            />
+                        )}
 
                         {/* Tarjeta Vendedor */}
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-2xl p-6 border border-[var(--ag-sys-color-border)]">
