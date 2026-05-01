@@ -263,7 +263,7 @@ export default async function ListingDetailPage(props: Props) {
                     <div className="w-full min-w-0 lg:w-[728px] lg:max-w-[728px] flex-shrink-0 space-y-8">
                         <ImageGallery images={resolvedImageUrls} title={listing.title} />
                         
-                        <AdSenseGalleryBottom />
+                        {!isProfessional && <AdSenseGalleryBottom />}
 
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-2xl p-6 sm:p-8 border border-[var(--ag-sys-color-border)]">
                             <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
