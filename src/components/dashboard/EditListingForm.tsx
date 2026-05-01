@@ -30,7 +30,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
     const [imageUrls, setImageUrls] = useState<string[]>(listing.image_urls || []);
     const [isPending, setIsPending] = useState(false);
     const isTestPro = userEmail === "testpro@ruralpop.com";
-    const [sellOnline, setSellOnline] = useState(false);
+    const [sellOnline, setSellOnline] = useState(!!listing.vender_online);
 
     // Location state
     const [selectedProvince, setSelectedProvince] = useState<number | "">(listing.province_id || "");

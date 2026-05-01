@@ -74,6 +74,7 @@ export async function updateListing(listingId: string, formData: FormData) {
 
     const contact_phone = formData.get("contact_phone") as string | null;
     const price_type = formData.get("price_type") as string;
+    const vender_online = formData.get("vender_online") === "true";
     const imageUrlsString = formData.get("image_urls") as string;
     const image_urls = imageUrlsString ? JSON.parse(imageUrlsString) : [];
 
@@ -96,6 +97,7 @@ export async function updateListing(listingId: string, formData: FormData) {
             province_id,
             municipality_id,
             price_type,
+            vender_online,
             image_urls,
             contact_phone
         })

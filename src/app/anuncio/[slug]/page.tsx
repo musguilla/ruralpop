@@ -316,7 +316,7 @@ export default async function ListingDetailPage(props: Props) {
                     {/* Columna Derecha: Vendedor y Acciones */}
                     <div className="w-full min-w-0 lg:max-w-[360px] flex-1 space-y-6">
 
-                        {listing.seller?.email === 'testpro@ruralpop.com' && (
+                        {listing.seller?.email === 'testpro@ruralpop.com' && listing.vender_online && (
                             <EscrowCheckoutButton 
                                 listingId={listing.id} 
                                 price={listing.price} 
