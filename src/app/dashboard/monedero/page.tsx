@@ -4,7 +4,7 @@ import Link from "next/link";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Wallet, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
 import stripe from "@/lib/stripe";
-import { createStripeOnboardingLink } from "./actions";
+import { StripeButton } from "./StripeButton";
 
 export const dynamic = "force-dynamic";
 
@@ -97,11 +97,7 @@ export default async function MonederoDashboardPage() {
                                 </p>
                             </div>
                         </div>
-                        <form action={createStripeOnboardingLink}>
-                            <button type="submit" className="whitespace-nowrap px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-colors shadow-sm">
-                                Configurar cobros seguros
-                            </button>
-                        </form>
+                        <StripeButton />
                     </div>
                 )}
 
