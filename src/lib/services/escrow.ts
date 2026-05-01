@@ -46,7 +46,7 @@ export async function createEscrowCheckout(listingId: string) {
 
   // Hack for TS since join typing might not be strict
   const seller = listing.users as any;
-  if (!seller || seller.email !== "testpro@ruralpop.com") {
+  if (!seller || seller.email?.toLowerCase().trim() !== "testpro@ruralpop.com") {
     throw new Error("Escrow not available for this seller");
   }
 

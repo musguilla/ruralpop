@@ -146,6 +146,8 @@ export default async function ListingDetailPage(props: Props) {
         notFound();
     }
 
+    const isTestPro = listing.seller?.email?.toLowerCase().trim() === 'testpro@ruralpop.com';
+
     const isProfessional = listing.seller?.role === 'profesional';
     
     // Fallback para el nombre del vendedor si no existe en la tabla users
@@ -316,7 +318,7 @@ export default async function ListingDetailPage(props: Props) {
                     {/* Columna Derecha: Vendedor y Acciones */}
                     <div className="w-full min-w-0 lg:max-w-[360px] flex-1 space-y-6">
 
-                        {listing.seller?.email === 'testpro@ruralpop.com' && listing.vender_online && (
+                        {listing.seller?.email?.toLowerCase().trim() === 'testpro@ruralpop.com' && listing.vender_online && (
                             <EscrowCheckoutButton 
                                 listingId={listing.id} 
                                 price={listing.price} 
