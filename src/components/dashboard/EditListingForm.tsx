@@ -307,7 +307,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                 />
                             </div>
 
-                            <div className="md:col-span-3">
+                            <div className="col-span-1 md:col-span-2">
                                 <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
                                     <Phone className="w-4 h-4" />
                                     Teléfono de contacto
