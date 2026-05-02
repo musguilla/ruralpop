@@ -68,8 +68,8 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
                     <div className="text-5xl font-extrabold text-[var(--ag-sys-color-primary)] mb-2 tracking-tight">
                         {formatCurrency(price)}
                     </div>
-                    <p className="text-xs font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">
-                        Compra protegida por Protección Ruralpop
+                    <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
+                        Compra protegida por protección Ruralpop
                     </p>
                 </div>
 
