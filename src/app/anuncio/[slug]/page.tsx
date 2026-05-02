@@ -299,26 +299,26 @@ export default async function ListingDetailPage(props: Props) {
                                         </Link>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                    <div className="flex flex-col items-end gap-3">
-                                        <div className="text-4xl font-extrabold text-[var(--ag-sys-color-primary)] mb-1">
+                                <div className="flex flex-row items-center justify-end gap-4 mt-4 sm:mt-0">
+                                    <div className="flex flex-col items-end">
+                                        <div className="text-4xl font-extrabold text-[var(--ag-sys-color-primary)] leading-none">
                                             {formatCurrency(listing.price)}
                                         </div>
                                         {listing.price_type !== 'fixed' && (
-                                            <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)] mt-[-8px]">
+                                            <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)] mt-1">
                                                 {listing.price_type === 'negotiable' ? 'Precio Negociable' : 'A convenir'}
                                             </span>
                                         )}
-                                        {isEscrowAvailable && (
-                                            <EscrowCheckoutButton
-                                                listingId={listing.id}
-                                                price={listing.price}
-                                                feeCents={ruralpopFeeCents}
-                                                isSeller={isOwner}
-                                                variant="mini"
-                                            />
-                                        )}
                                     </div>
+                                    {isEscrowAvailable && (
+                                        <EscrowCheckoutButton
+                                            listingId={listing.id}
+                                            price={listing.price}
+                                            feeCents={ruralpopFeeCents}
+                                            isSeller={isOwner}
+                                            variant="mini"
+                                        />
+                                    )}
                                 </div>
                             </div>
 
