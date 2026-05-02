@@ -55,7 +55,14 @@ export async function createEscrowCheckout(listingId: string) {
   }
 
   // 2. Fetch professional wallet
-  const { data: wallet, error: walletError } = await supabase
+  // We must use admin client because RLS might prevent buyers from reading other users' wallets
+  const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+  const supabaseAdmin = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: wallet, error: walletError } = await supabaseAdmin
     .from("professional_wallets")
     .select("stripe_connected_account_id")
     .eq("user_id", seller.id)
