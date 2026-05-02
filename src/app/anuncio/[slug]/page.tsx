@@ -368,9 +368,11 @@ export default async function ListingDetailPage(props: Props) {
                                         <h4 className="font-bold text-lg text-[var(--ag-sys-color-text)]">{rawSellerName}</h4>
                                     )}
 
-                                    <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
-                                        En Ruralpop desde {sellerJoinedDate || 'recientemente'}
-                                    </p>
+                                    {!isProfessional && (
+                                        <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
+                                            En Ruralpop desde {sellerJoinedDate || 'recientemente'}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
