@@ -36,7 +36,7 @@ export async function createEscrowCheckout(listingId: string) {
   const { data: listing, error: listingError } = await supabase
     .from("listings")
     .select(`
-      id, title, price, image_urls, user_id, 
+      id, title, price, shipping_price, image_urls, user_id, 
       users:user_id ( id, email, name, stripe_customer_id )
     `)
     .eq("id", listingId)
@@ -82,8 +82,10 @@ export async function createEscrowCheckout(listingId: string) {
 
   // 3. Calculate amounts
   const priceCents = Math.round(listing.price * 100);
+  const shippingCents = Math.round((listing.shipping_price || 0) * 100);
   const feeCents = calculateRuralpopFee(priceCents);
-  const totalCents = priceCents + feeCents; // Buyer pays fee? Or seller?
+  const sellerNetCents = priceCents + shippingCents;
+  const totalCents = sellerNetCents + feeCents; // Buyer pays product + shipping + fee
   // Wait, standard marketplace: Buyer pays price. If Buyer pays fee on top, total = price + fee.
   // The user said: "Mostrar precio del producto. Mostrar Comisión. Mostrar total a pagar." This implies Buyer pays fee on top.
   // BUT then "Application fee amount" is usually deducted from the payment.
@@ -122,9 +124,9 @@ export async function createEscrowCheckout(listingId: string) {
         price_data: {
           currency: "eur",
           product_data: {
-            name: "Protección de Compra Segura Ruralpop",
+            name: shippingCents > 0 ? "Envío" : "Protección de Compra Segura Ruralpop",
           },
-          unit_amount: feeCents,
+          unit_amount: shippingCents > 0 ? shippingCents + feeCents : feeCents,
         },
         quantity: 1,
       }
@@ -153,7 +155,7 @@ export async function createEscrowCheckout(listingId: string) {
       seller_email: seller.email,
       gross_amount_cents: totalCents,
       ruralpop_fee_cents: feeCents,
-      seller_net_amount_cents: priceCents,
+      seller_net_amount_cents: sellerNetCents,
       stripe_checkout_session_id: session.id,
       stripe_connected_account_id: wallet.stripe_connected_account_id,
       status: "pending_checkout"
