@@ -89,8 +89,9 @@ export async function createEscrowCheckout(listingId: string) {
   // Let's create an order in our DB first.
 
   const orderId = crypto.randomUUID(); // Generate id for tracking
-  const stripeSuccessUrl = process.env.STRIPE_ESCROW_SUCCESS_URL || `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/escrow/success?session_id={CHECKOUT_SESSION_ID}`;
-  const stripeCancelUrl = process.env.STRIPE_ESCROW_CANCEL_URL || `${process.env.NEXT_PUBLIC_SITE_URL}/anuncio/${listingId}`;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
+  const stripeSuccessUrl = process.env.STRIPE_ESCROW_SUCCESS_URL || `${baseUrl}/checkout/escrow/success?session_id={CHECKOUT_SESSION_ID}`;
+  const stripeCancelUrl = process.env.STRIPE_ESCROW_CANCEL_URL || `${baseUrl}/anuncio/${listingId}`;
 
   // 4. Create Stripe Checkout Session
   // Using Separate Charges and Transfers. 
