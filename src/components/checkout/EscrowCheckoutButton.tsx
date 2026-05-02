@@ -64,19 +64,13 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
         <>
             {/* Tarjeta de Compra */}
             <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 mb-4">
-                <div className="space-y-3 mb-6">
-                    <div className="flex justify-between text-sm">
-                        <span className="text-[var(--ag-sys-color-text-muted)]">Precio del producto:</span>
-                        <span className="font-medium text-[var(--ag-sys-color-text)]">{formatCurrency(price)}</span>
+                <div className="mb-6 flex flex-col items-center text-center">
+                    <div className="text-5xl font-extrabold text-[var(--ag-sys-color-primary)] mb-2 tracking-tight">
+                        {formatCurrency(price)}
                     </div>
-                    <div className="flex justify-between text-sm">
-                        <span className="text-[var(--ag-sys-color-text-muted)]">Protección Ruralpop:</span>
-                        <span className="font-medium text-[var(--ag-sys-color-text)]">{formatCurrency(feeCents / 100)}</span>
-                    </div>
-                    <div className="pt-3 border-t border-[var(--ag-sys-color-border)] flex justify-between items-center">
-                        <span className="font-bold text-[var(--ag-sys-color-text)]">Total a pagar:</span>
-                        <span className="font-extrabold text-[var(--ag-sys-color-primary)] text-xl">{formatCurrency(totalCents / 100)}</span>
-                    </div>
+                    <p className="text-xs font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">
+                        Compra protegida por Protección Ruralpop
+                    </p>
                 </div>
 
                 {error && (
@@ -100,7 +94,7 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
                         "w-full py-4 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95",
                         loading 
                             ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
-                            : "bg-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-on-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] shadow-[var(--ag-sys-color-primary)]/20"
+                            : "bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] shadow-[var(--ag-sys-color-primary)]/20"
                     )}
                 >
                     {loading ? (
