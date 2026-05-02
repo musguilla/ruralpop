@@ -44,7 +44,7 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
                 onClick={handleCheckout}
                 disabled={loading}
                 className={clsx(
-                    "flex items-center justify-center gap-2 py-4 px-8 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-lg shadow-[var(--ag-sys-color-primary)]/20 active:scale-95",
+                    "flex items-center justify-center gap-2 py-2 px-4 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-lg shadow-[var(--ag-sys-color-primary)]/20 active:scale-95",
                     loading && "opacity-70 cursor-not-allowed"
                 )}
             >
