@@ -137,7 +137,7 @@ export async function createEscrowCheckout(listingId: string) {
   });
 
   // 5. Save order in DB
-  const { error: insertError } = await supabase
+  const { error: insertError } = await supabaseAdmin
     .from("escrow_orders")
     .insert({
       id: orderId,
