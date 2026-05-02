@@ -11,9 +11,10 @@ interface EscrowCheckoutButtonProps {
     price: number;
     feeCents: number;
     isSeller?: boolean;
+    variant?: 'default' | 'mini';
 }
 
-export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller }: EscrowCheckoutButtonProps) {
+export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, variant = 'default' }: EscrowCheckoutButtonProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -36,6 +37,30 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller }: E
             setLoading(false);
         }
     };
+
+    if (variant === 'mini') {
+        return (
+            <button
+                onClick={handleCheckout}
+                disabled={loading}
+                className={clsx(
+                    "py-2.5 px-6 rounded-full font-bold flex items-center justify-center gap-2 transition-all",
+                    loading 
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                        : "bg-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-on-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] active:scale-[0.98] shadow-sm hover:shadow-md"
+                )}
+            >
+                {loading ? (
+                    <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Procesando...
+                    </>
+                ) : (
+                    "Comprar"
+                )}
+            </button>
+        );
+    }
 
     return (
         <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-200 dark:border-green-900/50 rounded-2xl p-5 mb-6">

@@ -240,6 +240,11 @@ export default async function ListingDetailPage(props: Props) {
         }
     };
 
+    // Escrow logic
+    const isOwner = user?.id === listing.seller?.id;
+    const isEscrowAvailable = ['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(listing.seller?.email?.toLowerCase().trim() || '') && listing.vender_online;
+    const ruralpopFeeCents = calculateRuralpopFee(Math.round(listing.price * 100));
+
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen w-full max-w-[100vw] overflow-x-hidden">
             <script
@@ -295,14 +300,25 @@ export default async function ListingDetailPage(props: Props) {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-4xl font-extrabold text-[var(--ag-sys-color-primary)] mb-1">
-                                        {formatCurrency(listing.price)}
+                                    <div className="flex flex-col items-end gap-3">
+                                        <div className="text-4xl font-extrabold text-[var(--ag-sys-color-primary)] mb-1">
+                                            {formatCurrency(listing.price)}
+                                        </div>
+                                        {listing.price_type !== 'fixed' && (
+                                            <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)] mt-[-8px]">
+                                                {listing.price_type === 'negotiable' ? 'Precio Negociable' : 'A convenir'}
+                                            </span>
+                                        )}
+                                        {isEscrowAvailable && (
+                                            <EscrowCheckoutButton
+                                                listingId={listing.id}
+                                                price={listing.price}
+                                                feeCents={ruralpopFeeCents}
+                                                isSeller={isOwner}
+                                                variant="mini"
+                                            />
+                                        )}
                                     </div>
-                                    {listing.price_type !== 'fixed' && (
-                                        <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)]">
-                                            {listing.price_type === 'negotiable' ? 'Precio Negociable' : 'A convenir'}
-                                        </span>
-                                    )}
                                 </div>
                             </div>
 
@@ -318,12 +334,12 @@ export default async function ListingDetailPage(props: Props) {
                     {/* Columna Derecha: Vendedor y Acciones */}
                     <div className="w-full min-w-0 lg:max-w-[360px] flex-1 space-y-6">
 
-                        {['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(listing.seller?.email?.toLowerCase().trim() || '') && listing.vender_online && (
+                        {isEscrowAvailable && (
                             <EscrowCheckoutButton 
                                 listingId={listing.id} 
                                 price={listing.price} 
-                                feeCents={calculateRuralpopFee(Math.round(listing.price * 100))} 
-                                isSeller={user?.id === listing.seller?.id}
+                                feeCents={ruralpopFeeCents} 
+                                isSeller={isOwner}
                             />
                         )}
 
@@ -379,16 +395,18 @@ export default async function ListingDetailPage(props: Props) {
                         </div>
                         <ShareButtons title={listing.title} url={`https://www.ruralpop.com/anuncio/${slug}`} />
 
-                        {/* Garantía Ruralpop Simple */}
-                        <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-2xl p-4 flex gap-3">
-                            <ShieldCheck className="w-6 h-6 text-green-600 flex-shrink-0" />
-                            <div>
-                                <h5 className="text-sm font-bold text-green-800 dark:text-green-400">Trato en mano seguro</h5>
-                                <p className="text-xs text-green-700/80 dark:text-green-500/80 mt-1 leading-normal">
-                                    Recuerda realizar siempre el trato en persona para revisar el estado del producto o animal.
-                                </p>
+                        {/* Garantía Ruralpop Simple (Solo si no hay venta online) */}
+                        {!isEscrowAvailable && (
+                            <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-2xl p-4 flex gap-3">
+                                <ShieldCheck className="w-6 h-6 text-green-600 flex-shrink-0" />
+                                <div>
+                                    <h5 className="text-sm font-bold text-green-800 dark:text-green-400">Trato en mano seguro</h5>
+                                    <p className="text-xs text-green-700/80 dark:text-green-500/80 mt-1 leading-normal">
+                                        Recuerda realizar siempre el trato en persona para revisar el estado del producto o animal.
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Publicidad Google AdSense */}
                         <AdSenseSidebar />
