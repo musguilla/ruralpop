@@ -8,9 +8,10 @@ import Link from "next/link";
 interface ChatButtonProps {
     listingId: string;
     isLoggedIn: boolean;
+    variant?: 'primary' | 'secondary';
 }
 
-export function ChatButton({ listingId, isLoggedIn }: ChatButtonProps) {
+export function ChatButton({ listingId, isLoggedIn, variant = 'primary' }: ChatButtonProps) {
     const [showModal, setShowModal] = useState(false);
     const router = useRouter();
 
@@ -26,9 +27,13 @@ export function ChatButton({ listingId, isLoggedIn }: ChatButtonProps) {
         <>
             <button
                 onClick={handleChatClick}
-                className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-lg shadow-[var(--ag-sys-color-primary)]/20 active:scale-95"
+                className={`w-full flex items-center justify-center gap-2 py-4 px-6 font-bold rounded-2xl transition-all active:scale-95 ${
+                    variant === 'primary' 
+                        ? "bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] shadow-lg shadow-[var(--ag-sys-color-primary)]/20"
+                        : "bg-white border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)] hover:bg-gray-50"
+                }`}
             >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className={`w-5 h-5 ${variant === 'secondary' ? 'text-gray-400' : ''}`} />
                 Chat con el vendedor
             </button>
 

@@ -383,6 +383,7 @@ export default async function ListingDetailPage(props: Props) {
                                 <ChatButton
                                     listingId={listing.id}
                                     isLoggedIn={!!user}
+                                    variant={isEscrowAvailable ? 'secondary' : 'primary'}
                                 />
 
                                 {listing.contact_phone && (
