@@ -71,7 +71,7 @@ export default async function MonederoDashboardPage() {
                     >
                         Vendidos
                     </Link>
-                    {['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(user.email?.toLowerCase().trim() || '') && (
+                    {['testpro@ruralpop.com', 'hildegartbaquero@gmail.com', 'info@musguilla.com'].includes(user.email?.toLowerCase().trim() || '') && (
                         <Link
                             href="/dashboard/compras"
                             className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]"
@@ -79,12 +79,14 @@ export default async function MonederoDashboardPage() {
                             Compras Seguras
                         </Link>
                     )}
-                    <Link
-                        href="/dashboard/monedero"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]"
-                    >
-                        Monedero
-                    </Link>
+                    {['testpro@ruralpop.com', 'hildegartbaquero@gmail.com', 'info@musguilla.com'].includes(user.email?.toLowerCase().trim() || '') && (
+                        <Link
+                            href="/dashboard/monedero"
+                            className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]"
+                        >
+                            Monedero
+                        </Link>
+                    )}
                 </div>
 
                 {!isStripeReady && (
