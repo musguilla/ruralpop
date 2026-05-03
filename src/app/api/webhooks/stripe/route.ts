@@ -134,7 +134,10 @@ export async function POST(req: Request) {
                 // Update order status
                 const { data: order, error: orderError } = await supabaseAdmin
                     .from("escrow_orders")
-                    .update({ status: "paid_held" })
+                    .update({ 
+                        status: "paid_held",
+                        stripe_payment_intent_id: session.payment_intent as string
+                    })
                     .eq("id", escrowOrderId)
                     .select()
                     .single();

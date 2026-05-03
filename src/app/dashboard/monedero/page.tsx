@@ -42,6 +42,7 @@ export default async function MonederoDashboardPage() {
             listings (title)
         `)
         .eq("seller_id", user.id)
+        .neq("status", "pending_checkout")
         .order("created_at", { ascending: false });
 
     return (
