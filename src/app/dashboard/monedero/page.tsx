@@ -12,7 +12,7 @@ export default async function MonederoDashboardPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (!user || !['testpro@ruralpop.com', 'hildegartbaquero@gmail.com', 'info@musguilla.com'].includes(user.email?.toLowerCase().trim() || '')) {
         redirect("/dashboard");
     }
 
