@@ -361,7 +361,7 @@ export default async function ListingDetailPage(props: Props) {
                                                 <ShieldCheck className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
                                             </h4>
                                             <span className="text-xs font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wider">
-                                                Ver empresa
+                                                VER TODOS LOS ANUNCIOS
                                             </span>
                                         </Link>
                                     ) : (
