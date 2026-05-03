@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { handleConfirmReception } from "@/app/dashboard/compras/actions";
 import { CheckCircle2, Loader2, AlertTriangle, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import clsx from "clsx";
 
 interface ConfirmReceptionButtonProps {
@@ -10,6 +11,7 @@ interface ConfirmReceptionButtonProps {
 }
 
 export function ConfirmReceptionButton({ orderId }: ConfirmReceptionButtonProps) {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -23,6 +25,10 @@ export function ConfirmReceptionButton({ orderId }: ConfirmReceptionButtonProps)
             if (!res.success) {
                 setError(res.error || "Ocurrió un error.");
                 setLoading(false);
+            } else {
+                router.refresh();
+                // We don't set loading to false here because the page is about to refresh
+                // and keeping it true prevents double clicks.
             }
         } catch (err: any) {
             setError(err.message || "Error de conexión.");
