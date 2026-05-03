@@ -44,7 +44,12 @@ async function run() {
         console.log(`\n📦 Checking listing: ${listing.title} (${listing.id})`);
         
         for (let i = 0; i < listing.image_urls.length; i++) {
-            const url = listing.image_urls[i];
+            let url = listing.image_urls[i];
+            
+            // Rewrite old R2 dev URL to custom domain for fetching
+            if (url.includes('pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev')) {
+                url = url.replace('https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev', 'https://media.ruralpop.com');
+            }
             
             try {
                 const response = await fetch(url, {

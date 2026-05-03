@@ -39,7 +39,13 @@ export function getImageUrl(image: string | MediaObject | null | undefined): str
     const { storage_provider, storage_path, public_url } = image;
 
     // Si guardaron de antemano la public_url literal, le damos maxima prioridad.
-    if (public_url) return public_url;
+    // Pero si contiene el dominio antiguo capado, lo sustituimos al vuelo
+    if (public_url) {
+        if (public_url.includes('pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev')) {
+            return public_url.replace('https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev', 'https://media.ruralpop.com');
+        }
+        return public_url;
+    }
 
     // Redirección R2
     if (storage_provider === 'r2') {
