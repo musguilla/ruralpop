@@ -247,6 +247,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail }: 
                                         onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
                                         options={PRICE_TYPES.map(p => ({ id: p.id, name: p.label }))}
                                         placeholder="Selecciona tipo..."
+                                        disabled={sellOnline}
                                     />
                                 </div>
                             </div>
@@ -265,7 +266,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail }: 
                                                 const isChecked = e.target.checked;
                                                 setSellOnline(isChecked);
                                                 if (isChecked) {
-                                                    setFormDataState(prev => ({ ...prev, priceType: "Precio Fijo" }));
+                                                    setFormDataState(prev => ({ ...prev, priceType: "fixed" }));
                                                 }
                                             }} 
                                             value="true" 
