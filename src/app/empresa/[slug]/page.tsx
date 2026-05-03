@@ -189,7 +189,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                     <CompanySearchInput initialSearchTerm={searchTerm} />
                 </div>
 
-                <ListingsGrid searchParams={gridSearchParams} />
+                <ListingsGrid searchParams={gridSearchParams} disableInFeedAds={true} />
             </div>
         </main>
     );

@@ -8,7 +8,7 @@ import { LOCATIONS } from "@/constants/locations";
 import { AdSenseInFeed } from "@/components/ads/AdSenseInFeed";
 import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 
-export async function ListingsGrid({ searchParams, isHome = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean }) {
+export async function ListingsGrid({ searchParams, isHome = false, disableInFeedAds = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean, disableInFeedAds?: boolean }) {
     let supabase = await createClient();
     const PAGE_SIZE = isHome ? 43 : 40;
     const currentPage = Number(searchParams.page) || 1;
@@ -222,7 +222,7 @@ export async function ListingsGrid({ searchParams, isHome = false }: { searchPar
 
     const gridItems: React.ReactNode[] = [];
     listings.forEach((listing: Listing, index: number) => {
-        if (adPositions.has(index)) {
+        if (!disableInFeedAds && adPositions.has(index)) {
             gridItems.push(<AdSenseInFeed key={`ad-${listing.id}-${index}`} />);
         }
         gridItems.push(
