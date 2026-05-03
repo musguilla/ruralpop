@@ -22,6 +22,7 @@ const VISUAL_CATEGORIES = [
     { id: "Perros", type: "subcategory", label: "Perros", icon: <Image src="/icon-perro.png" alt="Perros" width={48} height={48} className="object-contain" /> },
     { id: "Conejos", type: "subcategory", label: "Conejos", icon: <Image src="/icon-conejos.png" alt="Conejos" width={48} height={48} className="object-contain" /> },
     { id: "maquinaria", type: "category", label: "Maquinaria", icon: <Image src="/icon-tractor.png" alt="Maquinaria" width={48} height={48} className="object-contain" /> },
+    { id: "agricultura", type: "category", label: "Agricultura", icon: <Leaf className="w-10 h-10 text-emerald-600" /> },
     { id: "fincas", type: "category", label: "Fincas", icon: <Image src="/icon-fincas.webp" alt="Fincas" width={48} height={48} className="object-contain" /> },
     { id: "forraje", type: "category", label: "Forraje", icon: <Image src="/icon-forraje.png" alt="Forraje" width={48} height={48} className="object-contain" /> },
     { id: "alimentos", type: "category", label: "Km0", icon: <Image src="/icon-alimentos.png" alt="Km0" width={48} height={48} className="object-contain" /> },

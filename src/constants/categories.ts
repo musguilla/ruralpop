@@ -37,7 +37,7 @@ export const CATEGORIES = [
     },
     {
         id: "forraje",
-        label: "Forraje y alimentación",
+        label: "Forraje y alimentación animal",
         subcategories: [],
     },
     {
@@ -47,6 +47,14 @@ export const CATEGORIES = [
             "Venta",
             "Alquiler",
             "Traspasos explotaciones"
+        ],
+    },
+    {
+        id: "agricultura",
+        label: "Agricultura",
+        subcategories: [
+            "Semillas",
+            "Plantas y plantones"
         ],
     },
     {

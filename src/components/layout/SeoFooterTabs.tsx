@@ -138,7 +138,7 @@ export function SeoFooterTabs() {
 
                             {/* Columna 4: Fincas, Forraje, Alimentos */}
                             <div className="flex flex-col gap-8">
-                                {["fincas", "forraje", "alimentos"].map(catId => {
+                                {["agricultura", "servicios", "fincas", "forraje", "alimentos"].map(catId => {
                                     const cat = CATEGORIES.find(c => c.id === catId);
                                     if (!cat) return null;
                                     return (

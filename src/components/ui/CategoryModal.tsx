@@ -37,8 +37,9 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
     "maquinaria": <Image src="/icon-tractor.png" alt="Maquinaria" width={20} height={20} className="w-5 h-5 object-contain" />,
     "forraje": <Image src="/icon-forraje.png" alt="Forraje" width={20} height={20} className="w-5 h-5 object-contain" />,
     "alimentos": <Image src="/icon-alimentos.png" alt="Alimentos" width={20} height={20} className="w-5 h-5 object-contain" />,
+    "agricultura": <Leaf className="w-5 h-5 text-emerald-600" />,
     "servicios": <Image src="/icon-transportes.png" alt="Servicios" width={20} height={20} className="w-5 h-5 object-contain" />,
-    "fincas": <MapPin className="w-5 h-5" />,
+    "fincas": <MapPin className="w-5 h-5 text-emerald-700" />,
 };
 
 const SUBCATEGORY_ICONS: Record<string, React.ReactNode> = {
