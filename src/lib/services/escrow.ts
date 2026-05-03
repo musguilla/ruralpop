@@ -186,8 +186,15 @@ export async function confirmEscrowReception(orderId: string) {
     throw new Error("Order cannot be confirmed at this stage");
   }
 
+  // Use Admin Client to bypass RLS for updates
+  const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+  const supabaseAdmin = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
   // Mark as confirmed
-  const { error: updateError } = await supabase
+  const { error: updateError } = await supabaseAdmin
     .from("escrow_orders")
     .update({ 
       status: "buyer_confirmed", 
@@ -204,13 +211,13 @@ export async function confirmEscrowReception(orderId: string) {
 }
 
 export async function releaseEscrowPayout(orderId: string) {
-  // Uses service role or internal admin access if necessary, 
-  // but let's assume this is called post-confirmation.
-  const supabase = await createClient(); // Depending on RLS, might need service role
-  // Using standard client here since buyer just updated it, but wait, buyer can't view wallet info.
-  // Actually, we can fetch order, and do stripe transfer.
+  const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+  const supabaseAdmin = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
   
-  const { data: order } = await supabase
+  const { data: order } = await supabaseAdmin
     .from("escrow_orders")
     .select("*")
     .eq("id", orderId)
@@ -231,7 +238,7 @@ export async function releaseEscrowPayout(orderId: string) {
     });
 
     // Update order status
-    await supabase
+    await supabaseAdmin
       .from("escrow_orders")
       .update({
         status: "paid_out",
