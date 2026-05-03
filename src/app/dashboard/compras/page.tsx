@@ -60,7 +60,7 @@ export default async function ComprasDashboardPage() {
                             href="/dashboard/compras"
                             className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]"
                         >
-                            Compras Seguras
+                            Compras
                         </Link>
                     )}
                     {['testpro@ruralpop.com', 'hildegartbaquero@gmail.com', 'info@musguilla.com'].includes(user.email?.toLowerCase().trim() || '') && (
@@ -116,8 +116,9 @@ export default async function ComprasDashboardPage() {
                                         <div className="text-[var(--ag-sys-color-text-muted)] text-sm mb-4">
                                             Vendedor: {order.seller_email}
                                         </div>
-                                        <div className="text-lg font-black text-[var(--ag-sys-color-primary)]">
-                                            {formatCurrency(order.gross_amount_cents / 100)} <span className="text-sm font-normal text-[var(--ag-sys-color-text-muted)]">(Total pagado)</span>
+                                        <div className="text-lg font-black text-[var(--ag-sys-color-primary)] flex items-center">
+                                            <span className="text-[var(--ag-sys-color-text-muted)] font-normal text-sm mr-2 uppercase tracking-wider">Pagado:</span>
+                                            {formatCurrency(order.gross_amount_cents / 100)} <span className="text-sm font-normal text-[var(--ag-sys-color-text-muted)] ml-1">(Total)</span>
                                         </div>
                                     </div>
                                     
