@@ -292,7 +292,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                     
                                     {sellOnline && (
                                         <div className="flex items-center gap-3 w-full md:w-auto">
-                                            <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">Precio envío (€)</span>
+                                            <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">Precio transporte (€)</span>
                                             <input
                                                 name="shipping_price"
                                                 type="number"
