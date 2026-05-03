@@ -118,7 +118,7 @@ export default async function MonederoDashboardPage() {
                                     {formatCurrency(wallet.available_balance_cents / 100)}
                                 </div>
                                 <div className="text-xs text-white/80 flex items-center gap-1">
-                                    <ArrowUpRight className="w-3 h-3" /> Transferible a tu banco
+                                    <ArrowUpRight className="w-3 h-3" /> Recibirás los fondos en 7 días en tu banco
                                 </div>
                             </div>
 

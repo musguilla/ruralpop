@@ -247,8 +247,35 @@ export async function releaseEscrowPayout(orderId: string) {
       })
       .eq("id", order.id);
 
-    // Wallet logic will be updated via webhook (transfer.created) or we can do it here.
-    // It's safer to do wallet updates in webhook to avoid race conditions.
+    // Eagerly update professional_wallets to provide instant UI feedback
+    const { data: wallet } = await supabaseAdmin
+      .from("professional_wallets")
+      .select("id, pending_balance_cents, available_balance_cents, total_earned_cents")
+      .eq("user_id", order.seller_id)
+      .single();
+
+    if (wallet) {
+      // Move from pending to available
+      await supabaseAdmin
+        .from("professional_wallets")
+        .update({
+          pending_balance_cents: Math.max(0, wallet.pending_balance_cents - order.seller_net_amount_cents),
+          available_balance_cents: wallet.available_balance_cents + order.seller_net_amount_cents,
+          total_earned_cents: wallet.total_earned_cents + order.seller_net_amount_cents
+        })
+        .eq("id", wallet.id);
+
+      // Record payout released
+      await supabaseAdmin
+        .from("wallet_transactions")
+        .insert({
+          wallet_id: wallet.id,
+          escrow_order_id: order.id,
+          type: "payout_released",
+          amount_cents: order.seller_net_amount_cents,
+          description: `Pago liberado por confirmación del comprador`,
+        });
+    }
 
   } catch (error: any) {
     console.error("Payout release failed", error);
@@ -339,6 +366,32 @@ export async function confirmEscrowReturn(orderId: string) {
         refunded_at: new Date().toISOString()
       })
       .eq("id", order.id);
+
+    // Eagerly update professional_wallets to deduct the pending balance
+    const { data: wallet } = await supabaseAdmin
+      .from("professional_wallets")
+      .select("id, pending_balance_cents")
+      .eq("user_id", order.seller_id)
+      .single();
+
+    if (wallet) {
+      await supabaseAdmin
+        .from("professional_wallets")
+        .update({
+          pending_balance_cents: Math.max(0, wallet.pending_balance_cents - order.seller_net_amount_cents),
+        })
+        .eq("id", wallet.id);
+        
+      await supabaseAdmin
+        .from("wallet_transactions")
+        .insert({
+          wallet_id: wallet.id,
+          escrow_order_id: order.id,
+          type: "refund_processed",
+          amount_cents: -order.seller_net_amount_cents,
+          description: `Devolución al comprador procesada`,
+        });
+    }
 
     return { success: true };
   } catch (error: any) {

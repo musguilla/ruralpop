@@ -202,28 +202,9 @@ export async function POST(req: Request) {
                         .single();
 
                     if (wallet) {
-                        // Move from pending to available
-                        await supabaseAdmin
-                            .from("professional_wallets")
-                            .update({
-                                pending_balance_cents: Math.max(0, wallet.pending_balance_cents - order.seller_net_amount_cents),
-                                available_balance_cents: wallet.available_balance_cents + order.seller_net_amount_cents,
-                                total_earned_cents: wallet.total_earned_cents + order.seller_net_amount_cents
-                            })
-                            .eq("id", wallet.id);
-
-                        // Record payout released
-                        await supabaseAdmin
-                            .from("wallet_transactions")
-                            .insert({
-                                wallet_id: wallet.id,
-                                escrow_order_id: escrowOrderId,
-                                type: "payout_released",
-                                amount_cents: order.seller_net_amount_cents,
-                                description: `Pago liberado por confirmación del comprador`,
-                            });
-                        
-                        console.log(`✅ Escrow payout released for order ${escrowOrderId}`);
+                        // NOTE: We now eagerly update professional_wallets in `releaseEscrowPayout` directly 
+                        // so that the UI updates instantly. Doing it here too would cause double counting.
+                        console.log(`✅ Escrow payout webhook received for order ${escrowOrderId} (wallet updated eagerly)`);
                     }
                 }
             } catch (err: unknown) {
