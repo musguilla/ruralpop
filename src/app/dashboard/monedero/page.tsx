@@ -104,7 +104,7 @@ export default async function MonederoDashboardPage() {
 
                 {wallet && (
                     <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
                             {/* Card: Disponible */}
                             <div className="bg-[var(--ag-sys-color-primary)] text-white rounded-3xl p-6 shadow-md relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 -mr-4 -mt-4 opacity-20">
@@ -141,16 +141,7 @@ export default async function MonederoDashboardPage() {
                                 </div>
                             </div>
 
-                            {/* Card: Comisiones */}
-                            <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 shadow-sm border border-[var(--ag-sys-color-border)]">
-                                <h3 className="text-[var(--ag-sys-color-text-muted)] font-medium mb-1">Comisiones (Ruralpop)</h3>
-                                <div className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">
-                                    {formatCurrency(wallet.total_fees_paid_cents / 100)}
-                                </div>
-                                <div className="text-xs text-[var(--ag-sys-color-text-muted)] flex items-center gap-1">
-                                    <ArrowDownRight className="w-3 h-3 text-red-500" /> Pagadas
-                                </div>
-                            </div>
+
                         </div>
 
                         <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-6">Últimas operaciones</h2>
@@ -162,16 +153,14 @@ export default async function MonederoDashboardPage() {
                                         <tr className="bg-[var(--ag-sys-color-background)] border-b border-[var(--ag-sys-color-border)]">
                                             <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Fecha</th>
                                             <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Anuncio</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Importe Bruto</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Comisión</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Neto</th>
+                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Importe</th>
                                             <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Estado</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-[var(--ag-sys-color-border)]">
                                         {!orders || orders.length === 0 ? (
                                             <tr>
-                                                <td colSpan={6} className="px-6 py-12 text-center text-[var(--ag-sys-color-text-muted)]">
+                                                <td colSpan={4} className="px-6 py-12 text-center text-[var(--ag-sys-color-text-muted)]">
                                                     No hay operaciones registradas todavía.
                                                 </td>
                                             </tr>
@@ -183,12 +172,6 @@ export default async function MonederoDashboardPage() {
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-[var(--ag-sys-color-text)] max-w-[200px] truncate">
                                                         {order.listings?.title || "Anuncio eliminado"}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-sm text-[var(--ag-sys-color-text)]">
-                                                        {formatCurrency(order.gross_amount_cents / 100)}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-sm text-red-500 font-medium">
-                                                        -{formatCurrency(order.ruralpop_fee_cents / 100)}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-bold text-[var(--ag-sys-color-text)]">
                                                         {formatCurrency(order.seller_net_amount_cents / 100)}
