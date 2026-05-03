@@ -118,7 +118,7 @@ export default async function ComprasDashboardPage() {
                                         </div>
                                         <div className="text-lg font-black text-[var(--ag-sys-color-primary)] flex items-center">
                                             <span className="text-[var(--ag-sys-color-text-muted)] font-normal text-sm mr-2 uppercase tracking-wider">Pagado:</span>
-                                            {formatCurrency(order.gross_amount_cents / 100)} <span className="text-sm font-normal text-[var(--ag-sys-color-text-muted)] ml-1">(Total)</span>
+                                            {formatCurrency(order.gross_amount_cents / 100)}
                                         </div>
                                     </div>
                                     
