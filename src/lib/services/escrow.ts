@@ -399,3 +399,50 @@ export async function confirmEscrowReturn(orderId: string) {
     throw new Error("Refund failed");
   }
 }
+
+export async function autoReleaseExpiredEscrows() {
+  const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+  const supabaseAdmin = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  // Find all orders that are paid_held and older than 7 days
+  const { data: orders, error } = await supabaseAdmin
+    .from("escrow_orders")
+    .select("id")
+    .eq("status", "paid_held")
+    .lt("created_at", sevenDaysAgo);
+
+  if (error) {
+    console.error("Failed to fetch expired escrows:", error);
+    return { success: false, error: error.message };
+  }
+
+  let releasedCount = 0;
+
+  for (const order of orders || []) {
+    console.log(`Auto-releasing escrow order ${order.id}...`);
+    try {
+      // 1. Mark as buyer_confirmed (system bypass)
+      await supabaseAdmin
+        .from("escrow_orders")
+        .update({ 
+          status: "buyer_confirmed", 
+          buyer_confirmed_at: new Date().toISOString() 
+        })
+        .eq("id", order.id);
+
+      // 2. Release payout to the seller
+      await releaseEscrowPayout(order.id);
+      console.log(`✅ Auto-released escrow order ${order.id}`);
+      releasedCount++;
+    } catch (err) {
+      console.error(`❌ Failed to auto-release escrow order ${order.id}:`, err);
+    }
+  }
+  
+  return { success: true, releasedCount };
+}
