@@ -24,8 +24,13 @@ export function getImageUrl(image: string | MediaObject | null | undefined): str
         return '/placeholder-image.jpg'; // O la ruta a un logo por defecto de Ruralpop
     }
 
-    // 2. Si es una migración Legacy (texto plano apuntando a supabase)
+    // 2. Si es una migración Legacy (texto plano apuntando a supabase o a la vieja URL r2.dev)
     if (typeof image === 'string') {
+        // Sustituir dominio viejo de Cloudflare R2 por el nuevo dominio personalizado
+        if (image.includes('pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev')) {
+            return image.replace('https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev', 'https://media.ruralpop.com');
+        }
+
         // Corrección de seguridad: Si la app móvil subió la URL literal con un enviroment fallido
         if (image.startsWith('undefined/')) {
             const cleanPath = image.substring(10); // Quita 'undefined/'

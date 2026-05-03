@@ -43,14 +43,38 @@ async function run() {
 
         console.log(`\n📦 Checking listing: ${listing.title} (${listing.id})`);
         
+        let listingUrlsUpdated = false;
+        let newImageUrls = [...listing.image_urls];
+
         for (let i = 0; i < listing.image_urls.length; i++) {
             let url = listing.image_urls[i];
             
             // Rewrite old R2 dev URL to custom domain for fetching
             if (url.includes('pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev')) {
                 url = url.replace('https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev', 'https://media.ruralpop.com');
+                newImageUrls[i] = url;
+                listingUrlsUpdated = true;
             }
             
+            let r2Key = null;
+            let isSupabaseUrl = url.includes('supabase.co');
+            try {
+                const urlObj = new URL(url);
+                r2Key = decodeURIComponent(urlObj.pathname.substring(1));
+                // Fix the deeply nested path issue for old Supabase URLs
+                if (r2Key.startsWith('storage/v1/object/public/')) {
+                    r2Key = r2Key.replace('storage/v1/object/public/', '');
+                }
+            } catch(e) {
+                 console.log(`  └ ⚠️ Invalid URL: ${url}`);
+                 continue;
+            }
+            
+            if (!r2Key) {
+                 console.log(`  └ ⚠️ Could not extract R2 key from ${url}`);
+                 continue;
+            }
+
             try {
                 const response = await fetch(url, {
                     headers: {
@@ -66,56 +90,72 @@ async function run() {
                 const buffer = Buffer.from(arrayBuffer);
                 const originalSize = buffer.length;
 
-                if (originalSize < 80 * 1024) {
-                    console.log(`  └ ✅ Image ${i+1} is already light (${Math.round(originalSize/1024)} KB). Skipping.`);
-                    continue;
+                let bufferToUpload = buffer;
+                let wasOptimized = false;
+
+                if (originalSize >= 80 * 1024) {
+                    console.log(`  └ 🛠  Image ${i+1} is heavy (${Math.round(originalSize/1024)} KB). Optimizing...`);
+                    console.log(`  └ [DEBUG] Starting sharp processing...`);
+                    const optimizedBuffer = await sharp(buffer)
+                        .resize(600, 600, {
+                            fit: 'inside',
+                            withoutEnlargement: true,
+                        })
+                        .webp({ quality: 70 })
+                        .toBuffer();
+                    console.log(`  └ [DEBUG] Sharp processing complete.`);
+
+                    if (optimizedBuffer.length < originalSize) {
+                        bufferToUpload = optimizedBuffer;
+                        wasOptimized = true;
+                    } else {
+                        console.log(`  └ 🤷 Optimization didn't reduce size.`);
+                    }
+                } else {
+                    console.log(`  └ ✅ Image ${i+1} is already light (${Math.round(originalSize/1024)} KB).`);
                 }
 
-                console.log(`  └ 🛠  Image ${i+1} is heavy (${Math.round(originalSize/1024)} KB). Optimizing...`);
-
-                const optimizedBuffer = await sharp(buffer)
-                    .resize(600, 600, {
-                        fit: 'inside',
-                        withoutEnlargement: true,
-                    })
-                    .webp({ quality: 70 })
-                    .toBuffer();
-
-                const newSize = optimizedBuffer.length;
-                const savedKB = Math.round((originalSize - newSize) / 1024);
-                
-                if (newSize < originalSize) {
-                    let r2Key = null;
-                    try {
-                        const urlObj = new URL(url);
-                        r2Key = decodeURIComponent(urlObj.pathname.substring(1));
-                    } catch(e) {
-                         console.log(`  └ ⚠️ Invalid URL: ${url}`);
-                         continue;
-                    }
-                    
-                    if (!r2Key) {
-                         console.log(`  └ ⚠️ Could not extract R2 key from ${url}`);
-                         continue;
-                    }
-
+                if (wasOptimized || isSupabaseUrl) {
+                    console.log(`  └ [DEBUG] Uploading to R2: ${r2Key}...`);
                     await s3Client.send(new PutObjectCommand({
                         Bucket: R2_BUCKET_NAME,
                         Key: r2Key,
-                        Body: optimizedBuffer,
-                        ContentType: 'image/webp',
+                        Body: bufferToUpload,
+                        ContentType: wasOptimized ? 'image/webp' : (response.headers.get('content-type') || 'image/jpeg'),
                     }));
+                    console.log(`  └ [DEBUG] Upload complete.`);
 
-                    console.log(`  └ 🚀 Success! Optimized to ${Math.round(newSize/1024)} KB (Saved ${savedKB} KB) on R2.`);
-                    optimizedCount++;
-                    savedBytesTotal += (originalSize - newSize);
-                    
-                } else {
-                  console.log(`  └ 🤷 Optimization didn't reduce size.`);
+                    const newR2Url = `https://media.ruralpop.com/${r2Key}`;
+                    if (newImageUrls[i] !== newR2Url) {
+                        newImageUrls[i] = newR2Url;
+                        listingUrlsUpdated = true;
+                    }
+
+                    if (wasOptimized) {
+                        const savedKB = Math.round((originalSize - bufferToUpload.length) / 1024);
+                        console.log(`  └ 🚀 Success! Optimized to ${Math.round(bufferToUpload.length/1024)} KB (Saved ${savedKB} KB) on R2.`);
+                        optimizedCount++;
+                        savedBytesTotal += (originalSize - bufferToUpload.length);
+                    } else if (isSupabaseUrl) {
+                        console.log(`  └ 🚚 Migrated to R2 without optimization.`);
+                    }
                 }
 
             } catch (err) {
                 console.error(`  └ ❌ Error processing image ${url}:`, err.message);
+            }
+        }
+        
+        if (listingUrlsUpdated) {
+            console.log(`  └ 📝 Updating database URLs for listing...`);
+            const { error: updateError } = await supabase
+                .from('listings')
+                .update({ image_urls: newImageUrls })
+                .eq('id', listing.id);
+            if (updateError) {
+                console.error(`  └ ❌ Error updating database:`, updateError.message);
+            } else {
+                console.log(`  └ ✅ Database updated successfully.`);
             }
         }
     }
