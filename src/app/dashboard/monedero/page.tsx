@@ -5,6 +5,7 @@ import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Wallet, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
 import stripe from "@/lib/stripe";
 import { StripeButton } from "./StripeButton";
+import { ConfirmReturnButton } from "@/components/dashboard/ConfirmReturnButton";
 
 export const dynamic = "force-dynamic";
 
@@ -181,15 +182,24 @@ export default async function MonederoDashboardPage() {
                                                     <td className="px-6 py-4 text-sm">
                                                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                                                             order.status === 'paid_held' ? 'bg-amber-100 text-amber-700' :
+                                                            order.status === 'return_initiated' ? 'bg-red-100 text-red-700' :
+                                                            order.status === 'refunded' ? 'bg-gray-100 text-gray-700' :
                                                             order.status === 'paid_out' ? 'bg-green-100 text-green-700' :
                                                             order.status === 'buyer_confirmed' ? 'bg-blue-100 text-blue-700' :
                                                             'bg-gray-100 text-gray-700'
                                                         }`}>
                                                             {order.status === 'paid_held' ? 'Pendiente confirmación' :
+                                                             order.status === 'return_initiated' ? 'Devolución iniciada por comprador' :
+                                                             order.status === 'refunded' ? 'Reembolsado' :
                                                              order.status === 'buyer_confirmed' ? 'Liberando...' :
                                                              order.status === 'paid_out' ? 'Liberado' :
                                                              order.status.replace("_", " ")}
                                                         </span>
+                                                        {order.status === 'return_initiated' && (
+                                                            <div className="mt-2">
+                                                                <ConfirmReturnButton orderId={order.id} />
+                                                            </div>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             ))

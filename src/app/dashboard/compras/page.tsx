@@ -4,6 +4,7 @@ import Link from "next/link";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Package, CheckCircle2 } from "lucide-react";
 import { ConfirmReceptionButton } from "@/components/dashboard/ConfirmReceptionButton";
+import { InitiateReturnButton } from "@/components/dashboard/InitiateReturnButton";
 
 export const dynamic = "force-dynamic";
 
@@ -124,11 +125,22 @@ export default async function ComprasDashboardPage() {
                                     
                                     <div className="w-full md:w-auto flex flex-col gap-3">
                                         {isPendingConfirmation ? (
-                                            <ConfirmReceptionButton orderId={order.id} />
+                                            <>
+                                                <ConfirmReceptionButton orderId={order.id} />
+                                                <InitiateReturnButton orderId={order.id} />
+                                            </>
                                         ) : isConfirmed ? (
                                             <div className="text-sm text-green-600 font-bold bg-green-50 px-4 py-3 rounded-xl border border-green-100 flex items-center justify-center gap-2">
                                                 <CheckCircle2 className="w-5 h-5" />
                                                 Recepción Confirmada
+                                            </div>
+                                        ) : order.status === "return_initiated" ? (
+                                            <div className="text-sm text-amber-700 font-bold bg-amber-50 px-4 py-3 rounded-xl border border-amber-100 flex items-center justify-center gap-2 text-center">
+                                                Devolución en proceso
+                                            </div>
+                                        ) : order.status === "refunded" ? (
+                                            <div className="text-sm text-gray-700 font-bold bg-gray-50 px-4 py-3 rounded-xl border border-gray-200 flex items-center justify-center gap-2 text-center">
+                                                Reembolsado
                                             </div>
                                         ) : (
                                             <div className="text-sm text-[var(--ag-sys-color-text-muted)] font-bold bg-[var(--ag-sys-color-background)] px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] flex items-center justify-center text-center uppercase">

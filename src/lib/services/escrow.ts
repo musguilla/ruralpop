@@ -255,3 +255,94 @@ export async function releaseEscrowPayout(orderId: string) {
     throw new Error("Payout release failed");
   }
 }
+
+export async function initiateEscrowReturn(orderId: string) {
+  const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) throw new Error("Unauthenticated");
+
+  const { data: order, error: orderError } = await supabase
+    .from("escrow_orders")
+    .select("*")
+    .eq("id", orderId)
+    .single();
+
+  if (orderError || !order) throw new Error("Order not found");
+  if (order.buyer_id !== user.id) throw new Error("Unauthorized");
+  if (order.status !== "paid_held" && order.status !== "awaiting_delivery") {
+    throw new Error("Return cannot be initiated at this stage");
+  }
+
+  // Use Admin Client to bypass RLS for updates
+  const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+  const supabaseAdmin = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { error: updateError } = await supabaseAdmin
+    .from("escrow_orders")
+    .update({ 
+      status: "return_initiated",
+    })
+    .eq("id", orderId);
+
+  if (updateError) throw new Error("Failed to initiate return");
+
+  return { success: true };
+}
+
+export async function confirmEscrowReturn(orderId: string) {
+  const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) throw new Error("Unauthenticated");
+
+  const { data: order, error: orderError } = await supabase
+    .from("escrow_orders")
+    .select("*")
+    .eq("id", orderId)
+    .single();
+
+  if (orderError || !order) throw new Error("Order not found");
+  if (order.seller_id !== user.id) throw new Error("Unauthorized");
+  if (order.status !== "return_initiated") {
+    throw new Error("Return hasn't been initiated by the buyer");
+  }
+
+  if (!order.stripe_payment_intent_id) {
+     throw new Error("Missing payment intent to process refund");
+  }
+
+  try {
+    // Perform Stripe Refund
+    await stripe.refunds.create({
+      payment_intent: order.stripe_payment_intent_id,
+      metadata: {
+        escrow_order_id: order.id
+      }
+    });
+
+    // Use Admin Client to bypass RLS for updates
+    const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+    const supabaseAdmin = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    // Update order status
+    await supabaseAdmin
+      .from("escrow_orders")
+      .update({
+        status: "refunded",
+        refunded_at: new Date().toISOString()
+      })
+      .eq("id", order.id);
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Refund failed", error);
+    throw new Error("Refund failed");
+  }
+}

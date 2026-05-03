@@ -65,3 +65,18 @@ export async function createStripeOnboardingLink() {
         return { error: error.message || "Error al generar link de Stripe." };
     }
 }
+
+import { confirmEscrowReturn } from "@/lib/services/escrow";
+import { revalidatePath } from "next/cache";
+
+export async function handleConfirmReturn(orderId: string) {
+    try {
+        await confirmEscrowReturn(orderId);
+        revalidatePath("/dashboard/monedero");
+        revalidatePath("/dashboard/compras");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Error confirming return:", error);
+        return { success: false, error: error.message };
+    }
+}
