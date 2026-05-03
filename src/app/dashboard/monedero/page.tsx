@@ -128,9 +128,11 @@ export default async function MonederoDashboardPage() {
                                 <div className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">
                                     {formatCurrency(wallet.pending_balance_cents / 100)}
                                 </div>
-                                <div className="text-xs text-amber-600 bg-amber-50 rounded-full px-2 py-1 inline-flex items-center gap-1">
-                                    Esperando confirmación
-                                </div>
+                                {wallet.pending_balance_cents > 0 && (
+                                    <div className="text-xs text-amber-600 bg-amber-50 rounded-full px-2 py-1 inline-flex items-center gap-1">
+                                        Esperando confirmación
+                                    </div>
+                                )}
                             </div>
 
                             {/* Card: Total */}
