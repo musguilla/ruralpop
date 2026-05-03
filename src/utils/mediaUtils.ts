@@ -29,7 +29,7 @@ export function getImageUrl(image: string | MediaObject | null | undefined): str
         // Corrección de seguridad: Si la app móvil subió la URL literal con un enviroment fallido
         if (image.startsWith('undefined/')) {
             const cleanPath = image.substring(10); // Quita 'undefined/'
-            const r2BaseUrl = process.env.NEXT_PUBLIC_R2_URL || 'https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev';
+            const r2BaseUrl = process.env.NEXT_PUBLIC_R2_URL || 'https://media.ruralpop.com';
             return `${r2BaseUrl.replace(/\/+$/, '')}/${cleanPath}`;
         }
         return image;
@@ -48,7 +48,7 @@ export function getImageUrl(image: string | MediaObject | null | undefined): str
         if (!r2BaseUrl) {
             console.warn("⚠️ Falta NEXT_PUBLIC_R2_URL en el entorno");
             // Fallback en caso radical de que falte env temporalmente
-            return `https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev/${storage_path}`; 
+            return `https://media.ruralpop.com/${storage_path}`; 
         }
 
         // Limpiar duplicaciones de barras dobles, p.ej. url//path

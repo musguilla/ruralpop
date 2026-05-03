@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
 
     // 6. Retornar la URL firmada y la URL pública final
-    const publicBaseUrl = process.env.NEXT_PUBLIC_R2_URL || `https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev`;
+    const publicBaseUrl = process.env.NEXT_PUBLIC_R2_URL || `https://media.ruralpop.com`;
     const cleanBaseUrl = publicBaseUrl.replace(/\/+$/, '');
     const cleanPath = filePath.replace(/^\/+/, '');
     const finalPublicUrl = `${cleanBaseUrl}/${cleanPath}`;
