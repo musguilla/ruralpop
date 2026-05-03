@@ -35,9 +35,10 @@ const HorseIcon = ({ className }: { className?: string }) => (
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
     "ganaderia": <Image src="/icon-bovino.png" alt="Ganadería" width={20} height={20} className="w-5 h-5 object-contain" />,
     "maquinaria": <Image src="/icon-tractor.png" alt="Maquinaria" width={20} height={20} className="w-5 h-5 object-contain" />,
+    "agricultura": <Image src="/icon-agricultura.png" alt="Agricultura" width={20} height={20} className="w-5 h-5 object-contain" />,
     "forraje": <Image src="/icon-forraje.png" alt="Forraje" width={20} height={20} className="w-5 h-5 object-contain" />,
     "alimentos": <Image src="/icon-alimentos.png" alt="Alimentos" width={20} height={20} className="w-5 h-5 object-contain" />,
-    "agricultura": <Leaf className="w-5 h-5 text-emerald-600" />,
+    // Note: Fincas doesn't have an icon in the new design
     "servicios": <Image src="/icon-transportes.png" alt="Servicios" width={20} height={20} className="w-5 h-5 object-contain" />,
     "fincas": <MapPin className="w-5 h-5 text-emerald-700" />,
 };
