@@ -185,7 +185,7 @@ export default async function MonederoDashboardPage() {
                                                             order.status === 'buyer_confirmed' ? 'bg-blue-100 text-blue-700' :
                                                             'bg-gray-100 text-gray-700'
                                                         }`}>
-                                                            {order.status === 'paid_held' ? 'Retenido' :
+                                                            {order.status === 'paid_held' ? 'Pendiente confirmación' :
                                                              order.status === 'buyer_confirmed' ? 'Liberando...' :
                                                              order.status === 'paid_out' ? 'Liberado' :
                                                              order.status.replace("_", " ")}
