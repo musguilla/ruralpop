@@ -20,10 +20,10 @@ export default function EscrowSuccessPage() {
                 <div className="space-y-4">
                     <Link 
                         href="/dashboard/compras" 
-                        className="w-full py-4 px-6 rounded-xl font-bold bg-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-on-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] transition-all flex items-center justify-center gap-2"
+                        className="w-full py-4 px-6 rounded-xl font-bold bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] transition-all flex items-center justify-center gap-2"
                     >
                         <ShoppingBag className="w-5 h-5" />
-                        Ver mis compras seguras
+                        Ver mis compras
                     </Link>
                     
                     <Link 
