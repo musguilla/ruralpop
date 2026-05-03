@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { FeaturedCheckoutFlow } from "@/components/dashboard/FeaturedCheckoutFlow";
 import Image from "next/image";
+import { formatCurrency } from "@/utils/format";
 
 export const dynamic = "force-dynamic";
 
@@ -109,7 +110,7 @@ export default async function DestacarAnuncioPage(props: Props) {
                         </div>
                         <div className="flex-1 min-w-0">
                             <h2 className="text-lg font-bold text-[var(--ag-sys-color-text)] truncate">{listing.title}</h2>
-                            <div className="text-base font-black text-[var(--ag-sys-color-primary)] mt-0.5">{new Intl.NumberFormat('de-DE').format(listing.price)}€</div>
+                            <div className="text-base font-black text-[var(--ag-sys-color-primary)] mt-0.5">{formatCurrency(listing.price)}</div>
                             {listing.is_featured && (
                                 <div className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full border border-green-200">
                                     ¡Destacado!

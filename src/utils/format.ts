@@ -1,8 +1,9 @@
 export function formatCurrency(amount: number): string {
+    const isInteger = amount % 1 === 0;
     return new Intl.NumberFormat('de-DE', {
         style: 'currency',
         currency: 'EUR',
-        minimumFractionDigits: 0,
+        minimumFractionDigits: isInteger ? 0 : 2,
         maximumFractionDigits: 2,
     }).format(amount);
 }
