@@ -5,7 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { Listing, User } from '../../src/types';
-import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon, X, ShieldCheck } from 'lucide-react-native';
+import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon, X, ShieldCheck, Layers } from 'lucide-react-native';
 import ImageViewing from "react-native-image-viewing";
 import { formatPrice } from '../../src/lib/formatters';
 import { useAuth } from '../../src/contexts/AuthContext';
@@ -234,11 +234,22 @@ export default function ListingDetailsScreen() {
                         )}
                     </View>
 
-                    <View className="flex-row items-center bg-surface-muted self-start px-3 py-2 rounded-xl mb-6 border border-gray-100">
-                        <MapPin color="#6b7280" size={18} />
-                        <Text className="text-text-muted font-medium ml-1">
-                            {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
-                        </Text>
+                    <View className="flex-row flex-wrap gap-2 mb-6">
+                        <View className="flex-row items-center bg-surface-muted px-3 py-2 rounded-xl border border-gray-100">
+                            <MapPin color="#6b7280" size={18} />
+                            <Text className="text-text-muted font-medium ml-1">
+                                {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
+                            </Text>
+                        </View>
+
+                        {listing.subcategory && (
+                            <View className="flex-row items-center bg-surface-muted px-3 py-2 rounded-xl border border-gray-100">
+                                <Layers color="#6b7280" size={18} />
+                                <Text className="text-text-muted font-medium ml-1 capitalize">
+                                    {listing.subcategory}
+                                </Text>
+                            </View>
+                        )}
                     </View>
 
                     {/* Seller Info Container */}
