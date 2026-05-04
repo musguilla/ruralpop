@@ -236,7 +236,7 @@ export default function ChatScreen() {
 
                 <View 
                     className="bg-white border-t border-gray-200 px-4 pt-3 flex-row items-center"
-                    style={{ paddingBottom: Math.max(insets.bottom, 12) }}
+                    style={{ paddingBottom: Platform.OS === 'android' ? Math.max(insets.bottom, 12) : 12 }}
                 >
                     <TextInput
                         className="flex-1 bg-surface-muted border border-gray-200 rounded-full px-4 h-12 text-base text-gray-800 mr-2"
