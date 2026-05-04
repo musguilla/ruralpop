@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -19,6 +20,7 @@ export default function ChatScreen() {
     const { listingId, otherUserId } = useLocalSearchParams<{ listingId: string, otherUserId: string }>();
     const router = useRouter();
     const { user } = useAuth();
+    const insets = useSafeAreaInsets();
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
@@ -232,7 +234,10 @@ export default function ChatScreen() {
                     />
                 )}
 
-                <View className="bg-white border-t border-gray-200 px-4 py-3 flex-row items-center">
+                <View 
+                    className="bg-white border-t border-gray-200 px-4 pt-3 flex-row items-center"
+                    style={{ paddingBottom: Math.max(insets.bottom, 12) }}
+                >
                     <TextInput
                         className="flex-1 bg-surface-muted border border-gray-200 rounded-full px-4 h-12 text-base text-gray-800 mr-2"
                         placeholder="Escribe un mensaje..."
