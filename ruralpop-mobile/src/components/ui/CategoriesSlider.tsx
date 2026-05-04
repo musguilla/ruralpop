@@ -19,6 +19,9 @@ const VISUAL_CATEGORIES = [
     { id: 'Transporte', type: 'subcategory', label: 'Transporte', image: require('../../../assets/icon-transportes.png') },
     { id: 'Veterinarios', type: 'subcategory', label: 'Veterinarios', image: require('../../../assets/icon-veterinarios.png') },
     { id: 'Herradores', type: 'subcategory', label: 'Herradores', image: require('../../../assets/icon-herradores.png') },
+    { id: 'fincas', type: 'category', label: 'Fincas', image: require('../../../assets/icon-fincas.webp') },
+    { id: 'agricultura', type: 'category', label: 'Agricultura', image: require('../../../assets/icon-agricultura.png') },
+    { id: 'Apicultura', type: 'subcategory', label: 'Apicultura', image: require('../../../assets/icon-apicultura.webp') },
 ];
 
 export function CategoriesSlider() {

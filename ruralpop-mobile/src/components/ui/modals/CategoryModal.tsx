@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView, SafeAreaView, TextInput } from 'react-native';
 import { X, Check, ChevronRight, ChevronLeft, Search, List, PawPrint, Tractor, Leaf, Briefcase, Apple } from 'lucide-react-native';
+import { Image } from 'expo-image';
 import { CATEGORIES } from '../../../constants/categories';
 
 interface CategoryModalProps {
@@ -16,6 +17,8 @@ const ICONS: Record<string, any> = {
     forraje: Leaf,
     servicios: Briefcase,
     alimentos: Apple,
+    fincas: (props: any) => <Image source={require('../../../assets/icon-fincas.webp')} style={{ width: props.size, height: props.size }} contentFit="contain" />,
+    agricultura: (props: any) => <Image source={require('../../../assets/icon-agricultura.png')} style={{ width: props.size, height: props.size }} contentFit="contain" />,
 };
 
 export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: CategoryModalProps) {
@@ -29,9 +32,14 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
     const activeList = useMemo(() => {
         const query = normalizeStr(searchQuery);
         if (activeParent) {
-            return activeParent.subcategories
+            const subs = activeParent.subcategories
                 .filter((sub: string) => normalizeStr(sub).includes(query))
                 .map((sub: string) => ({ id: sub, label: sub, isSub: true }));
+
+            if (!query || normalizeStr(`Todo en ${activeParent.label}`).includes(query)) {
+                return [{ id: activeParent.id, label: `Todo en ${activeParent.label}`, isSub: true, isAllOption: true }, ...subs];
+            }
+            return subs;
         }
         return CATEGORIES
             .filter((c: any) => normalizeStr(c.label).includes(query))

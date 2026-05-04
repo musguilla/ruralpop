@@ -9,27 +9,66 @@ export const CATEGORIES = [
             "Ovino",
             "Porcino",
             "Avicultura",
+            "Apicultura",
             "Perros",
             "Conejos",
+            "Otros",
         ],
     },
     {
         id: "maquinaria",
         label: "Maquinaria y herramientas",
-        subcategories: [],
+        subcategories: [
+            "Tractores",
+            "Abonadoras",
+            "Cosechadoras",
+            "Desbrozadoras",
+            "Encintadoras",
+            "Empacadoras",
+            "Motocultores",
+            "Remolques",
+            "Sembradoras",
+            "Sulfatadoras",
+            "Segadoras",
+            "Trituradoras",
+            "Volteadoras",
+            "Otra maquinaria agrícola"
+        ],
     },
     {
         id: "forraje",
-        label: "Forraje y alimentación",
+        label: "Forraje y alimentación animal",
         subcategories: [],
+    },
+    {
+        id: "fincas",
+        label: "Fincas",
+        subcategories: [
+            "Venta",
+            "Alquiler",
+            "Traspasos explotaciones"
+        ],
+    },
+    {
+        id: "agricultura",
+        label: "Agricultura",
+        subcategories: [
+            "Semillas",
+            "Plantas y plantones"
+        ],
     },
     {
         id: "servicios",
         label: "Servicios",
         subcategories: [
+            "Cerramientos y vallados",
+            "Construcción rural",
+            "Esquiladores",
+            "Herradores",
+            "Mantenimiento de fincas",
+            "Servicios forestales",
             "Transporte",
-            "Veterinarios",
-            "Herradores"
+            "Veterinarios"
         ],
     },
     {
