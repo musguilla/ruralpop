@@ -1,5 +1,4 @@
-import { View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';;
+import { View, Text, TouchableOpacity, Alert, SafeAreaView, ScrollView } from "react-native";
 import { Image } from "expo-image";
 import { getOptimizedImageUrl } from "../../src/lib/image-optimization";
 import { useAuth } from "../../src/contexts/AuthContext";
