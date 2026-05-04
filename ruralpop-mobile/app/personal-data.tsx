@@ -30,6 +30,7 @@ export default function PersonalDataScreen() {
     const [isMunicipalityModalOpen, setIsMunicipalityModalOpen] = useState(false);
 
     const [isSaving, setIsSaving] = useState(false);
+    const [isPicking, setIsPicking] = useState(false);
     const [isUploadingImage, setIsUploadingImage] = useState(false);
     const [successMessage, setSuccessMessage] = useState(false);
 
@@ -106,28 +107,36 @@ export default function PersonalDataScreen() {
     };
 
     const handlePickAvatar = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1, // We will compress during manipulation
-            base64: false,
-        });
+        if (isPicking) return;
+        setIsPicking(true);
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 1, // We will compress during manipulation
+                base64: false,
+            });
 
-        if (!result.canceled && result.assets && result.assets.length > 0) {
-            const asset = result.assets[0];
-            
-            // Resize and compress
-            const manipResult = await ImageManipulator.manipulateAsync(
-                asset.uri,
-                [{ resize: { width: 500 } }], // Smaller size for avatars
-                { compress: 0.7, format: ImageManipulator.SaveFormat.WEBP, base64: true }
-            );
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                const asset = result.assets[0];
+                
+                // Resize and compress
+                const manipResult = await ImageManipulator.manipulateAsync(
+                    asset.uri,
+                    [{ resize: { width: 500 } }], // Smaller size for avatars
+                    { compress: 0.7, format: ImageManipulator.SaveFormat.WEBP, base64: true }
+                );
 
-            if (manipResult.base64) {
-                // Pass a mocked asset object that has the base64 injected
-                uploadAvatar({ ...asset, base64: manipResult.base64, uri: manipResult.uri });
+                if (manipResult.base64) {
+                    // Pass a mocked asset object that has the base64 injected
+                    uploadAvatar({ ...asset, base64: manipResult.base64, uri: manipResult.uri });
+                }
             }
+        } catch (error) {
+            console.error("Error picking avatar:", error);
+        } finally {
+            setIsPicking(false);
         }
     };
 

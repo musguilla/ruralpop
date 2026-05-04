@@ -36,6 +36,7 @@ export default function EditListingScreen() {
     const [isMunicipalityModalOpen, setIsMunicipalityModalOpen] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPicking, setIsPicking] = useState(false);
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
@@ -106,27 +107,35 @@ export default function EditListingScreen() {
     }
 
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1, // We will compress during manipulation
-            base64: false,
-        });
+        if (isPicking) return;
+        setIsPicking(true);
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1, // We will compress during manipulation
+                base64: false,
+            });
 
-        if (!result.canceled && result.assets && result.assets.length > 0) {
-            const asset = result.assets[0];
-            
-            // Resize and compress
-            const manipResult = await ImageManipulator.manipulateAsync(
-                asset.uri,
-                [{ resize: { width: 600 } }],
-                { compress: 0.7, format: ImageManipulator.SaveFormat.WEBP, base64: true }
-            );
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                const asset = result.assets[0];
+                
+                // Resize and compress
+                const manipResult = await ImageManipulator.manipulateAsync(
+                    asset.uri,
+                    [{ resize: { width: 600 } }],
+                    { compress: 0.7, format: ImageManipulator.SaveFormat.WEBP, base64: true }
+                );
 
-            if (manipResult.base64) {
-                setImages([...images, `data:image/webp;base64,${manipResult.base64}`]);
+                if (manipResult.base64) {
+                    setImages([...images, `data:image/webp;base64,${manipResult.base64}`]);
+                }
             }
+        } catch (error) {
+            console.error("Error picking image:", error);
+        } finally {
+            setIsPicking(false);
         }
     };
 
