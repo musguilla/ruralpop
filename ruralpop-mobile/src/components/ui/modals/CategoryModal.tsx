@@ -17,8 +17,8 @@ const ICONS: Record<string, any> = {
     forraje: Leaf,
     servicios: Briefcase,
     alimentos: Apple,
-    fincas: (props: any) => <Image source={require('../../../assets/icon-fincas.webp')} style={{ width: props.size, height: props.size }} contentFit="contain" />,
-    agricultura: (props: any) => <Image source={require('../../../assets/icon-agricultura.png')} style={{ width: props.size, height: props.size }} contentFit="contain" />,
+    fincas: (props: any) => <Image source={require('../../../../assets/icon-fincas.webp')} style={{ width: props.size, height: props.size }} contentFit="contain" />,
+    agricultura: (props: any) => <Image source={require('../../../../assets/icon-agricultura.png')} style={{ width: props.size, height: props.size }} contentFit="contain" />,
 };
 
 export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: CategoryModalProps) {
