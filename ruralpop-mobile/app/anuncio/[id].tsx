@@ -242,7 +242,7 @@ export default function ListingDetailsScreen() {
                     <View className="bg-primary-muted/10 border border-gray-200 rounded-2xl p-4 mb-8 flex-row items-center">
                         <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm mr-4 overflow-hidden border border-gray-100">
                             {listing.seller?.avatar_url ? (
-                                <Image source={{ uri: getOptimizedImageUrl(listing.seller.avatar_url, { width: 100 }) || undefined }} className="w-full h-full" contentFit="cover" transition={200} />
+                                <Image source={{ uri: getOptimizedImageUrl(listing.seller.avatar_url, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
                             ) : (
                                 <Text className="text-xl font-bold text-primary">
                                     {listing.seller?.name?.charAt(0) || 'U'}
