@@ -21,4 +21,6 @@ export interface User {
     avatar_url?: string;
     phone?: string;
     created_at?: string;
+    role?: string;
+    commercial_name?: string;
 }

@@ -5,7 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { Listing, User } from '../../src/types';
-import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon, X } from 'lucide-react-native';
+import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon, X, ShieldCheck } from 'lucide-react-native';
 import ImageViewing from "react-native-image-viewing";
 import { formatPrice } from '../../src/lib/formatters';
 import { useAuth } from '../../src/contexts/AuthContext';
@@ -52,7 +52,7 @@ export default function ListingDetailsScreen() {
                     .from('listings')
                     .select(`
             *,
-            seller:users (id, name, avatar_url, created_at)
+            seller:users (id, name, avatar_url, created_at, role, commercial_name)
           `)
                     .eq('id', id)
                     .single();
@@ -93,6 +93,9 @@ export default function ListingDetailsScreen() {
     const formattedPrice = formatPrice(listing.price);
 
     const hasPhone = !!(listing.seller?.phone || listing.contact_phone);
+
+    const isProfessional = listing.seller?.role === 'profesional';
+    const rawSellerName = isProfessional && listing.seller?.commercial_name ? listing.seller.commercial_name : (listing.seller?.name || "Usuario Ruralpop");
 
     const handleCall = () => {
         const phone = listing.seller?.phone || listing.contact_phone;
@@ -245,13 +248,19 @@ export default function ListingDetailsScreen() {
                                 <Image source={{ uri: getOptimizedImageUrl(listing.seller.avatar_url, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
                             ) : (
                                 <Text className="text-xl font-bold text-primary">
-                                    {listing.seller?.name?.charAt(0) || 'U'}
+                                    {rawSellerName.charAt(0) || 'U'}
                                 </Text>
                             )}
                         </View>
                         <View className="flex-1">
                             <Text className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Vendedor</Text>
-                            <Text className="text-lg font-bold text-text">{listing.seller?.name || 'Usuario Ruralpop'}</Text>
+                            <View className="flex-row items-center flex-wrap">
+                                <Text className="text-lg font-bold text-text mr-1">{rawSellerName}</Text>
+                                {isProfessional && <ShieldCheck color="#059669" size={18} />}
+                            </View>
+                            {isProfessional && (
+                                <Text className="text-[10px] text-primary font-bold uppercase tracking-wider mt-0.5">Profesional Verificado</Text>
+                            )}
                         </View>
                     </View>
 
