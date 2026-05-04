@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';;
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { Heart } from "lucide-react-native";
