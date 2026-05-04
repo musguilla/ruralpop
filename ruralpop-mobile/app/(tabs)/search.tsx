@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, Dimensions, RefreshControl, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, Dimensions, RefreshControl, Modal, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Search, MapPin, List, SlidersHorizontal, ArrowUpDown, ChevronLeft, ArrowLeft, X, Check } from 'lucide-react-native';
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
@@ -18,6 +19,7 @@ const numColumns = width > 768 ? 3 : 1;
 export default function SearchScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const insets = useSafeAreaInsets();
     const initialCategory = typeof params.category === 'string' ? params.category : null;
     const initialQuery = typeof params.q === 'string' ? params.q : '';
 
@@ -210,7 +212,10 @@ export default function SearchScreen() {
     return (
         <SafeAreaView className="flex-1 bg-surface-muted">
             {/* Header Search Area */}
-            <View className="bg-white px-4 pt-2 pb-4 border-b border-gray-200 z-10">
+            <View 
+                className="bg-white px-4 pb-4 border-b border-gray-200 z-10"
+                style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 8) : 8 }}
+            >
 
                 {/* Main Input with Back Button */}
                 <View className="flex-row items-center mb-4 mt-2">

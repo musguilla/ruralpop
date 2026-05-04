@@ -197,7 +197,10 @@ export default function ChatScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-surface-muted">
-            <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row items-center">
+            <View 
+                className="px-4 pb-3 bg-white border-b border-gray-100 flex-row items-center"
+                style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 12) : 12 }}
+            >
                 <TouchableOpacity onPress={() => router.back()} className="mr-3">
                     <ChevronLeft color="#374151" size={28} />
                 </TouchableOpacity>

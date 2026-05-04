@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { useRouter } from 'expo-router';
@@ -23,6 +24,7 @@ interface Conversation {
 export default function MessagesScreen() {
     const { session, user, isLoading } = useAuth();
     const router = useRouter();
+    const insets = useSafeAreaInsets();
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [fetching, setFetching] = useState(true);
 
@@ -129,7 +131,10 @@ export default function MessagesScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-surface-muted">
-            <View className="px-4 py-4 bg-white border-b border-gray-100 flex-row justify-between items-center">
+            <View 
+                className="px-4 pb-4 bg-white border-b border-gray-100 flex-row justify-between items-center"
+                style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 16) : 16 }}
+            >
                 <Text className="text-2xl font-extrabold text-text">Mensajes</Text>
             </View>
 

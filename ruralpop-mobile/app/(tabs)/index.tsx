@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, FlatList, ActivityIndicator, RefreshControl, Dimensions } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, RefreshControl, Dimensions, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CategoriesSlider } from '../../src/components/ui/CategoriesSlider';
 import { ListingCard } from '../../src/components/ui/ListingCard';
 import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
@@ -49,6 +50,7 @@ export default function Home() {
     const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     async function fetchListings(pageIndex = 0) {
         if (pageIndex === 0) {
@@ -181,7 +183,10 @@ export default function Home() {
 
     // Header is handled by HomeHeader component Above
     return (
-        <View className="flex-1 bg-surface-muted pt-12">
+        <View 
+            className="flex-1 bg-surface-muted"
+            style={{ paddingTop: Platform.OS === 'android' ? insets.top : 48 }}
+        >
             {/* Header that sticks to top */}
             <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row justify-center items-center h-14">
                 <Text className="text-2xl font-extrabold text-primary tracking-tight">ruralpop</Text>

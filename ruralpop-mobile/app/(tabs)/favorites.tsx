@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl, SafeAreaView } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl, SafeAreaView, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { Heart } from "lucide-react-native";
@@ -15,6 +16,7 @@ export default function FavoritesScreen() {
     const { session, isLoading: authLoading } = useAuth();
     const router = useRouter();
     const { favorites } = useFavorites();
+    const insets = useSafeAreaInsets();
     const [listings, setListings] = useState<Listing[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -94,7 +96,10 @@ export default function FavoritesScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-surface">
-            <View className="px-6 py-4 border-b border-gray-100 bg-white">
+            <View 
+                className="px-6 pb-4 border-b border-gray-100 bg-white"
+                style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 16) : 16 }}
+            >
                 <Text className="text-2xl font-extrabold text-text">Mis Favoritos</Text>
             </View>
 

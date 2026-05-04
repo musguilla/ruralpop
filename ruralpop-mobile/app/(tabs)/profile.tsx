@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, Alert, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, Alert, SafeAreaView, ScrollView, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { getOptimizedImageUrl } from "../../src/lib/image-optimization";
 import { useAuth } from "../../src/contexts/AuthContext";
@@ -9,6 +10,7 @@ import { supabase } from "../../src/lib/supabase";
 export default function ProfileScreen() {
     const { session, user, isLoading } = useAuth();
     const router = useRouter();
+    const insets = useSafeAreaInsets();
 
     if (isLoading) return null;
 
@@ -84,7 +86,10 @@ export default function ProfileScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-surface">
-            <View className="px-6 py-4 border-b border-gray-100 bg-white">
+            <View 
+                className="px-6 pb-4 border-b border-gray-100 bg-white"
+                style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 16) : 16 }}
+            >
                 <Text className="text-2xl font-extrabold text-text">Mi Perfil</Text>
             </View>
 
