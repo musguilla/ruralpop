@@ -1,63 +1,10 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, ScrollView, SafeAreaView, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, ScrollView, SafeAreaView, KeyboardAvoidingView, Platform, Keyboard, TextInput } from 'react-native';
 import { X, ChevronRight, Check } from 'lucide-react-native';
 
 import { formatPrice } from '../../../lib/formatters';
 import { CategoryModal } from './CategoryModal';
 import { LocationModal } from './LocationModal';
-
-const PRICE_OPTIONS = [
-    0, 25, 50, 100, 250, 500, 1000, 2000, 3000, 4000, 5000, 
-    6000, 7000, 8000, 9000, 10000, 15000, 20000, 30000, 40000, 50000, 75000, 100000
-];
-
-interface PricePickerModalProps {
-    visible: boolean;
-    onClose: () => void;
-    onSelect: (val: string) => void;
-    currentVal: string;
-    isMax?: boolean;
-}
-
-function PricePickerModal({ visible, onClose, onSelect, currentVal, isMax }: PricePickerModalProps) {
-    return (
-        <Modal visible={visible} transparent animationType="fade">
-            <View className="flex-1 justify-end bg-black/50">
-                <View className="bg-white rounded-t-3xl h-[65%]">
-                    <View className="flex-row items-center justify-between px-6 py-4 border-b border-gray-100">
-                        <TouchableOpacity onPress={onClose} className="p-2 -ml-2">
-                            <X color="#374151" size={24} />
-                        </TouchableOpacity>
-                        <Text className="text-[19px] font-bold text-text">{isMax ? 'Precio Hasta' : 'Precio Desde'}</Text>
-                        <View className="w-8" />
-                    </View>
-                    <ScrollView>
-                        {PRICE_OPTIONS.map((val) => {
-                            let valStr = val.toString();
-                            if (val === 0 && !isMax) valStr = '';
-                            if (val === 100000 && isMax) valStr = '';
-
-                            const isSelected = currentVal === valStr || (!currentVal && valStr === '');
-                            
-                            return (
-                                <TouchableOpacity 
-                                    key={val} 
-                                    onPress={() => onSelect(valStr)}
-                                    className={`px-6 py-4 border-b border-gray-100 flex-row justify-between items-center ${isSelected ? 'bg-primary/5' : ''}`}
-                                >
-                                    <Text className={`text-[17px] ${isSelected ? 'text-primary font-bold' : 'text-gray-800'}`}>
-                                        {formatPrice(val.toString())} €
-                                    </Text>
-                                    {isSelected && <Check color="#059669" size={20} />}
-                                </TouchableOpacity>
-                            )
-                        })}
-                    </ScrollView>
-                </View>
-            </View>
-        </Modal>
-    );
-}
 
 interface FiltersModalProps {
     visible: boolean;
@@ -88,9 +35,6 @@ export function FiltersModal({
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
     
-    // Price Picker states
-    const [isMinPriceOpen, setIsMinPriceOpen] = useState(false);
-    const [isMaxPriceOpen, setIsMaxPriceOpen] = useState(false);
 
     return (
         <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
@@ -149,26 +93,31 @@ export function FiltersModal({
                         <View className="px-6 py-6 border-b border-gray-100">
                             <Text className="text-[17px] font-bold text-gray-800 mb-4">Precio</Text>
                             
-                            <TouchableOpacity 
-                                onPress={() => setIsMinPriceOpen(true)}
-                                className="flex-row items-center justify-between px-4 py-4 bg-white border border-gray-300 rounded-xl"
-                                style={{ marginBottom: 24 }}
-                            >
-                                <Text className={`text-[17px] ${priceMin ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
-                                    {priceMin ? `${formatPrice(priceMin)} €` : 'Desde'}
-                                </Text>
-                                <ChevronRight color="#4b5563" size={20} />
-                            </TouchableOpacity>
+                            <View className="flex-row items-center justify-between px-4 py-4 bg-white border border-gray-300 rounded-xl" style={{ marginBottom: 24 }}>
+                                <TextInput
+                                    className="flex-1 text-[17px] text-gray-900 font-medium"
+                                    placeholder="Desde"
+                                    placeholderTextColor="#9ca3af"
+                                    keyboardType="numeric"
+                                    value={priceMin}
+                                    onChangeText={setPriceMin}
+                                    returnKeyType="done"
+                                />
+                                <Text className="text-[17px] text-gray-500 ml-2">€</Text>
+                            </View>
 
-                            <TouchableOpacity 
-                                onPress={() => setIsMaxPriceOpen(true)}
-                                className="flex-row items-center justify-between px-4 py-4 bg-white border border-gray-300 rounded-xl"
-                            >
-                                <Text className={`text-[17px] ${priceMax ? 'text-gray-900 font-medium' : 'text-gray-600'}`}>
-                                    {priceMax ? `${formatPrice(priceMax)} €` : 'Hasta'}
-                                </Text>
-                                <ChevronRight color="#4b5563" size={20} />
-                            </TouchableOpacity>
+                            <View className="flex-row items-center justify-between px-4 py-4 bg-white border border-gray-300 rounded-xl">
+                                <TextInput
+                                    className="flex-1 text-[17px] text-gray-900 font-medium"
+                                    placeholder="Hasta"
+                                    placeholderTextColor="#9ca3af"
+                                    keyboardType="numeric"
+                                    value={priceMax}
+                                    onChangeText={setPriceMax}
+                                    returnKeyType="done"
+                                />
+                                <Text className="text-[17px] text-gray-500 ml-2">€</Text>
+                            </View>
                         </View>
 
                         <View className="h-8 w-full bg-white" />
@@ -206,26 +155,6 @@ export function FiltersModal({
                 onSelect={setLocationId}
             />
 
-            <PricePickerModal 
-                visible={isMinPriceOpen} 
-                onClose={() => setIsMinPriceOpen(false)} 
-                currentVal={priceMin}
-                onSelect={(val) => {
-                    setPriceMin(val);
-                    setIsMinPriceOpen(false);
-                }} 
-            />
-
-            <PricePickerModal 
-                visible={isMaxPriceOpen} 
-                onClose={() => setIsMaxPriceOpen(false)} 
-                currentVal={priceMax}
-                isMax={true}
-                onSelect={(val) => {
-                    setPriceMax(val);
-                    setIsMaxPriceOpen(false);
-                }} 
-            />
         </Modal>
     );
 }
