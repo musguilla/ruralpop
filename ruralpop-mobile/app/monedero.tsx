@@ -37,9 +37,10 @@ export default function MonederoScreen() {
 
             if (data.wallet?.id) {
                 const { data: txData } = await supabase
-                    .from('wallet_transactions')
-                    .select('*, escrow_orders(listings(title))')
-                    .eq('wallet_id', data.id)
+                    .from('escrow_orders')
+                    .select('*, listings(title)')
+                    .eq('seller_id', user.id)
+                    .neq('status', 'pending_checkout')
                     .order('created_at', { ascending: false })
                     .limit(10);
                 
@@ -170,7 +171,12 @@ export default function MonederoScreen() {
                                 </View>
                             </View>
 
-                            <Text className="text-xl font-bold text-text mb-4 mt-2">Últimas operaciones</Text>
+                            <View className="flex-row justify-between items-end mb-4 mt-2">
+                                <Text className="text-xl font-bold text-text">Últimas operaciones</Text>
+                                <TouchableOpacity onPress={() => router.push('/ventas')}>
+                                    <Text className="text-primary font-bold text-sm">Ver todas las ventas</Text>
+                                </TouchableOpacity>
+                            </View>
                             
                             {transactions.length === 0 ? (
                                 <Text className="text-gray-500 text-center py-4">No hay operaciones recientes.</Text>
@@ -178,7 +184,9 @@ export default function MonederoScreen() {
                                 <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
                                     {transactions.map((tx, index) => {
                                         const isLast = index === transactions.length - 1;
-                                        const listingTitle = tx.escrow_orders?.listings?.title || 'Pedido seguro';
+                                        // Support both an array or a direct object if it's one-to-one
+                                        const listingData = Array.isArray(tx.listings) ? tx.listings[0] : tx.listings;
+                                        const listingTitle = listingData?.title || 'Pedido seguro';
                                         
                                         // Formato fecha simple
                                         const date = new Date(tx.created_at);
@@ -192,22 +200,24 @@ export default function MonederoScreen() {
                                                 </View>
                                                 <View className="items-end">
                                                     <Text className="text-text font-bold text-base mb-1">
-                                                        {(tx.amount_cents / 100).toFixed(2)} €
+                                                        {(tx.seller_net_amount_cents / 100).toFixed(2)} €
                                                     </Text>
-                                                    {tx.type === 'escrow_release' ? (
+                                                    {tx.status === 'paid_out' || tx.status === 'buyer_confirmed' ? (
                                                         <View className="bg-green-100 px-2 py-0.5 rounded-md">
                                                             <Text className="text-[10px] font-bold text-green-700">Liberado</Text>
                                                         </View>
-                                                    ) : tx.type === 'escrow_hold' ? (
+                                                    ) : tx.status === 'paid_held' ? (
                                                         <View className="bg-orange-100 px-2 py-0.5 rounded-md">
                                                             <Text className="text-[10px] font-bold text-orange-700">Retenido</Text>
                                                         </View>
-                                                    ) : tx.type === 'payout' ? (
-                                                        <View className="bg-blue-100 px-2 py-0.5 rounded-md">
-                                                            <Text className="text-[10px] font-bold text-blue-700">Transferencia</Text>
+                                                    ) : tx.status === 'return_initiated' ? (
+                                                        <View className="bg-red-100 px-2 py-0.5 rounded-md">
+                                                            <Text className="text-[10px] font-bold text-red-700">Devolución</Text>
                                                         </View>
                                                     ) : (
-                                                        <Text className="text-[10px] text-gray-500">{tx.type}</Text>
+                                                        <View className="bg-gray-100 px-2 py-0.5 rounded-md">
+                                                            <Text className="text-[10px] text-gray-500 uppercase">{tx.status.replace('_', ' ')}</Text>
+                                                        </View>
                                                     )}
                                                 </View>
                                             </View>

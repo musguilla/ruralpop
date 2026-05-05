@@ -47,18 +47,37 @@ export default function VentasScreen() {
     async function fetchMySales() {
         if (!user) return;
         try {
-            const { data, error } = await supabase
+            const { data: escrowData, error: escrowError } = await supabase
                 .from('escrow_orders')
                 .select(`
-                    id, status, seller_net_amount_cents, created_at,
-                    listings ( title, image_urls )
+                    id, status, seller_net_amount_cents, created_at, listing_id,
+                    listings ( title, image_urls, price, sold_price )
                 `)
                 .eq('seller_id', user.id)
                 .neq('status', 'pending_checkout')
                 .order('created_at', { ascending: false });
 
-            if (error) throw error;
-            setOrders(data || []);
+            const { data: manualData, error: manualError } = await supabase
+                .from('listings')
+                .select('id, title, image_urls, price, sold_price, created_at, updated_at, status')
+                .eq('user_id', user.id)
+                .eq('status', 'sold')
+                .order('created_at', { ascending: false });
+
+            if (escrowError) throw escrowError;
+            if (manualError) throw manualError;
+
+            const escrowOrders = escrowData || [];
+            const manualListings = manualData || [];
+
+            const escrowListingIds = new Set(escrowOrders.map(o => o.listing_id));
+            const manualSoldListings = manualListings.filter(l => !escrowListingIds.has(l.id));
+
+            const escrowItems = escrowOrders.map(o => ({ type: 'escrow', data: o, date: new Date(o.created_at).getTime() }));
+            const manualItems = manualSoldListings.map(l => ({ type: 'manual', data: l, date: new Date(l.updated_at || l.created_at).getTime() }));
+
+            const combinedItems = [...escrowItems, ...manualItems].sort((a, b) => b.date - a.date);
+            setOrders(combinedItems);
         } catch (error) {
             console.error('Error fetching my sales', error);
         } finally {
@@ -84,9 +103,12 @@ export default function VentasScreen() {
     };
 
     const renderItem = ({ item }: { item: any }) => {
-        const listing = Array.isArray(item.listings) ? item.listings[0] : item.listings;
+        const isEscrow = item.type === 'escrow';
+        const order = isEscrow ? item.data : null;
+        const listing = isEscrow ? (Array.isArray(order.listings) ? order.listings[0] : order.listings) : item.data;
+        
         const imageUrl = listing?.image_urls?.[0] ? getOptimizedImageUrl(listing.image_urls[0], { width: 200, height: 200 }) : null;
-        const { label, color, bg, icon: StatusIcon } = getStatusInfo(item.status);
+        const { label, color, bg, icon: StatusIcon } = isEscrow ? getStatusInfo(order.status) : { label: 'Venta manual (sin protección)', color: 'text-gray-500', bg: 'bg-gray-100', icon: Tag };
 
         return (
             <View className="mb-4 bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
@@ -107,7 +129,13 @@ export default function VentasScreen() {
                             {listing?.title || 'Producto desconocido'}
                         </Text>
                         <Text className="text-lg font-extrabold text-primary">
-                            {(item.seller_net_amount_cents / 100).toFixed(2)} € <Text className="text-sm font-normal text-gray-500">(Neto)</Text>
+                            {isEscrow 
+                                ? `${(order.seller_net_amount_cents / 100).toFixed(2)} € `
+                                : listing?.sold_price 
+                                    ? `${listing.sold_price.toFixed(2)} € ` 
+                                    : `${listing?.price?.toFixed(2) || '0.00'} € `
+                            }
+                            {isEscrow && <Text className="text-sm font-normal text-gray-500">(Neto)</Text>}
                         </Text>
                     </View>
                 </View>
@@ -120,11 +148,11 @@ export default function VentasScreen() {
                         </Text>
                     </View>
                     <Text className="text-xs text-gray-500 font-medium">
-                        {new Date(item.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+                        {new Date(item.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
                     </Text>
                 </View>
 
-                {item.status === 'paid_held' && (
+                {isEscrow && order.status === 'paid_held' && (
                     <View className="p-4 bg-blue-50/50 border-t border-blue-100">
                         <Text className="text-sm text-blue-800 font-medium text-center">
                             ¡El comprador ya ha pagado! Prepara el paquete para el envío. Recibirás el dinero cuando lo reciba.
@@ -133,14 +161,14 @@ export default function VentasScreen() {
                 )}
 
                 {/* Acciones de Escrow */}
-                {item.status === 'return_initiated' && (
+                {isEscrow && order.status === 'return_initiated' && (
                     <View className="px-4 py-3 border-t border-gray-100 bg-white">
                         <TouchableOpacity
-                            onPress={() => handleEscrowAction('confirm_return', item.id)}
+                            onPress={() => handleEscrowAction('confirm_return', order.id)}
                             disabled={!!actionLoading}
                             className="bg-emerald-600 py-2.5 rounded-xl items-center justify-center shadow-sm"
                         >
-                            {actionLoading === `confirm_return_${item.id}` ? (
+                            {actionLoading === `confirm_return_${order.id}` ? (
                                 <ActivityIndicator color="white" size="small" />
                             ) : (
                                 <Text className="text-white font-bold text-sm">Confirmar Devolución Recibida</Text>
