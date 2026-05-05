@@ -44,7 +44,8 @@ export default async function MonederoDashboardPage() {
         `)
         .eq("seller_id", user.id)
         .neq("status", "pending_checkout")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(10);
 
     return (
         <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-12 w-full">
@@ -149,7 +150,12 @@ export default async function MonederoDashboardPage() {
 
                         </div>
 
-                        <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-6">Últimas operaciones</h2>
+                        <div className="flex justify-between items-end mb-6">
+                            <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)]">Últimas operaciones</h2>
+                            <Link href="/dashboard?tab=vendidos" className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline mb-1">
+                                Ver todas las ventas
+                            </Link>
+                        </div>
 
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden">
                             <div className="overflow-x-auto">

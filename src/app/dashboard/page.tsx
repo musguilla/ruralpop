@@ -5,6 +5,7 @@ import Link from "next/link";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Tractor, MapPin, Tag, Clock } from "lucide-react";
 import { DashboardListingActions } from "@/components/dashboard/DashboardListingActions";
+import { UnifiedListingCard, UnifiedItem } from "@/components/dashboard/UnifiedListingCard";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,37 @@ export default async function DashboardPage(props: Props) {
 
     if (error) {
         console.error("Error fetching user listings:", error);
+    }
+
+    // Obtener operaciones de Escrow si estamos en la pestaña de vendidos
+    let escrowOrders: any[] = [];
+    if (currentTab === 'sold') {
+        const { data: eo } = await supabase
+            .from("escrow_orders")
+            .select(`
+                *,
+                listings (*)
+            `)
+            .eq("seller_id", user.id)
+            .neq("status", "pending_checkout")
+            .order("created_at", { ascending: false });
+        escrowOrders = eo || [];
+    }
+
+    // Combinar y deduplicar
+    let combinedItems: UnifiedItem[] = [];
+    if (currentTab === 'active') {
+        combinedItems = (listings || []).map((l: any) => ({ type: 'active', data: l, date: new Date(l.created_at).getTime() }));
+    } else {
+        const escrowListingIds = new Set(escrowOrders.map((o: any) => o.listing_id));
+        const manualSoldListings = (listings || []).filter((l: any) => !escrowListingIds.has(l.id));
+
+        const escrowItems: UnifiedItem[] = escrowOrders.map((o: any) => ({ type: 'escrow', data: o, date: new Date(o.created_at).getTime() }));
+        const manualItems: UnifiedItem[] = manualSoldListings.map((l: any) => ({ type: 'manual', data: l, date: new Date(l.updated_at || l.created_at).getTime() }));
+
+        // Orden cronológico (más recientes primero)
+        // El usuario pidió "las más antiguas más abajo", es decir, descendente.
+        combinedItems = [...escrowItems, ...manualItems].sort((a, b) => b.date - a.date);
     }
 
     // Calculamos si tiene anuncios en total para ver si mostrar un empty state puro o tabs
@@ -169,7 +201,7 @@ export default async function DashboardPage(props: Props) {
                         </div>
 
                         {/* List */}
-                        {!listings || listings.length === 0 ? (
+                        {!combinedItems || combinedItems.length === 0 ? (
                             <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] p-12 text-center">
                                 <p className="text-[var(--ag-sys-color-text-muted)] font-medium">
                                     {currentTab === 'sold' ? 'Aún no has marcado ningún anuncio como vendido.' : 'No tienes anuncios activos.'}
@@ -177,88 +209,13 @@ export default async function DashboardPage(props: Props) {
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 gap-6">
-                                {listings?.map((listing: { id: string, title: string, price: number, image_urls: string[], status: string, location: string, category: string, created_at: string, sold_price?: number }) => (
-                                    <div
-                                        key={listing.id}
-                                        className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden shadow-sm hover:shadow-md transition-all group"
-                                    >
-                                        <div className="flex flex-col sm:flex-row">
-                                            {/* Thumbnail */}
-                                            <div className="relative w-full sm:w-56 h-56 sm:h-auto overflow-hidden bg-[var(--ag-sys-color-background)] flex-shrink-0">
-                                                {listing.image_urls?.[0] ? (
-                                                    <Image
-                                                        src={listing.image_urls[0]}
-                                                        alt={listing.title}
-                                                        fill
-                                                        className={`object-cover transition-transform duration-500 ${currentTab === 'active' ? 'group-hover:scale-105' : 'grayscale opacity-80'}`}
-                                                        sizes="(max-width: 640px) 100vw, 250px"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-[var(--ag-sys-color-text-muted)]">
-                                                        <Tractor className="w-12 h-12 opacity-10" />
-                                                    </div>
-                                                )}
-
-                                                {/* Status Badge */}
-                                                <div className={`absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm ${listing.status === 'active'
-                                                    ? 'bg-green-500/90 text-white'
-                                                    : 'bg-amber-500/90 text-white'
-                                                    }`}>
-                                                    {listing.status === 'active' ? 'Activo' : 'Vendido'}
-                                                </div>
-                                            </div>
-
-                                            {/* Content */}
-                                            <div className="flex-1 p-6 flex flex-col justify-between">
-                                                <div>
-                                                    <div className="flex justify-between items-start gap-4 mb-2">
-                                                        <h4 className="text-xl font-bold text-[var(--ag-sys-color-text)] line-clamp-2">
-                                                            {listing.title}
-                                                        </h4>
-                                                        <div className="text-right flex-shrink-0">
-                                                            {currentTab === 'sold' && listing.sold_price ? (
-                                                                <div className="flex flex-col items-end">
-                                                                    <span className="text-2xl font-black text-amber-600">
-                                                                        {formatCurrency(listing.sold_price)}
-                                                                    </span>
-                                                                    <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] line-through">
-                                                                        {formatCurrency(listing.price)}
-                                                                    </span>
-                                                                </div>
-                                                            ) : (
-                                                                <span className="text-2xl font-black text-[var(--ag-sys-color-primary)]">
-                                                                    {formatCurrency(listing.price)}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex flex-wrap gap-3 text-xs sm:text-sm text-[var(--ag-sys-color-text-muted)] mt-5">
-                                                        <div className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1.5 rounded-full border border-[var(--ag-sys-color-border)]">
-                                                            <MapPin className="w-4 h-4" />
-                                                            {listing.location}
-                                                        </div>
-                                                        <div className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1.5 rounded-full border border-[var(--ag-sys-color-border)]">
-                                                            <Tag className="w-4 h-4" />
-                                                            {listing.category}
-                                                        </div>
-                                                        <div className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1.5 rounded-full border border-[var(--ag-sys-color-border)]">
-                                                            <Clock className="w-4 h-4" />
-                                                            {formatRelativeTime(listing.created_at)}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <DashboardListingActions 
-                                                    listingId={listing.id} 
-                                                    status={listing.status}
-                                                    isProfesional={publicUser?.role === 'profesional'}
-                                                    availableFeatured={publicUser?.available_featured || 0}
-                                                    availableBumps={publicUser?.available_bumps || 0}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
+                                {combinedItems.map((item, idx) => (
+                                    <UnifiedListingCard 
+                                        key={item.type === 'escrow' ? `escrow-${item.data.id}` : `listing-${item.data.id}`}
+                                        item={item} 
+                                        publicUser={publicUser} 
+                                        currentTab={currentTab} 
+                                    />
                                 ))}
                             </div>
                         )}
