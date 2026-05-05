@@ -12,16 +12,18 @@ export default function ProfileScreen() {
     const { session, user, isLoading } = useAuth();
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const [profile, setProfile] = useState<{ name?: string; avatar_url?: string } | null>(null);
+    const [profile, setProfile] = useState<{ name?: string; commercial_name?: string; avatar_url?: string } | null>(null);
 
     useEffect(() => {
         if (!user?.id) return;
         const fetchProfile = async () => {
-            const { data } = await supabase.from('users').select('name, avatar_url').eq('id', user.id).single();
+            const { data } = await supabase.from('users').select('name, commercial_name, avatar_url').eq('id', user.id).single();
             if (data) setProfile(data);
         };
         fetchProfile();
     }, [user?.id]);
+
+    const displayName = profile?.commercial_name || profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || 'Usuario Ruralpop';
 
     if (isLoading) return null;
 
@@ -116,12 +118,12 @@ export default function ProfileScreen() {
                     ) : (
                         <View className="w-[84px] h-[84px] bg-primary-muted rounded-full items-center justify-center mb-4 border border-primary/10">
                             <Text className="text-[32px] font-bold text-primary uppercase">
-                                {(profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || 'U').charAt(0)}
+                                {(displayName || 'U').charAt(0)}
                             </Text>
                         </View>
                     )}
                     <Text className="text-xl font-bold text-text mb-1">
-                        {profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || 'Usuario Ruralpop'}
+                        {displayName}
                     </Text>
                     <Text className="text-text-muted">{user?.email}</Text>
                 </View>
