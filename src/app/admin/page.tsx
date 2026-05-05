@@ -74,6 +74,33 @@ function generateHistograms(items: { date: string, amount?: number }[], isCurren
     };
 }
 
+async function fetchAllDates(adminClient: any, table: string) {
+    let allDates: any[] = [];
+    let count = 0;
+
+    // First fetch with head to get the exact count
+    const { count: exactCount } = await adminClient.from(table).select("*", { count: 'exact', head: true });
+    count = exactCount || 0;
+
+    // Fetch in parallel batches for speed
+    if (count > 0) {
+        const step = 1000;
+        const promises = [];
+        for (let i = 0; i < count; i += step) {
+            promises.push(
+                adminClient.from(table)
+                    .select("created_at")
+                    .range(i, i + step - 1)
+            );
+        }
+        const results = await Promise.all(promises);
+        for (const res of results) {
+            if (res.data) allDates.push(...res.data);
+        }
+    }
+    return { data: allDates, count };
+}
+
 export default async function AdminDashboard() {
     const supabase = await createClient();
     
@@ -84,20 +111,21 @@ export default async function AdminDashboard() {
         process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // Fetch metrics and all creation dates to build histograms
-    // We fetch more than the default 1000 limit (5000) to ensure we don't truncate histograms
+    // Fetch metrics and all creation dates to build histograms using the pagination helper
     const [
-        { data: usersData, count: totalUsers },
-        { data: listingsData, count: totalListings },
+        usersResult,
+        listingsResult,
         { count: activeListings },
     ] = await Promise.all([
-        adminClient.from("users").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
-        adminClient.from("listings").select("created_at", { count: 'exact' }).order('created_at', { ascending: false }).limit(5000),
+        fetchAllDates(adminClient, "users"),
+        fetchAllDates(adminClient, "listings"),
         adminClient.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active"),
     ]);
 
-    const userDates = usersData?.map((u: any) => ({ date: u.created_at })) || [];
-    const listingDates = listingsData?.map((l: any) => ({ date: l.created_at })) || [];
+    const totalUsers = usersResult.count;
+    const totalListings = listingsResult.count;
+    const userDates = usersResult.data.map((u: any) => ({ date: u.created_at }));
+    const listingDates = listingsResult.data.map((l: any) => ({ date: l.created_at }));
 
     // Fetch real revenue data from Stripe (Anuncios Destacados)
     const paymentIntentsResponse = await stripe.paymentIntents.list({ limit: 100 });
