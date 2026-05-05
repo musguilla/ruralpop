@@ -53,7 +53,8 @@ export default async function DashboardPage(props: Props) {
             .from("escrow_orders")
             .select(`
                 *,
-                listings (*)
+                listings (*),
+                buyer:users!escrow_orders_buyer_id_fkey(email)
             `)
             .eq("seller_id", user.id)
             .neq("status", "pending_checkout")

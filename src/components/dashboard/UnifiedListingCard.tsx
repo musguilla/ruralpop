@@ -92,7 +92,7 @@ export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
 
                         {isEscrow && (
                             <div className="text-sm text-[var(--ag-sys-color-text-muted)] mb-3">
-                                Comprador: <span className="font-medium text-[var(--ag-sys-color-text)]">{order.buyer_email}</span>
+                                Comprador: <span className="font-medium text-[var(--ag-sys-color-text)]">{order.buyer?.email}</span>
                             </div>
                         )}
 
