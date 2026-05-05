@@ -336,7 +336,7 @@ export default function ListingDetailsScreen() {
                                     {isProfessional && <ShieldCheck color="#059669" size={16} />}
                                 </View>
                                 {isProfessional && (
-                                    <Text className="text-[10px] text-primary font-bold uppercase tracking-wider mt-0.5">Verificado</Text>
+                                    <Text className="text-[10px] text-primary font-bold uppercase tracking-wider mt-0.5">Ver más anuncios</Text>
                                 )}
                             </View>
                         </View>
