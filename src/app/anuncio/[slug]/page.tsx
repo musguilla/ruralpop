@@ -16,6 +16,7 @@ import { getImageUrl } from "@/utils/mediaUtils";
 import { AdSenseSidebar } from "@/components/ads/AdSenseSidebar";
 import { AdSenseGalleryBottom } from "@/components/ads/AdSenseGalleryBottom";
 import { EscrowCheckoutButton } from "@/components/checkout/EscrowCheckoutButton";
+import { EscrowNativeCheckoutFlow } from "@/components/checkout/EscrowNativeCheckoutFlow";
 import { calculateRuralpopFee } from "@/lib/services/escrow";
 
 import { Metadata, ResolvingMetadata } from "next";
@@ -311,12 +312,12 @@ export default async function ListingDetailPage(props: Props) {
                                         )}
                                     </div>
                                     {isEscrowAvailable && (
-                                        <EscrowCheckoutButton
+                                        <EscrowNativeCheckoutFlow
                                             listingId={listing.id}
                                             price={listing.price}
                                             feeCents={ruralpopFeeCents}
+                                            shippingPrice={listing.shipping_price || 0}
                                             isSeller={isOwner}
-                                            variant="mini"
                                         />
                                     )}
                                 </div>
@@ -335,10 +336,11 @@ export default async function ListingDetailPage(props: Props) {
                     <div className="w-full min-w-0 lg:max-w-[360px] flex-1 space-y-6">
 
                         {isEscrowAvailable && (
-                            <EscrowCheckoutButton 
+                            <EscrowNativeCheckoutFlow 
                                 listingId={listing.id} 
                                 price={listing.price} 
                                 feeCents={ruralpopFeeCents} 
+                                shippingPrice={listing.shipping_price || 0}
                                 isSeller={isOwner}
                             />
                         )}

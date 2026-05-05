@@ -168,6 +168,106 @@ export async function createEscrowCheckout(listingId: string) {
   return { sessionId: session.id, url: session.url };
 }
 
+export async function createEscrowPaymentIntentNative(listingId: string) {
+  const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("User not authenticated");
+  }
+
+  // 1. Fetch listing and verify seller
+  const { data: listing, error: listingError } = await supabase
+    .from("listings")
+    .select(`
+      id, title, price, shipping_price, image_urls, user_id, 
+      users:user_id ( id, email, name, stripe_customer_id )
+    `)
+    .eq("id", listingId)
+    .single();
+
+  if (listingError || !listing) {
+    throw new Error("Listing not found");
+  }
+
+  const seller = listing.users as any;
+  if (!seller || !['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(seller.email?.toLowerCase().trim() || '')) {
+    throw new Error("Escrow not available for this seller");
+  }
+
+  if (seller.id === user.id) {
+    throw new Error("Cannot buy your own listing");
+  }
+
+  // 2. Fetch professional wallet
+  const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+  const supabaseAdmin = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: wallet, error: walletError } = await supabaseAdmin
+    .from("professional_wallets")
+    .select("stripe_connected_account_id")
+    .eq("user_id", seller.id)
+    .single();
+
+  if (walletError || !wallet?.stripe_connected_account_id) {
+    throw new Error("El vendedor aún no ha configurado sus pagos de forma segura.");
+  }
+
+  const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
+  if (!account.charges_enabled) {
+    throw new Error("El vendedor aún no ha completado la configuración para recibir pagos.");
+  }
+
+  // 3. Calculate amounts
+  const priceCents = Math.round(listing.price * 100);
+  const shippingCents = Math.round((listing.shipping_price || 0) * 100);
+  const feeCents = calculateRuralpopFee(priceCents);
+  const sellerNetCents = priceCents + shippingCents;
+  const totalCents = sellerNetCents + feeCents;
+
+  const orderId = crypto.randomUUID();
+
+  // 4. Create Stripe PaymentIntent
+  const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalCents,
+      currency: "eur",
+      payment_method_types: ['card'],
+      transfer_group: `escrow_${orderId}`,
+      metadata: {
+          escrow_order_id: orderId,
+          listing_id: listing.id,
+          buyer_id: user.id,
+          seller_id: seller.id,
+      }
+  });
+
+  // 5. Save order in DB
+  const { error: insertError } = await supabaseAdmin
+    .from("escrow_orders")
+    .insert({
+      id: orderId,
+      listing_id: listing.id,
+      buyer_id: user.id,
+      seller_id: seller.id,
+      seller_email: seller.email,
+      gross_amount_cents: totalCents,
+      ruralpop_fee_cents: feeCents,
+      seller_net_amount_cents: sellerNetCents,
+      stripe_payment_intent_id: paymentIntent.id,
+      stripe_connected_account_id: wallet.stripe_connected_account_id,
+      status: "pending_checkout"
+    });
+
+  if (insertError) {
+    throw new Error(`Failed to create order: ${insertError.message}`);
+  }
+
+  return { clientSecret: paymentIntent.client_secret, orderId };
+}
+
 export async function confirmEscrowReception(orderId: string) {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
