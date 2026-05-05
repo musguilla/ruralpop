@@ -3,7 +3,7 @@
     "name": "Ruralpop",
     "slug": "ruralpop-mobile",
     "scheme": "ruralpop",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ruralpop.ruralpopapp",
-      "buildNumber": "33",
+      "buildNumber": "34",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleDevelopmentRegion": "es",
@@ -29,7 +29,7 @@
         "backgroundColor": "#059669"
       },
       "package": "com.ruralpop.app",
-      "versionCode": 33,
+      "versionCode": 34,
       "permissions": [
         "com.google.android.gms.permission.AD_ID",
         "android.permission.INTERNET",
