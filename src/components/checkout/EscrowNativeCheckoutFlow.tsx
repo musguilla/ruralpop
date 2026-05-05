@@ -74,12 +74,13 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                             <span>{formatCurrency(shippingPrice)}</span>
                         </div>
                     )}
-                    <div className="flex justify-between text-sm mb-3 text-[var(--ag-sys-color-text-muted)]">
+                    <div className="text-xs mb-3 text-[var(--ag-sys-color-text-muted)] font-light">
+                        Las compras están cubiertas gracias a la{" "}
                         <a 
                             href="https://www.ruralpop.com/preguntas-frecuentes#proteccion" 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors"
+                            className="text-[#059669] hover:text-[#047857] hover:underline transition-colors font-normal"
                         >
                             Protección Ruralpop
                         </a>
