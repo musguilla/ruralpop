@@ -13,6 +13,7 @@ export default function VentasScreen() {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const [isStripeReady, setIsStripeReady] = useState(true);
 
     const handleEscrowAction = async (action: string, orderId: string) => {
         setActionLoading(`${action}_${orderId}`);
@@ -78,6 +79,19 @@ export default function VentasScreen() {
 
             const combinedItems = [...escrowItems, ...manualItems].sort((a, b) => b.date - a.date);
             setOrders(combinedItems);
+
+            // Fetch Stripe wallet status to show appropriate empty state
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                const apiUrl = `${process.env.EXPO_PUBLIC_SITE_URL || 'https://www.ruralpop.com'}/api/checkout/escrow/wallet-status`;
+                const response = await fetch(apiUrl, {
+                    headers: { 'Authorization': `Bearer ${session.access_token}` }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setIsStripeReady(data.isStripeReady);
+                }
+            }
         } catch (error) {
             console.error('Error fetching my sales', error);
         } finally {
@@ -208,11 +222,27 @@ export default function VentasScreen() {
                             <Text className="text-gray-500 text-center px-6 mb-8">
                                 Activa la opción de "Venta Online" en tus anuncios para permitir que otros te compren con envío.
                             </Text>
+                            
+                            {!isStripeReady && (
+                                <TouchableOpacity
+                                    onPress={() => router.push('/monedero')}
+                                    className="bg-primary px-8 py-3 rounded-full mb-3 w-full max-w-[280px] items-center"
+                                >
+                                    <Text className="text-white font-bold text-base">Configura tu monedero</Text>
+                                </TouchableOpacity>
+                            )}
+                            
                             <TouchableOpacity
                                 onPress={() => router.push('/my-listings')}
-                                className="bg-primary px-8 py-3 rounded-full"
+                                className={`px-8 py-3 rounded-full w-full max-w-[280px] items-center ${
+                                    !isStripeReady 
+                                    ? 'bg-white border border-gray-300' 
+                                    : 'bg-primary'
+                                }`}
                             >
-                                <Text className="text-white font-bold text-base">Ir a Mis Anuncios</Text>
+                                <Text className={`${!isStripeReady ? 'text-gray-700' : 'text-white'} font-bold text-base`}>
+                                    Ir a Mis Anuncios
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     }
