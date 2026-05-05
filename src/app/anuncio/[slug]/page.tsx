@@ -17,6 +17,7 @@ import { AdSenseSidebar } from "@/components/ads/AdSenseSidebar";
 import { AdSenseGalleryBottom } from "@/components/ads/AdSenseGalleryBottom";
 import { EscrowCheckoutButton } from "@/components/checkout/EscrowCheckoutButton";
 import { EscrowNativeCheckoutFlow } from "@/components/checkout/EscrowNativeCheckoutFlow";
+import { ScrollToCheckoutButton } from "@/components/checkout/ScrollToCheckoutButton";
 import { calculateRuralpopFee } from "@/lib/services/escrow";
 
 import { Metadata, ResolvingMetadata } from "next";
@@ -312,13 +313,7 @@ export default async function ListingDetailPage(props: Props) {
                                         )}
                                     </div>
                                     {isEscrowAvailable && (
-                                        <EscrowNativeCheckoutFlow
-                                            listingId={listing.id}
-                                            price={listing.price}
-                                            feeCents={ruralpopFeeCents}
-                                            shippingPrice={listing.shipping_price || 0}
-                                            isSeller={isOwner}
-                                        />
+                                        <ScrollToCheckoutButton />
                                     )}
                                 </div>
                             </div>

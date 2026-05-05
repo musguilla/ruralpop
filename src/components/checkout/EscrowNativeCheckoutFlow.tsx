@@ -99,7 +99,7 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
     }
 
     return (
-        <>
+        <div id="escrow-checkout-flow">
             <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-6 mb-4">
                 <div className="mb-6 flex flex-col items-center text-center">
                     <div className="text-5xl font-extrabold text-[var(--ag-sys-color-primary)] mb-2 tracking-tight">
@@ -125,6 +125,7 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                 )}
 
                 <button
+                    data-action="start-checkout"
                     onClick={handleStartCheckout}
                     disabled={loading}
                     className={clsx(
@@ -156,6 +157,6 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                     </p>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
