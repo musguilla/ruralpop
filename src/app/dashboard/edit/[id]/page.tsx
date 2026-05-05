@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import EditListingForm from "@/components/dashboard/EditListingForm";
 import { decodeId } from "@/utils/idUtils";
+import stripe from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
 
@@ -66,6 +67,23 @@ export default async function EditListingPage(props: Props) {
         initialMunicipalities = muniData || [];
     }
 
+    // Fetch Wallet to check Stripe readiness
+    const { data: wallet } = await supabase
+        .from("professional_wallets")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+    let isStripeReady = false;
+    if (wallet?.stripe_connected_account_id) {
+        try {
+            const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
+            isStripeReady = account.charges_enabled && account.details_submitted;
+        } catch (e) {
+            console.error("Error retrieving Stripe account:", e);
+        }
+    }
+
     return (
         <EditListingForm
             listing={listing}
@@ -73,6 +91,7 @@ export default async function EditListingPage(props: Props) {
             initialProvinces={initialProvinces}
             initialMunicipalities={initialMunicipalities}
             userEmail={user.email}
+            hasWalletConfigured={isStripeReady}
         />
     );
 }
