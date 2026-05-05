@@ -11,17 +11,17 @@ const VISUAL_CATEGORIES = [
     { id: 'Ovino', type: 'subcategory', label: 'Ovino', image: require('../../../assets/icon-ovino.png') },
     { id: 'Porcino', type: 'subcategory', label: 'Porcino', image: require('../../../assets/icon-porcino.png') },
     { id: 'Avicultura', type: 'subcategory', label: 'Avicultura', image: require('../../../assets/icon-aves.png') },
+    { id: 'Apicultura', type: 'subcategory', label: 'Apicultura', image: require('../../../assets/icon-apicultura.webp') },
     { id: 'Perros', type: 'subcategory', label: 'Perros', image: require('../../../assets/icon-perro.png') },
     { id: 'Conejos', type: 'subcategory', label: 'Conejos', image: require('../../../assets/icon-conejos.png') },
     { id: 'maquinaria', type: 'category', label: 'Maquinaria', image: require('../../../assets/icon-tractor.png') },
+    { id: 'agricultura', type: 'category', label: 'Agricultura', image: require('../../../assets/icon-agricultura.png') },
+    { id: 'fincas', type: 'category', label: 'Fincas', image: require('../../../assets/icon-fincas.webp') },
     { id: 'forraje', type: 'category', label: 'Forraje', image: require('../../../assets/icon-forraje.png') },
     { id: 'alimentos', type: 'category', label: 'Km0', image: require('../../../assets/icon-alimentos.png') },
     { id: 'Transporte', type: 'subcategory', label: 'Transporte', image: require('../../../assets/icon-transportes.png') },
     { id: 'Veterinarios', type: 'subcategory', label: 'Veterinarios', image: require('../../../assets/icon-veterinarios.png') },
     { id: 'Herradores', type: 'subcategory', label: 'Herradores', image: require('../../../assets/icon-herradores.png') },
-    { id: 'fincas', type: 'category', label: 'Fincas', image: require('../../../assets/icon-fincas.webp') },
-    { id: 'agricultura', type: 'category', label: 'Agricultura', image: require('../../../assets/icon-agricultura.png') },
-    { id: 'Apicultura', type: 'subcategory', label: 'Apicultura', image: require('../../../assets/icon-apicultura.webp') },
 ];
 
 export function CategoriesSlider() {
@@ -42,7 +42,7 @@ export function CategoriesSlider() {
                     <TouchableOpacity
                         key={cat.id}
                         onPress={() => router.push({ pathname: '/(tabs)/search', params: { category: cat.id } })}
-                        className="items-center justify-center bg-white border border-gray-200 rounded-2xl p-4 w-28 h-28 shadow-sm"
+                        className="items-center justify-center bg-white border border-gray-200 rounded-2xl p-4 w-28 h-28"
                     >
                         {cat.image ? (
                             <Image source={cat.image} style={{ width: 40, height: 40 }} contentFit="contain" />

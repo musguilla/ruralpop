@@ -3,7 +3,7 @@
     "name": "Ruralpop",
     "slug": "ruralpop-mobile",
     "scheme": "ruralpop",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ruralpop.ruralpopapp",
-      "buildNumber": "32",
+      "buildNumber": "33",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleDevelopmentRegion": "es",
@@ -29,7 +29,7 @@
         "backgroundColor": "#059669"
       },
       "package": "com.ruralpop.app",
-      "versionCode": 32,
+      "versionCode": 33,
       "permissions": [
         "com.google.android.gms.permission.AD_ID",
         "android.permission.INTERNET",
@@ -58,6 +58,13 @@
         {
           "androidAppId": "ca-app-pub-2042067618462129~3393473801",
           "iosAppId": "ca-app-pub-2042067618462129~3393473801"
+        }
+      ],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.ruralpop.ruralpopapp",
+          "enableGooglePay": false
         }
       ]
     ],

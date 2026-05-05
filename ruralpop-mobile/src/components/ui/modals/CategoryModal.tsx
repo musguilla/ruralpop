@@ -112,9 +112,6 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                             className={`flex-row items-center justify-between p-4 rounded-xl border mb-6 ${!selectedCategory ? 'bg-primary-muted/20 border-primary' : 'bg-white border-gray-200'}`}
                         >
                             <View className="flex-row items-center">
-                                <View className={`w-10 h-10 rounded-lg items-center justify-center mr-4 ${!selectedCategory ? 'bg-primary-muted/50' : 'bg-gray-100'}`}>
-                                    <List color={!selectedCategory ? "#059669" : "#6b7280"} size={22} />
-                                </View>
                                 <Text className={`text-base font-bold ${!selectedCategory ? 'text-primary' : 'text-text'}`}>
                                     Todas las categorías
                                 </Text>
@@ -143,11 +140,6 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                                 className={`flex-row items-center justify-between py-4 ${!isLast ? 'border-b border-gray-100' : ''}`}
                             >
                                 <View className="flex-row items-center">
-                                    {!item.isSub && (
-                                        <View className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 items-center justify-center mr-4">
-                                            {IconComponent && <IconComponent color="#059669" size={20} />}
-                                        </View>
-                                    )}
                                     <Text className={`text-[17px] ${isSelected ? 'font-bold text-primary' : 'text-gray-800'}`}>
                                         {item.label}
                                     </Text>

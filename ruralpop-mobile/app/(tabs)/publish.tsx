@@ -27,6 +27,11 @@ export default function PublishScreen() {
     const [municipality, setMunicipality] = useState<{ id: number, name: string } | null>(null);
     const [phone, setPhone] = useState('');
     const [images, setImages] = useState<string[]>([]);
+    
+    // Escrow / Venta Online
+    const [hasStripeAccount, setHasStripeAccount] = useState(false);
+    const [allowOnlineSale, setAllowOnlineSale] = useState(false);
+    const [shippingPrice, setShippingPrice] = useState('');
 
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
@@ -39,11 +44,16 @@ export default function PublishScreen() {
     useFocusEffect(
         React.useCallback(() => {
             if (user?.id && session) {
-                async function fetchPhone() {
-                    const { data } = await supabase.from('users').select('phone').eq('id', user?.id).single();
-                    if (data?.phone) setPhone(data.phone);
+                async function fetchData() {
+                    // Fetch phone
+                    const { data: userData } = await supabase.from('users').select('phone').eq('id', user?.id).single();
+                    if (userData?.phone) setPhone(userData.phone);
+
+                    // Fetch wallet
+                    const { data: walletData } = await supabase.from('professional_wallets').select('stripe_connected_account_id').eq('user_id', user?.id).single();
+                    if (walletData?.stripe_connected_account_id) setHasStripeAccount(true);
                 }
-                fetchPhone();
+                fetchData();
             }
         }, [user?.id, session])
     );
@@ -212,6 +222,8 @@ export default function PublishScreen() {
                     category: finalCategory,
                     subcategory: finalSubcategory,
                     contact_phone: phone,
+                    vender_online: allowOnlineSale,
+                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : null,
                     status: 'active'
                 })
                 .select()
@@ -351,6 +363,39 @@ export default function PublishScreen() {
                             </TouchableOpacity>
                         </View>
                     </View>
+
+                    {hasStripeAccount && (
+                        <View className="mb-6 bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                            <View className="flex-row items-center justify-between">
+                                <View className="flex-1 pr-4">
+                                    <Text className="text-sm font-bold text-text mb-1">Activar Venta Online Segura</Text>
+                                    <Text className="text-xs text-text-muted">Permite a los usuarios comprar tu producto con pago seguro. Recibirás el dinero en tu monedero.</Text>
+                                </View>
+                                <TouchableOpacity 
+                                    onPress={() => setAllowOnlineSale(!allowOnlineSale)}
+                                    className={`w-12 h-6 rounded-full justify-center px-1 ${allowOnlineSale ? 'bg-primary' : 'bg-gray-300'}`}
+                                >
+                                    <View className={`w-4 h-4 rounded-full bg-white transition-all ${allowOnlineSale ? 'ml-auto' : ''}`} />
+                                </TouchableOpacity>
+                            </View>
+
+                            {allowOnlineSale && (
+                                <View className="mt-4 pt-4 border-t border-emerald-200">
+                                    <Text className="text-sm font-bold text-text mb-2">Gastos de envío (€) *</Text>
+                                    <TextInput
+                                        value={shippingPrice}
+                                        onChangeText={setShippingPrice}
+                                        placeholder="Ej: 4.99"
+                                        keyboardType="numeric"
+                                        className="w-full bg-white border border-emerald-200 rounded-xl px-4 py-3 text-text"
+                                    />
+                                    <Text className="text-xs text-text-muted mt-2">
+                                        Este importe se sumará al precio final que pagará el comprador.
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                    )}
 
                     <View className="mb-6">
                         <Text className="text-sm font-bold text-text mb-2">Provincia *</Text>

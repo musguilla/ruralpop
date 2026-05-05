@@ -30,6 +30,11 @@ export default function EditListingScreen() {
     const [municipality, setMunicipality] = useState<{ id: number, name: string } | null>(null);
     const [phone, setPhone] = useState('');
     const [images, setImages] = useState<string[]>([]);
+    
+    // Escrow / Venta Online
+    const [hasStripeAccount, setHasStripeAccount] = useState(false);
+    const [allowOnlineSale, setAllowOnlineSale] = useState(false);
+    const [shippingPrice, setShippingPrice] = useState('');
 
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
@@ -62,6 +67,11 @@ export default function EditListingScreen() {
                     setDescription(data.description);
                     setPrice(data.price.toString());
                     setPriceType(data.price_type || 'fixed');
+                    
+                    if (data.vender_online) {
+                        setAllowOnlineSale(true);
+                        setShippingPrice(data.shipping_price ? data.shipping_price.toString() : '');
+                    }
 
                     // Show subcategory if present, else category
                     setCategoryId(data.subcategory || data.category);
@@ -90,7 +100,17 @@ export default function EditListingScreen() {
             }
         }
 
+        async function fetchWallet() {
+            try {
+                const { data } = await supabase.from('professional_wallets').select('stripe_connected_account_id').eq('user_id', user!.id).single();
+                if (data?.stripe_connected_account_id) setHasStripeAccount(true);
+            } catch (e) {
+                // Ignore if not found
+            }
+        }
+
         fetchListing();
+        fetchWallet();
     }, [user, id, isLoading]);
 
     if (isLoading || initialLoading) {
@@ -246,7 +266,8 @@ export default function EditListingScreen() {
                     category: finalCategory,
                     subcategory: finalSubcategory,
                     contact_phone: phone,
-                    // Note: intentionally not touching 'status' or 'sold_price' here
+                    vender_online: allowOnlineSale,
+                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : null
                 })
                 .eq('id', id)
                 .eq('user_id', user.id);
@@ -380,6 +401,39 @@ export default function EditListingScreen() {
                             </TouchableOpacity>
                         </View>
                     </View>
+
+                    {hasStripeAccount && (
+                        <View className="mb-6 bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                            <View className="flex-row items-center justify-between">
+                                <View className="flex-1 pr-4">
+                                    <Text className="text-sm font-bold text-text mb-1">Activar Venta Online Segura</Text>
+                                    <Text className="text-xs text-text-muted">Permite a los usuarios comprar tu producto con pago seguro. Recibirás el dinero en tu monedero.</Text>
+                                </View>
+                                <TouchableOpacity 
+                                    onPress={() => setAllowOnlineSale(!allowOnlineSale)}
+                                    className={`w-12 h-6 rounded-full justify-center px-1 ${allowOnlineSale ? 'bg-primary' : 'bg-gray-300'}`}
+                                >
+                                    <View className={`w-4 h-4 rounded-full bg-white transition-all ${allowOnlineSale ? 'ml-auto' : ''}`} />
+                                </TouchableOpacity>
+                            </View>
+
+                            {allowOnlineSale && (
+                                <View className="mt-4 pt-4 border-t border-emerald-200">
+                                    <Text className="text-sm font-bold text-text mb-2">Gastos de envío (€) *</Text>
+                                    <TextInput
+                                        value={shippingPrice}
+                                        onChangeText={setShippingPrice}
+                                        placeholder="Ej: 4.99"
+                                        keyboardType="numeric"
+                                        className="w-full bg-white border border-emerald-200 rounded-xl px-4 py-3 text-text"
+                                    />
+                                    <Text className="text-xs text-text-muted mt-2">
+                                        Este importe se sumará al precio final que pagará el comprador.
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+                    )}
 
                     <View>
                         <Text className="text-sm font-bold text-text mb-2">Provincia *</Text>

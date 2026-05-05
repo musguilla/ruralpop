@@ -11,6 +11,7 @@ import { formatPrice } from '../../src/lib/formatters';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useFavorites } from '../../src/contexts/FavoritesContext';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useStripe } from '@stripe/stripe-react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ export default function ListingDetailsScreen() {
     const { user } = useAuth();
     const { favorites, toggleFavorite } = useFavorites();
     const insets = useSafeAreaInsets();
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
     const isFavorited = id ? favorites.has(id) : false;
 
@@ -40,6 +42,7 @@ export default function ListingDetailsScreen() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+    const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     // Scroll Animation - Simplified to avoid Animated/Native driver crashes
     const [isScrolled, setIsScrolled] = useState(false);
@@ -126,6 +129,68 @@ export default function ListingDetailsScreen() {
         setCurrentImageIndex(index);
         setGalleryInitialIndex(index);
         setIsGalleryOpen(true);
+    };
+
+    const handleBuy = async () => {
+        if (!user) {
+            router.push('/(auth)/login');
+            return;
+        }
+
+        try {
+            setIsCheckingOut(true);
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            const siteUrl = __DEV__ && process.env.EXPO_PUBLIC_SITE_URL ? process.env.EXPO_PUBLIC_SITE_URL : 'https://www.ruralpop.com';
+            
+            const res = await fetch(`${siteUrl}/api/checkout/escrow/native`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session?.access_token}`
+                },
+                body: JSON.stringify({ listingId: listing!.id })
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || 'Error al procesar el pago.');
+            }
+
+            const { paymentIntentClientSecret } = await res.json();
+
+            const { error: initError } = await initPaymentSheet({
+                merchantDisplayName: 'Ruralpop',
+                paymentIntentClientSecret,
+                allowsDelayedPaymentMethods: false,
+                defaultBillingDetails: {
+                    name: user.user_metadata?.full_name || 'Usuario Ruralpop',
+                }
+            });
+
+            if (initError) {
+                throw new Error(initError.message);
+            }
+
+            const { error: paymentError } = await presentPaymentSheet();
+
+            if (paymentError) {
+                if (paymentError.code === 'Canceled') {
+                    // Usuario canceló, no hacer nada
+                    return;
+                }
+                throw new Error(paymentError.message);
+            }
+
+            // Éxito
+            Alert.alert('¡Pago completado!', 'Tu pedido ha sido realizado con éxito.');
+            router.replace('/compras');
+
+        } catch (error: any) {
+            Alert.alert('Atención', error.message || 'No se pudo iniciar el proceso de compra.');
+        } finally {
+            setIsCheckingOut(false);
+        }
     };
 
     return (
@@ -253,26 +318,48 @@ export default function ListingDetailsScreen() {
                     </View>
 
                     {/* Seller Info Container */}
-                    <View className="bg-primary-muted/10 border border-gray-200 rounded-2xl p-4 mb-8 flex-row items-center">
-                        <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm mr-4 overflow-hidden border border-gray-100">
-                            {listing.seller?.avatar_url ? (
-                                <Image source={{ uri: getOptimizedImageUrl(listing.seller.avatar_url, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
-                            ) : (
-                                <Text className="text-xl font-bold text-primary">
-                                    {rawSellerName.charAt(0) || 'U'}
-                                </Text>
-                            )}
-                        </View>
-                        <View className="flex-1">
-                            <Text className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Vendedor</Text>
-                            <View className="flex-row items-center flex-wrap">
-                                <Text className="text-lg font-bold text-text mr-1">{rawSellerName}</Text>
-                                {isProfessional && <ShieldCheck color="#059669" size={18} />}
+                    <View className="bg-primary-muted/10 border border-gray-200 rounded-2xl p-4 mb-8 flex-row items-center justify-between">
+                        <View className="flex-row items-center flex-1">
+                            <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm mr-3 overflow-hidden border border-gray-100">
+                                {listing.seller?.avatar_url ? (
+                                    <Image source={{ uri: getOptimizedImageUrl(listing.seller.avatar_url, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
+                                ) : (
+                                    <Text className="text-xl font-bold text-primary">
+                                        {rawSellerName.charAt(0) || 'U'}
+                                    </Text>
+                                )}
                             </View>
-                            {isProfessional && (
-                                <Text className="text-[10px] text-primary font-bold uppercase tracking-wider mt-0.5">Profesional Verificado</Text>
-                            )}
+                            <View className="flex-1 pr-2">
+                                <Text className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Vendedor</Text>
+                                <View className="flex-row items-center flex-wrap">
+                                    <Text className="text-lg font-bold text-text mr-1" numberOfLines={1}>{rawSellerName}</Text>
+                                    {isProfessional && <ShieldCheck color="#059669" size={16} />}
+                                </View>
+                                {isProfessional && (
+                                    <Text className="text-[10px] text-primary font-bold uppercase tracking-wider mt-0.5">Verificado</Text>
+                                )}
+                            </View>
                         </View>
+                        {listing.vender_online && (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    if (!user) {
+                                        router.push('/(auth)/login');
+                                        return;
+                                    }
+                                    if (listing?.user_id) {
+                                        router.push({
+                                            pathname: '/messages/chat',
+                                            params: { listingId: id, otherUserId: listing.user_id }
+                                        });
+                                    }
+                                }}
+                                className="bg-white border border-gray-300 px-4 py-2.5 rounded-full flex-row items-center justify-center"
+                            >
+                                <Mail color="#4b5563" size={16} />
+                                <Text className="text-gray-700 font-bold text-sm ml-1.5">Chat</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
 
                     <View className="border-t border-gray-100 pt-6">
@@ -286,8 +373,30 @@ export default function ListingDetailsScreen() {
 
             {/* Fixed Bottom Contact Bar */}
             <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-8 flex-row justify-between items-center">
-                {hasPhone ? (
-                    <>
+                {listing.vender_online ? (
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (user?.id === listing.user_id) {
+                                Alert.alert("Aviso", "No puedes comprar tu propio producto.");
+                                return;
+                            }
+                            handleBuy();
+                        }}
+                        disabled={isCheckingOut}
+                        className="w-full bg-primary py-4 rounded-full flex-row justify-center items-center shadow-sm"
+                        activeOpacity={0.8}
+                    >
+                        {isCheckingOut ? (
+                            <ActivityIndicator color="white" size="small" />
+                        ) : (
+                            <>
+                                <ShieldCheck color="#ffffff" size={20} />
+                                <Text className="text-white font-bold text-lg ml-2">Comprar</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                ) : (
+                    <View className="flex-row justify-between w-full" style={{ gap: 12 }}>
                         <TouchableOpacity
                             onPress={() => {
                                 if (!user) {
@@ -301,41 +410,24 @@ export default function ListingDetailsScreen() {
                                     });
                                 }
                             }}
-                            className={`bg-surface-muted border border-gray-300 py-3.5 rounded-xl flex-row justify-center items-center flex-1 mr-3`}
+                            className={`flex-1 flex-row justify-center items-center py-4 rounded-full ${hasPhone ? 'bg-white border-2 border-primary' : 'bg-primary shadow-sm'}`}
                             activeOpacity={0.8}
                         >
-                            <Mail color="#111827" size={20} />
-                            <Text className="text-text font-bold text-base ml-2">Chat</Text>
+                            <Mail color={hasPhone ? "#059669" : "#ffffff"} size={20} />
+                            <Text className={`${hasPhone ? 'text-primary' : 'text-white'} font-bold text-lg ml-2`}>Chat</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={handleCall}
-                            className="flex-1 bg-primary py-3.5 rounded-xl flex-row justify-center items-center ml-3"
-                            activeOpacity={0.8}
-                        >
-                            <Phone color="#ffffff" size={20} />
-                            <Text className="text-white font-bold text-base ml-2">Llamar</Text>
-                        </TouchableOpacity>
-                    </>
-                ) : (
-                    // Only Chat Button -> Pill shaped Ruralpop Green
-                    <TouchableOpacity
-                        onPress={() => {
-                            if (!user) {
-                                router.push('/(auth)/login');
-                                return;
-                            }
-                            if (listing?.user_id) {
-                                router.push({
-                                    pathname: '/messages/chat',
-                                    params: { listingId: id, otherUserId: listing.user_id }
-                                });
-                            }
-                        }}
-                        className={`w-full bg-primary py-4 rounded-full flex-row justify-center items-center shadow-sm`}
-                        activeOpacity={0.8}
-                    >
-                        <Text className="text-white font-bold text-lg">Chat</Text>
-                    </TouchableOpacity>
+
+                        {hasPhone && (
+                            <TouchableOpacity
+                                onPress={handleCall}
+                                className="flex-1 bg-primary py-4 rounded-full flex-row justify-center items-center shadow-sm"
+                                activeOpacity={0.8}
+                            >
+                                <Phone color="#ffffff" size={20} />
+                                <Text className="text-white font-bold text-lg ml-2">Llamar</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
                 )}
             </View>
 

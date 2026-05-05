@@ -5,20 +5,23 @@ import { StatusBar } from "expo-status-bar";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import { FavoritesProvider } from "../src/contexts/FavoritesContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 export default function RootLayout() {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            <AuthProvider>
-                <FavoritesProvider>
-                    <StatusBar style="auto" />
-                    <Stack screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name="(tabs)" />
-                        <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
-                        <Stack.Screen name="+not-found" options={{ presentation: 'modal' }} />
-                    </Stack>
-                </FavoritesProvider>
-            </AuthProvider>
+            <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''}>
+                <AuthProvider>
+                    <FavoritesProvider>
+                        <StatusBar style="auto" />
+                        <Stack screenOptions={{ headerShown: false }}>
+                            <Stack.Screen name="(tabs)" />
+                            <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
+                            <Stack.Screen name="+not-found" options={{ presentation: 'modal' }} />
+                        </Stack>
+                    </FavoritesProvider>
+                </AuthProvider>
+            </StripeProvider>
         </GestureHandlerRootView>
     );
 }

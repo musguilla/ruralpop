@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import { getOptimizedImageUrl } from "../../src/lib/image-optimization";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
-import { User, LogOut, ChevronRight, Briefcase } from "lucide-react-native";
+import { User, LogOut, ChevronRight, Briefcase, Handshake, Tag, Wallet } from "lucide-react-native";
 import { supabase } from "../../src/lib/supabase";
 
 export default function ProfileScreen() {
@@ -113,6 +113,42 @@ export default function ProfileScreen() {
                         {user?.user_metadata?.full_name || 'Usuario Ruralpop'}
                     </Text>
                     <Text className="text-text-muted">{user?.email}</Text>
+                </View>
+
+                {/* Sección Transacciones */}
+                <View className="bg-white border-t border-gray-100 mb-3">
+                    <TouchableOpacity
+                        onPress={() => router.push('/compras')}
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
+                    >
+                        <View className="flex-row items-center">
+                            <Handshake color="#059669" size={22} />
+                            <Text className="text-[17px] font-semibold text-gray-800 ml-3">Compras</Text>
+                        </View>
+                        <ChevronRight color="#9ca3af" size={20} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => router.push('/ventas')}
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
+                    >
+                        <View className="flex-row items-center">
+                            <Tag color="#059669" size={22} />
+                            <Text className="text-[17px] font-semibold text-gray-800 ml-3">Ventas</Text>
+                        </View>
+                        <ChevronRight color="#9ca3af" size={20} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => router.push('/monedero')}
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
+                    >
+                        <View className="flex-row items-center">
+                            <Wallet color="#059669" size={22} />
+                            <Text className="text-[17px] font-semibold text-gray-800 ml-3">Monedero</Text>
+                        </View>
+                        <ChevronRight color="#9ca3af" size={20} />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Subtitle / Separador */}

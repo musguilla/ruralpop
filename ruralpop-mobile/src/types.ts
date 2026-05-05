@@ -8,10 +8,13 @@ export interface Listing {
     image_urls?: string[];
     created_at: string;
     category: string;
+    subcategory?: string;
     user_id: string;
     status: 'active' | 'sold' | 'draft';
     contact_phone?: string;
     is_featured?: boolean;
+    vender_online?: boolean;
+    shipping_price?: number;
 }
 
 export interface User {

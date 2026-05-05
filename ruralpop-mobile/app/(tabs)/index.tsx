@@ -17,7 +17,7 @@ const numColumns = width > 768 ? 3 : 2;
 const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit }: { searchQuery: string, setSearchQuery: (s: string) => void, onSearchSubmit: () => void }) => (
     <View>
         <View className="px-4 mt-6">
-            <View className="flex-row items-center bg-white border border-gray-200 rounded-full h-14 px-4 shadow-sm">
+            <View className="flex-row items-center bg-[#f8f9fa] border border-gray-400 rounded-full h-[46px] px-4">
                 <Search color="#9ca3af" size={24} />
                 <TextInput
                     className="flex-1 ml-3 text-base text-text h-full"
