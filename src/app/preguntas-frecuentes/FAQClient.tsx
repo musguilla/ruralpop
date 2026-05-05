@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { HelpCircle } from "lucide-react";
 
 type Question = {
+    id?: string;
     q: string;
     a: string;
 };
@@ -18,6 +19,27 @@ export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
     // La categoría 1 se abre por defecto, pero ninguna pregunta está activa para mostrar el Empty State "premium".
     const [activeCategory, setActiveCategory] = useState<string | null>(faqs[0].id);
     const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
+
+    React.useEffect(() => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash) {
+            for (const cat of faqs) {
+                if (cat.id === hash) {
+                    setActiveCategory(cat.id);
+                    setActiveQuestion(null);
+                    return;
+                }
+                const qIdx = cat.questions.findIndex(q => q.id === hash);
+                if (qIdx !== -1) {
+                    setActiveCategory(cat.id);
+                    setActiveQuestion(qIdx);
+                    // Smooth scroll to content
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+            }
+        }
+    }, [faqs]);
 
     const currentFaq = faqs.find(cat => cat.id === activeCategory);
     const currentQ = activeQuestion !== null && currentFaq ? currentFaq.questions[activeQuestion] : null;
@@ -56,9 +78,11 @@ export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
                                                 if (isCatExpanded) {
                                                     setActiveCategory(null);
                                                     setActiveQuestion(null);
+                                                    window.history.replaceState(null, '', window.location.pathname);
                                                 } else {
                                                     setActiveCategory(cat.id);
                                                     setActiveQuestion(null);
+                                                    window.history.replaceState(null, '', `${window.location.pathname}#${cat.id}`);
                                                 }
                                             }}
                                             className={`text-left px-5 py-3.5 rounded-2xl font-bold transition-all text-lg flex items-center justify-between ${
@@ -78,7 +102,12 @@ export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
                                                     return (
                                                         <li key={idx}>
                                                             <button 
-                                                                onClick={() => setActiveQuestion(idx)}
+                                                                onClick={() => {
+                                                                    setActiveQuestion(idx);
+                                                                    if (q.id) {
+                                                                        window.history.replaceState(null, '', `${window.location.pathname}#${q.id}`);
+                                                                    }
+                                                                }}
                                                                 className={`text-left text-base transition-colors block line-clamp-3 leading-relaxed hover:text-[var(--ag-sys-color-primary)] ${
                                                                     isQuestionActive 
                                                                         ? 'text-[var(--ag-sys-color-primary)] font-bold' 
