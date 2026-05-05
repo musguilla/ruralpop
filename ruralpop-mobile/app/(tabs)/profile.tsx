@@ -4,13 +4,24 @@ import { Image } from "expo-image";
 import { getOptimizedImageUrl } from "../../src/lib/image-optimization";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
-import { User, LogOut, ChevronRight, Briefcase, Handshake, Tag, Wallet } from "lucide-react-native";
+import { User, ChevronRight, Briefcase, Handshake, Tag, Wallet } from "lucide-react-native";
 import { supabase } from "../../src/lib/supabase";
+import { useEffect, useState } from "react";
 
 export default function ProfileScreen() {
     const { session, user, isLoading } = useAuth();
     const router = useRouter();
     const insets = useSafeAreaInsets();
+    const [profile, setProfile] = useState<{ name?: string; avatar_url?: string } | null>(null);
+
+    useEffect(() => {
+        if (!user?.id) return;
+        const fetchProfile = async () => {
+            const { data } = await supabase.from('users').select('name, avatar_url').eq('id', user.id).single();
+            if (data) setProfile(data);
+        };
+        fetchProfile();
+    }, [user?.id]);
 
     if (isLoading) return null;
 
@@ -95,9 +106,9 @@ export default function ProfileScreen() {
 
             <ScrollView className="flex-1 bg-gray-50 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
                 <View className="px-6 items-center mb-8">
-                    {user?.user_metadata?.avatar_url ? (
+                    {profile?.avatar_url || user?.user_metadata?.avatar_url ? (
                         <Image
-                            source={{ uri: user.user_metadata.avatar_url }}
+                            source={{ uri: profile?.avatar_url || user?.user_metadata?.avatar_url }}
                             className="mb-4 border border-gray-200 bg-white"
                             style={{ width: 84, height: 84, borderRadius: 42 }}
                             contentFit="cover"
@@ -105,12 +116,12 @@ export default function ProfileScreen() {
                     ) : (
                         <View className="w-[84px] h-[84px] bg-primary-muted rounded-full items-center justify-center mb-4 border border-primary/10">
                             <Text className="text-[32px] font-bold text-primary uppercase">
-                                {(user?.user_metadata?.full_name || 'U').charAt(0)}
+                                {(profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || 'U').charAt(0)}
                             </Text>
                         </View>
                     )}
                     <Text className="text-xl font-bold text-text mb-1">
-                        {user?.user_metadata?.full_name || 'Usuario Ruralpop'}
+                        {profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || 'Usuario Ruralpop'}
                     </Text>
                     <Text className="text-text-muted">{user?.email}</Text>
                 </View>
@@ -211,9 +222,8 @@ export default function ProfileScreen() {
                 <View className="px-6 mt-10 mb-6">
                     <TouchableOpacity
                         onPress={handleSignOut}
-                        className="flex-row items-center justify-center bg-white py-4 rounded-xl border border-gray-200 shadow-sm"
+                        className="flex-row items-center justify-center bg-white py-4 rounded-xl border border-gray-200"
                     >
-                        <LogOut className="text-gray-600 mr-2" size={20} />
                         <Text className="text-gray-800 font-bold text-base">Cerrar Sesión</Text>
                     </TouchableOpacity>
                 </View>
