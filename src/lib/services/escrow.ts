@@ -48,7 +48,7 @@ export async function createEscrowCheckout(listingId: string) {
 
   // Hack for TS since join typing might not be strict
   const seller = listing.users as any;
-  if (!seller || !['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(seller.email?.toLowerCase().trim() || '')) {
+  if (!seller) {
     throw new Error("Escrow not available for this seller");
   }
 
@@ -191,7 +191,7 @@ export async function createEscrowPaymentIntentNative(listingId: string) {
   }
 
   const seller = listing.users as any;
-  if (!seller || !['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(seller.email?.toLowerCase().trim() || '')) {
+  if (!seller) {
     throw new Error("Escrow not available for this seller");
   }
 

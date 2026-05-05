@@ -148,7 +148,7 @@ export default async function ListingDetailPage(props: Props) {
         notFound();
     }
 
-    const isTestPro = ['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(listing.seller?.email?.toLowerCase().trim() || '');
+    const isTestPro = true;
 
     const isProfessional = listing.seller?.role === 'profesional';
     
@@ -244,7 +244,7 @@ export default async function ListingDetailPage(props: Props) {
 
     // Escrow logic
     const isOwner = user?.id === listing.seller?.id;
-    const isEscrowAvailable = ['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(listing.seller?.email?.toLowerCase().trim() || '') && listing.vender_online;
+    const isEscrowAvailable = listing.vender_online;
     const ruralpopFeeCents = calculateRuralpopFee(Math.round(listing.price * 100));
 
     return (

@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         }
 
         const seller = listing.users as any;
-        if (!seller || !['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(seller.email?.toLowerCase().trim() || '')) {
+        if (!seller) {
             return new NextResponse("Escrow not available for this seller", { status: 403 });
         }
 

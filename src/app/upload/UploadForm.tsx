@@ -24,7 +24,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail }: 
     const [selectedCategory, setSelectedCategory] = useState("");
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const [isPending, setIsPending] = useState(false);
-    const isTestPro = ['testpro@ruralpop.com', 'hildegartbaquero@gmail.com'].includes(userEmail?.toLowerCase().trim() || '');
+    const isTestPro = true;
     const [sellOnline, setSellOnline] = useState(false);
 
     // Location state
