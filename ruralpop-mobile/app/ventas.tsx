@@ -54,7 +54,7 @@ export default function VentasScreen() {
                     listings ( title, image_urls )
                 `)
                 .eq('seller_id', user.id)
-                .neq('status', 'pending')
+                .neq('status', 'pending_checkout')
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
