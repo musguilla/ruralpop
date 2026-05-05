@@ -73,6 +73,16 @@ export default function FAQPage() {
                     a: '1. Tu propia página web (landing page) con la URL ruralpop.com/empresa/tu-nombre.\n2. Publicación de anuncios ilimitados sin caducidad.\n3. Etiqueta destacada en tus anuncios que da mayor confianza a los compradores.\n4. Estadísticas detalladas de visualizaciones y contactos recibidos.'
                 }
             ]
+        },
+        {
+            category: 'Compras',
+            id: 'compras',
+            questions: [
+                {
+                    q: 'Comprar con Protección Ruralpop',
+                    a: 'Compra y vende con tranquilidad con Protección Ruralpop. Disfruta de transacciones fáciles y seguras y no te preocupes de nada más.\n\n¿Qué es Protección Ruralpop?\nProtección Ruralpop proporciona una experiencia de compra sencilla y sin preocupaciones mediante nuestro servicio de pago seguro.\n\nComprar con Protección Ruralpop\nAl realizar una compra, aplicamos un cargo obligatorio mediante el cual:\nTu dinero está seguro con nosotros mientras compruebas que lo que has recibido es correcto (Dispones de 7 días desde la confirmación de entrega del producto por parte de la compañia de transporte). Si todo está bien, pasado ese plazo pagaremos al vendedor.\nSi lo que has recibido no coincide con la descripción o está defectuoso tienes la posibilidad de solicitar un reembolso.\n\nVender con Protección Ruralpop\nRealizando tus ventas a través de Ruralpop:\nMantenemos el dinero seguro hasta que el producto llegue al comprador y confirme que es correcto o hayan transcurrido 7 días que tiene para comprobarlo.\nNuestro equipo de atención al cliente está siempre a tu disposición.\n\nCompra y vende sin preocupaciones, ¡nosotros nos encargamos del resto!'
+                }
+            ]
         }
     ];
 
