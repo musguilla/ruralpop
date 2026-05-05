@@ -98,8 +98,8 @@ export default function ProfileScreen() {
                     {user?.user_metadata?.avatar_url ? (
                         <Image
                             source={{ uri: user.user_metadata.avatar_url }}
-                            className="rounded-full mb-4 border border-gray-200 bg-white"
-                            style={{ width: 84, height: 84 }}
+                            className="mb-4 border border-gray-200 bg-white"
+                            style={{ width: 84, height: 84, borderRadius: 42 }}
                             contentFit="cover"
                         />
                     ) : (
