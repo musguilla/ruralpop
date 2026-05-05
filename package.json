@@ -12,6 +12,8 @@
     "@aws-sdk/client-s3": "^3.1030.0",
     "@aws-sdk/s3-request-presigner": "^3.1030.0",
     "@hookform/resolvers": "^5.2.2",
+    "@stripe/connect-js": "^3.4.2",
+    "@stripe/react-connect-js": "^3.4.1",
     "@stripe/react-stripe-js": "^5.6.1",
     "@stripe/stripe-js": "^8.11.0",
     "@supabase/ssr": "^0.8.0",

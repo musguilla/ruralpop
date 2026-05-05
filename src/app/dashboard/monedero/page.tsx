@@ -4,7 +4,7 @@ import Link from "next/link";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Wallet, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
 import stripe from "@/lib/stripe";
-import { StripeButton } from "./StripeButton";
+import { EmbeddedWalletOnboarding } from "@/components/dashboard/EmbeddedWalletOnboarding";
 import { ConfirmReturnButton } from "@/components/dashboard/ConfirmReturnButton";
 
 export const dynamic = "force-dynamic";
@@ -101,7 +101,7 @@ export default async function MonederoDashboardPage() {
                                 </p>
                             </div>
                         </div>
-                        <StripeButton />
+                        <EmbeddedWalletOnboarding />
                     </div>
                 )}
 

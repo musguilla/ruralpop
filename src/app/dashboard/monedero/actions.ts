@@ -66,6 +66,64 @@ export async function createStripeOnboardingLink() {
     }
 }
 
+export async function createStripeAccountSession() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    try {
+        if (!user) throw new Error("No autenticado");
+
+        const supabaseAdmin = createSupabaseClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
+        let { data: wallet } = await supabaseAdmin
+            .from("professional_wallets")
+            .select("*")
+            .eq("user_id", user.id)
+            .single();
+
+        let accountId = wallet?.stripe_connected_account_id;
+
+        if (!accountId) {
+            const account = await stripe.accounts.create({
+                type: 'express',
+                email: user.email,
+                capabilities: {
+                    card_payments: { requested: true },
+                    transfers: { requested: true },
+                },
+            });
+            accountId = account.id;
+
+            if (wallet) {
+                const { error: updateError } = await supabaseAdmin.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
+                if (updateError) throw new Error("Error actualizando wallet: " + updateError.message);
+            } else {
+                const { error: insertError } = await supabaseAdmin.from("professional_wallets").insert({
+                    user_id: user.id,
+                    stripe_connected_account_id: accountId,
+                });
+                if (insertError) throw new Error("Error insertando wallet: " + insertError.message);
+            }
+        }
+
+        // Create Account Session
+        const accountSession = await stripe.accountSessions.create({
+            account: accountId,
+            components: {
+                account_onboarding: { enabled: true },
+            },
+        });
+
+        return { clientSecret: accountSession.client_secret };
+    } catch (error: any) {
+        console.error("Stripe Account Session Error:", error);
+        return { error: error.message || "Error al inicializar sesión segura de Stripe." };
+    }
+}
+
 import { confirmEscrowReturn } from "@/lib/services/escrow";
 import { revalidatePath } from "next/cache";
 
