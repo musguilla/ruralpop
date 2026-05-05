@@ -74,7 +74,7 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                             <span>{formatCurrency(shippingPrice)}</span>
                         </div>
                     )}
-                    <div className="text-xs mb-3 text-[var(--ag-sys-color-text-muted)] font-light">
+                    <div className="text-[11px] mb-3 text-[var(--ag-sys-color-text-muted)] font-light">
                         Las compras están cubiertas por la{" "}
                         <a 
                             href="https://www.ruralpop.com/preguntas-frecuentes#proteccion" 
