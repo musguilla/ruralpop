@@ -10,6 +10,7 @@ export default function MonederoScreen() {
     const { user } = useAuth();
     const router = useRouter();
     const [wallet, setWallet] = useState<any>(null);
+    const [isStripeReady, setIsStripeReady] = useState(false);
     const [transactions, setTransactions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -17,16 +18,24 @@ export default function MonederoScreen() {
     async function fetchWallet() {
         if (!user) return;
         try {
-            const { data, error } = await supabase
-                .from('professional_wallets')
-                .select('*')
-                .eq('user_id', user.id)
-                .single();
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) return;
 
-            if (error && error.code !== 'PGRST116') throw error; // Ignoramos "no rows" ya que puede no tener aún
-            setWallet(data);
+            const apiUrl = `${process.env.EXPO_PUBLIC_SITE_URL || 'https://www.ruralpop.com'}/api/checkout/escrow/wallet-status`;
+            const response = await fetch(apiUrl, {
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`
+                }
+            });
 
-            if (data?.id) {
+            if (!response.ok) throw new Error("Error fetching wallet status");
+
+            const data = await response.json();
+            
+            setWallet(data.wallet);
+            setIsStripeReady(data.isStripeReady);
+
+            if (data.wallet?.id) {
                 const { data: txData } = await supabase
                     .from('wallet_transactions')
                     .select('*, escrow_orders(listings(title))')
@@ -101,7 +110,7 @@ export default function MonederoScreen() {
                     contentContainerStyle={{ padding: 16 }}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#059669']} />}
                 >
-                    {!wallet ? (
+                    {!isStripeReady ? (
                         <View className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 items-center mt-4">
                             <View className="w-16 h-16 bg-primary-muted/30 rounded-full items-center justify-center mb-4">
                                 <ShieldCheck color="#059669" size={32} />
