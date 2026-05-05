@@ -107,7 +107,7 @@ export async function POST(req: Request) {
                 seller_net_amount_cents: sellerNetCents,
                 stripe_payment_intent_id: paymentIntent.id,
                 stripe_connected_account_id: wallet.stripe_connected_account_id,
-                status: "pending"
+                status: "pending_checkout"
             });
 
         if (insertError) {
