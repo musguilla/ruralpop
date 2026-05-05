@@ -29,7 +29,7 @@ export default function PublishScreen() {
     const [images, setImages] = useState<string[]>([]);
     
     // Escrow / Venta Online
-    const [hasStripeAccount, setHasStripeAccount] = useState(false);
+    const [isStripeReady, setIsStripeReady] = useState(false);
     const [allowOnlineSale, setAllowOnlineSale] = useState(false);
     const [shippingPrice, setShippingPrice] = useState('');
 
@@ -49,9 +49,19 @@ export default function PublishScreen() {
                     const { data: userData } = await supabase.from('users').select('phone').eq('id', user?.id).single();
                     if (userData?.phone) setPhone(userData.phone);
 
-                    // Fetch wallet
-                    const { data: walletData } = await supabase.from('professional_wallets').select('stripe_connected_account_id').eq('user_id', user?.id).single();
-                    if (walletData?.stripe_connected_account_id) setHasStripeAccount(true);
+                    // Fetch wallet status
+                    const ruralpopDomain = 'https://www.ruralpop.com'; // or from env
+                    try {
+                        const res = await fetch(`${ruralpopDomain}/api/checkout/escrow/wallet-status`, {
+                            headers: { Authorization: `Bearer ${session?.access_token}` }
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            setIsStripeReady(data.isReady);
+                        }
+                    } catch (e) {
+                        console.error("Error fetching wallet status", e);
+                    }
                 }
                 fetchData();
             }
@@ -364,8 +374,8 @@ export default function PublishScreen() {
                         </View>
                     </View>
 
-                    {hasStripeAccount && (
-                        <View className="mb-6 bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                    <View className="mb-6">
+                        <View className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
                             <View className="flex-row items-center justify-between">
                                 <View className="flex-1 pr-4">
                                     <Text className="text-sm font-bold text-text mb-1">Activar Venta Online Segura</Text>
@@ -395,7 +405,21 @@ export default function PublishScreen() {
                                 </View>
                             )}
                         </View>
-                    )}
+                        
+                        {allowOnlineSale && !isStripeReady && (
+                            <View className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl flex-row items-start space-x-3">
+                                <Info className="text-amber-600 mt-0.5" size={20} />
+                                <View className="flex-1">
+                                    <Text className="text-sm font-medium text-amber-900 mb-2">
+                                        Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
+                                    </Text>
+                                    <TouchableOpacity onPress={() => router.push('/monedero')}>
+                                        <Text className="text-sm font-bold text-primary">Configurar mi monedero →</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )}
+                    </View>
 
                     <View className="mb-6">
                         <Text className="text-sm font-bold text-text mb-2">Provincia *</Text>

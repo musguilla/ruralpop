@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator,
 import { Image } from 'expo-image';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Camera, X, CheckCircle2, ChevronDown, ChevronLeft } from 'lucide-react-native';
+import { Camera, X, CheckCircle2, ChevronDown, ChevronLeft, Info } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { supabase } from '../../src/lib/supabase';
@@ -32,7 +32,7 @@ export default function EditListingScreen() {
     const [images, setImages] = useState<string[]>([]);
     
     // Escrow / Venta Online
-    const [hasStripeAccount, setHasStripeAccount] = useState(false);
+    const [isStripeReady, setIsStripeReady] = useState(false);
     const [allowOnlineSale, setAllowOnlineSale] = useState(false);
     const [shippingPrice, setShippingPrice] = useState('');
 
@@ -101,9 +101,15 @@ export default function EditListingScreen() {
         }
 
         async function fetchWallet() {
+            const ruralpopDomain = 'https://www.ruralpop.com'; // or from env
             try {
-                const { data } = await supabase.from('professional_wallets').select('stripe_connected_account_id').eq('user_id', user!.id).single();
-                if (data?.stripe_connected_account_id) setHasStripeAccount(true);
+                const res = await fetch(`${ruralpopDomain}/api/checkout/escrow/wallet-status`, {
+                    headers: { Authorization: `Bearer ${session?.access_token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setIsStripeReady(data.isReady);
+                }
             } catch (e) {
                 // Ignore if not found
             }
@@ -402,8 +408,8 @@ export default function EditListingScreen() {
                         </View>
                     </View>
 
-                    {hasStripeAccount && (
-                        <View className="mb-6 bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                    <View className="mb-6">
+                        <View className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
                             <View className="flex-row items-center justify-between">
                                 <View className="flex-1 pr-4">
                                     <Text className="text-sm font-bold text-text mb-1">Activar Venta Online Segura</Text>
@@ -433,7 +439,21 @@ export default function EditListingScreen() {
                                 </View>
                             )}
                         </View>
-                    )}
+                        
+                        {allowOnlineSale && !isStripeReady && (
+                            <View className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl flex-row items-start space-x-3">
+                                <Info className="text-amber-600 mt-0.5" size={20} />
+                                <View className="flex-1">
+                                    <Text className="text-sm font-medium text-amber-900 mb-2">
+                                        Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
+                                    </Text>
+                                    <TouchableOpacity onPress={() => router.push('/monedero')}>
+                                        <Text className="text-sm font-bold text-primary">Configurar mi monedero →</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )}
+                    </View>
 
                     <View>
                         <Text className="text-sm font-bold text-text mb-2">Provincia *</Text>
