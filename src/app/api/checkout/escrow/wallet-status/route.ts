@@ -29,8 +29,13 @@ export async function GET(req: Request) {
 
         let isReady = false;
         if (wallet?.stripe_connected_account_id) {
-            const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
-            isReady = account.charges_enabled && account.details_submitted;
+            try {
+                const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
+                isReady = account.charges_enabled && account.details_submitted;
+            } catch (stripeError) {
+                console.error("Stripe account retrieve error:", stripeError);
+                isReady = false;
+            }
         }
 
         return NextResponse.json({ wallet, isStripeReady: isReady });

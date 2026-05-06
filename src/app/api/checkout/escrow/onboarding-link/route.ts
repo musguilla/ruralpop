@@ -57,12 +57,42 @@ export async function POST(req: Request) {
 
         // Create Account Link
         const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
-        const accountLink = await stripe.accountLinks.create({
-            account: accountId,
-            refresh_url: `${baseUrl}/dashboard/monedero?refresh=true`,
-            return_url: `${baseUrl}/dashboard/monedero?success=true`,
-            type: 'account_onboarding',
-        });
+        
+        let accountLink;
+        try {
+            accountLink = await stripe.accountLinks.create({
+                account: accountId,
+                refresh_url: `${baseUrl}/dashboard/monedero?refresh=true`,
+                return_url: `${baseUrl}/dashboard/monedero?success=true`,
+                type: 'account_onboarding',
+            });
+        } catch (stripeError: any) {
+            console.error("Stripe account link error:", stripeError);
+            // If account was deleted in Stripe, recreate it
+            if (stripeError.code === 'account_invalid' || stripeError.message?.includes('No such account') || stripeError.raw?.code === 'account_invalid') {
+                const newAccount = await stripe.accounts.create({
+                    type: 'express',
+                    email: user.email,
+                    capabilities: {
+                        card_payments: { requested: true },
+                        transfers: { requested: true },
+                    },
+                });
+                accountId = newAccount.id;
+                
+                const { error: updateError } = await supabaseAdmin.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
+                if (updateError) throw new Error("Error actualizando wallet con nueva cuenta: " + updateError.message);
+                
+                accountLink = await stripe.accountLinks.create({
+                    account: accountId,
+                    refresh_url: `${baseUrl}/dashboard/monedero?refresh=true`,
+                    return_url: `${baseUrl}/dashboard/monedero?success=true`,
+                    type: 'account_onboarding',
+                });
+            } else {
+                throw stripeError;
+            }
+        }
 
         return NextResponse.json({ url: accountLink.url });
     } catch (error: any) {

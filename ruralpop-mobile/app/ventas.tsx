@@ -13,7 +13,7 @@ export default function VentasScreen() {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
-    const [isStripeReady, setIsStripeReady] = useState(true);
+    const [isStripeReady, setIsStripeReady] = useState(false);
 
     const handleEscrowAction = async (action: string, orderId: string) => {
         setActionLoading(`${action}_${orderId}`);
