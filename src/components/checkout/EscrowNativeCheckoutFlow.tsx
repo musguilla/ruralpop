@@ -112,14 +112,36 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
 
                 {error && (
                     <div className="mb-4 text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-100 flex flex-col gap-3">
-                        <p>{error}</p>
-                        {isSeller && error.includes("El vendedor aún no ha") && (
-                            <a 
-                                href="/dashboard/monedero" 
-                                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-center transition-colors shadow-sm"
-                            >
-                                Configurar mi monedero
-                            </a>
+                        {error === "User not authenticated" || error === "No autenticado" ? (
+                            <>
+                                <p className="text-center font-medium">Debes iniciar sesión o registrarte para poder realizar una compra.</p>
+                                <div className="flex gap-2 w-full mt-1">
+                                    <a 
+                                        href="/login" 
+                                        className="flex-1 bg-white hover:bg-red-50 text-red-700 border border-red-200 font-bold py-2 px-4 rounded-lg text-center transition-colors shadow-sm"
+                                    >
+                                        Iniciar sesión
+                                    </a>
+                                    <a 
+                                        href="/register" 
+                                        className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-center transition-colors shadow-sm"
+                                    >
+                                        Crear cuenta
+                                    </a>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <p>{error}</p>
+                                {isSeller && error.includes("El vendedor aún no ha") && (
+                                    <a 
+                                        href="/dashboard/monedero" 
+                                        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-center transition-colors shadow-sm"
+                                    >
+                                        Configurar mi monedero
+                                    </a>
+                                )}
+                            </>
                         )}
                     </div>
                 )}
