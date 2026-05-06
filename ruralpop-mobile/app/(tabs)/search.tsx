@@ -225,7 +225,7 @@ export default function SearchScreen() {
                     >
                         <ArrowLeft color="#1f2937" size={26} strokeWidth={2.5} />
                     </TouchableOpacity>
-                    <View className="flex-1 flex-row items-center bg-[#f8f9fa] border border-gray-400 rounded-full h-[46px] px-4">
+                    <View className="flex-1 flex-row items-center bg-[#f8f9fa] border border-[#9ca3af] rounded-full h-[46px] px-4">
                         <Search color="#374151" size={20} strokeWidth={2.5} />
                         <TextInput
                             className="flex-1 ml-2 text-base text-gray-900 font-medium"
