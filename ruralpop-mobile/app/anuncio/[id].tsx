@@ -442,7 +442,7 @@ export default function ListingDetailsScreen() {
                 onRequestClose={() => setIsCheckoutSummaryVisible(false)}
             >
                 <SafeAreaView className="flex-1 bg-surface-muted">
-                    <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row items-center justify-between shadow-sm z-10">
+                    <View className="px-5 py-4 bg-white border-b border-gray-100 flex-row items-center justify-between z-10">
                         <View className="flex-row items-center">
                             <ShieldCheck color="#059669" size={26} />
                             <Text className="text-xl font-bold text-text ml-2">Pago seguro</Text>
@@ -457,7 +457,7 @@ export default function ListingDetailsScreen() {
                     </View>
 
                     <ScrollView className="flex-1 px-4 py-6">
-                        <View className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mb-6">
+                        <View className="bg-white rounded-2xl border border-gray-300 p-6 mb-6">
                             <View className="flex-row justify-between items-center mb-4">
                                 <Text className="text-[17px] text-gray-500">Producto</Text>
                                 <Text className="text-[17px] text-text">{formatPrice((listing.price || 0))}</Text>
@@ -470,14 +470,7 @@ export default function ListingDetailsScreen() {
                                 </Text>
                             </View>
 
-                            <View className="flex-row justify-between items-center mb-2">
-                                <Text className="text-[17px] text-gray-500">Protección de compra</Text>
-                                <Text className="text-[17px] text-text">
-                                    {formatPrice(calculateRuralpopFee(Math.round((listing.price || 0) * 100)) / 100)}
-                                </Text>
-                            </View>
-
-                            <Text className="text-[13px] text-primary mb-6">
+                            <Text className="text-[13px] text-gray-500 mb-6 mt-2">
                                 Las compras están cubiertas por la Protección Ruralpop
                             </Text>
 
