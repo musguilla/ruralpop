@@ -139,13 +139,13 @@ export default async function AdminDashboard() {
         usersResult,
         listingsResult,
         { count: activeListings },
-        { data: recentWallets },
+        { data: allWallets },
         allEscrows
     ] = await Promise.all([
         fetchAllDates(adminClient, "users"),
         fetchAllDates(adminClient, "listings"),
         adminClient.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active"),
-        adminClient.from("professional_wallets").select("created_at, user:users(email)").order("created_at", { ascending: false }).limit(5),
+        adminClient.from("professional_wallets").select("created_at, stripe_connected_account_id, user:users(email)").order("created_at", { ascending: false }),
         fetchAllEscrows(adminClient)
     ]);
 
@@ -169,6 +169,22 @@ export default async function AdminDashboard() {
     
     const totalSubscriptionRevenue = paidInvoices.reduce((acc, inv) => acc + inv.amount_paid, 0) / 100;
     const subscriptionDates = paidInvoices.map(inv => ({ date: new Date(inv.created * 1000).toISOString(), amount: inv.amount_paid / 100 }));
+
+    // Compute enabled wallets
+    const stripeAccounts = [];
+    try {
+        for await (const account of stripe.accounts.list({ limit: 100 })) {
+            stripeAccounts.push(account);
+        }
+    } catch(e) {
+        console.error("Error fetching stripe accounts", e);
+    }
+    const enabledAccountIds = new Set(
+        stripeAccounts.filter(a => a.charges_enabled && a.details_submitted).map(a => a.id)
+    );
+    const enabledWallets = (allWallets || []).filter(w => enabledAccountIds.has(w.stripe_connected_account_id));
+    const recentWallets = enabledWallets.slice(0, 5);
+    const totalEnabledWallets = enabledWallets.length;
 
     const completedEscrows = allEscrows.filter((e: any) => e.status !== "pending_checkout" && e.status !== "cancelled");
     const totalEscrowSales = completedEscrows.reduce((acc: number, e: any) => acc + (e.gross_amount_cents || 0), 0) / 100;
@@ -247,7 +263,7 @@ export default async function AdminDashboard() {
                         </div>
                         <div className="flex-1">
                             <p className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] mb-1 leading-none">Wallets Recientes</p>
-                            <h4 className="text-3xl font-black text-[var(--ag-sys-color-text)] leading-none">{recentWallets?.length || 0}</h4>
+                            <h4 className="text-3xl font-black text-[var(--ag-sys-color-text)] leading-none">{totalEnabledWallets}</h4>
                         </div>
                     </div>
                     <div className="mt-4 flex flex-col gap-2 flex-1 justify-center">
