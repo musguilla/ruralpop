@@ -13,6 +13,7 @@ import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
+import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 
 export default function EditListingScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -176,8 +177,8 @@ export default function EditListingScreen() {
         for (let i = 0; i < images.length; i++) {
             const base64Img = images[i];
 
-            // Si la imagen ya es una URL pública que estaba guardada, la mantenemos
-            if (base64Img.startsWith('http')) {
+            // Si la imagen ya es una URL pública o un path del storage, la mantenemos
+            if (!base64Img.startsWith('data:image') && !base64Img.startsWith('file:')) {
                 urls.push(base64Img);
                 continue;
             }
@@ -320,7 +321,7 @@ export default function EditListingScreen() {
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
                         {images.map((uri, index) => (
                             <View key={index} className="relative w-24 h-24 rounded-xl overflow-hidden mr-3 border border-gray-200">
-                                <Image source={{ uri }} className="w-full h-full" contentFit="cover" />
+                                <Image source={{ uri: getOptimizedImageUrl(uri, { width: 300 }) || uri }} className="w-full h-full" contentFit="cover" />
                                 <TouchableOpacity
                                     onPress={() => removeImage(index)}
                                     className="absolute top-1 right-1 bg-black/50 rounded-full p-1"
@@ -342,7 +343,7 @@ export default function EditListingScreen() {
                     </ScrollView>
                 </View>
 
-                <View className="space-y-4">
+                <View className="space-y-6">
                     <View>
                         <Text className="text-sm font-bold text-text mb-2">Título del anuncio *</Text>
                         <TextInput
