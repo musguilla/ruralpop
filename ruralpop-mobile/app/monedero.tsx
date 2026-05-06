@@ -157,7 +157,7 @@ export default function MonederoScreen() {
                                 </View>
                             </View>
 
-                            <View className="flex-row space-x-4 mb-6">
+                            <View className="flex-row gap-3 mb-6">
                                 {/* Saldo Retenido */}
                                 <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                                     <Text className="text-gray-500 text-sm mb-1">Saldo Retenido</Text>
