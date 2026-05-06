@@ -102,11 +102,11 @@ export default function MonederoScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-surface-muted">
-            <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row items-center shadow-sm z-10">
+            <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row items-center z-10">
                 <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2 rounded-full active:bg-gray-100">
                     <ChevronLeft color="#111827" size={28} />
                 </TouchableOpacity>
-                <Text className="text-xl font-bold text-text ml-2">Mi Monedero</Text>
+                <Text className="text-xl font-bold text-text ml-2">Monedero</Text>
             </View>
 
             {loading ? (
