@@ -133,19 +133,6 @@ export default function ProfileScreen() {
                 </View>
 
                 <View className="bg-white border-y border-gray-100 mb-6">
-                    <View className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50 opacity-70">
-                        <View className="flex-row items-center flex-1 pr-4">
-                            <Briefcase color="#374151" size={24} strokeWidth={1.5} />
-                            <View className="flex-row items-center ml-4 flex-1">
-                                <Text className="text-[17px] text-gray-700 mr-3 shrink-0">Ruralpop PRO</Text>
-                                <View className="bg-primary/10 px-2 py-0.5 rounded-md shrink-0">
-                                    <Text className="text-[10px] uppercase font-bold text-primary tracking-wider">Próximamente</Text>
-                                </View>
-                            </View>
-                        </View>
-                        <ChevronRight color="#d1d5db" size={20} />
-                    </View>
-
                     <TouchableOpacity
                         onPress={() => router.push('/(tabs)/favorites')}
                         className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
@@ -170,7 +157,7 @@ export default function ProfileScreen() {
 
                     <TouchableOpacity
                         onPress={() => router.push('/ajustes')}
-                        className="flex-row justify-between items-center px-6 py-5"
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
                     >
                         <View className="flex-row items-center">
                             <Settings color="#374151" size={24} strokeWidth={1.5} />
@@ -178,6 +165,19 @@ export default function ProfileScreen() {
                         </View>
                         <ChevronRight color="#d1d5db" size={20} />
                     </TouchableOpacity>
+
+                    <View className="flex-row justify-between items-center px-6 py-5 opacity-70">
+                        <View className="flex-row items-center flex-1 pr-4">
+                            <Briefcase color="#374151" size={24} strokeWidth={1.5} />
+                            <View className="flex-row items-center ml-4 flex-1">
+                                <Text className="text-[17px] text-gray-700 mr-3 shrink-0">Ruralpop PRO</Text>
+                                <View className="bg-primary/10 px-2 py-0.5 rounded-md shrink-0">
+                                    <Text className="text-[10px] uppercase font-bold text-primary tracking-wider">Próximamente</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <ChevronRight color="#d1d5db" size={20} />
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
