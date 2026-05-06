@@ -52,12 +52,40 @@ export async function createStripeOnboardingLink() {
 
         // Create Account Link
         const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
-        const accountLink = await stripe.accountLinks.create({
-            account: accountId,
-            refresh_url: `${baseUrl}/dashboard/monedero?refresh=true`,
-            return_url: `${baseUrl}/dashboard/monedero?success=true`,
-            type: 'account_onboarding',
-        });
+        let accountLink;
+        try {
+            accountLink = await stripe.accountLinks.create({
+                account: accountId,
+                refresh_url: `${baseUrl}/dashboard/monedero?refresh=true`,
+                return_url: `${baseUrl}/dashboard/monedero?success=true`,
+                type: 'account_onboarding',
+            });
+        } catch (stripeError: any) {
+            console.error("Stripe account link error:", stripeError);
+            if (stripeError.code === 'account_invalid' || stripeError.message?.includes('No such account') || stripeError.raw?.code === 'account_invalid') {
+                const newAccount = await stripe.accounts.create({
+                    type: 'express',
+                    email: user.email,
+                    capabilities: {
+                        card_payments: { requested: true },
+                        transfers: { requested: true },
+                    },
+                });
+                accountId = newAccount.id;
+                
+                const { error: updateError } = await supabaseAdmin.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
+                if (updateError) throw new Error("Error actualizando wallet con nueva cuenta: " + updateError.message);
+                
+                accountLink = await stripe.accountLinks.create({
+                    account: accountId,
+                    refresh_url: `${baseUrl}/dashboard/monedero?refresh=true`,
+                    return_url: `${baseUrl}/dashboard/monedero?success=true`,
+                    type: 'account_onboarding',
+                });
+            } else {
+                throw stripeError;
+            }
+        }
 
         return { url: accountLink.url };
     } catch (error: any) {
@@ -110,12 +138,40 @@ export async function createStripeAccountSession() {
         }
 
         // Create Account Session
-        const accountSession = await stripe.accountSessions.create({
-            account: accountId,
-            components: {
-                account_onboarding: { enabled: true },
-            },
-        });
+        let accountSession;
+        try {
+            accountSession = await stripe.accountSessions.create({
+                account: accountId,
+                components: {
+                    account_onboarding: { enabled: true },
+                },
+            });
+        } catch (stripeError: any) {
+            console.error("Stripe account session error:", stripeError);
+            if (stripeError.code === 'account_invalid' || stripeError.message?.includes('No such account') || stripeError.raw?.code === 'account_invalid') {
+                const newAccount = await stripe.accounts.create({
+                    type: 'express',
+                    email: user.email,
+                    capabilities: {
+                        card_payments: { requested: true },
+                        transfers: { requested: true },
+                    },
+                });
+                accountId = newAccount.id;
+                
+                const { error: updateError } = await supabaseAdmin.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
+                if (updateError) throw new Error("Error actualizando wallet con nueva cuenta: " + updateError.message);
+                
+                accountSession = await stripe.accountSessions.create({
+                    account: accountId,
+                    components: {
+                        account_onboarding: { enabled: true },
+                    },
+                });
+            } else {
+                throw stripeError;
+            }
+        }
 
         return { clientSecret: accountSession.client_secret };
     } catch (error: any) {
