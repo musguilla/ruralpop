@@ -19,6 +19,8 @@ export default function PersonalDataScreen() {
     const router = useRouter();
 
     const [name, setName] = useState('');
+    const [commercialName, setCommercialName] = useState('');
+    const [role, setRole] = useState('user');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -41,13 +43,15 @@ export default function PersonalDataScreen() {
             setLoading(true);
             const { data, error } = await supabase
                 .from('users')
-                .select('name, contact_phone, avatar_url, location, municipality_id')
+                .select('name, commercial_name, role, contact_phone, avatar_url, location, municipality_id')
                 .eq('id', user?.id)
                 .single();
 
             if (data) {
                 // Support both full_name or name from supabase
-                setName(data.name || user?.user_metadata?.full_name || '');
+                setName(data.name || user?.user_metadata?.name || user?.user_metadata?.full_name || '');
+                setCommercialName(data.commercial_name || '');
+                setRole(data.role || 'user');
                 setPhone(data.contact_phone || '');
                 setAvatarUrl(data.avatar_url || user?.user_metadata?.avatar_url || null);
 
@@ -85,6 +89,7 @@ export default function PersonalDataScreen() {
             .from('users')
             .update({
                 name: name.trim(),
+                commercial_name: commercialName.trim() || null,
                 contact_phone: phone.trim(),
                 location: fullLocationString,
                 province_id: provinceNumericId,
@@ -268,6 +273,20 @@ export default function PersonalDataScreen() {
                             className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text"
                         />
                     </View>
+
+                    {/* Nombre Comercial (Si existe o es profesional/admin) */}
+                    {(commercialName || role === 'professional' || role === 'admin') ? (
+                        <View>
+                            <Text className="text-sm font-bold text-text mb-2 mt-2">Nombre Comercial / Empresa</Text>
+                            <TextInput
+                                value={commercialName}
+                                onChangeText={setCommercialName}
+                                placeholder="Tu empresa o marca"
+                                autoCapitalize="words"
+                                className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text"
+                            />
+                        </View>
+                    ) : null}
 
                     {/* Email (Read only) */}
                     <View>
