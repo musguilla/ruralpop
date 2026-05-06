@@ -111,24 +111,26 @@ export default function MonederoScreen() {
                     contentContainerStyle={{ padding: 16 }}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#059669']} />}
                 >
-                    {!isStripeReady ? (
-                        <View className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 items-center mt-4">
-                            <View className="w-16 h-16 bg-primary-muted/30 rounded-full items-center justify-center mb-4">
-                                <ShieldCheck color="#059669" size={32} />
+                    {!isStripeReady && (
+                        <View className="bg-white rounded-3xl p-6 shadow-sm border border-orange-200 items-center mt-4 mb-4">
+                            <View className="w-16 h-16 bg-orange-100 rounded-full items-center justify-center mb-4">
+                                <AlertCircle color="#ea580c" size={32} />
                             </View>
-                            <Text className="text-xl font-bold text-text mb-2 text-center">Pagos 100% Seguros</Text>
+                            <Text className="text-xl font-bold text-text mb-2 text-center">Verificación Pendiente</Text>
                             <Text className="text-gray-500 text-center mb-6">
-                                Para poder recibir pagos por tus ventas online, necesitamos verificar tu identidad por requerimiento legal europeo (KYC). Esto se hace de forma segura a través de Stripe.
+                                Para poder recibir transferencias a tu banco, Stripe necesita verificar tu identidad por requerimientos legales europeos (KYC).
                             </Text>
                             <TouchableOpacity
                                 onPress={handleStripeOnboarding}
-                                className="bg-primary w-full py-4 rounded-xl flex-row items-center justify-center"
+                                className="bg-orange-600 w-full py-4 rounded-xl flex-row items-center justify-center"
                             >
-                                <Text className="text-white font-bold text-base mr-2">Configurar cobros</Text>
+                                <Text className="text-white font-bold text-base mr-2">Completar verificación</Text>
                                 <ExternalLink color="white" size={18} />
                             </TouchableOpacity>
                         </View>
-                    ) : (
+                    )}
+
+                    {wallet ? (
                         <>
                             {/* Saldo Disponible */}
                             <View className="bg-primary rounded-3xl p-6 shadow-sm mb-4 relative overflow-hidden">
@@ -226,6 +228,24 @@ export default function MonederoScreen() {
                                 </View>
                             )}
                         </>
+                    ) : (
+                        // If there is no wallet AT ALL, show the original welcome banner
+                        <View className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 items-center mt-4">
+                            <View className="w-16 h-16 bg-primary-muted/30 rounded-full items-center justify-center mb-4">
+                                <ShieldCheck color="#059669" size={32} />
+                            </View>
+                            <Text className="text-xl font-bold text-text mb-2 text-center">Pagos 100% Seguros</Text>
+                            <Text className="text-gray-500 text-center mb-6">
+                                Para poder recibir pagos por tus ventas online, necesitamos verificar tu identidad por requerimiento legal europeo (KYC). Esto se hace de forma segura a través de Stripe.
+                            </Text>
+                            <TouchableOpacity
+                                onPress={handleStripeOnboarding}
+                                className="bg-primary w-full py-4 rounded-xl flex-row items-center justify-center"
+                            >
+                                <Text className="text-white font-bold text-base mr-2">Configurar cobros</Text>
+                                <ExternalLink color="white" size={18} />
+                            </TouchableOpacity>
+                        </View>
                     )}
                 </ScrollView>
             )}
