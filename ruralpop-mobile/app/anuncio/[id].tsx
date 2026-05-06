@@ -103,6 +103,10 @@ export default function ListingDetailsScreen() {
     const rawSellerName = isProfessional && listing.seller?.commercial_name ? listing.seller.commercial_name : (listing.seller?.name || "Usuario Ruralpop");
 
     const handleCall = () => {
+        if (!user) {
+            router.push('/(auth)/login');
+            return;
+        }
         const phone = listing.seller?.phone || listing.contact_phone;
         if (phone) {
             Linking.openURL(`tel:${phone}`).catch((err) => {
