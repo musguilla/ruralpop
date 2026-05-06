@@ -167,14 +167,6 @@ export default function ProfileScreen() {
                 {/* Subtitle / Separador */}
                 <View className="bg-white border-t border-gray-100">
                     <TouchableOpacity
-                        onPress={() => router.push('/my-listings')}
-                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
-                    >
-                        <Text className="text-[17px] text-gray-800">Mis Anuncios</Text>
-                        <ChevronRight color="#9ca3af" size={20} />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
                         onPress={() => router.push('/personal-data')}
                         className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
                     >
