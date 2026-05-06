@@ -53,8 +53,8 @@ export default function MessagesScreen() {
                     receiver_id,
                     listing_id,
                     listings (title),
-                    sender:users!messages_sender_id_fkey(id, name, avatar_url),
-                    receiver:users!messages_receiver_id_fkey(id, name, avatar_url)
+                    sender:users!messages_sender_id_fkey(id, name, commercial_name, avatar_url),
+                    receiver:users!messages_receiver_id_fkey(id, name, commercial_name, avatar_url)
                 `)
                 .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
                 .order('created_at', { ascending: false });
@@ -75,7 +75,7 @@ export default function MessagesScreen() {
                 if (!groups.has(key)) {
                     groups.set(key, {
                         other_user_id: otherUserId,
-                        other_user_name: (otherUser as any)?.name || 'Usuario',
+                        other_user_name: (otherUser as any)?.commercial_name || (otherUser as any)?.name || 'Usuario',
                         other_user_avatar: (otherUser as any)?.avatar_url,
                         listing_id: msg.listing_id,
                         listing_title: Array.isArray(msg.listings) ? (msg.listings[0] as any)?.title : (msg.listings as any)?.title || 'Anuncio Ruralpop',
@@ -150,7 +150,12 @@ export default function MessagesScreen() {
                         <TouchableOpacity
                             onPress={() => router.push({
                                 pathname: '/messages/chat',
-                                params: { listingId: item.listing_id, otherUserId: item.other_user_id }
+                                params: { 
+                                    listingId: item.listing_id, 
+                                    otherUserId: item.other_user_id,
+                                    otherUserName: item.other_user_name,
+                                    otherUserAvatar: item.other_user_avatar || ''
+                                }
                             })}
                             className="bg-white px-4 py-4 border-b border-gray-100 flex-row items-center active:bg-gray-50"
                         >

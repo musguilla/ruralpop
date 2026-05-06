@@ -17,7 +17,7 @@ interface Message {
 }
 
 export default function ChatScreen() {
-    const { listingId, otherUserId } = useLocalSearchParams<{ listingId: string, otherUserId: string }>();
+    const { listingId, otherUserId, otherUserName: paramName, otherUserAvatar: paramAvatar } = useLocalSearchParams<{ listingId: string, otherUserId: string, otherUserName?: string, otherUserAvatar?: string }>();
     const router = useRouter();
     const { user } = useAuth();
     const insets = useSafeAreaInsets();
@@ -26,8 +26,8 @@ export default function ChatScreen() {
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
-    const [otherUserName, setOtherUserName] = useState<string>('Usuario');
-    const [otherUserAvatar, setOtherUserAvatar] = useState<string | null>(null);
+    const [otherUserName, setOtherUserName] = useState<string>(paramName || 'Usuario');
+    const [otherUserAvatar, setOtherUserAvatar] = useState<string | null>(paramAvatar || null);
     const flatListRef = useRef<FlatList>(null);
 
     useEffect(() => {
@@ -81,8 +81,8 @@ export default function ChatScreen() {
         if (!otherUserId) return;
         const { data } = await supabase.from('users').select('name, full_name, commercial_name, avatar_url').eq('id', otherUserId).single();
         if (data) {
-            setOtherUserName(data.commercial_name || data.name || data.full_name || 'Usuario');
-            setOtherUserAvatar(data.avatar_url);
+            if (!paramName) setOtherUserName(data.commercial_name || data.name || data.full_name || 'Usuario');
+            if (!paramAvatar) setOtherUserAvatar(data.avatar_url);
         }
     }
 
