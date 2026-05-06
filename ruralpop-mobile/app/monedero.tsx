@@ -28,7 +28,12 @@ export default function MonederoScreen() {
                 }
             });
 
-            if (!response.ok) throw new Error("Error fetching wallet status");
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error("Tu sesión ha expirado o es inválida por un cambio en tu cuenta. Por favor, cierra sesión y vuelve a entrar.");
+                }
+                throw new Error("Error fetching wallet status");
+            }
 
             const data = await response.json();
             
@@ -46,8 +51,11 @@ export default function MonederoScreen() {
                 
                 setTransactions(txData || []);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching wallet', error);
+            if (error.message?.includes('sesión ha expirado')) {
+                alert(error.message);
+            }
         } finally {
             setLoading(false);
             setRefreshing(false);
