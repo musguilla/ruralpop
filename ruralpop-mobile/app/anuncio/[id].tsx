@@ -12,6 +12,7 @@ import { useAuth } from '../../src/contexts/AuthContext';
 import { useFavorites } from '../../src/contexts/FavoritesContext';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStripe } from '@stripe/stripe-react-native';
+import { calculateRuralpopFee } from '../../src/lib/escrow';
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,6 +43,7 @@ export default function ListingDetailsScreen() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+    const [isCheckoutSummaryVisible, setIsCheckoutSummaryVisible] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
 
     // Scroll Animation - Simplified to avoid Animated/Native driver crashes
@@ -184,6 +186,7 @@ export default function ListingDetailsScreen() {
 
             // Éxito
             Alert.alert('¡Pago completado!', 'Tu pedido ha sido realizado con éxito.');
+            setIsCheckoutSummaryVisible(false);
             router.replace('/compras');
 
         } catch (error: any) {
@@ -380,7 +383,7 @@ export default function ListingDetailsScreen() {
                                 Alert.alert("Aviso", "No puedes comprar tu propio producto.");
                                 return;
                             }
-                            handleBuy();
+                            setIsCheckoutSummaryVisible(true);
                         }}
                         disabled={isCheckingOut}
                         className="w-full bg-primary py-4 rounded-full flex-row justify-center items-center shadow-sm"
@@ -430,6 +433,84 @@ export default function ListingDetailsScreen() {
                     </View>
                 )}
             </View>
+
+            {/* Checkout Summary Modal */}
+            <Modal
+                visible={isCheckoutSummaryVisible}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setIsCheckoutSummaryVisible(false)}
+            >
+                <SafeAreaView className="flex-1 bg-surface-muted">
+                    <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row items-center justify-between shadow-sm z-10">
+                        <View className="flex-row items-center">
+                            <ShieldCheck color="#059669" size={26} />
+                            <Text className="text-xl font-bold text-text ml-2">Pago seguro</Text>
+                        </View>
+                        <TouchableOpacity 
+                            onPress={() => setIsCheckoutSummaryVisible(false)}
+                            className="bg-gray-100 px-4 py-2 rounded-full flex-row items-center"
+                        >
+                            <ChevronLeft color="#4b5563" size={18} />
+                            <Text className="text-gray-700 font-bold ml-1">Cancelar</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <ScrollView className="flex-1 px-4 py-6">
+                        <View className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mb-6">
+                            <View className="flex-row justify-between items-center mb-4">
+                                <Text className="text-[17px] text-gray-500">Producto</Text>
+                                <Text className="text-[17px] text-text">{formatPrice((listing.price || 0))}</Text>
+                            </View>
+
+                            <View className="flex-row justify-between items-center mb-4">
+                                <Text className="text-[17px] text-gray-500">Envío</Text>
+                                <Text className="text-[17px] text-text">
+                                    {formatPrice(listing.shipping_price || 0)}
+                                </Text>
+                            </View>
+
+                            <View className="flex-row justify-between items-center mb-2">
+                                <Text className="text-[17px] text-gray-500">Protección de compra</Text>
+                                <Text className="text-[17px] text-text">
+                                    {formatPrice(calculateRuralpopFee(Math.round((listing.price || 0) * 100)) / 100)}
+                                </Text>
+                            </View>
+
+                            <Text className="text-[13px] text-primary mb-6">
+                                Las compras están cubiertas por la Protección Ruralpop
+                            </Text>
+
+                            <View className="border-t border-gray-100 pt-4 flex-row justify-between items-center">
+                                <Text className="text-xl font-extrabold text-text">Total a pagar</Text>
+                                <Text className="text-2xl font-extrabold text-text">
+                                    {formatPrice((listing.price || 0) + (listing.shipping_price || 0) + (calculateRuralpopFee(Math.round((listing.price || 0) * 100)) / 100))}
+                                </Text>
+                            </View>
+                        </View>
+                    </ScrollView>
+
+                    <View className="bg-white border-t border-gray-200 p-4 pb-8">
+                        <TouchableOpacity
+                            onPress={handleBuy}
+                            disabled={isCheckingOut}
+                            className="w-full bg-primary py-4 rounded-full flex-row justify-center items-center shadow-sm"
+                            activeOpacity={0.8}
+                        >
+                            {isCheckingOut ? (
+                                <ActivityIndicator color="white" size="small" />
+                            ) : (
+                                <>
+                                    <ShieldCheck color="#ffffff" size={20} />
+                                    <Text className="text-white font-bold text-lg ml-2">
+                                        Pagar {formatPrice((listing.price || 0) + (listing.shipping_price || 0) + (calculateRuralpopFee(Math.round((listing.price || 0) * 100)) / 100))}
+                                    </Text>
+                                </>
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                </SafeAreaView>
+            </Modal>
 
             {/* Fullscreen Interactive Gallery Modal */}
             <ImageViewing
