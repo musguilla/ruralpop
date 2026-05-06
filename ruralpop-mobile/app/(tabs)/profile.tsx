@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import { getOptimizedImageUrl } from "../../src/lib/image-optimization";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
-import { User, ChevronRight, Briefcase, Handshake, Tag, Wallet } from "lucide-react-native";
+import { User, ChevronRight, Briefcase, Handshake, Tag, Wallet, Heart, Settings, MessageSquare } from "lucide-react-native";
 import { supabase } from "../../src/lib/supabase";
 import { useEffect, useState } from "react";
 
@@ -27,48 +27,7 @@ export default function ProfileScreen() {
 
     if (isLoading) return null;
 
-    async function handleSignOut() {
-        if (user?.id) {
-            // Eliminar el token de este dispositivo para que no reciba push notification del usuario tras cerrar sesión
-            await supabase.from('users').update({ expo_push_token: null }).eq('id', user.id);
-        }
 
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-            Alert.alert("Error al cerrar sesión", error.message);
-        } else {
-            router.replace("/");
-        }
-    }
-
-    const handleDeleteAccount = () => {
-        Alert.alert(
-            "Eliminar Cuenta",
-            "Esta acción es irreversible. Se eliminarán permanentemente todos tus datos personales, tus anuncios publicados y tu historial de mensajes.",
-            [
-                { text: "Cancelar", style: "cancel" },
-                {
-                    text: "Sí, eliminar mi cuenta",
-                    style: "destructive",
-                    onPress: async () => {
-                        try {
-                            const { error } = await supabase.rpc('delete_user_account');
-                            if (error) throw error;
-
-                            // User deleted, sign out from local state
-                            await supabase.auth.signOut();
-                            router.replace("/");
-                        } catch (error: any) {
-                            Alert.alert(
-                                "Error al eliminar la cuenta",
-                                error.message || "Ha ocurrido un error inesperado al intentar borrar tu cuenta."
-                            );
-                        }
-                    }
-                }
-            ]
-        );
-    };
 
     if (!session) {
         return (
@@ -129,96 +88,95 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Sección Transacciones */}
-                <View className="bg-white border-t border-gray-100 mb-3">
+                <View className="px-6 mb-2 mt-4">
+                    <Text className="text-[15px] font-bold text-gray-800">Transacciones</Text>
+                </View>
+
+                <View className="bg-white border-y border-gray-100 mb-6">
                     <TouchableOpacity
                         onPress={() => router.push('/compras')}
-                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
                     >
                         <View className="flex-row items-center">
-                            <Handshake color="#059669" size={22} />
-                            <Text className="text-[17px] font-semibold text-gray-800 ml-3">Compras</Text>
+                            <Handshake color="#374151" size={24} strokeWidth={1.5} />
+                            <Text className="text-[17px] text-gray-700 ml-4">Compras</Text>
                         </View>
-                        <ChevronRight color="#9ca3af" size={20} />
+                        <ChevronRight color="#d1d5db" size={20} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => router.push('/ventas')}
-                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
                     >
                         <View className="flex-row items-center">
-                            <Tag color="#059669" size={22} />
-                            <Text className="text-[17px] font-semibold text-gray-800 ml-3">Ventas</Text>
+                            <Tag color="#374151" size={24} strokeWidth={1.5} />
+                            <Text className="text-[17px] text-gray-700 ml-4">Ventas</Text>
                         </View>
-                        <ChevronRight color="#9ca3af" size={20} />
+                        <ChevronRight color="#d1d5db" size={20} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => router.push('/monedero')}
-                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
+                        className="flex-row justify-between items-center px-6 py-5"
                     >
                         <View className="flex-row items-center">
-                            <Wallet color="#059669" size={22} />
-                            <Text className="text-[17px] font-semibold text-gray-800 ml-3">Monedero</Text>
+                            <Wallet color="#374151" size={24} strokeWidth={1.5} />
+                            <Text className="text-[17px] text-gray-700 ml-4">Monedero</Text>
                         </View>
-                        <ChevronRight color="#9ca3af" size={20} />
+                        <ChevronRight color="#d1d5db" size={20} />
                     </TouchableOpacity>
                 </View>
 
-                {/* Subtitle / Separador */}
-                <View className="bg-white border-t border-gray-100">
-                    <TouchableOpacity
-                        onPress={() => router.push('/personal-data')}
-                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
-                    >
-                        <Text className="text-[17px] text-gray-800">Mi cuenta</Text>
-                        <ChevronRight color="#9ca3af" size={20} />
-                    </TouchableOpacity>
+                {/* Sección Cuenta */}
+                <View className="px-6 mb-2">
+                    <Text className="text-[15px] font-bold text-gray-800">Cuenta</Text>
+                </View>
+
+                <View className="bg-white border-y border-gray-100 mb-6">
+                    <View className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50 opacity-70">
+                        <View className="flex-row items-center flex-1 pr-4">
+                            <Briefcase color="#374151" size={24} strokeWidth={1.5} />
+                            <View className="flex-row items-center ml-4 flex-1">
+                                <Text className="text-[17px] text-gray-700 mr-3 shrink-0">Ruralpop PRO</Text>
+                                <View className="bg-primary/10 px-2 py-0.5 rounded-md shrink-0">
+                                    <Text className="text-[10px] uppercase font-bold text-primary tracking-wider">Próximamente</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <ChevronRight color="#d1d5db" size={20} />
+                    </View>
 
                     <TouchableOpacity
                         onPress={() => router.push('/(tabs)/favorites')}
-                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
                     >
-                        <Text className="text-[17px] text-gray-800">Favoritos</Text>
-                        <ChevronRight color="#9ca3af" size={20} />
+                        <View className="flex-row items-center">
+                            <Heart color="#374151" size={24} strokeWidth={1.5} />
+                            <Text className="text-[17px] text-gray-700 ml-4">Favoritos</Text>
+                        </View>
+                        <ChevronRight color="#d1d5db" size={20} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => router.push('/(tabs)/messages')}
-                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
                     >
-                        <Text className="text-[17px] text-gray-800">Mensajes</Text>
-                        <ChevronRight color="#9ca3af" size={20} />
-                    </TouchableOpacity>
-                </View>
-
-                <View className="h-3 w-full bg-gray-50" />
-
-                <View className="bg-white border-y border-gray-100">
-                    <View className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100 opacity-70">
-                        <View className="flex-row items-center flex-1 pr-4">
-                            <Text className="text-[17px] text-gray-800 mr-3 shrink-0">¿Eres profesional?</Text>
-                            <View className="bg-blue-100 px-2 py-1 rounded-full shrink-0">
-                                <Text className="text-[10px] uppercase font-bold text-blue-700 tracking-wider">Próximamente</Text>
-                            </View>
+                        <View className="flex-row items-center">
+                            <MessageSquare color="#374151" size={24} strokeWidth={1.5} />
+                            <Text className="text-[17px] text-gray-700 ml-4">Mensajes</Text>
                         </View>
-                        <Briefcase color="#9ca3af" size={20} />
-                    </View>
+                        <ChevronRight color="#d1d5db" size={20} />
+                    </TouchableOpacity>
 
                     <TouchableOpacity
-                        onPress={handleDeleteAccount}
+                        onPress={() => router.push('/ajustes')}
                         className="flex-row justify-between items-center px-6 py-5"
                     >
-                        <Text className="text-[17px] font-medium text-red-600">Eliminar cuenta</Text>
-                        <ChevronRight color="#fca5a5" size={20} />
-                    </TouchableOpacity>
-                </View>
-
-                <View className="px-6 mt-10 mb-6">
-                    <TouchableOpacity
-                        onPress={handleSignOut}
-                        className="flex-row items-center justify-center bg-white py-4 rounded-xl border border-gray-200"
-                    >
-                        <Text className="text-gray-800 font-bold text-base">Cerrar Sesión</Text>
+                        <View className="flex-row items-center">
+                            <Settings color="#374151" size={24} strokeWidth={1.5} />
+                            <Text className="text-[17px] text-gray-700 ml-4">Ajustes</Text>
+                        </View>
+                        <ChevronRight color="#d1d5db" size={20} />
                     </TouchableOpacity>
                 </View>
             </ScrollView>
