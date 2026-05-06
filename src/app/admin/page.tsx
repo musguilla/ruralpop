@@ -101,6 +101,29 @@ async function fetchAllDates(adminClient: any, table: string) {
     return { data: allDates, count };
 }
 
+async function fetchAllEscrows(adminClient: any) {
+    let allData: any[] = [];
+    let count = 0;
+    const { count: exactCount } = await adminClient.from("escrow_orders").select("*", { count: 'exact', head: true });
+    count = exactCount || 0;
+    if (count > 0) {
+        const step = 1000;
+        const promises = [];
+        for (let i = 0; i < count; i += step) {
+            promises.push(
+                adminClient.from("escrow_orders")
+                    .select("created_at, status, gross_amount_cents, ruralpop_fee_cents")
+                    .range(i, i + step - 1)
+            );
+        }
+        const results = await Promise.all(promises);
+        for (const res of results) {
+            if (res.data) allData.push(...res.data);
+        }
+    }
+    return allData;
+}
+
 export default async function AdminDashboard() {
     const supabase = await createClient();
     
@@ -116,10 +139,14 @@ export default async function AdminDashboard() {
         usersResult,
         listingsResult,
         { count: activeListings },
+        { data: recentWallets },
+        allEscrows
     ] = await Promise.all([
         fetchAllDates(adminClient, "users"),
         fetchAllDates(adminClient, "listings"),
         adminClient.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active"),
+        adminClient.from("professional_wallets").select("created_at, user:users(email)").order("created_at", { ascending: false }).limit(5),
+        fetchAllEscrows(adminClient)
     ]);
 
     const totalUsers = usersResult.count;
@@ -143,10 +170,19 @@ export default async function AdminDashboard() {
     const totalSubscriptionRevenue = paidInvoices.reduce((acc, inv) => acc + inv.amount_paid, 0) / 100;
     const subscriptionDates = paidInvoices.map(inv => ({ date: new Date(inv.created * 1000).toISOString(), amount: inv.amount_paid / 100 }));
 
+    const completedEscrows = allEscrows.filter((e: any) => e.status !== "pending_checkout" && e.status !== "cancelled");
+    const totalEscrowSales = completedEscrows.reduce((acc: number, e: any) => acc + (e.gross_amount_cents || 0), 0) / 100;
+    const totalEscrowFees = completedEscrows.reduce((acc: number, e: any) => acc + (e.ruralpop_fee_cents || 0), 0) / 100;
+
+    const escrowSalesDates = completedEscrows.map((e: any) => ({ date: e.created_at, amount: (e.gross_amount_cents || 0) / 100 }));
+    const escrowFeesDates = completedEscrows.map((e: any) => ({ date: e.created_at, amount: (e.ruralpop_fee_cents || 0) / 100 }));
+
     const realUsersHistograms = generateHistograms(userDates);
     const realListingsHistograms = generateHistograms(listingDates);
     const realFeaturedHistograms = generateHistograms(paymentDates, true);
     const realSubscriptionHistograms = generateHistograms(subscriptionDates, true);
+    const escrowSalesHistograms = generateHistograms(escrowSalesDates, true);
+    const escrowFeesHistograms = generateHistograms(escrowFeesDates, true);
 
     return (
         <div className="space-y-10">
@@ -196,6 +232,55 @@ export default async function AdminDashboard() {
                     icon={<BadgeEuro className="w-7 h-7" />}
                     color="amber"
                     histograms={realSubscriptionHistograms}
+                    showFilters={true}
+                />
+            </div>
+
+            {/* Escrow & Wallets Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                
+                {/* CARD 5: Últimos Wallets */}
+                <div className="bg-[var(--ag-sys-color-surface)] p-6 rounded-[2rem] border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-lg transition-all flex flex-col h-full">
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="w-14 h-14 rounded-2xl flex-shrink-0 flex items-center justify-center bg-slate-500/10 text-slate-500">
+                            <Handshake className="w-7 h-7" />
+                        </div>
+                        <div className="flex-1">
+                            <p className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] mb-1 leading-none">Wallets Recientes</p>
+                            <h4 className="text-3xl font-black text-[var(--ag-sys-color-text)] leading-none">{recentWallets?.length || 0}</h4>
+                        </div>
+                    </div>
+                    <div className="mt-4 flex flex-col gap-2 flex-1 justify-center">
+                        {recentWallets?.map((w: any, idx: number) => (
+                            <div key={idx} className="flex justify-between items-center text-sm border-b border-[var(--ag-sys-color-border)] pb-2 last:border-0 last:pb-0">
+                                <span className="font-medium text-[var(--ag-sys-color-text)] truncate mr-2" title={w.user?.email}>{w.user?.email || "Desconocido"}</span>
+                                <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] whitespace-nowrap bg-[var(--ag-sys-color-background)] px-2 py-1 rounded-md font-bold uppercase border border-[var(--ag-sys-color-border)]">{new Date(w.created_at).toLocaleDateString()}</span>
+                            </div>
+                        ))}
+                        {(!recentWallets || recentWallets.length === 0) && (
+                            <p className="text-sm text-[var(--ag-sys-color-text-muted)] text-center py-4">No hay wallets recientes.</p>
+                        )}
+                    </div>
+                </div>
+
+                {/* CARD 6: Ventas Escrow */}
+                <AdminStatCard
+                    label="Ventas Escrow"
+                    value={`${new Intl.NumberFormat('de-DE').format(totalEscrowSales)} €`}
+                    subtext={`${completedEscrows.length} completadas`}
+                    icon={<Package className="w-7 h-7" />}
+                    color="blue"
+                    histograms={escrowSalesHistograms}
+                    showFilters={true}
+                />
+
+                {/* CARD 7: Comisiones Escrow */}
+                <AdminStatCard
+                    label="Comisiones Escrow"
+                    value={`${new Intl.NumberFormat('de-DE').format(totalEscrowFees)} €`}
+                    icon={<BadgeEuro className="w-7 h-7" />}
+                    color="green"
+                    histograms={escrowFeesHistograms}
                     showFilters={true}
                 />
             </div>
