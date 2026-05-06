@@ -60,7 +60,7 @@ export default function VentasScreen() {
 
             const { data: manualData, error: manualError } = await supabase
                 .from('listings')
-                .select('id, title, image_urls, price, sold_price, created_at, updated_at, status')
+                .select('id, title, image_urls, price, sold_price, created_at, status')
                 .eq('user_id', user.id)
                 .eq('status', 'sold')
                 .order('created_at', { ascending: false });
@@ -75,7 +75,7 @@ export default function VentasScreen() {
             const manualSoldListings = manualListings.filter(l => !escrowListingIds.has(l.id));
 
             const escrowItems = escrowOrders.map(o => ({ type: 'escrow', data: o, date: new Date(o.created_at).getTime() }));
-            const manualItems = manualSoldListings.map(l => ({ type: 'manual', data: l, date: new Date(l.updated_at || l.created_at).getTime() }));
+            const manualItems = manualSoldListings.map(l => ({ type: 'manual', data: l, date: new Date(l.created_at).getTime() }));
 
             const combinedItems = [...escrowItems, ...manualItems].sort((a, b) => b.date - a.date);
             setOrders(combinedItems);
@@ -210,7 +210,7 @@ export default function VentasScreen() {
             ) : (
                 <FlatList
                     data={orders}
-                    keyExtractor={item => item.id}
+                    keyExtractor={(item, index) => `${item.type}_${item.data?.id || index}`}
                     renderItem={renderItem}
                     contentContainerStyle={{ padding: 16 }}
                     ListEmptyComponent={
