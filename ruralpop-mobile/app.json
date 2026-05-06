@@ -48,6 +48,7 @@
           "cameraPermission": "Ruralpop necesita acceso a la cámara para que puedas tomar fotos para tus anuncios."
         }
       ],
+      "expo-notifications",
       [
         "expo-build-properties",
         {
@@ -64,7 +65,8 @@
         "react-native-google-mobile-ads",
         {
           "androidAppId": "ca-app-pub-2042067618462129~3393473801",
-          "iosAppId": "ca-app-pub-2042067618462129~3393473801"
+          "iosAppId": "ca-app-pub-2042067618462129~3393473801",
+          "userTrackingUsageDescription": "Ruralpop utiliza tu identificador para ofrecerte publicidad y contenido adaptado a tus intereses."
         }
       ],
       [
