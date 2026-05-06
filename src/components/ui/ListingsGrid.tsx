@@ -207,17 +207,22 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     const userFavs = await getUserFavoriteIds();
 
-    // Determinar 5 posiciones para anuncios In-Feed basados en el número de página (para evitar problemas de hidratación)
+    // Determinar posiciones para anuncios In-Feed basados en el número de página
     const adPositions = new Set<number>();
     const maxIndex = listings.length;
-    if (maxIndex > 4) {
-        adPositions.add((currentPage * 3) % maxIndex);
-        adPositions.add((currentPage * 8 + 2) % maxIndex);
-        adPositions.add((currentPage * 13 + 1) % maxIndex);
-        adPositions.add((currentPage * 21 + 3) % maxIndex);
-        adPositions.add((currentPage * 29 + 4) % maxIndex);
-    } else if (maxIndex > 1) {
-        adPositions.add(1);
+    
+    // Reglas de negocio: 
+    // 1. Si hay menos de 12 anuncios, no mostramos anuncios intercalados.
+    // 2. Los primeros 6 anuncios (índices 0-5) no deben tener publicidad.
+    if (maxIndex >= 12) {
+        const offset = 6;
+        const availableSlots = maxIndex - offset;
+        
+        adPositions.add(offset + ((currentPage * 3) % availableSlots));
+        adPositions.add(offset + ((currentPage * 8 + 2) % availableSlots));
+        adPositions.add(offset + ((currentPage * 13 + 1) % availableSlots));
+        adPositions.add(offset + ((currentPage * 21 + 3) % availableSlots));
+        adPositions.add(offset + ((currentPage * 29 + 4) % availableSlots));
     }
 
     const gridItems: React.ReactNode[] = [];
