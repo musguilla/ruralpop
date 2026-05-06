@@ -22,7 +22,7 @@ export async function createStripeOnboardingLink() {
             .from("professional_wallets")
             .select("*")
             .eq("user_id", user.id)
-            .single();
+            .maybeSingle();
 
         let accountId = wallet?.stripe_connected_account_id;
 
@@ -82,7 +82,7 @@ export async function createStripeAccountSession() {
             .from("professional_wallets")
             .select("*")
             .eq("user_id", user.id)
-            .single();
+            .maybeSingle();
 
         let accountId = wallet?.stripe_connected_account_id;
 

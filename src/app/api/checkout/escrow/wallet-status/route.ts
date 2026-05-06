@@ -25,7 +25,7 @@ export async function GET(req: Request) {
             .from("professional_wallets")
             .select("*")
             .eq("user_id", user.id)
-            .single();
+            .maybeSingle();
 
         let isReady = false;
         if (wallet?.stripe_connected_account_id) {

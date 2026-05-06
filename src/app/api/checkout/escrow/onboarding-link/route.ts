@@ -27,7 +27,7 @@ export async function POST(req: Request) {
             .from("professional_wallets")
             .select("*")
             .eq("user_id", user.id)
-            .single();
+            .maybeSingle();
 
         let accountId = wallet?.stripe_connected_account_id;
 
