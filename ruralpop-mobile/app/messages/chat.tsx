@@ -243,7 +243,9 @@ export default function ChatScreen() {
                 >
                     <TextInput
                         className="flex-1 bg-surface-muted border border-gray-200 rounded-full px-4 h-12 text-base text-gray-800 mr-2"
+                        style={{ paddingVertical: 0, color: '#1f2937' }}
                         placeholder="Escribe un mensaje..."
+                        placeholderTextColor="#9ca3af"
                         value={newMessage}
                         onChangeText={setNewMessage}
                         multiline={false}
