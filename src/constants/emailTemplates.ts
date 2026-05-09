@@ -83,5 +83,44 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
     </div>
 </body>
 </html>`
+    },
+    {
+        id: "lanzamiento-compra-venta",
+        name: "Lanzamiento: Compra y Venta Integrada",
+        description: "Anuncio para todos los usuarios sobre la nueva funcionalidad de pagos y envíos integrados en la app.",
+        category: "Novedades",
+        subject: "¡Ya puedes comprar y vender directamente en Ruralpop! 🚀",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.ruralpop.com/ruralpop-logo.png" alt="Ruralpop" class="logo" />
+        <h1 class="title">¡Comprar y vender nunca fue tan fácil!</h1>
+        <p class="text">
+            Hola,<br/><br/>
+            Tenemos una gran noticia que darte: <strong>¡La compra y venta integrada ya está disponible en Ruralpop!</strong>
+            <br/><br/>
+            A partir de ahora, ya no necesitas salir de la aplicación para cerrar tus tratos. Puedes realizar tus pagos de forma 100% segura y gestionar los envíos directamente desde tu móvil.
+            <br/><br/>
+            ✅ <strong>Pagos blindados:</strong> Tu dinero está protegido y solo se transfiere cuando recibes el artículo en buen estado.<br/>
+            ✅ <strong>Envíos sencillos:</strong> Genera etiquetas y organiza la recogida sin dolores de cabeza.<br/>
+            ✅ <strong>Garantía Ruralpop:</strong> Vende y compra maquinaria, herramientas o productos locales con total tranquilidad en toda España.
+        </p>
+        <a href="https://www.ruralpop.com/buscar" class="button" style="color: #ffffff; text-decoration: none;">Probar la Compra Segura</a>
+        <p class="text" style="margin-top: 32px">
+            Entra ahora, actualiza tu app si es necesario, y descubre la nueva forma de hacer negocios en el campo. ¡Te esperamos!
+        </p>
+        <p class="footer">
+            Estás recibiendo este correo porque tienes una cuenta en Ruralpop.<br/><br/>
+            © ${new Date().getFullYear()} Ruralpop
+        </p>
+    </div>
+</body>
+</html>`
     }
 ];
