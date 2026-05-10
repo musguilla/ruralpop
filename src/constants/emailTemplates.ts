@@ -141,7 +141,6 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
         <img src="https://www.ruralpop.com/ruralpop-logo.png" alt="Ruralpop" class="logo" />
         <h1 class="title">¡Enhorabuena! Tu anuncio vuela alto</h1>
         <p class="text">
-            Hola,<br/><br/>
             Tenemos una excelente noticia para ti. Hemos seleccionado tu anuncio <strong>[titulo_anuncio]</strong> y lo hemos <strong>Destacado gratis durante 30 días</strong>.
             <br/><br/>
             Al ser un anuncio destacado, disfrutarás de los siguientes beneficios:
