@@ -18,6 +18,15 @@ module.exports = function with16KBPatch(config) {
         /ext \{/,
         'ext {\n        stripeVersion = "20.40.0"'
       );
+      
+      // Inject global resolution strategy to fix dependency conflict with Stripe 20.40.0
+      config.modResults.contents += `\nallprojects {
+    configurations.all {
+        resolutionStrategy {
+            force 'com.google.android.gms:play-services-wallet:19.3.0'
+        }
+    }
+}\n`;
     }
     return config;
   });
