@@ -233,7 +233,7 @@ export default function PublishScreen() {
                     subcategory: finalSubcategory,
                     contact_phone: phone,
                     vender_online: allowOnlineSale,
-                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : null,
+                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : 0,
                     status: 'active'
                 })
                 .select()
