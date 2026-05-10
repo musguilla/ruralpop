@@ -60,12 +60,12 @@ export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
                 <div className="flex-1 p-5 flex flex-col justify-between">
                     <div>
                         <div className="flex justify-between items-start gap-4 mb-2">
-                            <div className="flex-1 flex flex-col items-start gap-1">
+                            <div className="flex-1 flex flex-row items-center flex-wrap gap-2">
                                 <h4 className="text-lg font-bold text-[var(--ag-sys-color-text)] line-clamp-2">
                                     {listing.title}
                                 </h4>
                                 {listing.vender_online && (
-                                    <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-md border border-emerald-200">
+                                    <span className="inline-flex flex-shrink-0 items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-md border border-emerald-200">
                                         <CheckCircle2 className="w-3.5 h-3.5" /> Venta Online
                                     </span>
                                 )}
