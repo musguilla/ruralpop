@@ -122,5 +122,44 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
     </div>
 </body>
 </html>`
+    },
+    {
+        id: "anuncio-destacado-30-dias",
+        name: "Anuncio destacado 30 días",
+        description: "Notifica al usuario que su anuncio ha sido destacado gratuitamente.",
+        category: "Promocional",
+        subject: "¡Tu anuncio ha sido destacado GRATIS por 30 días! 🚀",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>\${baseStyles}</style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.ruralpop.com/ruralpop-logo.png" alt="Ruralpop" class="logo" />
+        <h1 class="title">¡Enhorabuena! Tu anuncio vuela alto</h1>
+        <p class="text">
+            Hola,<br/><br/>
+            Tenemos una excelente noticia para ti. Hemos seleccionado tu anuncio <strong>[titulo_anuncio]</strong> y lo hemos <strong>Destacado gratis durante 30 días</strong>.
+            <br/><br/>
+            Al ser un anuncio destacado, disfrutarás de los siguientes beneficios:
+            <br/><br/>
+            ✅ <strong>Máxima visibilidad:</strong> Tu anuncio aparecerá en las primeras posiciones de las búsquedas en tu zona.<br/>
+            ✅ <strong>Diseño VIP:</strong> Resaltado especial para captar la atención de los compradores rápidamente.<br/>
+            ✅ <strong>Más contactos:</strong> Los anuncios destacados reciben hasta un 500% más de visitas y mensajes.
+        </p>
+        <a href="https://www.ruralpop.com/dashboard" class="button" style="color: #ffffff; text-decoration: none;">Ver mis anuncios</a>
+        <p class="text" style="margin-top: 32px">
+            No tienes que hacer nada, la promoción ya está activa. ¡Aprovecha para cerrar tu venta al mejor precio!
+        </p>
+        <p class="footer">
+            Ruralpop - El mercado del campo<br/>
+            © \${new Date().getFullYear()} Ruralpop
+        </p>
+    </div>
+</body>
+</html>`
     }
 ];
