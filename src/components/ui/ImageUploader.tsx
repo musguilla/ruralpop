@@ -60,41 +60,25 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
             const fileExt = "webp"; // Usamos webp tras la optimización ultra
             const fileName = `${Math.random().toString(36).substring(7)}.${fileExt}`;
             
-            // 1. Obtener la URL pre-firmada desde nuestro backend
-            const presignRes = await fetch("/api/upload/presign", {
+            // 1. Subir la imagen optimizada a nuestro backend de Vercel/Next.js
+            // Esto evita que los ISPs bloqueen directamente los dominios de Cloudflare R2 en el cliente.
+            const formData = new FormData();
+            formData.append("file", optimizedBlob, fileName);
+            formData.append("folder", "listings");
+
+            const uploadRes = await fetch("/api/upload/direct", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    filename: fileName,
-                    contentType: "image/webp",
-                    folder: "listings",
-                }),
-            });
-
-            if (!presignRes.ok) {
-                 const errText = await presignRes.text();
-                 throw new Error(`Error en pre-firma: ${errText}`);
-            }
-
-            const { presignedUrl, publicUrl } = await presignRes.json();
-
-            // 2. Subir el binario directamente a Cloudflare R2 usando la url pre-firmada
-            const uploadRes = await fetch(presignedUrl, {
-                method: "PUT",
-                body: optimizedBlob,
-                headers: {
-                    "Content-Type": "image/webp",
-                },
+                body: formData,
             });
 
             if (!uploadRes.ok) {
-                const errText = await uploadRes.text();
-                throw new Error(`Error subiendo a R2: ${errText}`);
+                 const errText = await uploadRes.text();
+                 throw new Error(`Error en subida directa: ${errText}`);
             }
 
-            // 3. ¡Éxito! Actualizamos el estado con la public URL para que onImagesChange la lea, pero mantenemos localPreview!
+            const { publicUrl } = await uploadRes.json();
+
+            // 2. ¡Éxito! Actualizamos el estado con la public URL
             setFiles((prev) =>
                 prev.map(f => f.id === tempId ? { ...f, uploading: false, url: publicUrl, preview: localPreview } : f)
             );
