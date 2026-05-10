@@ -134,7 +134,7 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <style>\${baseStyles}</style>
+    <style>${baseStyles}</style>
 </head>
 <body>
     <div class="container">
@@ -156,7 +156,7 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
         </p>
         <p class="footer">
             Ruralpop - El mercado del campo<br/>
-            © \${new Date().getFullYear()} Ruralpop
+            © ${new Date().getFullYear()} Ruralpop
         </p>
     </div>
 </body>
