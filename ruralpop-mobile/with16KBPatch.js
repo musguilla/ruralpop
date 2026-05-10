@@ -11,19 +11,13 @@ module.exports = function with16KBPatch(config) {
     return config;
   });
 
-  // Force Stripe Android SDK to a version that supports 16KB pages
+  // Inject global resolution strategy to fix dependency conflict with newer Stripe versions
   config = withProjectBuildGradle(config, (config) => {
     if (config.modResults.language === 'groovy') {
-      config.modResults.contents = config.modResults.contents.replace(
-        /ext \{/,
-        'ext {\n        stripeVersion = "20.40.0"'
-      );
-      
-      // Inject global resolution strategy to fix dependency conflict with Stripe 20.40.0
       config.modResults.contents += `\nallprojects {
     configurations.all {
         resolutionStrategy {
-            force 'com.google.android.gms:play-services-wallet:19.3.0'
+            force 'com.google.android.gms:play-services-wallet:19.4.0'
         }
     }
 }\n`;
