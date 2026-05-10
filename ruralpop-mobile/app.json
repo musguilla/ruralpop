@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ruralpop.ruralpopapp",
-      "buildNumber": "46",
+      "buildNumber": "64",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleDevelopmentRegion": "es",
@@ -29,7 +29,7 @@
         "backgroundColor": "#059669"
       },
       "package": "com.ruralpop.app",
-      "versionCode": 46,
+      "versionCode": 64,
       "permissions": [
         "com.google.android.gms.permission.AD_ID",
         "android.permission.INTERNET",
@@ -50,14 +50,7 @@
       ],
       "expo-notifications",
       [
-        "expo-build-properties",
-        {
-          "android": {
-            "compileSdkVersion": 34,
-            "targetSdkVersion": 34,
-            "useLegacyPackaging": true
-          }
-        }
+        "expo-build-properties"
       ],
       [
         "react-native-google-mobile-ads",
