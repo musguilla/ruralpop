@@ -44,11 +44,11 @@ function decodeId(shortId) {
 }
 
 async function main() {
-    const shortId = '4yqDlfAjNEkQIOG1kiIeDb';
-    const listingId = decodeId(shortId);
+    const shortIds = ['7lAkSUWLOCjZ1m1QccdfuB', '4yqDlfAjNEkQIOG1kiIeDb'];
+    const listingIds = shortIds.map(decodeId).filter(id => id !== null);
     
-    if (!listingId) {
-        console.error("Failed to decode ID!");
+    if (listingIds.length === 0) {
+        console.error("Failed to decode IDs!");
         return;
     }
     
@@ -57,14 +57,17 @@ async function main() {
 
     const { data, error } = await supabase
         .from('listings')
-        .update({ featured_until: featuredUntil.toISOString() })
-        .eq('id', listingId)
+        .update({ 
+            featured_until: featuredUntil.toISOString(),
+            is_featured: true 
+        })
+        .in('id', listingIds)
         .select();
 
     if (error) {
-        console.error("Error updating listing:", error);
+        console.error("Error updating listings:", error);
     } else {
-        console.log(`Success! Listing ${listingId} is featured until:`, featuredUntil.toISOString());
+        console.log(`Success! Updated ${data.length} listings to be featured until:`, featuredUntil.toISOString());
     }
 }
 
