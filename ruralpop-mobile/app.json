@@ -3,7 +3,7 @@
     "name": "Ruralpop",
     "slug": "ruralpop-mobile",
     "scheme": "ruralpop",
-    "version": "1.0.23",
+    "version": "1.0.24",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ruralpop.ruralpopapp",
-      "buildNumber": "64",
+      "buildNumber": "65",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleDevelopmentRegion": "es",
@@ -29,7 +29,7 @@
         "backgroundColor": "#059669"
       },
       "package": "com.ruralpop.app",
-      "versionCode": 64,
+      "versionCode": 65,
       "permissions": [
         "com.google.android.gms.permission.AD_ID",
         "android.permission.INTERNET",
@@ -49,8 +49,18 @@
         }
       ],
       "expo-notifications",
+      "./with16KBPatch.js",
       [
-        "expo-build-properties"
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0",
+            "ndkVersion": "27.1.12297006",
+            "useLegacyPackaging": false
+          }
+        }
       ],
       [
         "react-native-google-mobile-ads",
