@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ruralpop.ruralpopapp",
-      "buildNumber": "68",
+      "buildNumber": "69",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleDevelopmentRegion": "es",
@@ -29,7 +29,7 @@
         "backgroundColor": "#059669"
       },
       "package": "com.ruralpop.app",
-      "versionCode": 68,
+      "versionCode": 69,
       "permissions": [
         "com.google.android.gms.permission.AD_ID",
         "android.permission.INTERNET",
@@ -76,7 +76,8 @@
           "merchantIdentifier": "merchant.com.ruralpop.ruralpopapp",
           "enableGooglePay": false
         }
-      ]
+      ],
+      "expo-tracking-transparency"
     ],
     "extra": {
       "router": {},

@@ -2,12 +2,24 @@ import "react-native-reanimated";
 import "../global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import { FavoritesProvider } from "../src/contexts/FavoritesContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StripeProvider } from "@stripe/stripe-react-native";
 
 export default function RootLayout() {
+    useEffect(() => {
+        (async () => {
+            try {
+                await requestTrackingPermissionsAsync();
+            } catch (e) {
+                console.warn("Failed to request tracking permissions", e);
+            }
+        })();
+    }, []);
+
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''}>
