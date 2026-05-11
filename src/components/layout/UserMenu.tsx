@@ -5,6 +5,7 @@ import Link from "next/link";
 import { User, List, Heart, MessageSquare, Briefcase, HelpCircle, LogOut, ChevronDown, UserCircle2 } from "lucide-react";
 import { ChatBadge } from "@/components/chat/ChatBadge";
 import { getImageUrl } from "@/utils/mediaUtils";
+import { createClient } from "@/utils/supabase/client";
 
 interface UserMenuProps {
     userFullName: string;
@@ -29,6 +30,17 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const handleLogout = async () => {
+        try {
+            const supabase = createClient();
+            await supabase.auth.signOut();
+            window.location.href = "/";
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+            window.location.href = "/";
+        }
+    };
 
     return (
         <div className="relative" ref={menuRef}>
@@ -148,18 +160,13 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                             </>
                         )}
 
-                        <form action={async () => {
-                            const { logout } = await import("@/app/auth/actions");
-                            await logout();
-                        }}>
-                            <button
-                                type="submit"
-                                className="flex items-center w-full gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition-colors"
-                            >
-                                <LogOut className="w-5 h-5" />
-                                <span className="font-semibold">Cerrar sesión</span>
-                            </button>
-                        </form>
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center w-full gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition-colors"
+                        >
+                            <LogOut className="w-5 h-5" />
+                            <span className="font-semibold">Cerrar sesión</span>
+                        </button>
                     </div>
                 </div>
             )}
