@@ -23,9 +23,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             title: "Artículo no encontrado | Ruralpop Magazine"
         };
     }
+    let metaTitle = `${post.title} | Ruralpop Magazine`;
+    let metaDescription = post.excerpt;
+    
+    // SEO Overrides para post específico
+    if (slug === 'app-para-ganaderos-gratis') {
+        metaTitle = "App gratis ganaderos | Descarga la app para ganaderos Ruralpop";
+        metaDescription = "Descubre Ruralpop, la app para ganaderos gratis donde puedes comprar y vender ganado, maquinaria, animales y encontrar productos km0. Publica anuncios, contacta con profesionales y gestiona tus ventas desde el móvil.";
+    }
+
     return {
-        title: `${post.title} | Ruralpop Magazine`,
-        description: post.excerpt,
+        title: metaTitle,
+        description: metaDescription,
         alternates: {
             canonical: `/magazine/${slug}`,
         },
@@ -134,7 +143,9 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                 <div className="absolute bottom-10 left-0 w-full px-4">
                     <div className="container mx-auto max-w-4xl flex flex-col gap-4">
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight drop-shadow-md">
-                            {post.title}
+                            {slug === 'app-para-ganaderos-gratis' 
+                                ? 'La app para ganaderos que está revolucionando el mundo rural' 
+                                : post.title}
                         </h1>
                         <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm font-medium mt-3">
                             <span className="text-white font-bold tracking-wider uppercase">{post.category}</span>
