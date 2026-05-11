@@ -221,3 +221,30 @@ export function generateCombinationMetaDescription(type: 'brand_feature' | 'feat
         return `Catálogo de tractores ${brandName} en la provincia de ${provinceName}. Compara características técnicas y revisa anuncios de compraventa agrícola.`;
     }
 }
+
+export function generateCombinationFaqs(type: 'brand_feature' | 'feature_province' | 'brand_province', featureName: string, featureType: string, stats: FeatureStats, brandName?: string, provinceName?: string) {
+    const faqs = [];
+    
+    if (type === 'brand_feature') {
+        faqs.push({
+            question: `¿Cuántos modelos de tractores ${brandName} hay para ${featureName}?`,
+            answer: `Actualmente tenemos catalogados ${stats.modelsCount} modelos de tractores de la marca ${brandName} con características técnicas específicas para ${featureName}.`
+        });
+        faqs.push({
+            question: `¿Son recomendables los tractores ${brandName} para ${featureName}?`,
+            answer: `Sí, ${brandName} cuenta con una amplia trayectoria en la fabricación de maquinaria agrícola. Sus modelos orientados a ${featureName} ofrecen un rendimiento óptimo y gran durabilidad en las labores del campo.`
+        });
+    } else if (type === 'feature_province') {
+        faqs.push({
+            question: `¿Dónde encontrar tractores para ${featureName} en ${provinceName}?`,
+            answer: `En nuestro marketplace puedes comparar los ${stats.modelsCount} modelos registrados para ${featureName} y contactar directamente con vendedores profesionales y particulares en la provincia de ${provinceName}.`
+        });
+    } else { // brand_province
+        faqs.push({
+            question: `¿Cuántos modelos de tractores ${brandName} de segunda mano hay en ${provinceName}?`,
+            answer: `A través de nuestro portal puedes explorar la disponibilidad entre los ${stats.modelsCount} modelos del fabricante ${brandName} y contactar con vendedores de maquinaria agrícola en ${provinceName}.`
+        });
+    }
+
+    return faqs;
+}

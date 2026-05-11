@@ -1,0 +1,37 @@
+
+> ruralpopv1@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.134:3000
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1318ms
+Error: Route "/tractores/[brand]/potencia/[slug]" used `params.brand`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Page (src/app/tractores/[brand]/potencia/[slug]/page.tsx:18:66)
+  16 |
+  17 | export default function Page({ params }: Props) {
+> 18 |     return <TractorCombinationPage urlPath={`/tractores/${params.brand}/potencia/${params.slug}`} />;
+     |                                                                  ^
+  19 | }
+  20 |
+Error: Route "/tractores/[brand]/potencia/[slug]" used `params.brand`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Module.generateMetadata (src/app/tractores/[brand]/potencia/[slug]/page.tsx:11:42)
+   9 | export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  10 |     const supabase = await createClient();
+> 11 |     const urlPath = `/tractores/${params.brand}/potencia/${params.slug}`;
+     |                                          ^
+  12 |     const { data } = await supabase.from('tractor_combination_pages').select('seo_title, seo_description, indexable, canonical_url').eq('url_path', urlPath).single();
+  13 |     if (!data) return { title: 'No encontrado' };
+  14 |     return { title: data.seo_title, description: data.seo_description, alternates: { canonical: data.canonical_url ? `https://www.ruralpop.com${data.canonical_url}` : undefined }, robots: { index: data.indexable, follow: true } };
+TractorCombinationPage error fetching: /tractores/undefined/potencia/undefined {
+  code: 'PGRST116',
+  details: 'The result contains 0 rows',
+  hint: null,
+  message: 'Cannot coerce the result to a single JSON object'
+}
+ GET /tractores/john-deere/potencia/menos-de-50-cv 404 in 2.2s (compile: 1561ms, proxy.ts: 71ms, render: 587ms)
+[?25h

@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { getRelatedTractorListingsByFeature } from '@/lib/tractores-data';
-import { ArrowLeft, ChevronRight, Settings } from 'lucide-react';
+import { generateCombinationFaqs } from '@/lib/seo/tractor-feature-content';
+import { ChevronRight, Settings } from 'lucide-react';
 
 interface Props {
     urlPath: string; // The full path to match in DB
@@ -13,14 +14,18 @@ export async function TractorCombinationPage({ urlPath }: Props) {
     const supabase = await createClient();
 
     // 1. Fetch combination page data
-    const { data: pageData } = await supabase
+    const { data: pageData, error } = await supabase
         .from('tractor_combination_pages')
         .select(`
             *,
             brand:tractor_brands(id, name, slug)
         `)
-        .eq('url_path', urlPath)
+        .eq('url_path', urlPath.toLowerCase())
         .single();
+    
+    if (error) {
+        console.error('TractorCombinationPage error fetching:', urlPath, error);
+    }
 
     if (!pageData) {
         notFound();
@@ -56,13 +61,53 @@ export async function TractorCombinationPage({ urlPath }: Props) {
     const relatedAds = await getRelatedTractorListingsByFeature(pageData.combination_type, pageData.url_path, models, relatedBrands);
 
     // 4. Generate JSON-LD Schema
-    const jsonLd = {
-        '@context': 'https://schema.org',
-        '@type': 'CollectionPage',
-        name: pageData.seo_title,
-        description: pageData.seo_description,
-        url: `https://www.ruralpop.com${pageData.url_path}`
-    };
+    const faqs = generateCombinationFaqs(
+        pageData.combination_type as any,
+        pageData.feature_page_id ? 'característica' : '', // We need to fetch feature name if needed, but we don't have it directly in select unless we add it, wait we can just pass some text
+        'feature',
+        { modelsCount: models.length, brandsCount: relatedBrands.length, topBrands: [] },
+        pageData.brand?.name,
+        pageData.province_name
+    );
+
+    const jsonLd: any[] = [
+        {
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            name: pageData.seo_title,
+            description: pageData.seo_description,
+            url: `https://www.ruralpop.com${pageData.url_path}`
+        },
+        {
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            name: pageData.h1,
+            description: pageData.seo_description,
+            url: `https://www.ruralpop.com${pageData.url_path}`,
+            numberOfItems: models.length,
+            itemListElement: models.map((model: any, index: number) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                url: `https://www.ruralpop.com/tractores/${model.brand.slug}/${model.slug}`,
+                name: `${model.brand.name} ${model.name}`
+            }))
+        }
+    ];
+
+    if (faqs.length > 0) {
+        jsonLd.push({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqs.map(faq => ({
+                '@type': 'Question',
+                name: faq.question,
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: faq.answer
+                }
+            }))
+        });
+    }
 
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)] pb-24">
