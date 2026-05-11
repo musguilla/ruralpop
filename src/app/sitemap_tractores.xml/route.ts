@@ -22,6 +22,10 @@ export async function GET() {
         <loc>${baseUrl}/sitemap_tractores_features.xml</loc>
         <lastmod>${date}</lastmod>
     </sitemap>
+    <sitemap>
+        <loc>${baseUrl}/sitemap_tractores_combinaciones_1.xml</loc>
+        <lastmod>${date}</lastmod>
+    </sitemap>
 </sitemapindex>`;
 
     return new Response(xml.trim(), {

@@ -146,3 +146,78 @@ export function generateFeatureMetaDescription(featureType: FeatureType, name: s
         default: return `Consulta el catálogo de ${count} tractores con ${name}. Fichas técnicas, características, marcas y mercado de segunda mano agrícola en Ruralpop.`;
     }
 }
+
+// --- COMBINATION GENERATORS ---
+
+export function generateCombinationH1(type: 'brand_feature' | 'feature_province' | 'brand_province', featureName: string, featureType: string, brandName?: string, provinceName?: string): string {
+    if (type === 'brand_feature') {
+        switch (featureType) {
+            case 'power_range': return `Tractores ${brandName} de ${featureName}`;
+            case 'engine': return `Tractores ${brandName} con motor ${featureName}`;
+            case 'transmission': return `Tractores ${brandName} con transmisión ${featureName}`;
+            case 'use': return `Tractores ${brandName} para ${featureName}`;
+            case 'crop': return `Tractores ${brandName} para ${featureName}`;
+            default: return `Tractores ${brandName} con ${featureName}`;
+        }
+    } else if (type === 'feature_province') {
+        switch (featureType) {
+            case 'power_range': return `Tractores de ${featureName} en ${provinceName}`;
+            case 'use': return `Tractores para ${featureName} en ${provinceName}`;
+            case 'crop': return `Tractores para ${featureName} en ${provinceName}`;
+            case 'transmission': return `Tractores con transmisión ${featureName} en ${provinceName}`;
+            default: return `Tractores con ${featureName} en ${provinceName}`;
+        }
+    } else { // brand_province
+        return `Tractores ${brandName} en ${provinceName}`;
+    }
+}
+
+export function generateCombinationIntro(type: 'brand_feature' | 'feature_province' | 'brand_province', featureName: string, featureType: string, stats: FeatureStats, brandName?: string, provinceName?: string): string {
+    const { modelsCount, adsCount } = stats as any; // Allow adsCount
+    
+    if (type === 'brand_feature') {
+        return `Descubre nuestro catálogo completo de tractores ${brandName} que destacan por ${featureType === 'use' || featureType === 'crop' ? 'estar diseñados para ' + featureName : 'su ' + featureName}. Hemos recopilado información detallada de ${modelsCount} modelos específicos de esta marca. Compara fichas técnicas y encuentra maquinaria de ocasión relacionada.`;
+    } else if (type === 'feature_province') {
+        return `Encuentra tractores ${featureType === 'use' || featureType === 'crop' ? 'para ' + featureName : 'de ' + featureName} disponibles en el mercado de la provincia de ${provinceName}. Nuestro knowledge graph ha catalogado ${modelsCount} modelos con estas especificaciones${adsCount ? ` y actualmente disponemos de ${adsCount} opciones de segunda mano cerca de ti` : ''}.`;
+    } else {
+        return `La presencia de tractores ${brandName} en ${provinceName} es histórica. Revisa los ${modelsCount} modelos más representativos de la marca${adsCount ? ` y explora nuestra selección de ${adsCount} anuncios activos en tu provincia` : ''}.`;
+    }
+}
+
+export function generateCombinationSeoText(type: 'brand_feature' | 'feature_province' | 'brand_province', featureName: string, featureType: string, stats: FeatureStats, brandName?: string, provinceName?: string): string {
+    const intro = generateCombinationIntro(type, featureName, featureType, stats, brandName, provinceName);
+    const h2 = `<h2>Características de los ${generateCombinationH1(type, featureName, featureType, brandName, provinceName).toLowerCase()}</h2>`;
+    
+    let content = `<p>Al buscar maquinaria agrícola específica, contar con la información técnica adecuada es fundamental. En esta sección hemos cruzado los datos de nuestro catálogo para ofrecerte exactamente los modelos que coinciden con tu búsqueda.</p>`;
+    
+    if (type === 'brand_feature') {
+        content += `<p>La marca <strong>${brandName}</strong> es un referente indiscutible en este segmento. Con ${stats.modelsCount} modelos registrados, destacan por su innovación tecnológica, durabilidad de componentes y alta eficiencia operativa orientada a <em>${featureName}</em>.</p>`;
+    } else if (provinceName) {
+        content += `<p>Las particularidades orográficas y el tipo de cultivo predominante en <strong>${provinceName}</strong> hacen que la elección del tractor sea crítica. Hemos prefiltrado las opciones para mostrarte maquinaria que se adapte perfectamente al entorno local.</p>`;
+    }
+
+    content += `<h3>Mercado de Ocasión</h3>\n<p>Recuerda que el mercado de segunda mano puede ofrecer excelentes oportunidades. Compara las fichas técnicas aquí disponibles con los anuncios activos para tomar una decisión de inversión informada.</p>`;
+
+    return intro + "\n\n" + h2 + "\n" + content;
+}
+
+export function generateCombinationMetaTitle(type: 'brand_feature' | 'feature_province' | 'brand_province', featureName: string, featureType: string, brandName?: string, provinceName?: string): string {
+    if (type === 'brand_feature') {
+        return `Tractores ${brandName} ${featureType === 'use' || featureType === 'crop' ? 'para ' : 'de '}${featureName} | Ruralpop`;
+    } else if (type === 'feature_province') {
+        return `Tractores ${featureType === 'use' || featureType === 'crop' ? 'para ' : 'de '}${featureName} en ${provinceName} | Ruralpop`;
+    } else {
+        return `Tractores ${brandName} en ${provinceName} de Segunda Mano | Ruralpop`;
+    }
+}
+
+export function generateCombinationMetaDescription(type: 'brand_feature' | 'feature_province' | 'brand_province', featureName: string, featureType: string, stats: FeatureStats, brandName?: string, provinceName?: string): string {
+    const count = stats.modelsCount;
+    if (type === 'brand_feature') {
+        return `Consulta ${count} tractores ${brandName} recomendados para ${featureName}. Compara modelos, fichas técnicas y encuentra maquinaria de ocasión.`;
+    } else if (type === 'feature_province') {
+        return `Encuentra tractores ${featureType === 'use' || featureType === 'crop' ? 'para ' : 'de '}${featureName} en ${provinceName}. ${count} modelos catalogados y mercado de segunda mano en Ruralpop.`;
+    } else {
+        return `Catálogo de tractores ${brandName} en la provincia de ${provinceName}. Compara características técnicas y revisa anuncios de compraventa agrícola.`;
+    }
+}
