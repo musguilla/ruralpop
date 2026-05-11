@@ -1,5 +1,4 @@
-import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
-import { getTractorFormattedName, generateTractorFriendlySlug } from "@/lib/tractores-data";
+import { createClient } from "@supabase/supabase-js";
 
 export const dynamic = 'force-dynamic';
 
@@ -11,66 +10,45 @@ export async function GET() {
         xml += `  <url>\n`;
         xml += `    <loc>${baseUrl}${path}</loc>\n`;
         xml += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
-        xml += `    <changefreq>daily</changefreq>\n`;
+        xml += `    <changefreq>weekly</changefreq>\n`;
         xml += `    <priority>${priority}</priority>\n`;
         xml += `  </url>\n`;
     };
 
     addEntry('/tractores', 0.9);
-    
-    const BRANDS_MAP: Record<string, string> = {
-        "case": "Case",
-        "john-deere": "John Deere",
-        "lamborghini": "Lamborghini",
-        "massey-ferguson": "Massey Ferguson",
-        "mc-cormick": "Mc Cormick",
-        "new-holland": "New Holland",
-    };
 
-    if (process.env.R2_ACCOUNT_ID) {
-        const s3Client = new S3Client({
-            region: "auto",
-            endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-            credentials: {
-                accessKeyId: process.env.R2_ACCESS_KEY_ID || "",
-                secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || "",
-            },
-        });
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
 
-        for (const [brandSlug, folderName] of Object.entries(BRANDS_MAP)) {
-            addEntry(`/tractores/${brandSlug}`, 0.85);
+    try {
+        // Fetch brands
+        const { data: brands, error: brandsError } = await supabase
+            .from('tractor_brands')
+            .select('id, slug')
+            .eq('is_active', true);
 
-            try {
-                const listCommand = new ListObjectsV2Command({
-                    Bucket: process.env.R2_BUCKET_NAME || "",
-                    Prefix: `tractores/${folderName}/`,
-                });
-                const { Contents } = await s3Client.send(listCommand);
+        if (brands && !brandsError) {
+            for (const brand of brands) {
+                addEntry(`/tractores/${brand.slug}`, 0.85);
 
-                if (Contents) {
-                    const uniqueModels = new Set<string>();
+                // Fetch models for this brand
+                const { data: models, error: modelsError } = await supabase
+                    .from('tractor_models')
+                    .select('slug')
+                    .eq('brand_id', brand.id)
+                    .eq('is_active', true);
 
-                    Contents.forEach(c => {
-                        const name = c.Key?.split('/').pop() || "";
-                        if (name && name !== ".emptyFolderPlaceholder" && !name.startsWith(".")) {
-                            const fName = getTractorFormattedName(name);
-                            if (fName !== "__IGNORE__") {
-                                const fSlug = generateTractorFriendlySlug(fName);
-                                uniqueModels.add(fSlug);
-                            }
-                        }
-                    });
-
-                    uniqueModels.forEach(modelSlug => {
-                        addEntry(`/tractores/${brandSlug}/${modelSlug}`, 0.8);
+                if (models && !modelsError) {
+                    models.forEach(model => {
+                        addEntry(`/tractores/${brand.slug}/${model.slug}`, 0.8);
                     });
                 }
-            } catch (err) {
-                console.error(`Sitemap Tractores: Error fetching tractor models for ${brandSlug}:`, err);
             }
         }
-    } else {
-        xml += `  <!-- Error: faltan credenciales R2 en el servidor -->\n`;
+    } catch (err) {
+        console.error("Sitemap Tractores: Error fetching data from Supabase:", err);
     }
 
     xml += `</urlset>`;

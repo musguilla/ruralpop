@@ -19,7 +19,7 @@ import { AdminLogoutButton } from "./AdminLogoutButton";
 
 export function AdminSidebar() {
     return (
-        <aside className="w-64 bg-[var(--ag-sys-color-surface)] border-r border-[var(--ag-sys-color-border)] flex flex-col">
+        <aside className="w-64 bg-[var(--ag-sys-color-surface)] border-r border-[var(--ag-sys-color-border)] flex flex-col sticky top-0 h-screen overflow-y-auto">
             <nav className="flex-1 p-4 space-y-2">
                 <AdminNavLink href="/admin" icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" />
                 <AdminNavLink href="/admin/insights" icon={<LineChart className="w-5 h-5" />} label="Insights" />
