@@ -187,3 +187,37 @@ export function generateTractorFriendlySlug(formattedName: string): string {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 }
+
+import { createClient } from '@/utils/supabase/server';
+
+export async function getRelatedTractorListingsByFeature(featureType: string, featureValue: string, relatedModels: any[], relatedBrands: any[]) {
+    const supabase = await createClient();
+    
+    // Base query for active tractor listings
+    let query = supabase.from('listings').select('*').eq('status', 'active').eq('category_id', 'tractores').order('created_at', { ascending: false }).limit(6);
+    
+    // We try to match any of the related brand names in the listing title/description as a fuzzy search
+    const brandNames = relatedBrands.map(b => b.name).join(' | ');
+    
+    if (brandNames) {
+        // Full text search on title or description if we have brands
+        // This is a simplified approach. For production, a more complex vector or tsquery could be used.
+        const { data, error } = await query.textSearch('title', brandNames, { type: 'websearch' });
+        
+        if (!error && data && data.length > 0) {
+            return data;
+        }
+    }
+    
+    // Fallback: If no specific brand match, just return recent tractor listings
+    const { data: fallbackData, error: fallbackError } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('status', 'active')
+        .eq('category_id', 'tractores')
+        .order('created_at', { ascending: false })
+        .limit(6);
+        
+    return fallbackError ? [] : fallbackData;
+}
+
