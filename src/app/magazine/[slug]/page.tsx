@@ -30,6 +30,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     if (slug === 'app-para-ganaderos-gratis') {
         metaTitle = "App gratis ganaderos | Descarga la app para ganaderos Ruralpop";
         metaDescription = "Descubre Ruralpop, la app para ganaderos gratis donde puedes comprar y vender ganado, maquinaria, animales y encontrar productos km0. Publica anuncios, contacta con profesionales y gestiona tus ventas desde el móvil.";
+    } else if (slug === 'origen-aqui-sello-alimentos-km0-castilla-y-leon') {
+        metaTitle = "Origen aquí, el sello alimentos km0 de Castilla y León que impulsa el campo";
+        metaDescription = "Descubre qué es el sello “Origen: aquí. Venta de Cercanía Castilla y León”, la nueva iniciativa para impulsar la venta directa de alimentos locales, apoyar a agricultores y ganaderos y fomentar el consumo de proximidad.";
     }
 
     return {
@@ -145,6 +148,8 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight drop-shadow-md">
                             {slug === 'app-para-ganaderos-gratis' 
                                 ? 'La app para ganaderos que está revolucionando el mundo rural' 
+                                : slug === 'origen-aqui-sello-alimentos-km0-castilla-y-leon'
+                                ? '“Origen: aquí”, el nuevo sello que impulsa la venta directa del campo a la mesa en Castilla y León'
                                 : post.title}
                         </h1>
                         <div className="flex flex-wrap items-center gap-3 text-white/80 text-sm font-medium mt-3">
