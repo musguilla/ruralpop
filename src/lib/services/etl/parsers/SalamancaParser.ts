@@ -7,8 +7,8 @@ export class SalamancaParser {
     
     static async parse(source: MarketSource): Promise<ETLParserResult> {
         // Fetch the records from the CKAN API using the new CSV resource ID
-        // limit=50000 to get all historical data since 2005 (there are around 48k bovino records)
-        const url = `https://datosabiertossalamanca.es/api/3/action/datastore_search?resource_id=042beb52-4d80-4380-b073-e170364f65e7&q=BOVINO&limit=50000`;
+        // limit=300 to get the latest 300 records (approx 2 months of data) instead of 47k
+        const url = `https://datosabiertossalamanca.es/api/3/action/datastore_search?resource_id=042beb52-4d80-4380-b073-e170364f65e7&q=BOVINO&sort=FECHA%20desc&limit=300`;
         
         const response = await fetch(url);
         if (!response.ok) {

@@ -6,12 +6,10 @@ export class TalaveraParser {
     static async parse(source: MarketSource): Promise<ETLParserResult> {
         try {
             // 1. Dynamic URL Discovery
-            let pdfBuffer: ArrayBuffer | null = null;
-            let foundDate: Date | null = null;
-            let foundUrl = '';
+            const today = new Date();
+            const fetchPromises: Promise<{ pdfBuffer: ArrayBuffer, foundDate: Date, foundUrl: string } | null>[] = [];
             
             // Start from today and go back up to 14 days
-            const today = new Date();
             for (let i = 0; i < 14; i++) {
                 const targetDate = new Date(today);
                 targetDate.setDate(today.getDate() - i);
@@ -23,25 +21,39 @@ export class TalaveraParser {
                 const dateStr = `${year}${month}${day}`;
                 const url = `https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_${dateStr}.pdf`;
                 
-                const response = await fetch(url, {
-                    headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-                    }
-                });
-                
-                // If it's a PDF, content-type should be application/pdf
-                const contentType = response.headers.get('content-type');
-                if (response.ok && contentType?.includes('application/pdf')) {
-                    pdfBuffer = await response.arrayBuffer();
-                    foundDate = new Date(`${year}-${month}-${day}T12:00:00Z`);
-                    foundUrl = url;
-                    break;
-                }
+                fetchPromises.push(
+                    fetch(url, {
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                        }
+                    }).then(async (response) => {
+                        const contentType = response.headers.get('content-type');
+                        if (response.ok && contentType?.includes('application/pdf')) {
+                            return {
+                                pdfBuffer: await response.arrayBuffer(),
+                                foundDate: new Date(`${year}-${month}-${day}T12:00:00Z`),
+                                foundUrl: url
+                            };
+                        }
+                        return null;
+                    }).catch(() => null)
+                );
             }
             
-            if (!pdfBuffer || !foundDate) {
+            const results = await Promise.all(fetchPromises);
+            const validResults = results.filter((r): r is NonNullable<typeof r> => r !== null);
+            
+            // Sort descending by date (newest first)
+            validResults.sort((a, b) => b.foundDate.getTime() - a.foundDate.getTime());
+            
+            if (validResults.length === 0) {
                 throw new Error('Could not find any valid Talavera PDF in the last 14 days.');
             }
+            
+            const best = validResults[0];
+            const pdfBuffer = best.pdfBuffer;
+            const foundDate = best.foundDate;
+            const foundUrl = best.foundUrl;
             
             // 2. Parse PDF
             const buffer = new Uint8Array(pdfBuffer);

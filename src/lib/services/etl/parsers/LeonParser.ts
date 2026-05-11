@@ -5,11 +5,9 @@ export class LeonParser {
     static async parse(source: MarketSource): Promise<ETLParserResult> {
         try {
             // 1. Dynamic URL Discovery
-            let htmlText = '';
-            let foundDate: Date | null = null;
-            let foundUrl = '';
-            
             const today = new Date();
+            const fetchPromises: Promise<{ htmlText: string, foundDate: Date, foundUrl: string } | null>[] = [];
+            
             for (let i = 0; i < 14; i++) {
                 const targetDate = new Date(today);
                 targetDate.setDate(today.getDate() - i);
@@ -18,34 +16,41 @@ export class LeonParser {
                 const month = String(targetDate.getMonth() + 1).padStart(2, '0');
                 const day = String(targetDate.getDate()).padStart(2, '0');
                 
-                // Try both formats
                 const urls = [
                     `https://www.lonjadeleon.es/lonja-carne-de-vacuno-${day}-${month}-${year}/`,
                     `https://www.lonjadeleon.es/lonja-carne-vacuno-${day}-${month}-${year}/`
                 ];
                 
                 for (const url of urls) {
-                    const response = await fetch(url, {
-                        headers: {
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        htmlText = await response.text();
-                        foundDate = new Date(`${year}-${month}-${day}T12:00:00Z`);
-                        foundUrl = url;
-                        break;
-                    }
+                    fetchPromises.push(
+                        fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' } })
+                            .then(async (response) => {
+                                if (response.ok) {
+                                    return {
+                                        htmlText: await response.text(),
+                                        foundDate: new Date(`${year}-${month}-${day}T12:00:00Z`),
+                                        foundUrl: url
+                                    };
+                                }
+                                return null;
+                            })
+                            .catch(() => null)
+                    );
                 }
-                if (foundDate) break;
             }
             
-            if (!foundDate || !htmlText) {
+            const results = await Promise.all(fetchPromises);
+            const validResults = results.filter((r): r is NonNullable<typeof r> => r !== null);
+            
+            // Sort descending by date (newest first)
+            validResults.sort((a, b) => b.foundDate.getTime() - a.foundDate.getTime());
+            
+            if (validResults.length === 0) {
                 throw new Error('Could not find any valid Leon HTML in the last 14 days.');
             }
             
-            return await LeonParser.parseHtml(htmlText, foundDate, foundUrl);
+            const best = validResults[0];
+            return await LeonParser.parseHtml(best.htmlText, best.foundDate, best.foundUrl);
         } catch (error) {
             console.error('LeonParser error:', error);
             throw error;

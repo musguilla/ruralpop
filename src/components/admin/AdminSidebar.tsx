@@ -19,18 +19,8 @@ import { AdminLogoutButton } from "./AdminLogoutButton";
 
 export function AdminSidebar() {
     return (
-        <aside className="w-64 bg-[var(--ag-sys-color-surface)] border-r border-[var(--ag-sys-color-border)] flex flex-col h-screen sticky top-0">
-            <div className="p-6 border-b border-[var(--ag-sys-color-border)] flex items-center gap-3">
-                <div className="w-10 h-10 bg-[var(--ag-sys-color-primary)] text-white rounded-xl flex items-center justify-center shadow-lg shadow-[var(--ag-sys-color-primary)]/20">
-                    <ShieldCheck className="w-6 h-6" />
-                </div>
-                <div>
-                    <h2 className="font-bold text-[var(--ag-sys-color-text)] leading-none text-lg">Admin</h2>
-                    <span className="text-[10px] uppercase tracking-widest text-[var(--ag-sys-color-primary)] font-bold">Ruralpop</span>
-                </div>
-            </div>
-
-            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <aside className="w-64 bg-[var(--ag-sys-color-surface)] border-r border-[var(--ag-sys-color-border)] flex flex-col">
+            <nav className="flex-1 p-4 space-y-2">
                 <AdminNavLink href="/admin" icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" />
                 <AdminNavLink href="/admin/insights" icon={<LineChart className="w-5 h-5" />} label="Insights" />
                 <AdminNavLink href="/admin/users" icon={<Users className="w-5 h-5" />} label="Usuarios" />
@@ -50,17 +40,6 @@ export function AdminSidebar() {
                 <AdminNavLink href="/admin/settings" icon={<Settings className="w-5 h-5" />} label="Configuración" />
                 <AdminNavLink href="/admin/lonjas" icon={<DownloadCloud className="w-5 h-5" />} label="Lonjas ETL" />
             </nav>
-
-            <div className="p-4 border-t border-[var(--ag-sys-color-border)] space-y-2">
-                <Link
-                    href="/"
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary)]/5 rounded-xl transition-all"
-                >
-                    <Home className="w-5 h-5" />
-                    Volver a la Web
-                </Link>
-                <AdminLogoutButton />
-            </div>
         </aside>
     );
 }
