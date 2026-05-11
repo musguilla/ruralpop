@@ -199,14 +199,6 @@ export default async function BrandModelDetail(props: Props) {
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                         Volver a {brandData.name}
                     </Link>
-
-                    <Link 
-                        href={`/s/tractores-segunda-mano/${brandSlug}`}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-50 text-[var(--ag-sys-color-primary)] text-sm font-bold rounded-xl border border-green-200/50 hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all shadow-sm"
-                    >
-                        ¿Buscas el {modelData.name} de segunda mano?
-                        <ChevronRight className="w-4 h-4 opacity-80" />
-                    </Link>
                 </div>
 
                 <div className="bg-white rounded-[2.5rem] border border-[var(--ag-sys-color-border)] shadow-sm overflow-hidden flex flex-col md:flex-row mb-12">
