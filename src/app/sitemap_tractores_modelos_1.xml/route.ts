@@ -19,7 +19,8 @@ export async function GET() {
             .limit(40000); // Limite por sitemap
 
         if (models && !modelsError) {
-            for (const model of models) {
+            for (const m of models) {
+                const model = m as any;
                 if (model.brand && !Array.isArray(model.brand)) {
                     xml += `  <url>\n`;
                     xml += `    <loc>${baseUrl}/tractores/${model.brand.slug}/${model.slug}</loc>\n`;

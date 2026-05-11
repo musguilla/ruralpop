@@ -1,4 +1,4 @@
-import { TractorModel, TractorBrand } from '@/types/tractores';
+
 
 export type FeatureType = 
     | 'power_range'
