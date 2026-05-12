@@ -212,7 +212,7 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
         <p class="text">
             Hola,<br/><br/>
             Te contactamos desde el equipo de moderación de Ruralpop para informarte que tu anuncio ha sido eliminado de la plataforma.<br/><br/>
-            Te recordamos que la Ley de Bienestar Animal (Ley 7/2023) en España, vigente desde el 29 de septiembre de 2023, prohíbe terminantemente la venta directa de animales de compañía (perros, gatos, hurones, roedores, pájaros) a través de Internet, portales web o aplicaciones.<br/><br/>
+            Te recordamos que la Ley de Bienestar Animal (Ley 7/2023) en España, vigente desde el 29 de septiembre de 2023, prohíbe terminantemente la venta directa de animales de compañía (perros, gatos, hurones, roedores, pájaros) a través de Internet, portales web o aplicaciones por usuarios no profesionales.<br/><br/>
             Para cumplir estrictamente con la legalidad, no podemos mantener este tipo de anuncios públicos.<br/><br/>
             En Ruralpop estamos comprometidos con la tenencia y adquisición responsable de animales de compañía y por ello solo permitimos anuncios con número de registro del núcleo zoológico por parte de usuarios profesionales que publican con el sello de "Profesional" y cuentan con <a href="https://www.ruralpop.com/empresas-profesionales-sector-rural" style="color: #10b981; font-weight: bold; text-decoration: none;">Ruralpop Plan Pro</a>.
         </p>
