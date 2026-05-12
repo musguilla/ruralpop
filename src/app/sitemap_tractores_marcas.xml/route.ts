@@ -20,8 +20,6 @@ export async function GET() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
-    addEntry('/tractores', 0.9);
-
     try {
         const { data: brands, error: brandsError } = await supabase
             .from('tractor_brands')

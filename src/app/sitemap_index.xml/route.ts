@@ -14,19 +14,10 @@ export async function GET() {
         <loc>${baseUrl}/sitemap_anuncios.xml</loc>
     </sitemap>
     <sitemap>
+        <loc>${baseUrl}/sitemap_tractores.xml</loc>
+    </sitemap>
+    <sitemap>
         <loc>${baseUrl}/sitemap_lonjas.xml</loc>
-    </sitemap>
-    <sitemap>
-        <loc>${baseUrl}/sitemap_tractores_marcas.xml</loc>
-    </sitemap>
-    <sitemap>
-        <loc>${baseUrl}/sitemap_tractores_modelos_1.xml</loc>
-    </sitemap>
-    <sitemap>
-        <loc>${baseUrl}/sitemap_tractores_features.xml</loc>
-    </sitemap>
-    <sitemap>
-        <loc>${baseUrl}/sitemap_tractores_combinaciones_1.xml</loc>
     </sitemap>
 </sitemapindex>`.trim();
 
