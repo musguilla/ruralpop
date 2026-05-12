@@ -18,6 +18,13 @@ export async function createListing(formData: FormData) {
     const subcategory = formData.get("subcategory") as string;
     const location = formData.get("location") as string;
 
+    if (subcategory && subcategory.toLowerCase() === "perros") {
+        const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
+        if (profile?.role !== 'profesional') {
+            return { error: "La subcategoría 'Perros' está restringida a cuentas profesionales por la Ley de Bienestar Animal." };
+        }
+    }
+
     // Convert to integers
     const provStr = formData.get("province_id") as string;
     const muniStr = formData.get("municipality_id") as string;
