@@ -32,6 +32,10 @@ export async function createListing(formData: FormData) {
     const imageUrlsString = formData.get("image_urls") as string;
     const image_urls = imageUrlsString ? JSON.parse(imageUrlsString) : [];
 
+    if (!image_urls || image_urls.length === 0) {
+        return { error: "Debes subir al menos una fotografía para tu anuncio." };
+    }
+
     // Si el usuario puso un teléfono, lo guardamos en su perfil también
     // (para no tener que volver a escribirlo en el siguiente anuncio)
     if (contact_phone && contact_phone.trim().length > 0) {

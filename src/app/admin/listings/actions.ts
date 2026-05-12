@@ -114,6 +114,10 @@ export async function adminUpdateListing(listingId: string, formData: FormData) 
     const imageUrlsString = formData.get("image_urls") as string;
     const image_urls = imageUrlsString ? JSON.parse(imageUrlsString) : [];
 
+    if (!image_urls || image_urls.length === 0) {
+        return { error: "El anuncio debe tener al menos una fotografía." };
+    }
+
     const { error } = await supabaseAdmin
         .from("listings")
         .update({

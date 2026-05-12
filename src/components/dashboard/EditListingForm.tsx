@@ -99,6 +99,12 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
         e.preventDefault();
         setIsPending(true);
 
+        if (imageUrls.length === 0) {
+            showAlert({ title: "Campo requerido", message: "Tu anuncio debe tener al menos una fotografía.", type: "error" });
+            setIsPending(false);
+            return;
+        }
+
         const formData = new FormData(e.currentTarget);
         formData.append("image_urls", JSON.stringify(imageUrls));
 

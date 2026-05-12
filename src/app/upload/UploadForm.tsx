@@ -107,6 +107,12 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
             return;
         }
 
+        if (imageUrls.length === 0) {
+            showAlert({ title: "Campo requerido", message: "Debes subir al menos una fotografía para tu anuncio.", type: "error" });
+            setIsPending(false);
+            return;
+        }
+
         const formData = new FormData(e.currentTarget);
         formData.append("image_urls", JSON.stringify(imageUrls));
 
