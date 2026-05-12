@@ -209,7 +209,7 @@ export default async function AdminListingsPage(props: {
                                             <Link href={`/item/${encodeId(l.id)}`} target="_blank" title="Ver anuncio" className="flex items-center justify-center w-8 h-8 bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-full hover:bg-[var(--ag-sys-color-border)] transition-all">
                                                 <Eye className="w-4 h-4" />
                                             </Link>
-                                            <DeleteButton listingId={l.id} title={l.title} iconOnly={true} />
+                                            <DeleteButton listingId={l.id} title={l.title} sellerEmail={(l.seller as Record<string, string | null>)?.email || undefined} iconOnly={true} />
                                         </div>
                                     </div>
                                 </div>
