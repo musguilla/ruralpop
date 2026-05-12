@@ -13,6 +13,9 @@ export default function RootLayout() {
     useEffect(() => {
         (async () => {
             try {
+                // Delay the request by 1 second to ensure the app is fully active in iOS.
+                // If called too early during splash screen, iOS silently drops the prompt.
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 await requestTrackingPermissionsAsync();
             } catch (e) {
                 console.warn("Failed to request tracking permissions", e);
