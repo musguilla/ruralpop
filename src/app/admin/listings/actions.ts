@@ -148,6 +148,8 @@ export async function adminUpdateListing(listingId: string, formData: FormData) 
     return { success: true };
 }
 
+import { EMAIL_TEMPLATES } from "@/constants/emailTemplates";
+
 export async function deleteListingAndSendEmail(listingId: string, email: string, reason: 'no_aplica' | 'bienestar_animal') {
     if (!await isAdmin()) {
         return { success: false, error: "No estás autorizado para realizar esta acción." };
@@ -159,45 +161,19 @@ export async function deleteListingAndSendEmail(listingId: string, email: string
 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    let subject = "";
-    let htmlContent = "";
+    const templateId = reason === 'no_aplica' ? 'no-aplica-anuncio' : 'ley-bienestar-animal';
+    const template = EMAIL_TEMPLATES.find(t => t.id === templateId);
 
-    if (reason === 'no_aplica') {
-        subject = "Tu anuncio ha sido eliminado de Ruralpop";
-        htmlContent = `
-            <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-                <h2>Hola,</h2>
-                <p>Te contactamos desde el equipo de moderación de Ruralpop para informarte que tu anuncio ha sido eliminado.</p>
-                <p>Tras revisar el contenido, hemos determinado que no encaja en las categorías y la temática principal de nuestra plataforma, enfocada al sector agrícola, ganadero y rural.</p>
-                <p>Si crees que ha sido un error, no dudes en contactarnos.</p>
-                <br/>
-                <p>Un saludo,</p>
-                <p><strong>El equipo de Ruralpop</strong></p>
-            </div>
-        `;
-    } else if (reason === 'bienestar_animal') {
-        subject = "Importante: Tu anuncio ha sido eliminado por normativa vigente";
-        htmlContent = `
-            <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
-                <h2>Hola,</h2>
-                <p>Te contactamos desde el equipo de moderación de Ruralpop para informarte que tu anuncio ha sido eliminado de la plataforma.</p>
-                <p>Te recordamos que la Ley de Bienestar Animal (Ley 7/2023) en España, vigente desde el 29 de septiembre de 2023, prohíbe terminantemente la venta directa de animales de compañía (perros, gatos, hurones, roedores, pájaros) a través de Internet, portales web o aplicaciones.</p>
-                <p>Para cumplir estrictamente con la legalidad, no podemos mantener este tipo de anuncios públicos.</p>
-                <p>En Ruralpop estamos comprometidos con la tenencia y adquisición responsable de animales de compañía y por ello solo permitimos anuncios con número de registro del núcleo zoológico por parte de usuarios profesionales que publican con el sello de "Profesional" y cuentan con <a href="https://www.ruralpop.com/empresas-profesionales-sector-rural" style="color: #16a34a; font-weight: bold;">Ruralpop Plan Pro</a>.</p>
-                <p>Agradecemos tu comprensión.</p>
-                <br/>
-                <p>Un saludo,</p>
-                <p><strong>El equipo de Ruralpop</strong></p>
-            </div>
-        `;
+    if (!template) {
+        return { success: false, error: "Plantilla no encontrada." };
     }
 
     try {
         const { error: resendError } = await resend.emails.send({
             from: "Soporte Ruralpop <soporte@ruralpop.com>",
             to: email,
-            subject: subject,
-            html: htmlContent
+            subject: template.subject,
+            html: template.htmlContent
         });
 
         if (resendError) {

@@ -160,5 +160,69 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
     </div>
 </body>
 </html>`
+    },
+    {
+        id: "no-aplica-anuncio",
+        name: "Rechazo: No aplica a Ruralpop",
+        description: "Plantilla para notificar a un usuario que su anuncio ha sido eliminado por no encajar en la temática de la plataforma.",
+        category: "Moderación",
+        subject: "Tu anuncio ha sido eliminado de Ruralpop",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.ruralpop.com/ruralpop-logo.png" alt="Ruralpop" class="logo" />
+        <h1 class="title">Aviso de Moderación</h1>
+        <p class="text">
+            Hola,<br/><br/>
+            Te contactamos desde el equipo de moderación de Ruralpop para informarte que tu anuncio ha sido eliminado.<br/><br/>
+            Tras revisar el contenido, hemos determinado que no encaja en las categorías y la temática principal de nuestra plataforma, enfocada al sector agrícola, ganadero y rural.<br/><br/>
+            Si crees que ha sido un error, no dudes en contactarnos.
+        </p>
+        <p class="footer">
+            Ruralpop - El mercado del campo<br/>
+            © ${new Date().getFullYear()} Ruralpop
+        </p>
+    </div>
+</body>
+</html>`
+    },
+    {
+        id: "ley-bienestar-animal",
+        name: "Rechazo: Ley Bienestar Animal",
+        description: "Plantilla para notificar a un usuario que su anuncio ha sido eliminado por incumplir la Ley de Bienestar Animal.",
+        category: "Moderación",
+        subject: "Importante: Tu anuncio ha sido eliminado por normativa vigente",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.ruralpop.com/ruralpop-logo.png" alt="Ruralpop" class="logo" />
+        <h1 class="title">Aviso Legal de Moderación</h1>
+        <p class="text">
+            Hola,<br/><br/>
+            Te contactamos desde el equipo de moderación de Ruralpop para informarte que tu anuncio ha sido eliminado de la plataforma.<br/><br/>
+            Te recordamos que la Ley de Bienestar Animal (Ley 7/2023) en España, vigente desde el 29 de septiembre de 2023, prohíbe terminantemente la venta directa de animales de compañía (perros, gatos, hurones, roedores, pájaros) a través de Internet, portales web o aplicaciones.<br/><br/>
+            Para cumplir estrictamente con la legalidad, no podemos mantener este tipo de anuncios públicos.<br/><br/>
+            En Ruralpop estamos comprometidos con la tenencia y adquisición responsable de animales de compañía y por ello solo permitimos anuncios con número de registro del núcleo zoológico por parte de usuarios profesionales que publican con el sello de "Profesional" y cuentan con <a href="https://www.ruralpop.com/empresas-profesionales-sector-rural" style="color: #10b981; font-weight: bold; text-decoration: none;">Ruralpop Plan Pro</a>.
+        </p>
+        <p class="footer">
+            Agradecemos tu comprensión.<br/><br/>
+            Ruralpop - El mercado del campo<br/>
+            © ${new Date().getFullYear()} Ruralpop
+        </p>
+    </div>
+</body>
+</html>`
     }
 ];
