@@ -405,16 +405,21 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                             <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
                                 <Info className="w-6 h-6 text-red-600" />
                             </div>
-                            <h3 className="text-2xl font-black text-[var(--ag-sys-color-text)] tracking-tight">Acción no permitida</h3>
+                            <h3 className="text-2xl font-black text-[var(--ag-sys-color-text)] tracking-tight">Anuncios para profesionales</h3>
                         </div>
                         
-                        <p className="text-gray-600 mb-8 leading-relaxed">
-                            La Ley de Bienestar Animal (Ley 7/2023) en España, vigente desde el 29 de septiembre de 2023, prohíbe terminantemente la venta directa de animales de compañía (perros, gatos, hurones, roedores, pájaros) a través de Internet, portales web o aplicaciones por usuarios no profesionales.
-                        </p>
+                        <div className="text-gray-600 mb-8 leading-relaxed space-y-4">
+                            <p>
+                                La Ley de Bienestar Animal (Ley 7/2023) en España, vigente desde el 29 de septiembre de 2023, prohíbe terminantemente la venta directa de animales de compañía (perros, gatos, hurones, roedores, pájaros) a través de Internet, portales web o aplicaciones por usuarios no profesionales.
+                            </p>
+                            <p>
+                                Si eres un profesional con número de registro de núcleo zoológico puedes crear un plan Ruralpop Plan Pro
+                            </p>
+                        </div>
 
                         <div className="flex flex-col gap-3">
                             <Link href="/profesionales" className="w-full py-4 bg-[var(--ag-sys-color-primary)] text-white text-center font-bold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all">
-                                Hacerse Plan Pro Profesional
+                                Hacerme Ruralpop Pro
                             </Link>
                             <button
                                 onClick={() => setShowDogModal(false)}
