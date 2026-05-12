@@ -118,7 +118,7 @@ export function DeleteButton({ listingId, title, sellerEmail, iconOnly }: Delete
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="absolute right-0 bottom-full mb-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                     <div className="py-1" role="menu">
                         <button
                             onClick={handleDeleteOnly}

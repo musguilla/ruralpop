@@ -145,7 +145,7 @@ export default async function AdminListingsPage(props: {
                 {listings?.map((l: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                     <div
                         key={l.id}
-                        className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden shadow-sm hover:shadow-md transition-all group p-6"
+                        className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md transition-all group p-6"
                     >
                         <div className="flex flex-col lg:flex-row gap-8 items-start">
                             {/* Image and Status */}
