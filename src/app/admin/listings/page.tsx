@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { DeleteButton } from "./DeleteButton";
+import { AdminFilters } from "./AdminFilters";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +50,14 @@ export default async function AdminListingsPage(props: {
         query = query.ilike('title', `%${searchParams.q}%`);
     }
 
+    if (searchParams.category && typeof searchParams.category === 'string') {
+        query = query.eq('category', searchParams.category);
+    }
+
+    if (searchParams.subcategory && typeof searchParams.subcategory === 'string') {
+        query = query.eq('subcategory', searchParams.subcategory);
+    }
+
     if (searchParams.status === 'top-likes') {
         // Remove range to get all available for JS sorting
         query = supabase
@@ -62,6 +71,14 @@ export default async function AdminListingsPage(props: {
 
         if (searchParams.q && typeof searchParams.q === 'string') {
             query = query.ilike('title', `%${searchParams.q}%`);
+        }
+
+        if (searchParams.category && typeof searchParams.category === 'string') {
+            query = query.eq('category', searchParams.category);
+        }
+        
+        if (searchParams.subcategory && typeof searchParams.subcategory === 'string') {
+            query = query.eq('subcategory', searchParams.subcategory);
         }
     }
 
@@ -89,6 +106,18 @@ export default async function AdminListingsPage(props: {
 
     const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
 
+    // Helper to preserve params in Links
+    const buildLink = (status: string | null) => {
+        const params = new URLSearchParams(searchParams as Record<string, string>);
+        if (status) {
+            params.set("status", status);
+        } else {
+            params.delete("status");
+        }
+        params.delete("page"); // Reset page on filter change
+        return `/admin/listings?${params.toString()}`;
+    };
+
     return (
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
@@ -97,31 +126,19 @@ export default async function AdminListingsPage(props: {
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-1">Supervisión técnica de contenidos y reportes.</p>
                 </div>
                 
-                <form action="/admin/listings" method="GET" className="relative w-full sm:w-auto flex-shrink-0">
-                    {searchParams.status && <input type="hidden" name="status" value={searchParams.status as string} />}
-                    {searchParams.userId && <input type="hidden" name="userId" value={searchParams.userId as string} />}
-                    
-                    <input 
-                        type="text" 
-                        name="q" 
-                        defaultValue={searchParams.q as string || ""}
-                        placeholder="Buscar por título..." 
-                        className="w-full sm:w-72 pl-10 pr-4 py-2.5 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-full text-sm outline-none focus:border-[var(--ag-sys-color-primary)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/10 transition-all font-medium text-[var(--ag-sys-color-text)] placeholder:font-normal placeholder:opacity-60 shadow-sm hover:shadow-md"
-                    />
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ag-sys-color-text-muted)]" />
-                </form>
+                <AdminFilters />
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-2">
                     <Link 
-                        href="/admin/listings" 
+                        href={buildLink(null)} 
                         className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${!searchParams.status || searchParams.status === 'all' ? 'bg-[var(--ag-sys-color-primary)] text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-gray-50'}`}
                     >
                         Todos los anuncios
                     </Link>
                     <Link 
-                        href="/admin/listings?status=sold" 
+                        href={buildLink("sold")} 
                         className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${searchParams.status === 'sold' ? 'bg-[var(--ag-sys-color-primary)] text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-gray-50'}`}
                     >
                         Vendidos
@@ -130,7 +147,7 @@ export default async function AdminListingsPage(props: {
                 
                 <div className="flex items-center gap-2">
                     <Link 
-                        href="/admin/listings?status=top-likes" 
+                        href={buildLink("top-likes")} 
                         className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-1.5 flex-shrink-0 transition-all ${searchParams.status === 'top-likes' ? 'bg-amber-500 text-white shadow-md' : 'bg-amber-100 text-amber-700 border border-amber-200 hover:bg-amber-200'}`}
                     >
                         <Heart className="w-3.5 h-3.5" /> Top 50 Likes
