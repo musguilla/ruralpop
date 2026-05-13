@@ -226,6 +226,33 @@ export async function POST(req: Request) {
                             });
                     }
                     console.log(`✅ Escrow order ${escrowOrderId} marked as paid_held`);
+
+                    // Send push notification to the seller
+                    try {
+                        const { data: seller } = await supabaseAdmin.from('users').select('expo_push_token').eq('id', order.seller_id).single();
+                        const { data: listing } = await supabaseAdmin.from('listings').select('title').eq('id', order.listing_id).single();
+
+                        if (seller?.expo_push_token) {
+                            await fetch('https://exp.host/--/api/v2/push/send', {
+                                method: 'POST',
+                                headers: {
+                                    Accept: 'application/json',
+                                    'Accept-encoding': 'gzip, deflate',
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    to: seller.expo_push_token,
+                                    sound: 'default',
+                                    title: '¡Has vendido un artículo!',
+                                    body: `El pago seguro por tu anuncio "${listing?.title || 'artículo'}" se ha completado. Tienes el dinero retenido en tu monedero.`,
+                                    data: { url: `/anuncio/${order.listing_id}` },
+                                }),
+                            });
+                            console.log(`✅ Push notification sent to seller ${order.seller_id} for order ${escrowOrderId}`);
+                        }
+                    } catch (pushErr) {
+                        console.error("Failed to send push notification to seller:", pushErr);
+                    }
                 }
             } catch (err: unknown) {
                 console.error("DB Error processing escrow checkout session:", err);
