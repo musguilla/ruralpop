@@ -11,6 +11,7 @@ import { decode } from "base64-arraybuffer";
 import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
 import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';
+import { DogLawModal } from '../../src/components/ui/modals/DogLawModal';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
@@ -31,6 +32,7 @@ export default function EditListingScreen() {
     const [municipality, setMunicipality] = useState<{ id: number, name: string } | null>(null);
     const [phone, setPhone] = useState('');
     const [images, setImages] = useState<string[]>([]);
+    const [isProfesional, setIsProfesional] = useState(false);
     
     // Escrow / Venta Online
     const [isStripeReady, setIsStripeReady] = useState(false);
@@ -40,6 +42,7 @@ export default function EditListingScreen() {
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
     const [isMunicipalityModalOpen, setIsMunicipalityModalOpen] = useState(false);
+    const [isDogLawModalOpen, setIsDogLawModalOpen] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isPicking, setIsPicking] = useState(false);
@@ -116,8 +119,20 @@ export default function EditListingScreen() {
             }
         }
 
+        async function fetchUserRole() {
+            try {
+                const { data } = await supabase.from('users').select('role').eq('id', user?.id).single();
+                if (data) {
+                    setIsProfesional(data.role === 'profesional');
+                }
+            } catch (e) {
+                // Ignore
+            }
+        }
+
         fetchListing();
         fetchWallet();
+        fetchUserRole();
     }, [user, id, isLoading]);
 
     if (isLoading || initialLoading) {
@@ -515,8 +530,13 @@ export default function EditListingScreen() {
                 onClose={() => setIsCategoryModalOpen(false)}
                 selectedCategory={categoryId}
                 onSelect={(cat) => {
-                    setCategoryId(cat);
-                    setIsCategoryModalOpen(false);
+                    if (cat.toLowerCase() === 'perros' && !isProfesional) {
+                        setIsCategoryModalOpen(false);
+                        setIsDogLawModalOpen(true);
+                    } else {
+                        setCategoryId(cat);
+                        setIsCategoryModalOpen(false);
+                    }
                 }}
             />
 
@@ -540,6 +560,11 @@ export default function EditListingScreen() {
                     setMunicipality(mun);
                     setIsMunicipalityModalOpen(false);
                 }}
+            />
+
+            <DogLawModal 
+                visible={isDogLawModalOpen}
+                onClose={() => setIsDogLawModalOpen(false)}
             />
         </SafeAreaView>
     );

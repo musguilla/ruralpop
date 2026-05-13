@@ -11,6 +11,7 @@ import { decode } from "base64-arraybuffer";
 import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
 import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';
+import { DogLawModal } from '../../src/components/ui/modals/DogLawModal';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 
@@ -27,6 +28,7 @@ export default function PublishScreen() {
     const [municipality, setMunicipality] = useState<{ id: number, name: string } | null>(null);
     const [phone, setPhone] = useState('');
     const [images, setImages] = useState<string[]>([]);
+    const [isProfesional, setIsProfesional] = useState(false);
     
     // Escrow / Venta Online
     const [isStripeReady, setIsStripeReady] = useState(false);
@@ -36,6 +38,7 @@ export default function PublishScreen() {
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
     const [isMunicipalityModalOpen, setIsMunicipalityModalOpen] = useState(false);
+    const [isDogLawModalOpen, setIsDogLawModalOpen] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isPicking, setIsPicking] = useState(false);
@@ -45,9 +48,12 @@ export default function PublishScreen() {
         React.useCallback(() => {
             if (user?.id && session) {
                 async function fetchData() {
-                    // Fetch phone
-                    const { data: userData } = await supabase.from('users').select('phone').eq('id', user?.id).single();
-                    if (userData?.phone) setPhone(userData.phone);
+                    // Fetch phone and role
+                    const { data: userData } = await supabase.from('users').select('phone, role').eq('id', user?.id).single();
+                    if (userData) {
+                        if (userData.phone) setPhone(userData.phone);
+                        setIsProfesional(userData.role === 'profesional');
+                    }
 
                     // Fetch wallet status
                     const ruralpopDomain = 'https://www.ruralpop.com'; // or from env
@@ -480,8 +486,13 @@ export default function PublishScreen() {
                 onClose={() => setIsCategoryModalOpen(false)}
                 selectedCategory={categoryId}
                 onSelect={(cat) => {
-                    setCategoryId(cat);
-                    setIsCategoryModalOpen(false);
+                    if (cat.toLowerCase() === 'perros' && !isProfesional) {
+                        setIsCategoryModalOpen(false);
+                        setIsDogLawModalOpen(true);
+                    } else {
+                        setCategoryId(cat);
+                        setIsCategoryModalOpen(false);
+                    }
                 }}
             />
 
@@ -505,6 +516,11 @@ export default function PublishScreen() {
                     setMunicipality(mun);
                     setIsMunicipalityModalOpen(false);
                 }}
+            />
+
+            <DogLawModal 
+                visible={isDogLawModalOpen}
+                onClose={() => setIsDogLawModalOpen(false)}
             />
         </SafeAreaView>
     );
