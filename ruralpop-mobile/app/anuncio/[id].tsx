@@ -117,18 +117,20 @@ export default function ListingDetailsScreen() {
 
     const handleShare = async () => {
         if (!listing) return;
-        try {
-            const url = `https://ruralpop.com/anuncio/${listing.id}`;
-            await RNShare.share({
-                message: Platform.OS === 'ios'
-                    ? `Mira este anuncio en Ruralpop: ${listing.title}`
-                    : `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`,
-                url: Platform.OS === 'ios' ? url : undefined,
-                title: listing.title,
-            });
-        } catch (error) {
-            console.error('Error sharing:', error);
-        }
+        setTimeout(async () => {
+            try {
+                const url = `https://ruralpop.com/anuncio/${listing.id}`;
+                await RNShare.share({
+                    message: Platform.OS === 'ios'
+                        ? `Mira este anuncio en Ruralpop: ${listing.title}`
+                        : `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`,
+                    url: Platform.OS === 'ios' ? url : undefined,
+                    title: listing.title,
+                });
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
+        }, 100);
     };
 
     const openGallery = (index: number) => {
@@ -203,15 +205,15 @@ export default function ListingDetailsScreen() {
     return (
         <View className="flex-1 bg-surface">
             {/* Header Overlay */}
-            <SafeAreaView className="absolute top-0 left-0 right-0 z-10" edges={['top']}>
+            <SafeAreaView className="absolute top-0 left-0 right-0 z-10" edges={['top']} pointerEvents="box-none">
                 <View style={{ 
                     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
                     backgroundColor: isScrolled ? 'white' : 'transparent',
                     borderBottomWidth: isScrolled ? 1 : 0,
                     borderColor: '#e5e7eb'
-                }} />
+                }} pointerEvents="none" />
                 
-                <View className="flex-row justify-between items-center px-4 py-2">
+                <View className="flex-row justify-between items-center px-4 py-2" pointerEvents="box-none">
                     <TouchableOpacity
                         onPress={() => router.back()}
                         className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}
