@@ -12,7 +12,6 @@ const VISUAL_CATEGORIES = [
     { id: 'Porcino', type: 'subcategory', label: 'Porcino', image: require('../../../assets/icon-porcino.png') },
     { id: 'Avicultura', type: 'subcategory', label: 'Avicultura', image: require('../../../assets/icon-aves.png') },
     { id: 'Apicultura', type: 'subcategory', label: 'Apicultura', image: require('../../../assets/icon-apicultura.webp') },
-    { id: 'Perros', type: 'subcategory', label: 'Perros', image: require('../../../assets/icon-perro.png') },
     { id: 'Conejos', type: 'subcategory', label: 'Conejos', image: require('../../../assets/icon-conejos.png') },
     { id: 'maquinaria', type: 'category', label: 'Maquinaria', image: require('../../../assets/icon-tractor.png') },
     { id: 'agricultura', type: 'category', label: 'Agricultura', image: require('../../../assets/icon-agricultura.png') },

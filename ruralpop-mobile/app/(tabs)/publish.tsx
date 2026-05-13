@@ -192,6 +192,11 @@ export default function PublishScreen() {
             return;
         }
 
+        if (images.length === 0) {
+            Alert.alert('Faltan imágenes', 'Es obligatorio subir al menos una foto para publicar tu anuncio.');
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -288,7 +293,7 @@ export default function PublishScreen() {
             <ScrollView className="flex-1 p-6" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 }}>
 
                 <View className="mb-6">
-                    <Text className="text-sm font-bold text-text mb-2">Fotos del producto</Text>
+                    <Text className="text-sm font-bold text-text mb-2">Fotos del producto *</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
                         {images.map((uri, index) => (
                             <View key={index} className="relative w-24 h-24 rounded-xl overflow-hidden mr-3 border border-gray-200">
