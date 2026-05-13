@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, PanResponder } from 'react-native';
 import { Image } from 'expo-image';
 import { Link, useRouter } from 'expo-router';
 import { MapPin, Heart, ChevronLeft, ChevronRight, ImageIcon, Crown } from 'lucide-react-native';
@@ -45,6 +45,23 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
         }
     };
 
+    const panResponder = React.useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => false,
+            onMoveShouldSetPanResponder: (evt, gestureState) => {
+                return Math.abs(gestureState.dx) > 20 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+            },
+            onPanResponderRelease: (evt, gestureState) => {
+                if (gestureState.dx > 40) {
+                    prevImage();
+                } else if (gestureState.dx < -40) {
+                    nextImage();
+                }
+            },
+            onPanResponderTerminate: () => {},
+        })
+    ).current;
+
     // Safe formatting for price
     const formattedPrice = formatPrice(listing.price);
 
@@ -52,7 +69,11 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
         <Link href={`/anuncio/${listing.id}`} asChild>
             <TouchableOpacity activeOpacity={0.9} className="bg-surface rounded-2xl overflow-hidden border border-gray-200 mb-4 shadow-sm w-[100%] max-w-[400px]">
                 {/* Image Section */}
-                <View className="relative w-full bg-surface-muted items-center justify-center overflow-hidden" style={{ aspectRatio: 4 / 3 }}>
+                <View 
+                    {...(hasImages && listing.image_urls!.length > 1 ? panResponder.panHandlers : {})}
+                    className="relative w-full bg-surface-muted items-center justify-center overflow-hidden" 
+                    style={{ aspectRatio: 4 / 3 }}
+                >
                     {mainImage ? (
                         <Image
                             source={{ uri: mainImage }}
@@ -86,7 +107,6 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
                                 <ChevronRight color="white" size={20} />
                             </TouchableOpacity>
 
-                            {/* Dots */}
                             <View className="absolute bottom-2 left-0 right-0 flex-row justify-center space-x-1.5">
                                 {listing.image_urls!.map((_, idx) => (
                                     <View
@@ -94,6 +114,13 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
                                         className={`w-1.5 h-1.5 rounded-full ${idx === currentImageIndex ? 'bg-white' : 'bg-white/50'}`}
                                     />
                                 ))}
+                            </View>
+
+                            {/* Photo Count Badge */}
+                            <View style={{ position: 'absolute', bottom: 12, left: 12, zIndex: 20, backgroundColor: 'rgba(0,0,0,0.7)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
+                                <Text style={{ color: 'white', fontSize: 11, fontWeight: 'bold' }}>
+                                    {currentImageIndex + 1}/{listing.image_urls!.length}
+                                </Text>
                             </View>
                         </>
                     )}
