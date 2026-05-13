@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator, ActionSheetIOS, Alert } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { useAuth } from '../../src/contexts/AuthContext';
-import { ChevronLeft, Send, MoreVertical, ImageIcon } from 'lucide-react-native';
+import { ChevronLeft, Send, ImageIcon } from 'lucide-react-native';
 
 interface Message {
     id: string;
@@ -179,55 +179,6 @@ export default function ChatScreen() {
         }
     }
 
-    const handleOptions = () => {
-        const options = ['Eliminar conversación', 'Cancelar'];
-        const destructiveButtonIndex = 0;
-        const cancelButtonIndex = 1;
-
-        if (Platform.OS === 'ios') {
-            ActionSheetIOS.showActionSheetWithOptions(
-                {
-                    options,
-                    cancelButtonIndex,
-                    destructiveButtonIndex,
-                },
-                (buttonIndex) => {
-                    if (buttonIndex === destructiveButtonIndex) {
-                        confirmDelete();
-                    }
-                }
-            );
-        } else {
-            Alert.alert(
-                'Opciones',
-                '',
-                [
-                    { text: 'Eliminar conversación', onPress: confirmDelete, style: 'destructive' },
-                    { text: 'Cancelar', style: 'cancel' }
-                ],
-                { cancelable: true }
-            );
-        }
-    };
-
-    const confirmDelete = () => {
-        Alert.alert(
-            'Eliminar conversación',
-            '¿Seguro que quieres borrar este chat? Se ocultará para ti pero la otra persona podrá seguir viéndolo.',
-            [
-                { text: 'Cancelar', style: 'cancel' },
-                { text: 'Eliminar', style: 'destructive', onPress: deleteConversation }
-            ]
-        );
-    };
-
-    const deleteConversation = async () => {
-        // Simulación: en el futuro aquí se añadirá el borrado lógico en BD
-        Alert.alert('Simulación', 'La conversación se ocultaría en tu bandeja de entrada. Funcionalidad de base de datos pendiente.', [
-            { text: 'Ok', onPress: () => router.back() }
-        ]);
-    };
-
     const renderMessage = ({ item }: { item: Message }) => {
         const isMe = item.sender_id === user?.id;
         return (
@@ -282,10 +233,6 @@ export default function ChatScreen() {
                     )}
                 </View>
 
-                {/* Options Menu */}
-                <TouchableOpacity onPress={handleOptions} className="p-1">
-                    <MoreVertical color="#6b7280" size={24} />
-                </TouchableOpacity>
             </View>
 
             <KeyboardAvoidingView
