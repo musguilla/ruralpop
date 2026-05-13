@@ -179,18 +179,40 @@ export default function ChatScreen() {
         }
     }
 
-    const renderMessage = ({ item }: { item: Message }) => {
+    const renderMessage = ({ item, index }: { item: Message, index: number }) => {
         const isMe = item.sender_id === user?.id;
+
+        const currentDateStr = new Date(item.created_at).toDateString();
+        const prevDateStr = index < messages.length - 1 ? new Date(messages[index + 1].created_at).toDateString() : null;
+        const showDateSeparator = currentDateStr !== prevDateStr;
+
+        let dateSeparator = null;
+        if (showDateSeparator) {
+            const dateObj = new Date(item.created_at);
+            let formattedDate = dateObj.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+            dateSeparator = (
+                <View className="items-center my-4">
+                    <View className="bg-gray-300 px-4 py-1 rounded-full">
+                        <Text className="text-white text-xs font-medium">{formattedDate}</Text>
+                    </View>
+                </View>
+            );
+        }
+
         return (
-            <View className={`mb-4 max-w-[80%] ${isMe ? 'self-end' : 'self-start'}`}>
-                <View className={`rounded-2xl px-4 py-3 ${isMe ? 'bg-primary' : 'bg-white border border-gray-100 shadow-sm'}`}>
-                    <Text className={`text-[15px] ${isMe ? 'text-white' : 'text-gray-800'}`}>
-                        {item.content}
+            <View className="w-full">
+                {dateSeparator}
+                <View className={`mb-4 max-w-[80%] ${isMe ? 'self-end' : 'self-start'}`}>
+                    <View className={`rounded-2xl px-4 py-3 ${isMe ? 'bg-primary' : 'bg-white border border-gray-100 shadow-sm'}`}>
+                        <Text className={`text-[15px] ${isMe ? 'text-white' : 'text-gray-800'}`}>
+                            {item.content}
+                        </Text>
+                    </View>
+                    <Text className={`text-[10px] text-gray-400 mt-1 ${isMe ? 'text-right' : 'text-left'}`}>
+                        {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </Text>
                 </View>
-                <Text className={`text-[10px] text-gray-400 mt-1 ${isMe ? 'text-right' : 'text-left'}`}>
-                    {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </Text>
             </View>
         );
     };
