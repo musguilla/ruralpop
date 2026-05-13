@@ -24,6 +24,7 @@ export default function ProfileScreen() {
     }, [user?.id]);
 
     const displayName = profile?.commercial_name || profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || 'Usuario Ruralpop';
+    const avatarUrl = profile?.company_logo_url || profile?.avatar_url || user?.user_metadata?.avatar_url;
 
     if (isLoading) return null;
 
@@ -67,13 +68,18 @@ export default function ProfileScreen() {
 
             <ScrollView className="flex-1 bg-gray-50 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
                 <View className="px-6 items-center mb-8">
-                    {profile?.avatar_url || user?.user_metadata?.avatar_url ? (
-                        <Image
-                            source={{ uri: profile?.avatar_url || user?.user_metadata?.avatar_url }}
-                            className="mb-4 border border-gray-200 bg-white"
+                    {avatarUrl ? (
+                        <View 
+                            className="mb-4 border border-gray-200 bg-white overflow-hidden"
                             style={{ width: 84, height: 84, borderRadius: 42 }}
-                            contentFit="cover"
-                        />
+                        >
+                            <Image
+                                source={{ uri: getOptimizedImageUrl(avatarUrl) || avatarUrl }}
+                                style={{ width: '100%', height: '100%' }}
+                                contentFit="cover"
+                                transition={200}
+                            />
+                        </View>
                     ) : (
                         <View className="w-[84px] h-[84px] bg-primary-muted rounded-full items-center justify-center mb-4 border border-primary/10">
                             <Text className="text-[32px] font-bold text-primary uppercase">
