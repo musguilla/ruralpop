@@ -63,7 +63,7 @@ export default function PublishScreen() {
                         });
                         if (res.ok) {
                             const data = await res.json();
-                            setIsStripeReady(data.isReady);
+                            setIsStripeReady(data.isStripeReady);
                         }
                     } catch (e) {
                         console.error("Error fetching wallet status", e);

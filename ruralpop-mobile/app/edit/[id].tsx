@@ -112,7 +112,7 @@ export default function EditListingScreen() {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    setIsStripeReady(data.isReady);
+                    setIsStripeReady(data.isStripeReady);
                 }
             } catch (e) {
                 // Ignore if not found
