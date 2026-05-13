@@ -16,6 +16,8 @@ interface Conversation {
     other_user_avatar?: string;
     listing_id: string;
     listing_title: string;
+    listing_image?: string;
+    listing_price?: number;
     last_message: string;
     last_message_time: string;
     unread_count: number;
@@ -52,7 +54,7 @@ export default function MessagesScreen() {
                     sender_id,
                     receiver_id,
                     listing_id,
-                    listings (title),
+                    listings (title, price, image_urls),
                     sender:users!messages_sender_id_fkey(id, name, commercial_name, avatar_url),
                     receiver:users!messages_receiver_id_fkey(id, name, commercial_name, avatar_url)
                 `)
@@ -79,6 +81,8 @@ export default function MessagesScreen() {
                         other_user_avatar: (otherUser as any)?.avatar_url,
                         listing_id: msg.listing_id,
                         listing_title: Array.isArray(msg.listings) ? (msg.listings[0] as any)?.title : (msg.listings as any)?.title || 'Anuncio Ruralpop',
+                        listing_image: Array.isArray(msg.listings) ? (msg.listings[0] as any)?.image_urls?.[0] : (msg.listings as any)?.image_urls?.[0],
+                        listing_price: Array.isArray(msg.listings) ? (msg.listings[0] as any)?.price : (msg.listings as any)?.price,
                         last_message: msg.content,
                         last_message_time: msg.created_at,
                         unread_count: (!isSender && !msg.is_read) ? 1 : 0
@@ -154,32 +158,37 @@ export default function MessagesScreen() {
                                     listingId: item.listing_id, 
                                     otherUserId: item.other_user_id,
                                     otherUserName: item.other_user_name,
-                                    otherUserAvatar: item.other_user_avatar || ''
+                                    otherUserAvatar: item.other_user_avatar || '',
+                                    listingImage: item.listing_image || '',
+                                    listingPrice: item.listing_price ? item.listing_price.toString() : '',
+                                    listingTitle: item.listing_title
                                 }
                             })}
                             className="bg-white px-4 py-4 border-b border-gray-100 flex-row items-center active:bg-gray-50"
                         >
-                            <View className="w-14 h-14 bg-primary-muted rounded-full items-center justify-center mr-4 border border-gray-100 overflow-hidden">
-                                {item.other_user_avatar ? (
-                                    <Image source={{ uri: getOptimizedImageUrl(item.other_user_avatar, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                            <View className="w-[60px] h-[60px] rounded-2xl overflow-hidden mr-4 border border-gray-100 bg-gray-100">
+                                {item.listing_image ? (
+                                    <Image source={{ uri: item.listing_image }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 ) : (
-                                    <Text className="text-xl font-bold text-primary uppercase">{item.other_user_name.charAt(0)}</Text>
+                                    <View className="w-full h-full items-center justify-center">
+                                        <MessageCircle color="#9ca3af" size={24} />
+                                    </View>
                                 )}
                             </View>
                             <View className="flex-1">
                                 <View className="flex-row justify-between items-center mb-1">
-                                    <Text className="font-bold text-lg text-text truncate max-w-[75%]" numberOfLines={1}>
+                                    <Text className="text-[13px] font-medium text-gray-400 truncate max-w-[70%]" numberOfLines={1}>
                                         {item.other_user_name}
                                     </Text>
-                                    <Text className="text-xs text-gray-400">
-                                        {new Date(item.last_message_time).toLocaleDateString()}
+                                    <Text className="text-[12px] text-gray-400">
+                                        {new Date(item.last_message_time).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                                     </Text>
                                 </View>
-                                <Text className="text-xs font-medium text-primary mb-1 truncate" numberOfLines={1}>
+                                <Text className="font-bold text-[16px] text-gray-900 mb-1 truncate" numberOfLines={1}>
                                     {item.listing_title}
                                 </Text>
                                 <View className="flex-row justify-between items-center">
-                                    <Text className="text-gray-500 flex-1 mr-4 truncate" numberOfLines={1}>
+                                    <Text className={`flex-1 mr-4 truncate ${item.unread_count > 0 ? 'text-primary font-bold' : 'text-gray-500'}`} numberOfLines={1}>
                                         {item.last_message}
                                     </Text>
                                     {item.unread_count > 0 && (

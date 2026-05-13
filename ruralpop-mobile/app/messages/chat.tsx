@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator, ActionSheetIOS, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { useAuth } from '../../src/contexts/AuthContext';
-import { ChevronLeft, Send } from 'lucide-react-native';
+import { ChevronLeft, Send, MoreVertical, ImageIcon } from 'lucide-react-native';
 
 interface Message {
     id: string;
@@ -17,7 +17,7 @@ interface Message {
 }
 
 export default function ChatScreen() {
-    const { listingId, otherUserId, otherUserName: paramName, otherUserAvatar: paramAvatar } = useLocalSearchParams<{ listingId: string, otherUserId: string, otherUserName?: string, otherUserAvatar?: string }>();
+    const { listingId, otherUserId, otherUserName: paramName, otherUserAvatar: paramAvatar, listingImage, listingPrice, listingTitle } = useLocalSearchParams<{ listingId: string, otherUserId: string, otherUserName?: string, otherUserAvatar?: string, listingImage?: string, listingPrice?: string, listingTitle?: string }>();
     const router = useRouter();
     const { user } = useAuth();
     const insets = useSafeAreaInsets();
@@ -179,6 +179,55 @@ export default function ChatScreen() {
         }
     }
 
+    const handleOptions = () => {
+        const options = ['Eliminar conversación', 'Cancelar'];
+        const destructiveButtonIndex = 0;
+        const cancelButtonIndex = 1;
+
+        if (Platform.OS === 'ios') {
+            ActionSheetIOS.showActionSheetWithOptions(
+                {
+                    options,
+                    cancelButtonIndex,
+                    destructiveButtonIndex,
+                },
+                (buttonIndex) => {
+                    if (buttonIndex === destructiveButtonIndex) {
+                        confirmDelete();
+                    }
+                }
+            );
+        } else {
+            Alert.alert(
+                'Opciones',
+                '',
+                [
+                    { text: 'Eliminar conversación', onPress: confirmDelete, style: 'destructive' },
+                    { text: 'Cancelar', style: 'cancel' }
+                ],
+                { cancelable: true }
+            );
+        }
+    };
+
+    const confirmDelete = () => {
+        Alert.alert(
+            'Eliminar conversación',
+            '¿Seguro que quieres borrar este chat? Se ocultará para ti pero la otra persona podrá seguir viéndolo.',
+            [
+                { text: 'Cancelar', style: 'cancel' },
+                { text: 'Eliminar', style: 'destructive', onPress: deleteConversation }
+            ]
+        );
+    };
+
+    const deleteConversation = async () => {
+        // Simulación: en el futuro aquí se añadirá el borrado lógico en BD
+        Alert.alert('Simulación', 'La conversación se ocultaría en tu bandeja de entrada. Funcionalidad de base de datos pendiente.', [
+            { text: 'Ok', onPress: () => router.back() }
+        ]);
+    };
+
     const renderMessage = ({ item }: { item: Message }) => {
         const isMe = item.sender_id === user?.id;
         return (
@@ -204,16 +253,39 @@ export default function ChatScreen() {
                 <TouchableOpacity onPress={() => router.back()} className="mr-3">
                     <ChevronLeft color="#374151" size={28} />
                 </TouchableOpacity>
-                <View className="w-10 h-10 rounded-full bg-primary-muted items-center justify-center mr-3 overflow-hidden border border-gray-100">
+
+                {/* Product Image */}
+                <View className="w-12 h-12 rounded-xl bg-gray-100 mr-3 overflow-hidden border border-gray-100 items-center justify-center">
+                    {listingImage ? (
+                        <Image source={{ uri: listingImage }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                    ) : (
+                        <ImageIcon color="#9ca3af" size={20} />
+                    )}
+                </View>
+
+                {/* Listing Details */}
+                <View className="flex-1 mr-2 justify-center">
+                    <Text className="text-[17px] font-bold text-gray-900 leading-tight">
+                        {listingPrice ? `${listingPrice} €` : 'Consultar'}
+                    </Text>
+                    <Text className="text-[14px] text-gray-500 truncate" numberOfLines={1}>
+                        {listingTitle || 'Anuncio'}
+                    </Text>
+                </View>
+
+                {/* User Avatar */}
+                <View className="w-8 h-8 rounded-full bg-primary-muted items-center justify-center mr-2 overflow-hidden border border-gray-100">
                     {otherUserAvatar ? (
                         <Image source={{ uri: getOptimizedImageUrl(otherUserAvatar, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                     ) : (
-                        <Text className="text-lg font-bold text-primary uppercase">{otherUserName.charAt(0)}</Text>
+                        <Text className="text-sm font-bold text-primary uppercase">{otherUserName.charAt(0)}</Text>
                     )}
                 </View>
-                <View className="flex-1">
-                    <Text className="text-lg font-bold text-text truncate max-w-[85%]">{otherUserName}</Text>
-                </View>
+
+                {/* Options Menu */}
+                <TouchableOpacity onPress={handleOptions} className="p-1">
+                    <MoreVertical color="#6b7280" size={24} />
+                </TouchableOpacity>
             </View>
 
             <KeyboardAvoidingView
