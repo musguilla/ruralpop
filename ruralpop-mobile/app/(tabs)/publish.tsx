@@ -48,11 +48,29 @@ export default function PublishScreen() {
         React.useCallback(() => {
             if (user?.id && session) {
                 async function fetchData() {
-                    // Fetch phone and role
-                    const { data: userData } = await supabase.from('users').select('phone, role').eq('id', user?.id).single();
-                    if (userData) {
-                        if (userData.phone) setPhone(userData.phone);
+                    // Fetch phone, role and location data
+                    const { data: userData, error: userError } = await supabase
+                        .from('users')
+                        .select('contact_phone, role, location, province_id, municipality_id')
+                        .eq('id', user?.id)
+                        .single();
+                        
+                    if (userData && !userError) {
+                        if (userData.contact_phone) setPhone(userData.contact_phone);
                         setIsProfesional(userData.role === 'profesional');
+                        if (userData.location) setLocationId(userData.location);
+                        
+                        if (userData.municipality_id) {
+                            const { data: munData } = await supabase
+                                .from('municipalities')
+                                .select('name')
+                                .eq('id', userData.municipality_id)
+                                .single();
+                                
+                            if (munData) {
+                                setMunicipality({ id: userData.municipality_id, name: munData.name });
+                            }
+                        }
                     }
 
                     // Fetch wallet status
@@ -202,11 +220,32 @@ export default function PublishScreen() {
         try {
             const imageUrls = await uploadImages();
 
-            // Guardar el telefono si hay uno nuevo
-            if (phone && phone.trim().length > 0) {
-                await supabase.from('users').update({ phone: phone.trim() }).eq('id', user?.id);
-            }
+            const selectedProvinceObj = LOCATIONS.find(l => l.name === locationId);
+            const provinceNumericId = selectedProvinceObj ? parseInt(selectedProvinceObj.id, 10) : null;
+            const fullLocationString = municipality ? `${municipality.name}, ${locationId}` : locationId;
 
+            // Guardar los datos de contacto y ubicación en el perfil del usuario si no los tiene
+            try {
+                const { data: currentUserData } = await supabase.from('users').select('location, municipality_id, contact_phone').eq('id', user?.id).single();
+                const finalUpdate: any = {};
+                
+                if (!currentUserData?.contact_phone && phone && phone.trim().length > 0) {
+                    finalUpdate.contact_phone = phone.trim();
+                }
+                if (!currentUserData?.location && locationId) {
+                    finalUpdate.location = locationId;
+                    finalUpdate.province_id = provinceNumericId;
+                }
+                if (!currentUserData?.municipality_id && municipality?.id) {
+                    finalUpdate.municipality_id = municipality.id;
+                }
+
+                if (Object.keys(finalUpdate).length > 0) {
+                    await supabase.from('users').update(finalUpdate).eq('id', user?.id);
+                }
+            } catch (e) {
+                console.error("Error updating user profile with default location:", e);
+            }
             // Derivar category y subcategory a raiz de categoryId
             let finalCategory = categoryId;
             let finalSubcategory: string | null = null;
@@ -223,10 +262,6 @@ export default function PublishScreen() {
                     break;
                 }
             }
-
-            const selectedProvinceObj = LOCATIONS.find(l => l.name === locationId);
-            const provinceNumericId = selectedProvinceObj ? parseInt(selectedProvinceObj.id, 10) : null;
-            const fullLocationString = municipality ? `${municipality.name}, ${locationId}` : locationId;
 
             const { data, error } = await supabase
                 .from('listings')
