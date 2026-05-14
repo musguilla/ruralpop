@@ -113,25 +113,25 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
                         </>
                     )}
 
+                    {/* Featured Badge Overlay on top-left of the image */}
+                    {listing.is_featured && (
+                        <View style={{ position: 'absolute', top: 12, left: 12, zIndex: 20, backgroundColor: 'rgba(31,41,55,0.85)', borderRadius: 20 }} className="px-2 py-1.5 flex-row items-center">
+                            <Crown color="white" size={18} />
+                            {isSingleColumn && (
+                                <Text className="text-white ml-1.5 font-bold text-xs tracking-wide">Destacado</Text>
+                            )}
+                        </View>
+                    )}
+
+                    {/* Favorite Button Overlay on bottom-right of the image */}
+                    <TouchableOpacity
+                        onPress={handleFavoritePress}
+                        style={{ position: 'absolute', bottom: 12, right: 12, zIndex: 20, backgroundColor: 'rgba(0,0,0,0.3)', padding: 6, borderRadius: 20 }}
+                    >
+                        <Heart color={isFavorited ? "#ef4444" : "white"} fill={isFavorited ? "#ef4444" : "transparent"} size={18} />
+                    </TouchableOpacity>
+
                 </View>
-
-                {/* Featured Badge Overlay on top-left of the image */}
-                {listing.is_featured && (
-                    <View style={{ position: 'absolute', top: 12, left: 12, zIndex: 20, backgroundColor: 'rgba(31,41,55,0.85)', borderRadius: 20 }} className="px-2 py-1.5 flex-row items-center">
-                        <Crown color="white" size={18} />
-                        {isSingleColumn && (
-                            <Text className="text-white ml-1.5 font-bold text-xs tracking-wide">Destacado</Text>
-                        )}
-                    </View>
-                )}
-
-                {/* Favorite Button Overlay on top-right of the image */}
-                <TouchableOpacity
-                    onPress={handleFavoritePress}
-                    style={{ position: 'absolute', top: 12, right: 12, zIndex: 20, backgroundColor: 'rgba(0,0,0,0.3)', padding: 6, borderRadius: 20 }}
-                >
-                    <Heart color={isFavorited ? "#ef4444" : "white"} fill={isFavorited ? "#ef4444" : "transparent"} size={18} />
-                </TouchableOpacity>
 
                 {/* Content Section */}
                 <View className="p-4">
