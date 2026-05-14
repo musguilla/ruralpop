@@ -116,7 +116,7 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
 
     return (
         <View className="bg-surface rounded-2xl overflow-hidden border border-gray-200 mb-4 shadow-sm w-[100%] max-w-[400px]">
-            {hasImages && listing.image_urls!.length > 1 ? (
+            {isSingleColumn && hasImages && listing.image_urls!.length > 1 ? (
                 <View 
                     className="relative w-full bg-surface-muted overflow-hidden" 
                     style={{ aspectRatio: 4 / 3 }}

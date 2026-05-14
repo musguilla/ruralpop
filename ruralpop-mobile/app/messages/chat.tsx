@@ -24,6 +24,7 @@ export default function ChatScreen() {
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
+    const [listingData, setListingData] = useState<{ title: string, price: number, image_url: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
     const [otherUserName, setOtherUserName] = useState<string>(paramName || 'Usuario');
@@ -37,6 +38,7 @@ export default function ChatScreen() {
         }
 
         fetchOtherUser();
+        fetchListingData();
         fetchMessages();
         markAsRead();
 
@@ -83,6 +85,18 @@ export default function ChatScreen() {
         if (data) {
             if (!paramName) setOtherUserName(data.commercial_name || data.name || data.full_name || 'Usuario');
             if (!paramAvatar) setOtherUserAvatar(data.avatar_url);
+        }
+    }
+
+    async function fetchListingData() {
+        if (!listingId) return;
+        const { data } = await supabase.from('listings').select('title, price, image_urls').eq('id', listingId).single();
+        if (data) {
+            setListingData({
+                title: data.title,
+                price: data.price,
+                image_url: data.image_urls?.[0] || ''
+            });
         }
     }
 
@@ -229,8 +243,8 @@ export default function ChatScreen() {
 
                 {/* Product Image */}
                 <View className="w-12 h-12 rounded-xl bg-gray-100 mr-3 overflow-hidden border border-gray-100 items-center justify-center">
-                    {listingImage ? (
-                        <Image source={{ uri: listingImage }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                    {listingData?.image_url || listingImage ? (
+                        <Image source={{ uri: listingData?.image_url || listingImage }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                     ) : (
                         <ImageIcon color="#9ca3af" size={20} />
                     )}
@@ -239,10 +253,10 @@ export default function ChatScreen() {
                 {/* Listing Details */}
                 <View className="flex-1 mr-2 justify-center">
                     <Text className="text-[17px] font-bold text-gray-900 leading-tight">
-                        {listingPrice ? `${listingPrice} €` : 'Consultar'}
+                        {listingData?.price !== undefined ? `${listingData.price} €` : listingPrice ? `${listingPrice} €` : 'Consultar'}
                     </Text>
                     <Text className="text-[14px] text-gray-500 truncate" numberOfLines={1}>
-                        {listingTitle || 'Anuncio'}
+                        {listingData?.title || listingTitle || 'Anuncio'}
                     </Text>
                 </View>
 

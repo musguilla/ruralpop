@@ -123,13 +123,15 @@ export default function ListingDetailsScreen() {
             ? `Mira este anuncio en Ruralpop: ${listing.title}`
             : `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`;
 
-        RNShare.share({
-            message,
-            url: Platform.OS === 'ios' ? url : undefined,
-            title: listing.title,
-        }).catch((error) => {
-            console.log('Error sharing:', error);
-        });
+        setTimeout(() => {
+            RNShare.share({
+                message,
+                url: Platform.OS === 'ios' ? url : undefined,
+                title: listing.title,
+            }).catch((error) => {
+                console.log('Error sharing:', error);
+            });
+        }, 100);
     };
 
     const openGallery = (index: number) => {
