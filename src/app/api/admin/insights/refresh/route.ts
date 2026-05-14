@@ -22,9 +22,29 @@ export async function POST() {
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
 
+        // Helper to fetch all records bypassing the 1000 limit
+        async function fetchAllRecords(table: string, selectQuery: string) {
+            let allData: any[] = [];
+            let from = 0;
+            const step = 1000;
+            
+            while (true) {
+                const { data, error } = await supabaseAdmin
+                    .from(table)
+                    .select(selectQuery)
+                    .range(from, from + step - 1);
+                    
+                if (error || !data || data.length === 0) break;
+                allData = allData.concat(data);
+                if (data.length < step) break;
+                from += step;
+            }
+            return allData;
+        }
+
         // --- 1. Usuarios por provincia (Top 100) ---
         let topProvinces: any[] = [];
-        const { data: usersData } = await supabaseAdmin.from('users').select('province_id').limit(50000); // Increased limit since we run in background
+        const usersData = await fetchAllRecords('users', 'province_id');
         if (usersData) {
             const provCounts: Record<number, number> = {};
             usersData.forEach((u: any) => {
@@ -45,15 +65,24 @@ export async function POST() {
         }
 
         // --- 2. Usuarios más conectados hoy ---
-        const { data: usersAuthData } = await supabaseAdmin.auth.admin.listUsers();
+        let allAuthUsers: any[] = [];
+        let page = 1;
+        while (true) {
+            const { data: authData, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 1000 });
+            if (error || !authData || !authData.users || authData.users.length === 0) break;
+            allAuthUsers = allAuthUsers.concat(authData.users);
+            if (authData.users.length < 1000) break;
+            page++;
+        }
+        
         let topConnectedUsers: any[] = [];
         let activeUsersTodayCount = 0;
         
-        if (usersAuthData?.users) {
+        if (allAuthUsers.length > 0) {
             const todayStart = new Date();
             todayStart.setHours(0, 0, 0, 0);
 
-            const activeToday = [...usersAuthData.users].filter(u => u.last_sign_in_at && new Date(u.last_sign_in_at) >= todayStart);
+            const activeToday = allAuthUsers.filter(u => u.last_sign_in_at && new Date(u.last_sign_in_at) >= todayStart);
             activeUsersTodayCount = activeToday.length;
 
             topConnectedUsers = activeToday
@@ -74,7 +103,7 @@ export async function POST() {
         // --- 3. Usuarios con más anuncios y conteo de categorías ---
         let topUsersListings: any[] = [];
         let topCategories: any[] = [];
-        const { data: listingsData } = await supabaseAdmin.from('listings').select('user_id, category, subcategory').limit(50000);
+        const listingsData = await fetchAllRecords('listings', 'user_id, category, subcategory, visits_count');
         const totalAnalyzedListings = listingsData?.length || 0;
         
         if (listingsData) {
@@ -113,7 +142,7 @@ export async function POST() {
         // --- 4. Usuarios Y Anuncios con más chats ---
         let topUsersChats: any[] = [];
         let topListingsChats: any[] = [];
-        const { data: msgsData } = await supabaseAdmin.from('messages').select('sender_id, receiver_id, listing_id').limit(100000);
+        const msgsData = await fetchAllRecords('messages', 'sender_id, receiver_id, listing_id');
         if (msgsData) {
             const userChatsCounts: Record<string, number> = {};
             const listChatsCounts: Record<string, number> = {};
@@ -153,7 +182,7 @@ export async function POST() {
 
         // --- 6. Anuncios con más likes ---
         let topLikesListings: any[] = [];
-        const { data: favsData } = await supabaseAdmin.from('favorites').select('listing_id').limit(100000);
+        const favsData = await fetchAllRecords('favorites', 'listing_id');
         if (favsData) {
             const likeCounts: Record<string, number> = {};
             favsData.forEach((f: any) => {
@@ -174,7 +203,7 @@ export async function POST() {
         }
 
         // --- Compile final payload ---
-        const totalTraffic = topVisitedListings?.reduce((acc: number, curr: any) => acc + (curr.visits_count || 0), 0) || 0;
+        const totalTraffic = listingsData?.reduce((acc: number, curr: any) => acc + (curr.visits_count || 0), 0) || 0;
 
         const insightsData = {
             last_updated: new Date().toISOString(),
