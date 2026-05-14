@@ -9,11 +9,19 @@ import { Metadata } from "next";
 import { generateSeoH1 } from "@/utils/h1Generator";
 import { LOCATIONS } from "@/constants/locations";
 
+import { headers } from "next/headers";
+import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
+import { LocaleCode } from "@/i18n/config";
+
 export async function generateMetadata(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
   const searchParams = await props.searchParams;
-  let canonical = "/";
+  const headersList = await headers();
+  const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+  const originalPathname = headersList.get('x-original-pathname') || '/';
+
+  let canonical = getCanonicalUrl(originalPathname, locale);
   if (searchParams.page && typeof searchParams.page === 'string' && searchParams.page !== '1') {
       canonical += `?page=${searchParams.page}`;
   }
@@ -21,6 +29,7 @@ export async function generateMetadata(props: {
   return {
     alternates: {
       canonical,
+      languages: getHreflangLinks(originalPathname),
     },
   };
 }

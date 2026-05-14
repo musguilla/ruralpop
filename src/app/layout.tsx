@@ -21,42 +21,58 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://www.ruralpop.com"),
-  title: "Ruralpop - App gratis para comprar y vender ganado",
-  description: "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
-  applicationName: "Ruralpop",
-  icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon.png', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
-  },
-  appleWebApp: {
-    title: "Ruralpop",
-    statusBarStyle: "default",
-  },
-  itunes: {
-    appId: "6759678666"
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+import { headers } from "next/headers";
+import { ptIndexableRoutes } from "@/i18n/config";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers();
+  const locale = headersList.get('x-locale') || 'es';
+  const originalPathname = headersList.get('x-original-pathname') || '/';
+
+  const metadataObj: Metadata = {
+    metadataBase: new URL("https://www.ruralpop.com"),
+    title: "Ruralpop - App gratis para comprar y vender ganado",
+    description: "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
+    applicationName: "Ruralpop",
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/favicon.png', type: 'image/png' },
+      ],
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      ],
+    },
+    appleWebApp: {
+      title: "Ruralpop",
+      statusBarStyle: "default",
+    },
+    itunes: {
+      appId: "6759678666"
+    },
+    robots: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
-  },
-  other: {
-    "google-adsense-account": "ca-pub-2042067618462129"
+    other: {
+      "google-adsense-account": "ca-pub-2042067618462129"
+    }
+  };
+
+  // Enforce noindex for Portuguese routes that are not explicitly approved
+  if (locale === 'pt' && !ptIndexableRoutes.includes(originalPathname)) {
+    metadataObj.robots = { index: false, follow: true };
   }
-};
+
+  return metadataObj;
+}
 
 export default async function RootLayout({
   children,
@@ -64,9 +80,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const categories = await getCategories();
+  const headersList = await headers();
+  const locale = headersList.get('x-locale') || 'es';
 
   return (
-    <html lang="es">
+    <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col font-sans antialiased`}
       >

@@ -10,6 +10,10 @@ import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
 import { DynamicFaqs } from "@/components/seo/DynamicFaqs";
 import { generateSeoH1 } from "@/utils/h1Generator";
 
+import { headers } from "next/headers";
+import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
+import { LocaleCode } from "@/i18n/config";
+
 export async function generateMetadata(props: { 
     params: Promise<{ slug: string }>;
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -52,7 +56,6 @@ export async function generateMetadata(props: {
     let pageTitle = "Mercado Agrícola y Ganadero | Ruralpop";
     if (baseSubject.trim()) {
         const candidateTitle = `${baseSubject} - ${suffix} | Ruralpop`;
-        // Google usually displays up to ~65 characters. Only attach the suffix if it reasonably fits.
         if (candidateTitle.length > 72) {
             pageTitle = `${baseSubject} | Ruralpop`;
         } else {
@@ -60,7 +63,11 @@ export async function generateMetadata(props: {
         }
     }
 
-    let canonical = buildSeoUrl(parsed);
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const originalPathname = headersList.get('x-original-pathname') || `/${params.slug}`;
+
+    let canonical = getCanonicalUrl(originalPathname, locale);
     if (searchParams.page && typeof searchParams.page === 'string' && searchParams.page !== '1') {
         canonical += `?page=${searchParams.page}`;
     }
@@ -69,7 +76,8 @@ export async function generateMetadata(props: {
         title: pageTitle,
         description: `Aplicación gratis para ${parts.join(" ") || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`,
         alternates: {
-            canonical
+            canonical,
+            languages: getHreflangLinks(originalPathname)
         }
     };
 }
