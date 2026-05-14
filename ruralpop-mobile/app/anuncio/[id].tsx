@@ -116,20 +116,20 @@ export default function ListingDetailsScreen() {
         }
     };
 
-    const handleShare = async () => {
+    const handleShare = () => {
         if (!listing) return;
-        try {
-            const url = buildWebListingUrl(listing.id, listing.title);
-            await RNShare.share({
-                message: Platform.OS === 'ios'
-                    ? `Mira este anuncio en Ruralpop: ${listing.title}`
-                    : `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`,
-                url: Platform.OS === 'ios' ? url : undefined,
-                title: listing.title,
-            });
-        } catch (error) {
-            console.error('Error sharing:', error);
-        }
+        const url = buildWebListingUrl(listing.id, listing.title);
+        const message = Platform.OS === 'ios'
+            ? `Mira este anuncio en Ruralpop: ${listing.title}`
+            : `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`;
+
+        RNShare.share({
+            message,
+            url: Platform.OS === 'ios' ? url : undefined,
+            title: listing.title,
+        }).catch((error) => {
+            console.log('Error sharing:', error);
+        });
     };
 
     const openGallery = (index: number) => {
@@ -362,7 +362,15 @@ export default function ListingDetailsScreen() {
                                     if (listing?.user_id) {
                                         router.push({
                                             pathname: '/messages/chat',
-                                            params: { listingId: id, otherUserId: listing.user_id }
+                                            params: { 
+                                                listingId: id, 
+                                                otherUserId: listing.user_id,
+                                                listingTitle: listing.title,
+                                                listingImage: listing.image_urls?.[0] || '',
+                                                listingPrice: listing.price?.toString() || '0',
+                                                otherUserName: rawSellerName,
+                                                otherUserAvatar: listing.seller?.avatar_url || ''
+                                            }
                                         });
                                     }
                                 }}
@@ -418,7 +426,15 @@ export default function ListingDetailsScreen() {
                                 if (listing?.user_id) {
                                     router.push({
                                         pathname: '/messages/chat',
-                                        params: { listingId: id, otherUserId: listing.user_id }
+                                        params: { 
+                                            listingId: id, 
+                                            otherUserId: listing.user_id,
+                                            listingTitle: listing.title,
+                                            listingImage: listing.image_urls?.[0] || '',
+                                            listingPrice: listing.price?.toString() || '0',
+                                            otherUserName: rawSellerName,
+                                            otherUserAvatar: listing.seller?.avatar_url || ''
+                                        }
                                     });
                                 }
                             }}
