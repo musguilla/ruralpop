@@ -526,9 +526,11 @@ export default function PublishScreen() {
                 onClose={() => setIsCategoryModalOpen(false)}
                 selectedCategory={categoryId}
                 onSelect={(cat) => {
-                    if (cat.toLowerCase() === 'perros' && !isProfesional) {
+                    if (cat && cat.toLowerCase() === 'perros' && !isProfesional) {
                         setIsCategoryModalOpen(false);
-                        setIsDogLawModalOpen(true);
+                        setTimeout(() => {
+                            setIsDogLawModalOpen(true);
+                        }, 400);
                     } else {
                         setCategoryId(cat);
                         setIsCategoryModalOpen(false);
