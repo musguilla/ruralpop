@@ -508,14 +508,19 @@ export default function PublishScreen() {
 
                 <TouchableOpacity
                     onPress={handlePublish}
-                    disabled={isSubmitting}
-                    className={`w-full py-4 rounded-full items-center justify-center mt-8 mb-8 ${isSubmitting ? 'bg-primary-hover opacity-70' : 'bg-primary'
-                        }`}
+                    disabled={isSubmitting || (allowOnlineSale && !isStripeReady)}
+                    className={`w-full py-4 rounded-full items-center justify-center mt-8 mb-8 ${
+                        isSubmitting 
+                            ? 'bg-primary-hover opacity-70' 
+                            : (allowOnlineSale && !isStripeReady)
+                                ? 'bg-gray-300'
+                                : 'bg-primary'
+                    }`}
                 >
                     {isSubmitting ? (
                         <ActivityIndicator color="white" />
                     ) : (
-                        <Text className="text-white font-bold text-lg">Publicar Anuncio</Text>
+                        <Text className={`font-bold text-lg ${allowOnlineSale && !isStripeReady && !isSubmitting ? 'text-gray-500' : 'text-white'}`}>Publicar Anuncio</Text>
                     )}
                 </TouchableOpacity>
 
