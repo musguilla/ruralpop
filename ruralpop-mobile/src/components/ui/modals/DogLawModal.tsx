@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Modal, TouchableOpacity, Linking, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import { ShieldAlert, X } from 'lucide-react-native';
 
 interface DogLawModalProps {
@@ -13,15 +13,14 @@ export function DogLawModal({ visible, onClose }: DogLawModalProps) {
         onClose();
     };
 
+    if (!visible) return null;
+
     return (
-        <Modal
-            animationType="fade"
-            transparent={true}
-            visible={visible}
-            onRequestClose={onClose}
+        <View 
+            style={[StyleSheet.absoluteFill, { zIndex: 9999, elevation: 9999 }]} 
+            className="flex-1 justify-center items-center bg-black/60 px-4"
         >
-            <View className="flex-1 justify-center items-center bg-black/60 px-4">
-                <View className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl relative">
+            <View className="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl relative">
                     <TouchableOpacity 
                         onPress={onClose}
                         className="absolute top-4 right-4 z-10"
@@ -62,7 +61,6 @@ export function DogLawModal({ visible, onClose }: DogLawModalProps) {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
-        </Modal>
+        </View>
     );
 }
