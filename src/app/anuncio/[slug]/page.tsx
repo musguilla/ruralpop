@@ -76,13 +76,17 @@ export async function generateMetadata(
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
     const dict = await getDictionary(locale);
 
-    const fullTitle = `${listing.title} - ${dict.listing_detail?.meta_desc ? dict.vender + ' y ' + dict.comprar + ' ' + (dict.category?.ganaderia || '').toLowerCase() : 'Vender y comprar ganado'} | Ruralpop`;
+    const andWord = locale === 'pt' ? 'e' : 'y';
+    const fullTitle = `${listing.title} - ${dict.listing_detail?.meta_desc ? dict.vender + ` ${andWord} ` + dict.comprar + ' ' + (dict.category?.ganaderia || '').toLowerCase() : 'Vender y comprar ganado'} | Ruralpop`;
 
     // Acortar base para dejar espacio a las keywords SEO
     const rawDesc = listing.description?.replace(/\n/g, ' ') || "";
     const shortDesc = rawDesc.slice(0, 60) + (rawDesc.length > 60 ? '...' : '');
 
     let optimizedDescription = `${shortDesc} en ${listing.location}. Descarga la App gratis para buscar, vender y comprar ganado, vacas, caballos, maquinaria y servicios de campo.`;
+    if (locale === 'pt') {
+        optimizedDescription = `${shortDesc} em ${listing.location}. Descarrega a App grátis para procurar, vender e comprar gado, vacas, cavalos, máquinas e serviços rurais.`;
+    }
     if (dict.listing_detail?.meta_desc) {
         optimizedDescription = `${shortDesc} ${dict.listing_detail.meta_desc.replace('{location}', listing.location)}`;
     }

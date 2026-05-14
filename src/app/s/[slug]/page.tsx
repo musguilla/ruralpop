@@ -9,6 +9,9 @@ import type { Metadata } from "next";
 import { parseSeoUrl } from "@/utils/seoUtils";
 import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
 import { DynamicFaqs } from "@/components/seo/DynamicFaqs";
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
+import { generateSeoH1 } from "@/utils/h1Generator";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const params = await props.params;
@@ -25,19 +28,35 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
         "Compra venta ganadería"
     ];
 
-    const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    const suffix = seoVariations[charCodeSum % seoVariations.length];
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
 
-    let pageTitle = `${landing.title} | Ruralpop`;
-    const candidateTitle = `${landing.title} - ${suffix} | Ruralpop`;
+    let baseTitle = landing.title;
+    if (locale === 'pt') {
+        const combinedParams: any = {};
+        if (landing.searchQuery) combinedParams.q = landing.searchQuery;
+        if (landing.category) combinedParams.category = landing.category;
+        if (landing.subcategory) combinedParams.subcategory = landing.subcategory;
+        baseTitle = generateSeoH1(combinedParams, landing.province, locale);
+    }
 
-    // Maximize title length for Google (usually up to ~65-70 chars)
-    if (candidateTitle.length <= 72) {
-        pageTitle = candidateTitle;
+    let pageTitle = `${baseTitle} | Ruralpop`;
+    if (locale === 'es') {
+        const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const suffix = seoVariations[charCodeSum % seoVariations.length];
+        const candidateTitle = `${baseTitle} - ${suffix} | Ruralpop`;
+
+        // Maximize title length for Google (usually up to ~65-70 chars)
+        if (candidateTitle.length <= 72) {
+            pageTitle = candidateTitle;
+        }
     }
 
     // Making the description even more punchy and keyword rich
-    const optimizedDescription = `Descubre los mejores anuncios de ${landing.title.toLowerCase()} en nuestra App gratis. El gran mercado agrícola de España para descargar y buscar, comprar y vender ganado, vacas, toros, caballos, maquinaria y más.`;
+    let optimizedDescription = `Descubre los mejores anuncios de ${baseTitle.toLowerCase()} en nuestra App gratis. El gran mercado agrícola de España para descargar y buscar, comprar y vender ganado, vacas, toros, caballos, maquinaria y más.`;
+    if (locale === 'pt') {
+        optimizedDescription = `Descubra os melhores anúncios de ${baseTitle.toLowerCase()} na nossa App grátis. O grande mercado agrícola para descarregar e pesquisar, comprar e vender gado, vacas, touros, cavalos, máquinas e muito mais.`;
+    }
 
     return {
         title: pageTitle,
@@ -92,6 +111,21 @@ export default async function SeoLandingPage(props: {
         }
     }
 
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+
+    let displayTitle = landing.title;
+    let displaySubtitle = landing.subtitle || "Encuentra y compara las mejores ofertas de nuestro mercado agrícola.";
+
+    if (locale === 'pt') {
+        const combinedParams: any = {};
+        if (landing.searchQuery) combinedParams.q = landing.searchQuery;
+        if (landing.category) combinedParams.category = landing.category;
+        if (landing.subcategory) combinedParams.subcategory = landing.subcategory;
+        displayTitle = generateSeoH1(combinedParams, landing.province, locale);
+        displaySubtitle = "Encontre e compare as melhores ofertas do nosso mercado agrícola.";
+    }
+
     return (
         <div className="container mx-auto px-4 pt-0 pb-16 sm:py-8 min-h-screen">
             <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
@@ -99,8 +133,8 @@ export default async function SeoLandingPage(props: {
             </Suspense>
 
             <div className="mb-10 text-center sm:text-left mt-6">
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] mb-3">{landing.title}</h1>
-                <p className="text-[var(--ag-sys-color-text-muted)] text-lg">{landing.subtitle || "Encuentra y compara las mejores ofertas de nuestro mercado agrícola."}</p>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] mb-3">{displayTitle}</h1>
+                <p className="text-[var(--ag-sys-color-text-muted)] text-lg">{displaySubtitle}</p>
             </div>
 
             <Suspense fallback={<GridSkeleton />}>
