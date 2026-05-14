@@ -391,8 +391,8 @@ export default function PublishScreen() {
                         />
                     </View>
 
-                    <View className="flex-row space-x-3 mb-6">
-                        <View className="flex-[0.8]">
+                    <View className="flex-row mb-6">
+                        <View className="flex-[0.8] mr-3">
                             <Text className="text-sm font-bold text-text mb-2">Precio (€) *</Text>
                             <TextInput
                                 value={price}
@@ -406,14 +406,18 @@ export default function PublishScreen() {
                             <Text className="text-sm font-bold text-text mb-2">Tipo de precio</Text>
                             <TouchableOpacity
                                 onPress={() => {
+                                    if (allowOnlineSale) {
+                                        Alert.alert('Venta online', 'Al activar la venta online, el precio debe ser fijo.');
+                                        return;
+                                    }
                                     const idx = PRICE_TYPES.findIndex(p => p.id === priceType);
                                     const next = PRICE_TYPES[(idx + 1) % PRICE_TYPES.length];
                                     setPriceType(next.id);
                                 }}
-                                className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-4 flex-row justify-between items-center"
+                                className={`w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-4 flex-row justify-between items-center ${allowOnlineSale ? 'opacity-50' : ''}`}
                             >
                                 <Text className="text-base text-text" numberOfLines={1}>
-                                    {PRICE_TYPES.find(p => p.id === priceType)?.label}
+                                    {PRICE_TYPES.find(p => p.id === priceType)?.label || 'Precio Fijo'}
                                 </Text>
                                 <ChevronDown color="#9ca3af" size={20} />
                             </TouchableOpacity>
@@ -428,7 +432,13 @@ export default function PublishScreen() {
                                     <Text className="text-xs text-text-muted">Permite a los usuarios comprar tu producto con pago seguro. Recibirás el dinero en tu monedero.</Text>
                                 </View>
                                 <TouchableOpacity 
-                                    onPress={() => setAllowOnlineSale(!allowOnlineSale)}
+                                    onPress={() => {
+                                        const nextVal = !allowOnlineSale;
+                                        setAllowOnlineSale(nextVal);
+                                        if (nextVal) {
+                                            setPriceType('fixed');
+                                        }
+                                    }}
                                     className={`w-12 h-6 rounded-full justify-center px-1 ${allowOnlineSale ? 'bg-primary' : 'bg-gray-300'}`}
                                 >
                                     <View className={`w-4 h-4 rounded-full bg-white transition-all ${allowOnlineSale ? 'ml-auto' : ''}`} />
