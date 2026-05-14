@@ -8,8 +8,12 @@ import { CategoriesProvider } from "@/context/CategoriesContext";
 import { getCategories } from "@/utils/categoriesFetcher";
 import { SeoFooterTabs } from "@/components/layout/SeoFooterTabs";
 import Script from "next/script";
-
 import { CookieBanner } from "@/components/layout/CookieBanner";
+import { headers } from "next/headers";
+import { ptIndexableRoutes, LocaleCode } from "@/i18n/config";
+import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
+import { LocaleProvider } from "@/context/LocaleContext";
+import { getDictionary } from "@/i18n/dictionaries";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,10 +24,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-import { headers } from "next/headers";
-import { ptIndexableRoutes, LocaleCode } from "@/i18n/config";
-import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
@@ -78,9 +78,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return metadataObj;
 }
-
-import { LocaleProvider } from "@/context/LocaleContext";
-import { getDictionary } from "@/i18n/dictionaries";
 
 export default async function RootLayout({
   children,
