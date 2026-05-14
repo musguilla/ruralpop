@@ -204,8 +204,8 @@ export default function ChatScreen() {
             <View className="w-full">
                 {dateSeparator}
                 <View className={`mb-4 max-w-[80%] ${isMe ? 'self-end' : 'self-start'}`}>
-                    <View className={`rounded-2xl px-4 py-3 ${isMe ? 'bg-primary' : 'bg-white border border-gray-100 shadow-sm'}`}>
-                        <Text className={`text-[15px] ${isMe ? 'text-white' : 'text-gray-800'}`}>
+                    <View className={`rounded-2xl px-4 py-3 ${isMe ? 'bg-gray-200' : 'bg-white border border-gray-200'}`}>
+                        <Text className="text-[15px] text-gray-800">
                             {item.content}
                         </Text>
                     </View>
