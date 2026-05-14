@@ -13,6 +13,7 @@ import { useFavorites } from '../../src/contexts/FavoritesContext';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStripe } from '@stripe/stripe-react-native';
 import { calculateRuralpopFee } from '../../src/lib/escrow';
+import { buildWebListingUrl } from '../../src/lib/urls';
 
 const { width, height } = Dimensions.get('window');
 
@@ -117,20 +118,18 @@ export default function ListingDetailsScreen() {
 
     const handleShare = async () => {
         if (!listing) return;
-        setTimeout(async () => {
-            try {
-                const url = `https://ruralpop.com/anuncio/${listing.id}`;
-                await RNShare.share({
-                    message: Platform.OS === 'ios'
-                        ? `Mira este anuncio en Ruralpop: ${listing.title}`
-                        : `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`,
-                    url: Platform.OS === 'ios' ? url : undefined,
-                    title: listing.title,
-                });
-            } catch (error) {
-                console.error('Error sharing:', error);
-            }
-        }, 100);
+        try {
+            const url = buildWebListingUrl(listing.id, listing.title);
+            await RNShare.share({
+                message: Platform.OS === 'ios'
+                    ? `Mira este anuncio en Ruralpop: ${listing.title}`
+                    : `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`,
+                url: Platform.OS === 'ios' ? url : undefined,
+                title: listing.title,
+            });
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
     };
 
     const openGallery = (index: number) => {
