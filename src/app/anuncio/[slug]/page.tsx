@@ -19,6 +19,10 @@ import { EscrowCheckoutButton } from "@/components/checkout/EscrowCheckoutButton
 import { EscrowNativeCheckoutFlow } from "@/components/checkout/EscrowNativeCheckoutFlow";
 import { ScrollToCheckoutButton } from "@/components/checkout/ScrollToCheckoutButton";
 import { calculateRuralpopFee } from "@/lib/services/escrow";
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -67,13 +71,23 @@ export async function generateMetadata(
     const resolvedImageUrls = (listing.image_urls || []).map((url: string) => getImageUrl(url));
     const mainImage = resolvedImageUrls[0] || 'https://www.ruralpop.com/default-og.jpg';
 
-    const fullTitle = `${listing.title} - Vender y comprar ganado | Ruralpop`;
+    // SEO Dictionary fetching for metadata
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const dict = await getDictionary(locale);
+
+    const fullTitle = `${listing.title} - ${dict.listing_detail?.meta_desc ? dict.vender + ' y ' + dict.comprar + ' ' + (dict.category?.ganaderia || '').toLowerCase() : 'Vender y comprar ganado'} | Ruralpop`;
 
     // Acortar base para dejar espacio a las keywords SEO
     const rawDesc = listing.description?.replace(/\n/g, ' ') || "";
     const shortDesc = rawDesc.slice(0, 60) + (rawDesc.length > 60 ? '...' : '');
 
-    const optimizedDescription = `${shortDesc} en ${listing.location}. Descarga la App gratis para buscar, vender y comprar ganado, vacas, caballos, maquinaria y servicios de campo.`;
+    let optimizedDescription = `${shortDesc} en ${listing.location}. Descarga la App gratis para buscar, vender y comprar ganado, vacas, caballos, maquinaria y servicios de campo.`;
+    if (dict.listing_detail?.meta_desc) {
+        optimizedDescription = `${shortDesc} ${dict.listing_detail.meta_desc.replace('{location}', listing.location)}`;
+    }
+
+    const originalPathname = `/anuncio/${slug}`;
 
     return {
         title: fullTitle,
@@ -82,7 +96,8 @@ export async function generateMetadata(
             title: fullTitle,
         },
         alternates: {
-            canonical: `/anuncio/${slug}`,
+            canonical: getCanonicalUrl(originalPathname, locale),
+            languages: getHreflangLinks(originalPathname),
         },
         openGraph: {
             title: fullTitle,
@@ -112,6 +127,11 @@ export async function generateMetadata(
 
 export default async function ListingDetailPage(props: Props) {
     const { slug } = await props.params;
+
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const dict = await getDictionary(locale);
+    const t = (key: keyof typeof dict.listing_detail) => dict.listing_detail[key] || key;
 
     // The slug format is [title]-[shortId]
     const slugParts = slug.split('-');
@@ -262,7 +282,7 @@ export default async function ListingDetailPage(props: Props) {
                         className="inline-flex items-center gap-2 text-sm font-medium text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group"
                     >
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        Volver al listado
+                        {t("volver_listado")}
                     </Link>
                 </div>
 
@@ -297,7 +317,7 @@ export default async function ListingDetailPage(props: Props) {
                                             })}
                                             className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full hover:text-[var(--ag-sys-color-text)] transition-colors"
                                         >
-                                            <Tractor className="w-4 h-4" /> {listing.subcategory || listing.category}
+                                            <Tractor className="w-4 h-4" /> {dict.category[listing.subcategory as keyof typeof dict.category] || dict.category[listing.category as keyof typeof dict.category] || listing.subcategory || listing.category}
                                         </Link>
                                     </div>
                                 </div>
@@ -308,7 +328,7 @@ export default async function ListingDetailPage(props: Props) {
                                         </div>
                                         {listing.price_type !== 'fixed' && (
                                             <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)] mt-1">
-                                                {listing.price_type === 'negotiable' ? 'Precio Negociable' : 'A convenir'}
+                                                {listing.price_type === 'negotiable' ? dict.negociable : dict.a_convenir}
                                             </span>
                                         )}
                                     </div>
@@ -319,7 +339,7 @@ export default async function ListingDetailPage(props: Props) {
                             </div>
 
                             <div className="border-t border-[var(--ag-sys-color-border)] pt-6">
-                                <h3 className="text-lg font-bold text-[var(--ag-sys-color-text)] mb-4">Descripción</h3>
+                                <h3 className="text-lg font-bold text-[var(--ag-sys-color-text)] mb-4">{t("descripcion")}</h3>
                                 <div className="text-[var(--ag-sys-color-text)] whitespace-pre-wrap leading-relaxed">
                                     {listing.description}
                                 </div>
@@ -358,7 +378,7 @@ export default async function ListingDetailPage(props: Props) {
                                                 <ShieldCheck className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
                                             </h4>
                                             <span className="text-xs font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wider">
-                                                VER TODOS LOS ANUNCIOS
+                                                {t("ver_todos_anuncios")}
                                             </span>
                                         </Link>
                                     ) : (
@@ -367,7 +387,7 @@ export default async function ListingDetailPage(props: Props) {
 
                                     {!isProfessional && (
                                         <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
-                                            En Ruralpop desde {sellerJoinedDate || 'recientemente'}
+                                            {t("en_ruralpop_desde")} {sellerJoinedDate || t("recientemente")}
                                         </p>
                                     )}
                                 </div>
@@ -400,9 +420,9 @@ export default async function ListingDetailPage(props: Props) {
                             <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-2xl p-4 flex gap-3">
                                 <ShieldCheck className="w-6 h-6 text-green-600 flex-shrink-0" />
                                 <div>
-                                    <h5 className="text-sm font-bold text-green-800 dark:text-green-400">Trato en mano seguro</h5>
+                                    <h5 className="text-sm font-bold text-green-800 dark:text-green-400">{t("trato_seguro_titulo")}</h5>
                                     <p className="text-xs text-green-700/80 dark:text-green-500/80 mt-1 leading-normal">
-                                        Recuerda realizar siempre el trato en persona para revisar el estado del producto o animal.
+                                        {t("trato_seguro_desc")}
                                     </p>
                                 </div>
                             </div>

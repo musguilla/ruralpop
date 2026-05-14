@@ -22,15 +22,20 @@ const geistMono = Geist_Mono({
 });
 
 import { headers } from "next/headers";
-import { ptIndexableRoutes } from "@/i18n/config";
+import { ptIndexableRoutes, LocaleCode } from "@/i18n/config";
+import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
-  const locale = headersList.get('x-locale') || 'es';
+  const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
   const originalPathname = headersList.get('x-original-pathname') || '/';
 
   const metadataObj: Metadata = {
     metadataBase: new URL("https://www.ruralpop.com"),
+    alternates: {
+      canonical: getCanonicalUrl(originalPathname, locale),
+      languages: getHreflangLinks(originalPathname),
+    },
     title: "Ruralpop - App gratis para comprar y vender ganado",
     description: "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
     applicationName: "Ruralpop",
@@ -76,7 +81,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 import { LocaleProvider } from "@/context/LocaleContext";
 import { getDictionary } from "@/i18n/dictionaries";
-import { LocaleCode } from "@/i18n/config";
 
 export default async function RootLayout({
   children,

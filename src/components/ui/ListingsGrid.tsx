@@ -7,9 +7,26 @@ import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { LOCATIONS } from "@/constants/locations";
 import { AdSenseInFeed } from "@/components/ads/AdSenseInFeed";
 import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
 export async function ListingsGrid({ searchParams, isHome = false, disableInFeedAds = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean, disableInFeedAds?: boolean }) {
     let supabase = await createClient();
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const dict = await getDictionary(locale);
+    
+    const t = (key: keyof typeof dict.search, params?: Record<string, string>): string => {
+        let val = dict.search[key];
+        if (typeof val === 'string' && params) {
+            Object.keys(params).forEach(p => {
+                val = val.replace(`{${p}}`, params[p]);
+            });
+        }
+        return typeof val === 'string' ? val : String(key);
+    };
+
     const PAGE_SIZE = isHome ? 43 : 40;
     const currentPage = Number(searchParams.page) || 1;
     const from = (currentPage - 1) * PAGE_SIZE;
@@ -162,8 +179,11 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         error = catRes.error;
         
         if (listings && listings.length > 0) {
-             const catName = typeof searchParams.category === 'string' ? searchParams.category.charAt(0).toUpperCase() + searchParams.category.slice(1) : 'esta categoría';
-             fallbackMessage = `No hay resultados exactos con esos filtros, pero aquí tienes los anuncios recientes de ${catName}.`;
+             const baseCatName = typeof searchParams.category === 'string' ? searchParams.category : 'esta categoría';
+             // Intenta traducir el nombre de la categoría si existe
+             const catNameTranslated = typeof dict.category[baseCatName as keyof typeof dict.category] === 'string' ? dict.category[baseCatName as keyof typeof dict.category] : baseCatName;
+             const catName = catNameTranslated.charAt(0).toUpperCase() + catNameTranslated.slice(1);
+             fallbackMessage = t("fallback_cat", { catName });
         }
     }
 
@@ -176,7 +196,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         error = globalRes.error;
         
         if (listings && listings.length > 0) {
-             fallbackMessage = `No hay resultados exactos, pero aquí tienes los anuncios más recientes de Ruralpop.`;
+             fallbackMessage = t("fallback_global");
         }
     }
 
@@ -184,7 +204,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         console.error("Supabase Error fetching listings:", error);
         return (
             <div className="p-8 text-center bg-red-50 text-red-600 rounded-2xl border border-red-200">
-                Error al cargar los anuncios. Inténtelo de nuevo más tarde.
+                {t("error_load")}
             </div>
         );
     }
@@ -194,10 +214,10 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             <div className="flex flex-col items-center justify-center p-16 text-center bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl">
                 <Tractor className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4" />
                 <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-2">
-                    No hay resultados
+                    {t("no_resultados")}
                 </h3>
                 <p className="text-[var(--ag-sys-color-text-muted)]">
-                    No hemos encontrado ningún anuncio que coincida con tus filtros.
+                    {t("no_anuncios_filtros")}
                 </p>
             </div>
         );

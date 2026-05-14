@@ -1,65 +1,52 @@
-function pluralizeSpanish(text: string): string {
-    if (!text) return text;
-    
-    const stopwords = ['de', 'del', 'la', 'las', 'el', 'los', 'un', 'una', 'con', 'para', 'y', 'o', 'en', 'sin'];
-    
-    return text.split(' ').map(word => {
-        const lowerWord = word.toLowerCase();
-        if (stopwords.includes(lowerWord)) return word;
-        if (lowerWord.endsWith('s')) return word;
-        if (lowerWord.endsWith('z')) return word.slice(0, -1) + 'ces';
-        
-        const lastChar = lowerWord.slice(-1);
-        const vowels = ['a', 'e', 'i', 'o', 'u', 'á', 'é', 'í', 'ó', 'ú'];
-        if (vowels.includes(lastChar)) {
-            return word + 's';
-        } else {
-            return word + 'es';
-        }
-    }).join(' ');
-}
-
-export function generateSeoH1(parsedSlug: { q?: string, category?: string, subcategory?: string }, locationName: string = "") {
+import { seoDictionaryES } from "./seo/i18n/es";
+import { seoDictionaryPT } from "./seo/i18n/pt";
+import { LocaleCode } from "@/i18n/config";
+export function generateSeoH1(
+    parsedSlug: { q?: string, category?: string, subcategory?: string },
+    locationName: string = "",
+    locale: string = "es"
+) {
+    const dict = locale === "pt" ? seoDictionaryPT : seoDictionaryES;
     const { q, category, subcategory } = parsedSlug;
     let h1 = "";
 
     if (q) {
         // palabra de la URL o búsqueda en plural + en venta
-        const pluralizedQ = pluralizeSpanish(q);
-        h1 = `${pluralizedQ} en venta`;
+        const pluralizedQ = dict.pluralize(q);
+        h1 = `${pluralizedQ} ${dict.inSale}`;
     } else if (subcategory) {
         const sub = subcategory.toLowerCase();
         
         // Ganadería
-        if (sub === "bovino") h1 = "Ganado vacuno en venta";
-        else if (sub === "equino") h1 = "Ganado equino en venta";
-        else if (sub === "caprino") h1 = "Ganado caprino en venta";
-        else if (sub === "ovino") h1 = "Ganado ovino en venta";
-        else if (sub === "porcino") h1 = "Ganado porcino en venta";
-        else if (sub === "avicultura") h1 = "Anuncios compraventa avicultura";
-        else if (sub === "apicultura") h1 = "Anuncios compraventa apicultura";
-        else if (sub === "perros") h1 = "Anuncios perros";
-        else if (sub === "conejos") h1 = "Anuncios conejos";
+        if (sub === "bovino") h1 = dict.livestockCattle;
+        else if (sub === "equino") h1 = dict.livestockEquine;
+        else if (sub === "caprino") h1 = dict.livestockGoat;
+        else if (sub === "ovino") h1 = dict.livestockSheep;
+        else if (sub === "porcino") h1 = dict.livestockPig;
+        else if (sub === "avicultura") h1 = dict.poultry;
+        else if (sub === "apicultura") h1 = dict.beekeeping;
+        else if (sub === "perros") h1 = dict.dogs;
+        else if (sub === "conejos") h1 = dict.rabbits;
         // Servicios
-        else if (sub === "transporte") h1 = "Transporte de ganado";
-        else if (sub === "veterinarios") h1 = "Anuncios veterinarios";
-        else if (sub === "herradores") h1 = "Anuncios herradores";
+        else if (sub === "transporte") h1 = dict.transport;
+        else if (sub === "veterinarios") h1 = dict.vets;
+        else if (sub === "herradores") h1 = dict.blacksmiths;
         else if (category === "maquinaria") {
-            h1 = `${subcategory} segunda mano`;
+            h1 = dict.machineryUsed.replace('{subcategory}', subcategory);
         } else {
-            h1 = `Anuncios de ${subcategory}`;
+            h1 = dict.adsOf.replace('{subcategory}', subcategory);
         }
     } else if (category) {
         const cat = category.toLowerCase();
-        if (cat === "maquinaria") h1 = "Maquinaria de segunda mano";
-        else if (cat === "fincas") h1 = "Compra y venta de fincas";
-        else if (cat === "forraje") h1 = "Anuncios forraje ganado";
-        else if (cat === "alimentos") h1 = "Alimentos Km0";
-        else if (cat === "ganaderia") h1 = "Ganado en venta";
-        else if (cat === "servicios") h1 = "Servicios para el mundo rural";
-        else h1 = `Anuncios de ${category}`;
+        if (cat === "maquinaria") h1 = dict.categoryMachinery;
+        else if (cat === "fincas") h1 = dict.categoryEstates;
+        else if (cat === "forraje") h1 = dict.categoryFodder;
+        else if (cat === "alimentos") h1 = dict.categoryFood;
+        else if (cat === "ganaderia") h1 = dict.categoryLivestock;
+        else if (cat === "servicios") h1 = dict.categoryServices;
+        else h1 = dict.categoryAdsOf.replace('{category}', category);
     } else {
-        h1 = "Anuncios clasificados del mundo rural";
+        h1 = dict.defaultGlobal;
     }
 
     if (h1 && h1.length > 0) {
@@ -67,7 +54,7 @@ export function generateSeoH1(parsedSlug: { q?: string, category?: string, subca
     }
 
     if (locationName) {
-        h1 += ` en ${locationName}`;
+        h1 += ` ${dict.getPreposition(locationName)}`;
     }
 
     return h1;

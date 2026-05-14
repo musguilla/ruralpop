@@ -4,7 +4,7 @@ const supabaseAdmin = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY || 'sb_secret_zo6E6YvBYltAqRmLbmGOiA_zk3Xrt9U'
 );
 async function test() {
-    const { data, error } = await supabaseAdmin.from('users').select('*').limit(1);
-    console.log(data?.[0]);
+    const { data, error } = await supabaseAdmin.storage.listBuckets();
+    console.log(data);
 }
 test();

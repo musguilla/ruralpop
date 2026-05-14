@@ -35,6 +35,13 @@ export const ptIndexableRoutes = [
   '/pt/cavalos',
   '/pt/servicos-agricolas',
   '/pt/servicos-pecuarios',
+  '/pt/tractores',
+  '/pt/magazine',
+  '/pt/precios-ganado/vacuno',
+  '/pt/precios-ganado/vacuno/mercados/lonja-de-salamanca',
+  '/pt/precios-ganado/vacuno/mercados/mercado-nacional-de-ganado-de-pola-de-siero',
+  '/pt/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-talavera-de-la-reina',
+  '/pt/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-leon',
 ];
 
 export const routeTranslations: Record<string, Record<LocaleCode, string>> = {

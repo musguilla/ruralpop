@@ -1,197 +1,101 @@
-import { createClient } from "@/utils/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { AdminStatCard } from "@/components/admin/AdminStatCard";
-import { Users, LayoutDashboard, Package, MapPin, Eye, Heart, MessageSquare } from "lucide-react";
+import { Users, Package, Eye, DatabaseBackup } from "lucide-react";
 import { InsightsPanels } from "@/components/admin/InsightsPanels";
+import { RefreshInsightsButton } from "@/components/admin/RefreshInsightsButton";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
 export default async function InsightsPage() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const supabase = await createClient(); // Kept to avoid unused import errors if any
     const supabaseAdmin = createAdminClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // 1. Usuarios por provincia (Top 100)
-    let topProvinces: any[] = [];
-    const { data: usersData } = await supabaseAdmin.from('users').select('province_id').limit(10000);
-    if (usersData) {
-        const provCounts: Record<number, number> = {};
-        usersData.forEach((u: any) => {
-            if (u.province_id) provCounts[u.province_id] = (provCounts[u.province_id] || 0) + 1;
-        });
-        const sortedProvs = Object.entries(provCounts)
-            .map(([id, users_count]) => ({ province_id: Number(id), users_count }))
-            .sort((a, b) => b.users_count - a.users_count)
-            .slice(0, 100);
-        
-        if (sortedProvs.length > 0) {
-            const { data: provNames } = await supabaseAdmin.from('provinces').select('id, name').in('id', sortedProvs.map(p => p.province_id));
-            topProvinces = sortedProvs.map(p => ({
-                ...p,
-                name: provNames?.find((n: any) => n.id === p.province_id)?.name || `Provincia ${p.province_id}`
-            }));
+    // Intentamos descargar el JSON cacheado del bucket wpublic
+    const { data: fileData, error: downloadError } = await supabaseAdmin
+        .storage
+        .from('wpublic')
+        .download('admin-insights-cache.json');
+
+    let insightsData = null;
+
+    if (fileData && !downloadError) {
+        try {
+            const text = await fileData.text();
+            insightsData = JSON.parse(text);
+        } catch (e) {
+            console.error("Error parsing insights JSON", e);
         }
     }
 
-    // 2. Usuarios más conectados hoy
-    const { data: usersAuthData } = await supabaseAdmin.auth.admin.listUsers();
-    let topConnectedUsers: any[] = [];
-    let activeUsersTodayCount = 0;
-    
-    if (usersAuthData?.users) {
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0);
+    if (!insightsData) {
+        return (
+            <div className="space-y-8 animate-in fade-in duration-500">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[var(--ag-sys-color-border)] pb-6 gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-[var(--ag-sys-color-text)]">Insights & KPIs</h1>
+                        <p className="text-[var(--ag-sys-color-text-muted)] mt-1">Análisis premium de usuarios y anuncios.</p>
+                    </div>
+                    <RefreshInsightsButton />
+                </div>
 
-        const activeToday = [...usersAuthData.users].filter(u => u.last_sign_in_at && new Date(u.last_sign_in_at) >= todayStart);
-        activeUsersTodayCount = activeToday.length;
-
-        topConnectedUsers = activeToday
-            .sort((a, b) => new Date(b.last_sign_in_at!).getTime() - new Date(a.last_sign_in_at!).getTime())
-            .slice(0, 100)
-            .map(u => ({ id: u.id, email: u.email, last_sign_in_at: u.last_sign_in_at }));
-        
-        if (topConnectedUsers.length > 0) {
-            const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name').in('id', topConnectedUsers.map(u => u.id));
-            topConnectedUsers = topConnectedUsers.map(u => ({
-                ...u,
-                name: userProfiles?.find((p: any) => p.id === u.id)?.name || u.email,
-                time_label: new Date(u.last_sign_in_at).toLocaleDateString()
-            }));
-        }
-    }
-
-    // 3. Usuarios con más anuncios y conteo de categorías
-    let topUsersListings: any[] = [];
-    let topCategories: any[] = [];
-    const { data: listingsData } = await supabaseAdmin.from('listings').select('user_id, category, subcategory').limit(15000);
-    if (listingsData) {
-        const listCounts: Record<string, number> = {};
-        const catCounts: Record<string, number> = {};
-        listingsData.forEach((l: any) => {
-            if (l.user_id) listCounts[l.user_id] = (listCounts[l.user_id] || 0) + 1;
-            if (l.category) {
-                let catName = l.category.charAt(0).toUpperCase() + l.category.slice(1);
-                if (l.subcategory) {
-                    const subName = l.subcategory.charAt(0).toUpperCase() + l.subcategory.slice(1);
-                    catName = `${catName} > ${subName}`;
-                }
-                catCounts[catName] = (catCounts[catName] || 0) + 1;
-            }
-        });
-        
-        topCategories = Object.entries(catCounts)
-            .map(([name, count]) => ({ 
-                name, 
-                count 
-            }))
-            .sort((a, b) => b.count - a.count);
-
-        const sortedListUsers = Object.entries(listCounts)
-            .map(([user_id, listings_count]) => ({ user_id, listings_count }))
-            .sort((a, b) => b.listings_count - a.listings_count)
-            .slice(0, 100);
-
-        if (sortedListUsers.length > 0) {
-            const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name, email').in('id', sortedListUsers.map(u => u.user_id));
-            topUsersListings = sortedListUsers.map(u => ({
-                ...u,
-                name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
-            }));
-        }
-    }
-
-    // 4. Usuarios Y Anuncios con más chats (Aprovechamos un solo fetch)
-    let topUsersChats: any[] = [];
-    let topListingsChats: any[] = [];
-    const { data: msgsData } = await supabaseAdmin.from('messages').select('sender_id, receiver_id, listing_id').limit(50000);
-    if (msgsData) {
-        const userChatsCounts: Record<string, number> = {};
-        const listChatsCounts: Record<string, number> = {};
-        
-        msgsData.forEach((m: any) => {
-            if (m.sender_id) userChatsCounts[m.sender_id] = (userChatsCounts[m.sender_id] || 0) + 1;
-            if (m.receiver_id) userChatsCounts[m.receiver_id] = (userChatsCounts[m.receiver_id] || 0) + 1;
-            if (m.listing_id) listChatsCounts[m.listing_id] = (listChatsCounts[m.listing_id] || 0) + 1;
-        });
-
-        const sortedUserChats = Object.entries(userChatsCounts).map(([user_id, chats_count]) => ({ user_id, chats_count })).sort((a, b) => b.chats_count - a.chats_count).slice(0, 100);
-        const sortedListChats = Object.entries(listChatsCounts).map(([listing_id, chats_count]) => ({ listing_id, chats_count })).sort((a, b) => b.chats_count - a.chats_count).slice(0, 100);
-
-        if (sortedUserChats.length > 0) {
-            const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name, email').in('id', sortedUserChats.map(u => u.user_id));
-            topUsersChats = sortedUserChats.map(u => ({
-                ...u,
-                name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
-            }));
-        }
-
-        if (sortedListChats.length > 0) {
-            const { data: listProfiles } = await supabaseAdmin.from('listings').select('id, title').in('id', sortedListChats.map(l => l.listing_id));
-            topListingsChats = sortedListChats.map(l => ({
-                ...l,
-                title: listProfiles?.find((p: any) => p.id === l.listing_id)?.title || 'Desconocido'
-            }));
-        }
-    }
-
-    // 5. Anuncios más visitados
-    const { data: topVisitedListings } = await supabaseAdmin
-        .from('listings')
-        .select('id, title, visits_count')
-        .order('visits_count', { ascending: false, nullsFirst: false })
-        .limit(100);
-
-    // 6. Anuncios con más likes
-    let topLikesListings: any[] = [];
-    const { data: favsData } = await supabaseAdmin.from('favorites').select('listing_id').limit(50000);
-    if (favsData) {
-        const likeCounts: Record<string, number> = {};
-        favsData.forEach((f: any) => {
-            if (f.listing_id) likeCounts[f.listing_id] = (likeCounts[f.listing_id] || 0) + 1;
-        });
-        const sortedLikes = Object.entries(likeCounts)
-            .map(([listing_id, likes_count]) => ({ listing_id, likes_count }))
-            .sort((a, b) => b.likes_count - a.likes_count)
-            .slice(0, 100);
-
-        if (sortedLikes.length > 0) {
-            const { data: listProfiles } = await supabaseAdmin.from('listings').select('id, title').in('id', sortedLikes.map(l => l.listing_id));
-            topLikesListings = sortedLikes.map(l => ({
-                ...l,
-                title: listProfiles?.find((p: any) => p.id === l.listing_id)?.title || 'Desconocido'
-            }));
-        }
+                <div className="flex flex-col items-center justify-center bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-12 shadow-sm text-center">
+                    <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-4">
+                        <DatabaseBackup className="w-8 h-8" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-2">No hay datos generados</h2>
+                    <p className="text-[var(--ag-sys-color-text-muted)] max-w-md mx-auto mb-6">
+                        Para mantener la plataforma rápida, los datos de Insights no se calculan en tiempo real.
+                        Haz clic en el botón superior para realizar el primer cálculo (puede tardar un minuto).
+                    </p>
+                </div>
+            </div>
+        );
     }
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="flex justify-between items-end border-b border-[var(--ag-sys-color-border)] pb-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[var(--ag-sys-color-border)] pb-6 gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-[var(--ag-sys-color-text)]">Insights & KPIs</h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-1">Análisis premium de usuarios y anuncios.</p>
                 </div>
+                <RefreshInsightsButton lastUpdated={insightsData.last_updated} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <AdminStatCard label="Usuarios Activos Hoy" value={activeUsersTodayCount} icon={<Users />} color="green" />
-                <AdminStatCard label="Anuncios Analizados" value={listingsData?.length || 0} icon={<Package />} color="purple" />
-                <AdminStatCard label="Tráfico Acumulado" value={topVisitedListings?.reduce((acc: number, curr: any) => acc + (curr.visits_count || 0), 0) || 0} icon={<Eye />} color="blue" />
+                <AdminStatCard 
+                    label="Usuarios Activos Hoy" 
+                    value={insightsData.activeUsersTodayCount || 0} 
+                    icon={<Users />} 
+                    color="green" 
+                />
+                <AdminStatCard 
+                    label="Anuncios Analizados" 
+                    value={insightsData.totalAnalyzedListings || 0} 
+                    icon={<Package />} 
+                    color="purple" 
+                />
+                <AdminStatCard 
+                    label="Tráfico Acumulado" 
+                    value={insightsData.totalTraffic || 0} 
+                    icon={<Eye />} 
+                    color="blue" 
+                />
             </div>
 
             <InsightsPanels 
-                topProvinces={topProvinces}
-                topConnectedUsers={topConnectedUsers}
-                topUsersListings={topUsersListings}
-                topUsersChats={topUsersChats}
-                topVisitedListings={topVisitedListings}
-                topLikesListings={topLikesListings}
-                topListingsChats={topListingsChats}
-                topCategories={topCategories}
+                topProvinces={insightsData.topProvinces || []}
+                topConnectedUsers={insightsData.topConnectedUsers || []}
+                topUsersListings={insightsData.topUsersListings || []}
+                topUsersChats={insightsData.topUsersChats || []}
+                topVisitedListings={insightsData.topVisitedListings || []}
+                topLikesListings={insightsData.topLikesListings || []}
+                topListingsChats={insightsData.topListingsChats || []}
+                topCategories={insightsData.topCategories || []}
             />
         </div>
     );

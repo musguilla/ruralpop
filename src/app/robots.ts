@@ -10,7 +10,8 @@ export default function robots(): MetadataRoute.Robots {
             'https://www.ruralpop.com/sitemap_index.xml',
             'https://www.ruralpop.com/sitemap_anuncios.xml',
             'https://www.ruralpop.com/sitemap_lonjas.xml',
-            'https://www.ruralpop.com/sitemap_tractors.xml'
+            'https://www.ruralpop.com/sitemap_tractors.xml',
+            'https://www.ruralpop.com/sitemap-pt.xml'
         ],
     };
 }

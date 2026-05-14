@@ -7,6 +7,7 @@ import { LOCATIONS } from "@/constants/locations";
 import { useCategories } from "@/context/CategoriesContext";
 import { parseSeoUrl, buildSeoUrl } from "@/utils/seoUtils";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
+import { useTranslation } from "@/context/LocaleContext";
 
 export function ActiveSearchBar() {
     const CATEGORIES = useCategories();
@@ -14,6 +15,7 @@ export function ActiveSearchBar() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const urlParams = useParams();
+    const { t } = useTranslation();
 
     const slug = urlParams?.slug as string | undefined;
     const parsedSlug = slug ? parseSeoUrl(slug) : null;
@@ -166,11 +168,11 @@ export function ActiveSearchBar() {
     const currentPriceMin = searchParams.get("price_min");
     const currentPriceMax = searchParams.get("price_max");
     if (currentPriceMin || currentPriceMax) {
-        activeBadges.push({ type: 'price', label: 'Precio' });
+        activeBadges.push({ type: 'price', label: t("search.precio") });
     }
     const currentSellerType = searchParams.get("seller_type");
     if (currentSellerType && currentSellerType !== "all") {
-        activeBadges.push({ type: 'seller_type', label: `Vendedor: ${currentSellerType}` });
+        activeBadges.push({ type: 'seller_type', label: `${t("search.tipo_vendedor")}: ${t(`search.vendedor_${currentSellerType}`)}` });
     }
 
     const applySort = (sortParam: string) => {
@@ -201,10 +203,10 @@ export function ActiveSearchBar() {
     };
 
     const SORT_OPTIONS = [
-        { id: "relevance", label: "Relevancia" },
-        { id: "cheap", label: "Baratos primero" },
-        { id: "expensive", label: "Caro primero" },
-        { id: "recent", label: "Más recientes" },
+        { id: "relevance", label: t("search.relevancia") },
+        { id: "cheap", label: t("search.baratos_primero") },
+        { id: "expensive", label: t("search.caro_primero") },
+        { id: "recent", label: t("search.mas_recientes") },
     ];
 
     return (
@@ -221,7 +223,7 @@ export function ActiveSearchBar() {
                         name="q"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        placeholder="Buscar en anuncios..."
+                        placeholder={t("search.placeholder")}
                         className="w-full h-full pl-12 pr-12 bg-transparent outline-none text-[var(--ag-sys-color-text)] placeholder:text-gray-400"
                     />
                     {inputValue && (
@@ -241,7 +243,7 @@ export function ActiveSearchBar() {
                     className="flex items-center gap-2 bg-white border border-[#505050] rounded-full px-4 sm:px-6 h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
                 >
                     <SlidersHorizontal className="w-5 h-5" />
-                    <span className="hidden sm:inline">Filtros</span>
+                    <span className="hidden sm:inline">{t("search.filtros")}</span>
                     {activeBadges.length > 0 && (
                         <span className="bg-[#1a7f5a] text-white text-sm font-bold w-6 h-6 flex items-center justify-center rounded-full ml-1">
                             {activeBadges.length}
@@ -255,7 +257,7 @@ export function ActiveSearchBar() {
                     className="flex justify-center items-center w-14 sm:w-auto sm:px-6 sm:gap-2 bg-white border border-[#505050] rounded-full h-14 text-[var(--ag-sys-color-text)] font-semibold text-base hover:border-[var(--ag-sys-color-primary)] transition-all shrink-0"
                 >
                     <ArrowDownUp className="w-5 h-5" />
-                    <span className="hidden sm:inline">Ordenar</span>
+                    <span className="hidden sm:inline">{t("search.ordenar")}</span>
                 </button>
             </div>
 
@@ -263,7 +265,7 @@ export function ActiveSearchBar() {
             {activeSort !== "relevance" && (
                 <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto mt-2 flex justify-end">
                     <div className="text-sm flex items-center gap-1.5 bg-emerald-50 text-emerald-800 px-3 py-1 rounded-full border border-emerald-100 font-medium">
-                        <span className="opacity-80">Ordenación:</span> {SORT_OPTIONS.find(s => s.id === activeSort)?.label}
+                        <span className="opacity-80">{t("search.ordenacion")}</span> {SORT_OPTIONS.find(s => s.id === activeSort)?.label}
                         <button onClick={() => applySort("relevance")} className="ml-1 hover:text-emerald-900 bg-emerald-200/60 rounded-full p-0.5 transition-colors">
                             <X className="w-3.5 h-3.5" />
                         </button>
@@ -277,7 +279,7 @@ export function ActiveSearchBar() {
                     <div className="bg-white w-full max-w-lg min-h-screen sm:min-h-0 sm:h-fit sm:my-auto sm:rounded-2xl flex flex-col relative animate-in slide-in-from-bottom-5">
                         {/* Header */}
                         <div className="flex justify-between items-center p-4 border-b border-[var(--ag-sys-color-border)]">
-                            <h2 className="text-xl font-bold text-gray-900">Filtros</h2>
+                            <h2 className="text-xl font-bold text-gray-900">{t("search.filtros")}</h2>
                             <button onClick={() => setIsFiltersOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
                                 <X className="w-6 h-6 text-gray-500" />
                             </button>
@@ -289,21 +291,21 @@ export function ActiveSearchBar() {
                             {/* Categories */}
                             <div className="space-y-2 flex flex-col">
                                 <label className="flex items-center justify-between cursor-pointer w-full text-left py-2 hover:opacity-80">
-                                    <span className="font-semibold text-gray-900 text-sm">Categoría</span>
+                                    <span className="font-semibold text-gray-900 text-sm">{t("categoria")}</span>
                                 </label>
                                 <SearchableSelect
                                     name="modalCategory"
                                     value={modalCategoryValue}
                                     onChange={(val) => setModalCategoryValue(val as string)}
                                     options={[
-                                        { id: "", name: "Todas las categorías" },
+                                        { id: "", name: t("todas_las_categorias") },
                                         ...CATEGORIES.flatMap(c => [
-                                            { id: `cat_${c.id}`, name: c.label },
-                                            ...c.subcategories.map(sub => ({ id: `sub_${sub}`, name: `↳ ${sub}` }))
+                                            { id: `cat_${c.id}`, name: t(`category.${c.label}`) || c.label },
+                                            ...c.subcategories.map(sub => ({ id: `sub_${sub}`, name: `↳ ${t(`category.${sub}`) || sub}` }))
                                         ])
                                     ]}
-                                    placeholder="Todas las categorías"
-                                    searchPlaceholder="Buscar categoría o subcategoría..."
+                                    placeholder={t("todas_las_categorias")}
+                                    searchPlaceholder={t("search.buscar_categoria")}
                                 />
                             </div>
 
@@ -318,22 +320,22 @@ export function ActiveSearchBar() {
                                     value={modalLocation}
                                     onChange={(val) => setModalLocation(val as string)}
                                     options={[
-                                        { id: "", name: "Toda España" },
+                                        { id: "", name: t("toda_espana") },
                                         ...LOCATIONS.filter(loc => loc.type === 'province').map(loc => ({ id: loc.id, name: loc.name }))
                                     ]}
-                                    placeholder="Toda España"
-                                    searchPlaceholder="Buscar provincia..."
+                                    placeholder={t("toda_espana")}
+                                    searchPlaceholder={t("search.buscar_provincia")}
                                 />
                             </div>
 
                             {/* Price */}
                             <div className="space-y-3">
-                                <span className="font-semibold text-gray-900 text-sm block">Precio</span>
+                                <span className="font-semibold text-gray-900 text-sm block">{t("search.precio")}</span>
                                 <div className="flex gap-4">
                                     <div className="flex-1 relative">
                                         <input
                                             type="number"
-                                            placeholder="Desde"
+                                            placeholder={t("search.desde")}
                                             className="w-full border border-[var(--ag-sys-color-border)] rounded-lg p-3 text-sm focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none bg-gray-50"
                                             value={priceMin}
                                             onChange={(e) => setPriceMin(e.target.value)}
@@ -343,7 +345,7 @@ export function ActiveSearchBar() {
                                     <div className="flex-1 relative">
                                         <input
                                             type="number"
-                                            placeholder="Hasta"
+                                            placeholder={t("search.hasta")}
                                             className="w-full border border-[var(--ag-sys-color-border)] rounded-lg p-3 text-sm focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none bg-gray-50"
                                             value={priceMax}
                                             onChange={(e) => setPriceMax(e.target.value)}
@@ -355,7 +357,7 @@ export function ActiveSearchBar() {
 
                             {/* Seller Type */}
                             <div className="space-y-3">
-                                <span className="font-semibold text-gray-900 text-sm block">Tipo de vendedor</span>
+                                <span className="font-semibold text-gray-900 text-sm block">{t("search.tipo_vendedor")}</span>
                                 <div className="flex bg-gray-50 border border-[var(--ag-sys-color-border)] rounded-lg p-1 overflow-hidden">
                                     {(['all', 'particular', 'profesional'] as const).map(type => (
                                         <button
@@ -363,7 +365,7 @@ export function ActiveSearchBar() {
                                             onClick={() => setSellerType(type)}
                                             className={`flex-1 text-center py-2 text-sm font-medium rounded-md transition-colors ${sellerType === type ? 'bg-white shadow text-emerald-700' : 'text-gray-500 hover:text-gray-700'}`}
                                         >
-                                            {type === 'all' ? 'Todos' : type.charAt(0).toUpperCase() + type.slice(1)}
+                                            {t(`search.vendedor_${type}`)}
                                         </button>
                                     ))}
                                 </div>
@@ -377,13 +379,13 @@ export function ActiveSearchBar() {
                                 onClick={clearFilters}
                                 className="flex-1 py-3 text-emerald-700 font-semibold text-sm hover:underline"
                             >
-                                Limpiar filtros
+                                {t("search.limpiar_filtros")}
                             </button>
                             <button
                                 onClick={applyFilters}
                                 className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded-lg font-semibold text-sm transition-colors"
                             >
-                                Ver resultados
+                                {t("search.ver_resultados")}
                             </button>
                         </div>
                     </div>
@@ -395,7 +397,7 @@ export function ActiveSearchBar() {
                 <div className="fixed inset-0 z-[100] flex justify-center bg-black/50 overflow-y-auto w-full transition-opacity">
                     <div className="bg-white w-full max-w-sm min-h-screen sm:min-h-0 sm:h-fit sm:my-auto sm:rounded-2xl flex flex-col relative animate-in slide-in-from-bottom-5">
                         <div className="flex justify-between items-center p-4 border-b border-[var(--ag-sys-color-border)]">
-                            <h2 className="text-xl font-bold text-gray-900">Ordenar por</h2>
+                            <h2 className="text-xl font-bold text-gray-900">{t("search.ordenar_por")}</h2>
                             <button onClick={() => setIsSortModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
                                 <X className="w-6 h-6 text-gray-500" />
                             </button>
