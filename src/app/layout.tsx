@@ -74,6 +74,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadataObj;
 }
 
+import { LocaleProvider } from "@/context/LocaleContext";
+import { getDictionary } from "@/i18n/dictionaries";
+import { LocaleCode } from "@/i18n/config";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -81,7 +85,8 @@ export default async function RootLayout({
 }>) {
   const categories = await getCategories();
   const headersList = await headers();
-  const locale = headersList.get('x-locale') || 'es';
+  const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+  const dictionary = await getDictionary(locale);
 
   return (
     <html lang={locale}>
@@ -109,7 +114,8 @@ export default async function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2042067618462129"
           crossOrigin="anonymous"
         ></script>
-        <CategoriesProvider categories={categories}>
+        <LocaleProvider locale={locale} dictionary={dictionary}>
+          <CategoriesProvider categories={categories}>
           <NotificationProvider>
             <Header />
             <main className="flex-1 w-full flex flex-col items-center">
@@ -120,6 +126,7 @@ export default async function RootLayout({
             <CookieBanner />
           </NotificationProvider>
         </CategoriesProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

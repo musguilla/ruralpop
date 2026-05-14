@@ -6,6 +6,8 @@ import { User, List, Heart, MessageSquare, Briefcase, HelpCircle, LogOut, Chevro
 import { ChatBadge } from "@/components/chat/ChatBadge";
 import { getImageUrl } from "@/utils/mediaUtils";
 import { createClient } from "@/utils/supabase/client";
+import { LocalizedLink } from "@/components/ui/LocalizedLink";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface UserMenuProps {
     userFullName: string;
@@ -18,6 +20,7 @@ interface UserMenuProps {
 export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: UserMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const { t } = useTranslation();
 
     // Cerrar al hacer click fuera
     useEffect(() => {
@@ -65,7 +68,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden text-gray-700 animate-in fade-in zoom-in-95 duration-200">
                     <div className="py-2">
                         {isGhost ? (
-                            <Link
+                            <LocalizedLink
                                 href="/profesionales?ghost_claim=true"
                                 className="flex px-4 py-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group border-b border-gray-100"
                                 onClick={() => setIsOpen(false)}
@@ -79,46 +82,46 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                         </div>
                                     </div>
                                 </div>
-                            </Link>
+                            </LocalizedLink>
                         ) : (
                             <>
-                                <Link
+                                <LocalizedLink
                                     href="/account"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <User className="w-5 h-5" />
-                                    <span className="font-semibold">Mi cuenta</span>
-                                </Link>
-                                <Link
+                                    <span className="font-semibold">{t("mi_cuenta")}</span>
+                                </LocalizedLink>
+                                <LocalizedLink
                                     href="/dashboard"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <List className="w-5 h-5" />
-                                    <span className="font-semibold">Mis anuncios</span>
-                                </Link>
-                                <Link
+                                    <span className="font-semibold">{t("mis_anuncios")}</span>
+                                </LocalizedLink>
+                                <LocalizedLink
                                     href="/favoritos"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <Heart className="w-5 h-5" />
-                                    <span className="font-semibold">Mis guardados</span>
-                                </Link>
-                                <Link
+                                    <span className="font-semibold">{t("mis_guardados")}</span>
+                                </LocalizedLink>
+                                <LocalizedLink
                                     href="/chat"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <MessageSquare className="w-5 h-5" />
-                                    <span className="font-semibold">Mis mensajes</span>
-                                </Link>
+                                    <span className="font-semibold">{t("mis_mensajes")}</span>
+                                </LocalizedLink>
 
                                 <div className="my-1 border-t border-gray-100"></div>
 
                                 {role === 'profesional' ? (
-                                    <Link
+                                    <LocalizedLink
                                         href="/dashboard/pro"
                                         className="flex px-4 py-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group"
                                         onClick={() => setIsOpen(false)}
@@ -132,9 +135,9 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                                 </div>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </LocalizedLink>
                                 ) : (
-                                    <Link
+                                    <LocalizedLink
                                         href="/profesionales"
                                         className="flex px-4 py-3 hover:bg-gray-50 transition-colors"
                                         onClick={() => setIsOpen(false)}
@@ -146,17 +149,17 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                                 <span className="font-semibold leading-none mt-1">¿Eres profesional?</span>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </LocalizedLink>
                                 )}
 
-                                <Link
+                                <LocalizedLink
                                     href="/contact"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <HelpCircle className="w-5 h-5" />
                                     <span className="font-semibold">Ayuda</span>
-                                </Link>
+                                </LocalizedLink>
                             </>
                         )}
 
@@ -165,7 +168,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                             className="flex items-center w-full gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition-colors"
                         >
                             <LogOut className="w-5 h-5" />
-                            <span className="font-semibold">Cerrar sesión</span>
+                            <span className="font-semibold">{t("cerrar_sesion")}</span>
                         </button>
                     </div>
                 </div>

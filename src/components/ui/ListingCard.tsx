@@ -10,6 +10,8 @@ import { encodeId } from "@/utils/idUtils";
 import { FavoriteButton } from "./FavoriteButton";
 import supabaseLoader from "@/utils/supabase-image-loader";
 import { getImageUrl } from "@/utils/mediaUtils";
+import { useTranslation } from "@/context/LocaleContext";
+import { LocalizedLink } from "@/components/ui/LocalizedLink";
 
 export interface Listing {
     id: string;
@@ -26,6 +28,7 @@ export interface Listing {
 export function ListingCard({ listing, isFavorited = false, isGhostPreview = false }: { listing: Listing; isFavorited?: boolean; isGhostPreview?: boolean }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [showGhostPopup, setShowGhostPopup] = useState(false);
+    const { t } = useTranslation();
 
     const nextImage = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -130,7 +133,7 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         <ImageIcon className="w-12 h-12 opacity-50 mb-2" />
-                        <span className="text-xs font-medium">Sin imagen</span>
+                        <span className="text-xs font-medium">{t("sin_imagen")}</span>
                     </div>
                 )}
             </div>
@@ -146,16 +149,16 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                         )}
                         {listing.is_featured && (
                             <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black uppercase tracking-wider rounded-md border border-green-200">
-                                ¡Destacado!
+                                {t("destacado")}
                             </span>
                         )}
                     </div>
                     <div className="flex flex-col items-end">
                         {listing.price_type === 'negotiable' && (
-                            <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)] tracking-wider">Negociable</span>
+                            <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)] tracking-wider">{t("negociable")}</span>
                         )}
                         {listing.price_type === 'exchange' && (
-                            <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)] tracking-wider">A convenir</span>
+                            <span className="text-[10px] uppercase font-bold text-[var(--ag-sys-color-text-muted)] tracking-wider">{t("a_convenir")}</span>
                         )}
                     </div>
                 </div>
@@ -186,9 +189,9 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                     {cardContent}
                 </div>
             ) : (
-                <Link href={`/anuncio/${listingSlug}-${shortId}`} className="block h-full">
+                <LocalizedLink href={`/anuncio/${listingSlug}-${shortId}`} className="block h-full">
                     {cardContent}
-                </Link>
+                </LocalizedLink>
             )}
 
             {/* Absolute positioning of the heart above the image but inside the relative container */}

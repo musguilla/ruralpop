@@ -9,6 +9,8 @@ import {
     ChevronLeft, ChevronRight, Truck, Stethoscope, Anvil, Briefcase
 } from "lucide-react";
 import { useCategories } from "@/context/CategoriesContext";
+import { useTranslation } from "@/context/LocaleContext";
+import { useLocalizedRoute } from "@/i18n/hooks";
 
 // Define a unified list for the slider
 const VISUAL_CATEGORIES = [
@@ -36,12 +38,14 @@ import { buildSeoUrl } from "@/utils/seoUtils";
 
 export function HomeSearchHero() {
     const CATEGORIES = useCategories();
+    const { t } = useTranslation();
+    const { getPath } = useLocalizedRoute();
     const router = useRouter();
     const [query, setQuery] = useState("");
     const [category, setCategory] = useState("");
     const [subcategory, setSubcategory] = useState("");
     const [location, setLocation] = useState("");
-    const [locationName, setLocationName] = useState("Toda España");
+    const [locationName, setLocationName] = useState(t("toda_espana"));
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
 
@@ -55,7 +59,7 @@ export function HomeSearchHero() {
             subcategory: subcategory,
             province_id: location
         });
-        router.push(url);
+        router.push(getPath(url));
     };
 
     const handleCategorySelect = (catId: string, subId?: string) => {
@@ -69,11 +73,11 @@ export function HomeSearchHero() {
     };
 
     const getCategoryDisplayLabel = () => {
-        if (!category) return "Todas las categorías";
+        if (!category) return t("todas_las_categorias");
         const cat = CATEGORIES.find(c => c.id === category);
-        if (!cat) return "Todas las categorías";
-        if (subcategory) return subcategory;
-        return cat.label;
+        if (!cat) return t("todas_las_categorias");
+        if (subcategory) return t(`category.${subcategory}`) || subcategory;
+        return t(`category.${cat.id}`) || cat.label;
     };
 
     const handleCategoryClick = (item: typeof VISUAL_CATEGORIES[0]) => {
@@ -90,7 +94,7 @@ export function HomeSearchHero() {
         }
 
         const url = buildSeoUrl({ category: cat, subcategory: subcat });
-        router.push(url);
+        router.push(getPath(url));
     };
 
     const scrollLeft = () => {
@@ -108,7 +112,7 @@ export function HomeSearchHero() {
     return (
         <div className="w-full flex flex-col items-center py-6 sm:py-10">
             <h1 className="hidden md:block text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-8 text-center">
-                ¿Qué quieres encontrar?
+                {t("que_quieres_encontrar")}
             </h1>
 
             {/* Desktop Search Bar */}
@@ -121,7 +125,7 @@ export function HomeSearchHero() {
                     <Search className="w-5 h-5 text-gray-400" />
                     <input
                         type="text"
-                        placeholder="Estoy buscando..."
+                        placeholder={t("estoy_buscando")}
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         className="w-full h-10 bg-transparent text-[var(--ag-sys-color-text)] outline-none"
@@ -161,7 +165,7 @@ export function HomeSearchHero() {
                     className="bg-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] text-white px-8 py-3 rounded-full font-semibold transition-colors flex items-center gap-2"
                 >
                     <Search className="w-5 h-5" />
-                    Buscar
+                    {t("buscar")}
                 </button>
             </form>
 
@@ -172,7 +176,7 @@ export function HomeSearchHero() {
                         <Search className="w-5 h-5 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Estoy buscando..."
+                            placeholder={t("estoy_buscando")}
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             className="w-full bg-transparent outline-none"
@@ -206,7 +210,7 @@ export function HomeSearchHero() {
                     className="w-full bg-[var(--ag-sys-color-primary)] text-white h-12 rounded-full font-semibold flex items-center justify-center gap-2"
                 >
                     <Search className="w-5 h-5" />
-                    Buscar
+                    {t("buscar")}
                 </button>
             </form>
 
@@ -215,7 +219,7 @@ export function HomeSearchHero() {
 
                 {/* Header with Title and Arrows */}
                 <div className="flex items-center justify-between w-full px-2">
-                    <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">Todas las categorías</h2>
+                    <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">{t("todas_las_categorias")}</h2>
 
                     <div className="flex gap-3">
                         <button
@@ -252,7 +256,7 @@ export function HomeSearchHero() {
                                 {cat.icon}
                             </div>
                             <span className="text-[15px] font-bold text-[var(--ag-sys-color-text)] text-center w-full">
-                                {cat.label}
+                                {t(`category.${cat.label}`) || cat.label}
                             </span>
                         </button>
                     ))}

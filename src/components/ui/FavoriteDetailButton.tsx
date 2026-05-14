@@ -3,6 +3,7 @@
 import React, { useState, useTransition } from "react";
 import { Heart } from "lucide-react";
 import { toggleFavorite } from "@/app/favoritos/actions";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface FavoriteDetailButtonProps {
     listingId: string;
@@ -12,6 +13,7 @@ interface FavoriteDetailButtonProps {
 export function FavoriteDetailButton({ listingId, initialIsFavorited }: FavoriteDetailButtonProps) {
     const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
     const [isPending, startTransition] = useTransition();
+    const { t } = useTranslation();
 
     const handleToggle = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -46,7 +48,7 @@ export function FavoriteDetailButton({ listingId, initialIsFavorited }: Favorite
             <Heart
                 className={`w-5 h-5 transition-colors duration-300 ${isFavorited ? "fill-rose-500 text-rose-500" : "text-gray-400"}`}
             />
-            {isFavorited ? "Guardado en Favoritos" : "Guardar Favorito"}
+            {isFavorited ? t("guardado_favoritos") : t("guardar_favorito_btn")}
         </button>
     );
 }
