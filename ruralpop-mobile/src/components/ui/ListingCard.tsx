@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, PanResponder, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, PanResponder, ScrollView, FlatList } from 'react-native';
 import { Image } from 'expo-image';
 import { Link, useRouter } from 'expo-router';
 import { MapPin, Heart, ChevronLeft, ChevronRight, ImageIcon, Crown } from 'lucide-react-native';
@@ -116,42 +116,41 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
 
     return (
         <View className="bg-surface rounded-2xl overflow-hidden border border-gray-200 mb-4 shadow-sm w-[100%] max-w-[400px]">
-            {isSingleColumn && hasImages && listing.image_urls!.length > 1 ? (
+            {hasImages && listing.image_urls!.length > 1 ? (
                 <View 
                     className="relative w-full bg-surface-muted overflow-hidden" 
                     style={{ aspectRatio: 4 / 3 }}
                     onLayout={(e) => setCardWidth(e.nativeEvent.layout.width)}
                 >
                     {cardWidth > 0 ? (
-                        <ScrollView
+                        <FlatList
+                            data={listing.image_urls}
                             horizontal
                             pagingEnabled
                             showsHorizontalScrollIndicator={false}
-                            onScroll={(e) => {
+                            keyExtractor={(_, index) => index.toString()}
+                            onMomentumScrollEnd={(e) => {
                                 const idx = Math.round(e.nativeEvent.contentOffset.x / cardWidth);
                                 if (idx !== currentImageIndex && idx >= 0 && idx < listing.image_urls!.length) {
                                     setCurrentImageIndex(idx);
                                 }
                             }}
-                            scrollEventThrottle={16}
-                            style={{ width: '100%', height: '100%' }}
-                        >
-                            {listing.image_urls!.map((url, idx) => (
+                            renderItem={({ item }) => (
                                 <TouchableOpacity
-                                    key={idx}
                                     activeOpacity={0.9}
                                     onPress={handleNavigate}
                                     style={{ width: cardWidth, height: '100%' }}
                                 >
                                     <Image
-                                        source={{ uri: getOptimizedImageUrl(url, { width: 600 }) || url }}
+                                        source={{ uri: getOptimizedImageUrl(item, { width: 600 }) || item }}
                                         style={{ width: '100%', height: '100%' }}
                                         contentFit="cover"
                                         cachePolicy="disk"
                                     />
                                 </TouchableOpacity>
-                            ))}
-                        </ScrollView>
+                            )}
+                            style={{ width: '100%', height: '100%' }}
+                        />
                     ) : null}
                     {renderBadges()}
                 </View>
@@ -159,7 +158,6 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
                 <TouchableOpacity 
                     activeOpacity={0.9} 
                     onPress={handleNavigate}
-                    {...(hasImages && listing.image_urls!.length > 1 ? panResponder.panHandlers : {})}
                     className="relative w-full bg-surface-muted items-center justify-center overflow-hidden" 
                     style={{ aspectRatio: 4 / 3 }}
                 >
