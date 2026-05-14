@@ -205,7 +205,11 @@ export default function ListingDetailsScreen() {
     return (
         <View className="flex-1 bg-surface">
             {/* Header Overlay */}
-            <SafeAreaView className="absolute top-0 left-0 right-0 z-10" edges={['top']} pointerEvents="box-none">
+            <View 
+                className="absolute top-0 left-0 right-0 z-10" 
+                style={{ paddingTop: Math.max(insets.top, 16) }} 
+                pointerEvents="box-none"
+            >
                 <View style={{ 
                     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
                     backgroundColor: isScrolled ? 'white' : 'transparent',
@@ -225,7 +229,7 @@ export default function ListingDetailsScreen() {
                         <ShareIcon color={isScrolled ? "#111827" : "white"} size={20} />
                     </TouchableOpacity>
                 </View>
-            </SafeAreaView>
+            </View>
 
             <ScrollView 
                 className="flex-1" 
