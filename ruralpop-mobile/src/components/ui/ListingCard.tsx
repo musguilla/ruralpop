@@ -48,13 +48,17 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
     const panResponder = React.useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => false,
+            onStartShouldSetPanResponderCapture: () => false,
             onMoveShouldSetPanResponder: (evt, gestureState) => {
-                return Math.abs(gestureState.dx) > 20 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+                return Math.abs(gestureState.dx) > 10 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+            },
+            onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
+                return Math.abs(gestureState.dx) > 10 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
             },
             onPanResponderRelease: (evt, gestureState) => {
-                if (gestureState.dx > 40) {
+                if (gestureState.dx > 30) {
                     prevImage();
-                } else if (gestureState.dx < -40) {
+                } else if (gestureState.dx < -30) {
                     nextImage();
                 }
             },
@@ -91,23 +95,7 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
                     {/* Slider Controls */}
                     {hasImages && listing.image_urls!.length > 1 && (
                         <>
-                            <TouchableOpacity
-                                onPress={prevImage}
-                                className="absolute top-1/2 -mt-4 w-8 h-8 rounded-full bg-black/30 items-center justify-center z-10"
-                                style={{ left: 8 }}
-                            >
-                                <ChevronLeft color="white" size={20} />
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                onPress={nextImage}
-                                className="absolute top-1/2 -mt-4 w-8 h-8 rounded-full bg-black/30 items-center justify-center z-10"
-                                style={{ right: 8 }}
-                            >
-                                <ChevronRight color="white" size={20} />
-                            </TouchableOpacity>
-
-                            <View className="absolute bottom-2 left-0 right-0 flex-row justify-center space-x-1.5">
+                            <View className="absolute bottom-2 left-0 right-0 flex-row justify-center space-x-1.5 pointer-events-none">
                                 {listing.image_urls!.map((_, idx) => (
                                     <View
                                         key={idx}
