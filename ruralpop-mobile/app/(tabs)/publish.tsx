@@ -528,9 +528,12 @@ export default function PublishScreen() {
                 onSelect={(cat) => {
                     if (cat && cat.toLowerCase() === 'perros' && !isProfesional) {
                         setIsCategoryModalOpen(false);
+                        // [Antigravity Sync]: Aumentamos timeout a 600ms para asegurar
+                        // que la animación de cierre del Modal nativo de iOS termine
+                        // antes de montar otro Modal nativo, evitando bloqueos de interfaz.
                         setTimeout(() => {
                             setIsDogLawModalOpen(true);
-                        }, 400);
+                        }, 600);
                     } else {
                         setCategoryId(cat);
                         setIsCategoryModalOpen(false);

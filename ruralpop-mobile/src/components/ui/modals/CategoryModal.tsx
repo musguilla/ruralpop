@@ -53,12 +53,11 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
 
     const handleSelect = (id: string | null) => {
         onSelect(id);
-        onClose();
-        // Reset state after close
+        // Reset state after a short delay to allow closing animation
         setTimeout(() => {
             setSearchQuery('');
             setActiveParentId(null);
-        }, 300);
+        }, 400);
     };
 
     const handleClose = () => {
