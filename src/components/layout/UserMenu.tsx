@@ -89,7 +89,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     <p className="text-[11px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Transacciones</p>
                                 </div>
                                 <LocalizedLink
-                                    href="/compras"
+                                    href="/dashboard/compras"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
@@ -105,7 +105,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     <span className="font-semibold text-gray-800">Ventas</span>
                                 </LocalizedLink>
                                 <LocalizedLink
-                                    href="/monedero"
+                                    href="/dashboard/monedero"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
