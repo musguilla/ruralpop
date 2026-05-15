@@ -35,40 +35,12 @@ export default async function ComprasDashboardPage() {
             <div className="container mx-auto px-4 max-w-6xl">
                 <header className="mb-8">
                     <h1 className="text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-                        Mi Panel
+                        Compras
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                        Gestiona tus anuncios publicados y tus compras seguras.
+                        Gestiona tus compras seguras.
                     </p>
                 </header>
-
-                {/* Tabs */}
-                <div className="flex flex-wrap gap-3 mb-8">
-                    <Link
-                        href="/dashboard"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]"
-                    >
-                        Activos
-                    </Link>
-                    <Link
-                        href="/dashboard?tab=vendidos"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]"
-                    >
-                        Vendidos
-                    </Link>
-                    <Link
-                        href="/dashboard/compras"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]"
-                    >
-                        Compras
-                    </Link>
-                    <Link
-                        href="/dashboard/monedero"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]"
-                    >
-                        Monedero
-                    </Link>
-                </div>
 
                 {/* List */}
                 {!orders || orders.length === 0 ? (

@@ -52,40 +52,12 @@ export default async function MonederoDashboardPage() {
             <div className="container mx-auto px-4 max-w-6xl">
                 <header className="mb-8">
                     <h1 className="text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-                        Mi Panel
+                        Monedero
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                        Gestiona tus anuncios publicados y tu monedero profesional.
+                        Gestiona tu monedero profesional y saldo disponible.
                     </p>
                 </header>
-
-                {/* Tabs */}
-                <div className="flex flex-wrap gap-3 mb-8">
-                    <Link
-                        href="/dashboard"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]"
-                    >
-                        Activos
-                    </Link>
-                    <Link
-                        href="/dashboard?tab=vendidos"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]"
-                    >
-                        Vendidos
-                    </Link>
-                    <Link
-                        href="/dashboard/compras"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]"
-                    >
-                        Compras
-                    </Link>
-                    <Link
-                        href="/dashboard/monedero"
-                        className="px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]"
-                    >
-                        Monedero
-                    </Link>
-                </div>
 
                 {!isStripeReady && (
                     <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

@@ -21,7 +21,8 @@ export default async function DashboardPage(props: Props) {
     const locale = (headersList.get("x-locale") || "es") as LocaleCode;
     const dict = await getDictionary(locale);
     const searchParams = await props.searchParams;
-    const currentTab = searchParams?.tab === "vendidos" ? "sold" : "active";
+    const currentTabRaw = searchParams?.tab;
+    const currentTab = currentTabRaw === "vendidos" ? "sold" : currentTabRaw === "en_curso" ? "reserved" : "active";
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -132,10 +133,10 @@ export default async function DashboardPage(props: Props) {
             <div className="container mx-auto px-4 max-w-6xl">
                 <header className="mb-8">
                     <h1 className="text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-                        {dict.dashboard.title}
+                        Ventas
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                        {dict.dashboard.desc}
+                        Gestiona tus anuncios publicados y su estado.
                     </p>
                 </header>
 
@@ -179,7 +180,15 @@ export default async function DashboardPage(props: Props) {
                                     ? 'bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]'
                                     : 'bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]'}`}
                             >
-                                {dict.dashboard.tab_active}
+                                En venta
+                            </Link>
+                            <Link
+                                href="/dashboard?tab=en_curso"
+                                className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm ${currentTab === 'reserved'
+                                    ? 'bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]'
+                                    : 'bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]'}`}
+                            >
+                                En curso
                             </Link>
                             <Link
                                 href="/dashboard?tab=vendidos"
@@ -187,19 +196,7 @@ export default async function DashboardPage(props: Props) {
                                     ? 'bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]'
                                     : 'bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]'}`}
                             >
-                                {dict.dashboard.tab_sold}
-                            </Link>
-                            <Link
-                                href="/dashboard/compras"
-                                className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]`}
-                            >
-                                {dict.dashboard.tab_purchases}
-                            </Link>
-                            <Link
-                                href="/dashboard/monedero"
-                                className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]`}
-                            >
-                                {dict.dashboard.tab_wallet}
+                                Finalizadas
                             </Link>
                         </div>
 
