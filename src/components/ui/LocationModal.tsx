@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { X, Search, MapPin, Check } from "lucide-react";
 import { LOCATIONS, LocationItem } from "@/constants/locations";
+import { useTranslation } from "@/context/LocaleContext";
 
 const normalizeStr = (str: string) =>
     str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -20,6 +21,7 @@ export function LocationModal({
     onSelect,
     selectedLocationId = ""
 }: LocationModalProps) {
+    const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState("");
 
     // Reset when modal opens
@@ -58,7 +60,7 @@ export function LocationModal({
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-900">¿Dónde buscas?</h2>
+                    <h2 className="text-xl font-bold text-gray-900">{t('location_modal.title')}</h2>
                     <button
                         onClick={onClose}
                         className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500"
@@ -73,7 +75,7 @@ export function LocationModal({
                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-emerald-600 transition-colors" />
                         <input
                             type="text"
-                            placeholder="Escribe tu provincia o localidad"
+                            placeholder={t('location_modal.placeholder')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-transparent focus:border-emerald-500 focus:bg-white rounded-xl outline-none transition-all text-gray-900 shadow-inner"
@@ -87,14 +89,14 @@ export function LocationModal({
                     <div className="flex flex-col gap-1">
                         {!searchTerm && (
                             <button
-                                onClick={() => { onSelect("", "Toda España"); onClose(); }}
+                                onClick={() => { onSelect("", t('location_modal.all_spain')); onClose(); }}
                                 className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all ${!selectedLocationId ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
                                     }`}
                             >
                                 <div className={`p-2 rounded-lg ${!selectedLocationId ? 'bg-emerald-100' : 'bg-gray-100'}`}>
                                     <Search className="w-5 h-5" />
                                 </div>
-                                <span>Toda España</span>
+                                <span>{t('location_modal.all_spain')}</span>
                                 {!selectedLocationId && <Check className="ml-auto w-5 h-5 text-emerald-600" />}
                             </button>
                         )}
@@ -140,7 +142,7 @@ export function LocationModal({
 
                         {filteredLocations.length === 0 && (
                             <div className="py-10 text-center text-gray-500">
-                                <p>No se encontraron resultados para "{searchTerm}"</p>
+                                <p>{t('location_modal.no_results')} "{searchTerm}"</p>
                             </div>
                         )}
                     </div>
@@ -152,7 +154,7 @@ export function LocationModal({
                         onClick={onClose}
                         className="w-full py-4 bg-emerald-700 text-white rounded-xl font-bold shadow-lg"
                     >
-                        Aplicar filtro
+                        {t('location_modal.apply')}
                     </button>
                 </div>
             </div>

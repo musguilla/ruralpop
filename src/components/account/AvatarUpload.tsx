@@ -7,12 +7,14 @@ import { uploadAvatar } from "@/app/account/actions";
 import { useNotification } from "@/context/NotificationContext";
 
 import { optimizeImage } from "@/utils/image-optimization";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface AvatarUploadProps {
     initialAvatarUrl: string;
 }
 
 export function AvatarUpload({ initialAvatarUrl }: AvatarUploadProps) {
+    const { t } = useTranslation();
     const [avatar, setAvatar] = useState(initialAvatarUrl);
     const [isPending, setIsPending] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +63,7 @@ export function AvatarUpload({ initialAvatarUrl }: AvatarUploadProps) {
 
     return (
         <div className="flex flex-col items-center sm:items-start gap-4 p-8 border-b border-[var(--ag-sys-color-border)]">
-            <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] sm:mb-2 w-full text-center sm:text-left">Foto de Perfil</h2>
+            <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] sm:mb-2 w-full text-center sm:text-left">{t('account.photo_title')}</h2>
 
             <div className="flex flex-col sm:flex-row items-center gap-6 w-full">
                 {/* Avatar Display */}
@@ -98,9 +100,9 @@ export function AvatarUpload({ initialAvatarUrl }: AvatarUploadProps) {
                 </div>
 
                 <div className="flex flex-col text-center sm:text-left text-sm text-[var(--ag-sys-color-text-muted)] gap-1">
-                    <p className="font-semibold text-[var(--ag-sys-color-text)]">Sube una nueva foto</p>
-                    <p>Formatos permitidos: JPG, PNG o WEBP.</p>
-                    <p>Tamaño máximo recomendado: 5MB.</p>
+                    <p className="font-semibold text-[var(--ag-sys-color-text)]">{t('account.photo_upload')}</p>
+                    <p>{t('account.photo_formats')}</p>
+                    <p>{t('account.photo_size')}</p>
                 </div>
             </div>
         </div>

@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Tractor, ChevronRight, MessageSquare, User } from "lucide-react";
 import { formatRelativeTime } from "@/utils/format";
 import { getImageUrl } from "@/utils/mediaUtils";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface Message {
     id: string;
@@ -31,6 +32,7 @@ interface ChatInboxListProps {
 }
 
 export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
+    const { t } = useTranslation();
     const router = useRouter();
     const [threads, setThreads] = React.useState<Thread[]>(initialThreads);
     const supabase = createClient();
@@ -96,15 +98,15 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
                 <div className="mx-auto w-16 h-16 bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text-muted)] rounded-2xl flex items-center justify-center mb-4">
                     <MessageSquare className="w-8 h-8 opacity-20" />
                 </div>
-                <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-2">Aún no tienes mensajes</h3>
+                <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-2">{t('chat.empty')}</h3>
                 <p className="text-[var(--ag-sys-color-text-muted)] mb-6">
-                    Cuando contactes con un vendedor o te pregunten por un anuncio, aparecerán aquí.
+                    {t('favorites.empty_desc')}
                 </p>
                 <Link
                     href="/"
                     className="inline-flex py-3 px-6 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all"
                 >
-                    Explorar anuncios
+                    {t('favorites.explore_btn')}
                 </Link>
             </div>
         );
@@ -162,7 +164,7 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
                             </div>
 
                             <p className={`text-sm line-clamp-1 italic ${thread.unreadCount > 0 ? "text-[var(--ag-sys-color-text)] font-semibold" : "text-[var(--ag-sys-color-text-muted)]"}`}>
-                                {thread.lastMessage.sender_id === userId ? "Tú: " : ""}
+                                {thread.lastMessage.sender_id === userId ? `${t('chat.you')}: ` : ""}
                                 {thread.lastMessage.content}
                             </p>
                         </div>

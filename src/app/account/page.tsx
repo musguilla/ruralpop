@@ -6,10 +6,16 @@ import { EditableField } from "@/components/account/EditableField";
 import { EditableLocation } from "@/components/account/EditableLocation";
 import { AvatarUpload } from "@/components/account/AvatarUpload";
 import { slugify } from "@/utils/seoUtils";
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
+    const headersList = await headers();
+    const locale = (headersList.get("x-locale") || "es") as LocaleCode;
+    const dict = await getDictionary(locale);
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -56,13 +62,13 @@ export default async function AccountPage() {
                         className="inline-flex items-center text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors mb-4 font-medium"
                     >
                         <ArrowLeft className="w-5 h-5 mr-2" />
-                        Volver a Mi Panel
+                        {dict.account.back}
                     </Link>
                     <h1 className="text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-                        Mi cuenta
+                        {dict.account.title}
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                        Gestiona tu información personal y de seguridad.
+                        {dict.account.desc}
                     </p>
                 </header>
 
@@ -70,11 +76,11 @@ export default async function AccountPage() {
                     <AvatarUpload initialAvatarUrl={avatarUrl} />
 
                     <div className="p-8 border-b border-[var(--ag-sys-color-border)]">
-                        <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Datos Personales</h2>
+                        <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">{dict.account.personal_data}</h2>
                         <dl className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-12">
                             <EditableField
                                 field="name"
-                                label="Nombre Completo"
+                                label={dict.account.name}
                                 icon={<User className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                 initialValue={fullName}
                                 placeholder="Tu nombre..."
@@ -82,7 +88,7 @@ export default async function AccountPage() {
 
                             <EditableField
                                 field="phone"
-                                label="Teléfono"
+                                label={dict.account.phone}
                                 icon={<Phone className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                 type="tel"
                                 initialValue={userPhone}
@@ -91,7 +97,7 @@ export default async function AccountPage() {
 
                             <EditableField
                                 field="email"
-                                label="Email"
+                                label={dict.account.email}
                                 icon={<Mail className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                 type="email"
                                 initialValue={userEmail}

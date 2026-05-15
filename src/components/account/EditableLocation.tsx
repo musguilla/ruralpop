@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Check, Loader2, MapPin, ChevronDown, Search } from "lucide-react";
 import { updateUserLocationData, getMunicipalities } from "@/app/account/actions";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface LocItem {
     id: number;
@@ -124,6 +125,7 @@ function SearchableSelect({
 }
 
 export function EditableLocation({ initialProvinceId, initialMunicipalityId, initialProvinces }: EditableLocationProps) {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);

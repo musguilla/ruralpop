@@ -1,10 +1,16 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { ChatInboxList } from "@/components/chat/ChatInboxList";
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
 export default async function ChatInboxPage() {
+    const headersList = await headers();
+    const locale = (headersList.get("x-locale") || "es") as LocaleCode;
+    const dict = await getDictionary(locale);
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -69,10 +75,10 @@ export default async function ChatInboxPage() {
             <div className="container mx-auto px-4 max-w-6xl">
                 <header className="mb-8">
                     <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-                        Mis Mensajes
+                        {dict.chat.title}
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-2">
-                        Gestiona tus conversaciones y dudas sobre anuncios.
+                        {dict.chat.desc}
                     </p>
                 </header>
 

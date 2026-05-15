@@ -5,6 +5,7 @@ import { Upload, X, Loader2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { optimizeImage } from "@/utils/image-optimization";
 import { useNotification } from "@/context/NotificationContext";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface ImageUploaderProps {
     onImagesChange: (urls: string[]) => void;
@@ -14,6 +15,7 @@ interface ImageUploaderProps {
 }
 
 export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [], onUploadingStateChange }: ImageUploaderProps) {
+    const { t } = useTranslation();
     const { showAlert } = useNotification();
     const [files, setFiles] = useState<{ id: string; url: string; preview?: string; uploading: boolean }[]>(() => {
         return initialImages.map(url => ({
@@ -145,12 +147,12 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
                     <label className="aspect-square rounded-xl border-2 border-dashed border-[var(--ag-sys-color-border)] hover:border-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary)]/5 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 group">
                         <input type="file" multiple accept="image/*" onChange={onFileChange} className="hidden" />
                         <Upload className="w-6 h-6 text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)]" />
-                        <span className="text-[10px] font-medium text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)]">Añadir Fotos</span>
+                        <span className="text-[10px] font-medium text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)]">{t('upload.photos_title_short') || 'Añadir Fotos'}</span>
                     </label>
                 )}
             </div>
             <p className="text-xs text-[var(--ag-sys-color-text-muted)]">
-                Sube hasta {maxFiles} fotos. La primera será la principal.
+                {t('upload.photos_desc')}
             </p>
         </div>
     );

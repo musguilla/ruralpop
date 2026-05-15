@@ -11,6 +11,7 @@ import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { useRouter } from "next/navigation";
 import { useNotification } from "@/context/NotificationContext";
 import Link from "next/link";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface UploadFormProps {
     savedPhone: string | null;
@@ -21,6 +22,7 @@ interface UploadFormProps {
 }
 
 export default function UploadForm({ savedPhone, initialProvinces, userEmail, hasWalletConfigured = false, isProfesional = false }: UploadFormProps) {
+    const { t } = useTranslation();
     const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();
@@ -87,31 +89,31 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
 
         // Validaciones manuales obligatorias
         if (!selectedCategory) {
-            showAlert({ title: "Campo requerido", message: "Debes seleccionar una categoría principal.", type: "error" });
+            showAlert({ title: t('upload.error_title'), message: t('upload.required_category'), type: "error" });
             setIsPending(false);
             return;
         }
 
         if (categoryData && categoryData.subcategories.length > 0 && !formDataState.subcategory) {
-            showAlert({ title: "Campo requerido", message: "Debes seleccionar una subcategoría.", type: "error" });
+            showAlert({ title: t('upload.error_title'), message: t('upload.required_subcategory'), type: "error" });
             setIsPending(false);
             return;
         }
 
         if (!selectedProvince) {
-            showAlert({ title: "Campo requerido", message: "Debes seleccionar una provincia.", type: "error" });
+            showAlert({ title: t('upload.error_title'), message: t('upload.required_province'), type: "error" });
             setIsPending(false);
             return;
         }
 
         if (!selectedMunicipality) {
-            showAlert({ title: "Campo requerido", message: "Debes seleccionar una localidad válida.", type: "error" });
+            showAlert({ title: t('upload.error_title'), message: t('upload.required_municipality'), type: "error" });
             setIsPending(false);
             return;
         }
 
         if (imageUrls.length === 0) {
-            showAlert({ title: "Campo requerido", message: "Debes subir al menos una fotografía para tu anuncio.", type: "error" });
+            showAlert({ title: t('upload.error_title'), message: t('upload.required_photo'), type: "error" });
             setIsPending(false);
             return;
         }
@@ -129,7 +131,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
             const res = await createListing(formData);
             if (res?.error) {
                 showAlert({
-                    title: "Error al publicar",
+                    title: t('upload.error_title'),
                     message: res.error,
                     type: "error"
                 });
@@ -142,8 +144,8 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
         } catch (err) {
             console.error(err);
             showAlert({
-                title: "Error inesperado",
-                message: "Hubo un problema al conectar con el servidor. Inténtalo de nuevo más tarde.",
+                title: t('upload.error_title'),
+                message: t('upload.unexpected_error'),
                 type: "error"
             });
             setIsPending(false);
@@ -155,10 +157,10 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
             <div className="mb-8 border-b border-[var(--ag-sys-color-border)] pb-6">
                 <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] flex items-center gap-3">
                     <Tractor className="text-[var(--ag-sys-color-primary)] w-8 h-8" />
-                    Sube tu anuncio gratis
+                    {t('upload.title')}
                 </h1>
                 <p className="text-[var(--ag-sys-color-text-secondary)] text-sm sm:text-base mt-2">
-                    Vende ganadería, maquinaria y productos del campo de forma segura en Ruralpop.
+                    {t('upload.subtitle')}
                 </p>
             </div>
 
@@ -167,7 +169,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                 <section className="bg-[var(--ag-sys-color-surface)] p-6 rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm">
                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                         <Info className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
-                        Fotografías del anuncio
+                        {t('upload.photos_title')}
                     </h3>
                     <ImageUploader onImagesChange={setImageUrls} />
                 </section>
@@ -176,36 +178,36 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                 <section className="bg-[var(--ag-sys-color-surface)] p-6 rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm space-y-6">
                     <h3 className="text-lg font-bold flex items-center gap-2">
                         <Info className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
-                        Información general
+                        {t('upload.general_info')}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="col-span-1 md:col-span-2">
-                            <label className="block text-sm font-medium mb-1.5">Título del anuncio *</label>
+                            <label className="block text-sm font-medium mb-1.5">{t('upload.title_label')}</label>
                             <input
                                 name="title"
                                 required
-                                placeholder="Ej: Tractor John Deere 6120M o Terneros Limousin"
+                                placeholder={t('upload.title_placeholder')}
                                 className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Categoría *</label>
+                            <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">{t('upload.category_label')}</label>
                             <SearchableSelect
                                 name="category"
                                 required
                                 value={selectedCategory}
                                 onChange={(val) => setSelectedCategory(val as string)}
                                 options={CATEGORIES.map(c => ({ id: c.id, name: c.label }))}
-                                placeholder="Selecciona categoría..."
+                                placeholder={t('upload.category_placeholder')}
                                 searchPlaceholder="Buscar categoría..."
                             />
                         </div>
 
                         {categoryData && categoryData.subcategories.length > 0 && (
                             <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Subcategoría *</label>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">{t('upload.subcategory_label')}</label>
                                 <SearchableSelect
                                     name="subcategory"
                                     required
@@ -220,19 +222,19 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                             setFormDataState(prev => ({ ...prev, subcategory: subcat }));
                                         }
                                     }}
-                                    placeholder="Selecciona subcategoría..."
+                                    placeholder={t('upload.subcategory_placeholder')}
                                     searchPlaceholder="Buscar subcategoría..."
                                 />
                             </div>
                         )}
 
                         <div className="col-span-1 md:col-span-2">
-                            <label className="block text-sm font-medium mb-1.5">Descripción detallada *</label>
+                            <label className="block text-sm font-medium mb-1.5">{t('upload.desc_label')}</label>
                             <textarea
                                 name="description"
                                 required
                                 rows={5}
-                                placeholder="Describe el estado, años, mantenimiento, raza, peso..."
+                                placeholder={t('upload.desc_placeholder')}
                                 className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all resize-none"
                             />
                         </div>
@@ -244,7 +246,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
-                                <Euro className="w-4 h-4" /> Precio (€) *
+                                <Euro className="w-4 h-4" /> {t('upload.price_label')}
                             </label>
                             <input
                                 name="price"
@@ -256,7 +258,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                         </div>
 
                         <div className="flex flex-col">
-                            <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Tipo de precio</label>
+                            <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">{t('upload.price_type_label')}</label>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1 min-w-0">
                                     <SearchableSelect
@@ -264,7 +266,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                         value={formDataState.priceType}
                                         onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
                                         options={PRICE_TYPES.map(p => ({ id: p.id, name: p.label }))}
-                                        placeholder="Selecciona tipo..."
+                                        placeholder={t('upload.price_type_placeholder')}
                                         disabled={sellOnline}
                                     />
                                 </div>
@@ -329,7 +331,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
 
                         <div>
                             <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
-                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Provincia *
+                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> {t('upload.province_label')}
                             </label>
                             <SearchableSelect
                                 name="province_id"
@@ -337,14 +339,14 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                 value={selectedProvince}
                                 onChange={(val) => setSelectedProvince(val as number | "")}
                                 options={initialProvinces}
-                                placeholder="Selecciona provincia..."
+                                placeholder={t('upload.province_placeholder')}
                                 searchPlaceholder="Ej: Salamanca, Asturias..."
                             />
                         </div>
 
                         <div>
                             <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
-                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Localidad *
+                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> {t('upload.municipality_label')}
                             </label>
                             <SearchableSelect
                                 name="municipality_id"
@@ -352,7 +354,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                 value={selectedMunicipality}
                                 onChange={(val) => setSelectedMunicipality(val as number | "")}
                                 options={municipalities}
-                                placeholder={selectedProvince === "" ? "Selecciona primero provincia" : "Selecciona localidad..."}
+                                placeholder={selectedProvince === "" ? "Selecciona primero provincia" : t('upload.municipality_placeholder')}
                                 searchPlaceholder="Ej: Suances, Tineo..."
                                 disabled={selectedProvince === ""}
                                 isLoading={isLoadingMunicipalities}
@@ -362,10 +364,10 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                         <div className="col-span-1 md:col-span-2">
                             <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
                                 <Phone className="w-4 h-4" />
-                                Teléfono de contacto
+                                {t('upload.phone_label')}
                                 {savedPhone && (
                                     <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] font-semibold">
-                                        Autocompletado desde tu perfil
+                                        {t('upload.phone_autofill')}
                                     </span>
                                 )}
                             </label>
@@ -391,9 +393,9 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                         {isPending ? (
                             <>
                                 <Loader2 className="w-5 h-5 animate-spin" />
-                                Publicando...
+                                {t('upload.submitting')}
                             </>
-                        ) : "Publicar Anuncio"}
+                        ) : t('upload.submit_btn')}
                     </button>
                 </div>
             </form>
