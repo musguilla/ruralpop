@@ -93,9 +93,7 @@ export function LocationModal({
                                 className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all ${!selectedLocationId ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
                                     }`}
                             >
-                                <div className={`p-2 rounded-lg ${!selectedLocationId ? 'bg-emerald-100' : 'bg-gray-100'}`}>
-                                    <Search className="w-5 h-5" />
-                                </div>
+
                                 <span>{t('location_modal.all_spain')}</span>
                                 {!selectedLocationId && <Check className="ml-auto w-5 h-5 text-emerald-600" />}
                             </button>
@@ -124,9 +122,7 @@ export function LocationModal({
                                     className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all group ${selectedLocationId === loc.id ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
                                         }`}
                                 >
-                                    <div className={`p-2 rounded-lg transition-colors ${selectedLocationId === loc.id ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200'}`}>
-                                        <MapPin className="w-5 h-5" />
-                                    </div>
+
                                     <div className="flex-1 text-left flex flex-col">
                                         <span className="text-sm sm:text-base">
                                             {renderName()}

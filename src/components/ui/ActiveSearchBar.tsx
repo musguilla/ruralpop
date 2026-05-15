@@ -363,9 +363,9 @@ export function ActiveSearchBar() {
                                         <button
                                             key={type}
                                             onClick={() => setSellerType(type)}
-                                            className={`flex-1 text-center py-2 text-sm font-medium rounded-md transition-colors ${sellerType === type ? 'bg-white shadow text-emerald-700' : 'text-gray-500 hover:text-gray-700'}`}
+                                            className={`flex-1 text-center py-2 text-sm font-medium rounded-md transition-colors ${sellerType === type ? 'bg-white shadow text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
                                         >
-                                            {t(`search.vendedor_${type}`)}
+                                            {t(`search.vendedor_${type === 'all' ? 'todos' : type}`)}
                                         </button>
                                     ))}
                                 </div>
@@ -383,7 +383,7 @@ export function ActiveSearchBar() {
                             </button>
                             <button
                                 onClick={applyFilters}
-                                className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded-lg font-semibold text-sm transition-colors"
+                                className="flex-1 bg-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] text-white py-3 rounded-lg font-semibold text-sm transition-colors shadow-md shadow-[var(--ag-sys-color-primary)]/20"
                             >
                                 {t("search.ver_resultados")}
                             </button>
