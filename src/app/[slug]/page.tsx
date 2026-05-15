@@ -87,6 +87,8 @@ export default async function SearchResultsPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     const params = await props.params;
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
     
     // Explicit protection against catching known folders if the dev server hasn't hot-reloaded the tree perfectly
     const reservedRoutes = ['tienda', 'checkout', 'admin', 'auth', 'favoritos'];
@@ -117,7 +119,7 @@ export default async function SearchResultsPage(props: {
     return (
         <div className="container mx-auto px-4 pt-0 pb-8 sm:py-8 min-h-screen">
             <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2 pt-2 sm:pt-0">
-                {generateSeoH1(parsedSlug, locationName)}
+                {generateSeoH1(parsedSlug, locationName, locale)}
             </h1>
 
             <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>

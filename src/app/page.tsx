@@ -38,6 +38,8 @@ export default async function Home(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const searchParams = await props.searchParams;
+  const headersList = await headers();
+  const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
 
   const parsedSlug = {
     q: searchParams.q as string | undefined,
@@ -61,7 +63,7 @@ export default async function Home(props: {
       ) : (
         <>
           <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2 pt-2 sm:pt-0">
-            {generateSeoH1(parsedSlug, locationName)}
+            {generateSeoH1(parsedSlug, locationName, locale)}
           </h1>
           <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
             <ActiveSearchBar />

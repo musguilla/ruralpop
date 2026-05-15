@@ -10,7 +10,6 @@ import {
     ShieldCheck,
     AlertCircle,
     DownloadCloud,
-    Share2,
     FileText,
     Mail,
     LineChart
@@ -29,7 +28,6 @@ export function AdminSidebar() {
                 <div className="pt-4 pb-2">
                     <p className="px-4 text-[10px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Marketing</p>
                 </div>
-                <AdminNavLink href="/admin/marketing/social" icon={<Share2 className="w-5 h-5" />} label="Social Media" />
                 <AdminNavLink href="/admin/marketing/cms" icon={<FileText className="w-5 h-5" />} label="CMS" />
                 <AdminNavLink href="/admin/marketing/email" icon={<Mail className="w-5 h-5" />} label="Email marketing" />
                 <AdminNavLink href="/admin/marketing/ghost" icon={<Package className="w-5 h-5" />} label="Empresas ghost" />

@@ -70,14 +70,22 @@ async function run() {
                 
                 if (newSize < originalSize) {
                     // Extract the storage path from public URL
-                    // Example URL: https://...supabase.co/storage/v1/object/public/listings/123/456/photo.jpg
-                    // The path is everything after "/listings/"
-                    const pathMatch = url.match(/\/object\/public\/listings\/(.+)$/);
-                    if (!pathMatch || !pathMatch[1]) {
+                    // Example URL 1: https://...supabase.co/storage/v1/object/public/listings/123/456/photo.jpg
+                    // Example URL 2: https://media.ruralpop.com/listings/123/456/photo.jpg
+                    let storagePath = null;
+                    const supabaseMatch = url.match(/\/object\/public\/listings\/(.+)$/);
+                    const mediaMatch = url.match(/media\.ruralpop\.com\/listings\/(.+)$/);
+                    
+                    if (supabaseMatch && supabaseMatch[1]) {
+                        storagePath = supabaseMatch[1];
+                    } else if (mediaMatch && mediaMatch[1]) {
+                        storagePath = mediaMatch[1];
+                    }
+
+                    if (!storagePath) {
                         console.log(`  └ ⚠️ Could not extract storage path for ${url}`);
                         continue;
                     }
-                    const storagePath = pathMatch[1];
 
                     // Re-upload (upsert) the optimized WebP or JPEG
                     const { error: uploadError } = await supabase.storage
