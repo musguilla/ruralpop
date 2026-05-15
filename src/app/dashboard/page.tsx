@@ -2,6 +2,9 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Tractor, MapPin, Tag, Clock } from "lucide-react";
 import { DashboardListingActions } from "@/components/dashboard/DashboardListingActions";
@@ -14,6 +17,9 @@ type Props = {
 };
 
 export default async function DashboardPage(props: Props) {
+    const headersList = await headers();
+    const locale = (headersList.get("x-locale") || "es") as LocaleCode;
+    const dict = await getDictionary(locale);
     const searchParams = await props.searchParams;
     const currentTab = searchParams?.tab === "vendidos" ? "sold" : "active";
 
@@ -126,10 +132,10 @@ export default async function DashboardPage(props: Props) {
             <div className="container mx-auto px-4 max-w-6xl">
                 <header className="mb-8">
                     <h1 className="text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-                        Mi Panel
+                        {dict.dashboard.title}
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                        Gestiona tus anuncios publicados y su estado.
+                        {dict.dashboard.desc}
                     </p>
                 </header>
 
@@ -173,7 +179,7 @@ export default async function DashboardPage(props: Props) {
                                     ? 'bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]'
                                     : 'bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]'}`}
                             >
-                                Activos
+                                {dict.dashboard.tab_active}
                             </Link>
                             <Link
                                 href="/dashboard?tab=vendidos"
@@ -181,19 +187,19 @@ export default async function DashboardPage(props: Props) {
                                     ? 'bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]'
                                     : 'bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]'}`}
                             >
-                                Vendidos
+                                {dict.dashboard.tab_sold}
                             </Link>
                             <Link
                                 href="/dashboard/compras"
                                 className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]`}
                             >
-                                Compras
+                                {dict.dashboard.tab_purchases}
                             </Link>
                             <Link
                                 href="/dashboard/monedero"
                                 className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]`}
                             >
-                                Monedero
+                                {dict.dashboard.tab_wallet}
                             </Link>
                         </div>
 
@@ -201,7 +207,7 @@ export default async function DashboardPage(props: Props) {
                         {!combinedItems || combinedItems.length === 0 ? (
                             <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] p-12 text-center">
                                 <p className="text-[var(--ag-sys-color-text-muted)] font-medium">
-                                    {currentTab === 'sold' ? 'Aún no has marcado ningún anuncio como vendido.' : 'No tienes anuncios activos.'}
+                                    {currentTab === 'sold' ? 'Aún no has marcado ningún anuncio como vendido.' : dict.dashboard.empty_active}
                                 </p>
                             </div>
                         ) : (

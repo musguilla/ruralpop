@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { Mail, MessageSquare, Phone } from "lucide-react";
 import { submitContact } from "./actions";
+import { useTranslation } from "@/context/LocaleContext";
 
 export default function ContactPage() {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [successMsg, setSuccessMsg] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
@@ -40,14 +42,14 @@ export default function ContactPage() {
                         <Mail className="w-6 h-6" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">Contacto</h1>
-                        <p className="text-[var(--ag-sys-color-text-muted)] mt-1 font-medium">Estamos aquí para ayudarte</p>
+                        <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">{t('contact.title')}</h1>
+                        <p className="text-[var(--ag-sys-color-text-muted)] mt-1 font-medium">{t('contact.desc')}</p>
                     </div>
                 </header>
 
                 <div className="space-y-8">
                     <p className="text-[var(--ag-sys-color-text)] leading-relaxed">
-                        ¿Tienes problemas técnicos, alertas sobre anuncios fraudulentos o dudas sobre cómo funciona Ruralpop? Ponte en contacto con nosotros para un soporte directo rellenando el siguiente formulario.
+                        {t('contact.intro')}
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -75,45 +77,45 @@ export default function ContactPage() {
                                     )}
 
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Tu Nombre</label>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('contact.name_label')}</label>
                                         <input
                                             type="text"
                                             name="name"
                                             required
                                             className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
-                                            placeholder="Nombre completo"
+                                            placeholder={t('contact.name_ph')}
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Tu Email</label>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('contact.email_label')}</label>
                                         <input
                                             type="email"
                                             name="email"
                                             required
                                             className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
-                                            placeholder="Para que podamos responderte"
+                                            placeholder={t('contact.email_ph')}
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Asunto</label>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('contact.subject_label')}</label>
                                         <input
                                             type="text"
                                             name="subject"
                                             className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition"
-                                            placeholder="¿De qué trata?"
+                                            placeholder={t('contact.subject_ph')}
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Mensaje</label>
+                                        <label className="block text-sm font-bold text-gray-700 mb-1">{t('contact.message_label')}</label>
                                         <textarea
                                             name="message"
                                             required
                                             rows={5}
                                             className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition resize-none"
-                                            placeholder="Explícanos tu caso..."
+                                            placeholder={t('contact.message_ph')}
                                         />
                                     </div>
 
@@ -122,7 +124,7 @@ export default function ContactPage() {
                                         disabled={isLoading}
                                         className="mt-2 flex items-center justify-center gap-2 bg-[var(--ag-sys-color-primary)] text-white font-bold py-3 px-6 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-60"
                                     >
-                                        {isLoading ? "Enviando..." : "Enviar Mensaje"}
+                                        {isLoading ? t('contact.submitting') : t('contact.submit')}
                                     </button>
                                 </form>
                             )}
@@ -135,9 +137,9 @@ export default function ContactPage() {
                                     <Mail className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-blue-800 mb-1">Atención Garantizada</h4>
+                                    <h4 className="font-bold text-blue-800 mb-1">{t('contact.box1_title')}</h4>
                                     <p className="text-sm text-blue-700/80 leading-relaxed">
-                                        Nuestro equipo revisa todos los formularios. Para posibles estafas o contenido fraudulento, indícalo directamente en el asunto para darle máxima prioridad.
+                                        {t('contact.box1_desc')}
                                     </p>
                                 </div>
                             </div>
@@ -147,9 +149,9 @@ export default function ContactPage() {
                                     <MessageSquare className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-yellow-800 mb-1">Feedback de la comunidad</h4>
+                                    <h4 className="font-bold text-yellow-800 mb-1">{t('contact.box2_title')}</h4>
                                     <p className="text-sm text-yellow-700/80 leading-relaxed">
-                                        Constantemente implementamos mejoras que nos sugerís. Si echas en falta alguna categoría, subcategoría o utilidad, no dudes en escribirnos un correo.
+                                        {t('contact.box2_desc')}
                                     </p>
                                 </div>
                             </div>

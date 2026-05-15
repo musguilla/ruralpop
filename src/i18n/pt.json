@@ -212,5 +212,33 @@
     "municipality": "Localidade",
     "uploading": "A carregar...",
     "saving": "A guardar..."
+  },
+  "dashboard": {
+    "title": "O Meu Painel",
+    "desc": "Gere os teus anúncios publicados e o seu estado.",
+    "tab_active": "Ativos",
+    "tab_sold": "Vendidos",
+    "tab_purchases": "Compras",
+    "tab_wallet": "Carteira",
+    "empty_active": "Não tens anúncios ativos."
+  },
+  "contact": {
+    "title": "Contacto",
+    "desc": "Estamos aqui para ajudar-te",
+    "intro": "Tens problemas técnicos, alertas sobre anúncios fraudulentos ou dúvidas sobre como funciona a Ruralpop? Entra em contacto connosco para um suporte direto preenchendo o seguinte formulário.",
+    "name_label": "O teu Nome",
+    "name_ph": "Nome completo",
+    "email_label": "O teu Email",
+    "email_ph": "Para que possamos responder-te",
+    "subject_label": "Assunto",
+    "subject_ph": "Sobre o que é?",
+    "message_label": "Mensagem",
+    "message_ph": "Explica-nos o teu caso...",
+    "submit": "Enviar Mensagem",
+    "submitting": "A enviar...",
+    "box1_title": "Atenção Garantida",
+    "box1_desc": "A nossa equipa revê todos os formulários. Para possíveis burlas ou conteúdo fraudulento, indica-o diretamente no assunto para lhe dar prioridade máxima.",
+    "box2_title": "Feedback da comunidade",
+    "box2_desc": "Implementamos constantemente melhorias sugeridas por ti. Se sentes a falta de alguma categoria, subcategoria ou utilidade, não hesites em enviar-nos um email."
   }
 }
