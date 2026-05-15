@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { User, List, Heart, MessageSquare, Briefcase, HelpCircle, LogOut, ChevronDown, UserCircle2 } from "lucide-react";
+import { User, Heart, MessageSquare, Briefcase, HelpCircle, LogOut, ChevronDown, UserCircle2, Handshake, Tag, Wallet } from "lucide-react";
 import { ChatBadge } from "@/components/chat/ChatBadge";
 import { getImageUrl } from "@/utils/mediaUtils";
 import { createClient } from "@/utils/supabase/client";
@@ -85,37 +85,60 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                             </LocalizedLink>
                         ) : (
                             <>
+                                <div className="px-4 pt-3 pb-1">
+                                    <p className="text-[11px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Transacciones</p>
+                                </div>
                                 <LocalizedLink
-                                    href="/account"
+                                    href="/compras"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    <User className="w-5 h-5" />
-                                    <span className="font-semibold">{t("mi_cuenta")}</span>
+                                    <Handshake className="w-5 h-5 text-gray-500" />
+                                    <span className="font-semibold text-gray-800">Compras</span>
                                 </LocalizedLink>
                                 <LocalizedLink
                                     href="/dashboard"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    <List className="w-5 h-5" />
-                                    <span className="font-semibold">{t("mis_anuncios")}</span>
+                                    <Tag className="w-5 h-5 text-gray-500" />
+                                    <span className="font-semibold text-gray-800">Ventas</span>
                                 </LocalizedLink>
+                                <LocalizedLink
+                                    href="/monedero"
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <Wallet className="w-5 h-5 text-gray-500" />
+                                    <span className="font-semibold text-gray-800">Monedero</span>
+                                </LocalizedLink>
+
+                                <div className="px-4 pt-4 pb-1 border-t border-gray-100 mt-1">
+                                    <p className="text-[11px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Cuenta</p>
+                                </div>
                                 <LocalizedLink
                                     href="/favoritos"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    <Heart className="w-5 h-5" />
-                                    <span className="font-semibold">{t("mis_guardados")}</span>
+                                    <Heart className="w-5 h-5 text-gray-500" />
+                                    <span className="font-semibold text-gray-800">{t("mis_guardados") || "Favoritos"}</span>
                                 </LocalizedLink>
                                 <LocalizedLink
                                     href="/chat"
                                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    <MessageSquare className="w-5 h-5" />
-                                    <span className="font-semibold">{t("mis_mensajes")}</span>
+                                    <MessageSquare className="w-5 h-5 text-gray-500" />
+                                    <span className="font-semibold text-gray-800">{t("mis_mensajes") || "Mensajes"}</span>
+                                </LocalizedLink>
+                                <LocalizedLink
+                                    href="/account"
+                                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <User className="w-5 h-5 text-gray-500" />
+                                    <span className="font-semibold text-gray-800">Mi perfil</span>
                                 </LocalizedLink>
 
                                 <div className="my-1 border-t border-gray-100"></div>
