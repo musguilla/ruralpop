@@ -263,6 +263,20 @@ export default function AdminEditListingForm({ listing, initialProvinces, initia
                                 />
                             </div>
 
+                            <div className="md:col-span-2 bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 flex items-start gap-3">
+                                <input
+                                    type="checkbox"
+                                    name="vender_online"
+                                    id="vender_online"
+                                    defaultChecked={listing.vender_online}
+                                    className="mt-1 w-4 h-4 text-emerald-600 rounded border-emerald-300 focus:ring-emerald-500"
+                                />
+                                <div>
+                                    <label htmlFor="vender_online" className="font-bold text-emerald-900 block cursor-pointer">Venta Online Activa</label>
+                                    <p className="text-xs text-emerald-700 mt-0.5">Permite a los usuarios comprar este artículo mediante el sistema de pagos seguros (escrow).</p>
+                                </div>
+                            </div>
+
                             <div className="z-20">
                                 <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
                                     <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Provincia *

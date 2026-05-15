@@ -112,6 +112,7 @@ export async function adminUpdateListing(listingId: string, formData: FormData) 
 
     const contact_phone = formData.get("contact_phone") as string | null;
     const price_type = formData.get("price_type") as string;
+    const vender_online = formData.get("vender_online") === "on";
     const imageUrlsString = formData.get("image_urls") as string;
     const image_urls = imageUrlsString ? JSON.parse(imageUrlsString) : [];
 
@@ -132,7 +133,8 @@ export async function adminUpdateListing(listingId: string, formData: FormData) 
             municipality_id,
             price_type,
             image_urls,
-            contact_phone
+            contact_phone,
+            vender_online
         })
         .eq("id", listingId);
 
