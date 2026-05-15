@@ -128,9 +128,7 @@ export function LocationModal({
                                     <div className="flex-1 text-left flex flex-col">
                                         <span className="text-sm sm:text-base">
                                             {renderName()}
-                                            {loc.type === 'province' ? (
-                                                <span className="text-gray-400 ml-1">(Provincia)</span>
-                                            ) : (
+                                            {loc.type !== 'province' && (
                                                 <span className="text-gray-400 ml-1">, {loc.province}</span>
                                             )}
                                         </span>
