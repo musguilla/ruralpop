@@ -5,18 +5,21 @@ import { Histograms } from "./AdminStatCard";
 
 export function AdminSalesChart({
     featured,
-    subscriptions
+    subscriptions,
+    escrowFees
 }: {
     featured: Histograms;
     subscriptions: Histograms;
+    escrowFees: Histograms;
 }) {
-    const [filter, setFilter] = useState<'days' | 'weeks' | 'months'>('days');
+    const [filter, setFilter] = useState<'days' | 'weeks' | 'months'>('months');
 
     const chartFeatured = featured[filter];
     const chartSubs = subscriptions[filter];
+    const chartEscrow = escrowFees[filter];
 
     // Compute max for scaling (the tallest stacked bar)
-    const maxVal = Math.max(...chartFeatured.map((h, i) => h.value + chartSubs[i].value));
+    const maxVal = Math.max(...chartFeatured.map((h, i) => h.value + chartSubs[i].value + chartEscrow[i].value));
 
     return (
         <div className="pt-6">
@@ -53,10 +56,12 @@ export function AdminSalesChart({
                 <div className="h-64 flex items-end justify-between gap-4 px-4 pt-4">
                     {chartFeatured.map((feat, i) => {
                         const sub = chartSubs[i];
-                        const total = feat.value + sub.value;
+                        const esc = chartEscrow[i];
+                        const total = feat.value + sub.value + esc.value;
                         const heightPercent = maxVal > 0 ? (total / maxVal) * 100 : 0;
                         
                         // Los % relativos de cada bloque sobre el bloque individual, para apilar visualmente
+                        const escH = total > 0 ? (esc.value / total) * 100 : 0;
                         const subH = total > 0 ? (sub.value / total) * 100 : 0;
                         const featH = total > 0 ? (feat.value / total) * 100 : 0;
                         
@@ -70,12 +75,17 @@ export function AdminSalesChart({
                                     className="w-full flex flex-col justify-end rounded-t-lg transition-all cursor-pointer overflow-hidden opacity-60 hover:opacity-100 group-hover:opacity-100 relative bg-[var(--ag-sys-color-border)]"
                                     style={{ height: `${heightPercent}%`, minHeight: heightPercent === 0 ? '2px' : undefined }}
                                 >
-                                    {/* Stack 1: Perfiles Profesionales (AMBER) */}
+                                    {/* Stack 1: Comisiones Escrow (GREEN) */}
+                                    <div 
+                                        className="w-full bg-emerald-500 flex-shrink-0 transition-opacity" 
+                                        style={{ height: `${escH}%` }} 
+                                    />
+                                    {/* Stack 2: Perfiles Profesionales (AMBER) */}
                                     <div 
                                         className="w-full bg-amber-500 flex-shrink-0 transition-opacity" 
                                         style={{ height: `${subH}%` }} 
                                     />
-                                    {/* Stack 2: Anuncios Destacados (PURPLE/PRIMARY) */}
+                                    {/* Stack 3: Anuncios Destacados (PURPLE/PRIMARY) */}
                                     <div 
                                         className="w-full bg-purple-500 flex-shrink-0 transition-opacity" 
                                         style={{ height: `${featH}%` }} 
@@ -83,9 +93,10 @@ export function AdminSalesChart({
                                 </div>
                                 
                                 {/* Tooltip Flotante de Detalles Apilables */}
-                                <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity -top-16 left-1/2 -translate-x-1/2 bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-surface)] text-[10px] font-bold px-3 py-2 rounded-lg pointer-events-none whitespace-nowrap z-10 shadow-lg flex flex-col items-center">
+                                <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity -top-20 left-1/2 -translate-x-1/2 bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-surface)] text-[10px] font-bold px-3 py-2 rounded-lg pointer-events-none whitespace-nowrap z-10 shadow-lg flex flex-col items-center">
                                     <div className="text-white mb-1">Total: {new Intl.NumberFormat('de-DE').format(total)} €</div>
                                     <div className="flex flex-col gap-0.5 mt-1 border-t border-[var(--ag-sys-color-border)]/20 pt-1">
+                                        <span className="text-emerald-300">Escrow: {new Intl.NumberFormat('de-DE').format(esc.value)} €</span>
                                         <span className="text-purple-300">Destacados: {new Intl.NumberFormat('de-DE').format(feat.value)} €</span>
                                         <span className="text-amber-300">Perfiles: {new Intl.NumberFormat('de-DE').format(sub.value)} €</span>
                                     </div>
@@ -100,7 +111,11 @@ export function AdminSalesChart({
                 </div>
                 
                 {/* Leyenda Footer */}
-                <div className="flex gap-6 mt-10 justify-center">
+                <div className="flex flex-wrap gap-4 sm:gap-6 mt-10 justify-center">
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-md bg-emerald-500 opacity-60"></div>
+                        <span className="text-xs font-bold text-[var(--ag-sys-color-text-muted)]">Comisiones Escrow</span>
+                    </div>
                     <div className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-md bg-purple-500 opacity-60"></div>
                         <span className="text-xs font-bold text-[var(--ag-sys-color-text-muted)]">Anuncios Destacados</span>

@@ -301,7 +301,7 @@ export default async function AdminDashboard() {
                 />
             </div>
 
-            <AdminSalesChart featured={realFeaturedHistograms} subscriptions={realSubscriptionHistograms} />
+            <AdminSalesChart featured={realFeaturedHistograms} subscriptions={realSubscriptionHistograms} escrowFees={escrowFeesHistograms} />
         </div>
     );
 }
