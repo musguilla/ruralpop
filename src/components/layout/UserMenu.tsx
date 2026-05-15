@@ -122,7 +122,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <Heart className="w-5 h-5 text-gray-500" />
-                                    <span className="font-semibold text-gray-800">{t("mis_guardados") || "Favoritos"}</span>
+                                    <span className="font-semibold text-gray-800">Favoritos</span>
                                 </LocalizedLink>
                                 <LocalizedLink
                                     href="/chat"
@@ -130,7 +130,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <MessageSquare className="w-5 h-5 text-gray-500" />
-                                    <span className="font-semibold text-gray-800">{t("mis_mensajes") || "Mensajes"}</span>
+                                    <span className="font-semibold text-gray-800">Mensajes</span>
                                 </LocalizedLink>
                                 <LocalizedLink
                                     href="/account"
@@ -138,7 +138,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <User className="w-5 h-5 text-gray-500" />
-                                    <span className="font-semibold text-gray-800">Mi perfil</span>
+                                    <span className="font-semibold text-gray-800">Perfil</span>
                                 </LocalizedLink>
 
                                 <div className="my-1 border-t border-gray-100"></div>
