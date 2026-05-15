@@ -14,7 +14,7 @@ export type UnifiedItem = {
 type Props = {
     item: UnifiedItem;
     publicUser: any;
-    currentTab: 'active' | 'sold';
+    currentTab: 'active' | 'sold' | 'reserved';
 };
 
 export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
