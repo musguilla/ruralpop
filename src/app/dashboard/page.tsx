@@ -204,7 +204,11 @@ export default async function DashboardPage(props: Props) {
                         {!combinedItems || combinedItems.length === 0 ? (
                             <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] p-12 text-center">
                                 <p className="text-[var(--ag-sys-color-text-muted)] font-medium">
-                                    {currentTab === 'sold' ? 'Aún no has marcado ningún anuncio como vendido.' : dict.dashboard.empty_active}
+                                    {currentTab === 'sold' 
+                                        ? 'Aún no has marcado ningún anuncio como vendido.' 
+                                        : currentTab === 'reserved'
+                                        ? 'No tienes ventas en curso en este momento.'
+                                        : dict.dashboard.empty_active}
                                 </p>
                             </div>
                         ) : (
