@@ -46,7 +46,7 @@ export default async function AdminListingsPage(props: {
         query = query.eq('status', 'sold');
     }
 
-    if (searchParams.status === 'online') {
+    if (searchParams.online === 'true') {
         query = query.eq('vender_online', true);
     }
 
@@ -122,6 +122,17 @@ export default async function AdminListingsPage(props: {
         return `/admin/listings?${params.toString()}`;
     };
 
+    const buildOnlineLink = () => {
+        const params = new URLSearchParams(searchParams as Record<string, string>);
+        if (params.get("online") === "true") {
+            params.delete("online");
+        } else {
+            params.set("online", "true");
+        }
+        params.delete("page");
+        return `/admin/listings?${params.toString()}`;
+    };
+
     return (
         <div className="space-y-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
@@ -148,8 +159,8 @@ export default async function AdminListingsPage(props: {
                         Vendidos
                     </Link>
                     <Link 
-                        href={buildLink("online")} 
-                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${searchParams.status === 'online' ? 'bg-[var(--ag-sys-color-primary)] text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-gray-50'}`}
+                        href={buildOnlineLink()} 
+                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${searchParams.online === 'true' ? 'bg-emerald-500 text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-emerald-50'}`}
                     >
                         Venta Online
                     </Link>
