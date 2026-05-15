@@ -93,12 +93,6 @@ export default function AdminEditListingForm({ listing, initialProvinces, initia
         e.preventDefault();
         setIsPending(true);
 
-        if (imageUrls.length === 0) {
-            showAlert({ title: "Campo requerido", message: "El anuncio debe tener al menos una fotografía.", type: "error" });
-            setIsPending(false);
-            return;
-        }
-
         const formData = new FormData(e.currentTarget);
         formData.append("image_urls", JSON.stringify(imageUrls));
 
