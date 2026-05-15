@@ -46,6 +46,10 @@ export default async function AdminListingsPage(props: {
         query = query.eq('status', 'sold');
     }
 
+    if (searchParams.status === 'online') {
+        query = query.eq('vender_online', true);
+    }
+
     if (searchParams.q && typeof searchParams.q === 'string') {
         query = query.ilike('title', `%${searchParams.q}%`);
     }
@@ -143,6 +147,12 @@ export default async function AdminListingsPage(props: {
                     >
                         Vendidos
                     </Link>
+                    <Link 
+                        href={buildLink("online")} 
+                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${searchParams.status === 'online' ? 'bg-[var(--ag-sys-color-primary)] text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-gray-50'}`}
+                    >
+                        Venta Online
+                    </Link>
                 </div>
                 
                 <div className="flex items-center gap-2">
@@ -158,76 +168,71 @@ export default async function AdminListingsPage(props: {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-3">
                 {listings?.map((l: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                     <div
                         key={l.id}
-                        className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md transition-all group p-6"
+                        className="bg-[var(--ag-sys-color-surface)] rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm hover:shadow-md transition-all group p-3 sm:p-4"
                     >
-                        <div className="flex flex-col lg:flex-row gap-8 items-start">
+                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                             {/* Image and Status */}
-                            <div className="relative w-full lg:w-48 aspect-square rounded-2xl overflow-hidden bg-[var(--ag-sys-color-background)] flex-shrink-0">
+                            <div className="relative w-full sm:w-24 sm:h-24 aspect-[4/3] sm:aspect-square rounded-xl overflow-hidden bg-[var(--ag-sys-color-background)] flex-shrink-0">
                                 {l.image_urls?.[0] ? (
                                     <SupabaseImage src={l.image_urls[0]} alt={l.title} fill className="object-cover" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-[var(--ag-sys-color-text-muted)] opacity-20">
-                                        <Package className="w-12 h-12" />
+                                        <Package className="w-8 h-8" />
                                     </div>
                                 )}
-                                <div className={`absolute top-2 left-2 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider backdrop-blur-md ${l.status === 'active' ? 'bg-green-500/90 text-white' :
+                                <div className={`absolute top-1 left-1 px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider backdrop-blur-md ${l.status === 'active' ? 'bg-green-500/90 text-white' :
                                     l.status === 'moderated' ? 'bg-amber-500/90 text-white' :
                                         'bg-red-500/90 text-white'
                                     }`}>
                                     {l.status}
                                 </div>
+                                {l.vender_online && (
+                                    <div className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider backdrop-blur-md bg-emerald-500/90 text-white">
+                                        Online
+                                    </div>
+                                )}
                             </div>
 
                             {/* Info Wrapper */}
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start mb-4 gap-4">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-4 mb-1 flex-wrap">
-                                            <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] line-clamp-1">{l.title}</h3>
-                                        </div>
-                                        <div className="flex items-center gap-3 text-xs text-[var(--ag-sys-color-text-muted)] font-bold flex-wrap">
-                                            <span className="flex items-center gap-1 whitespace-nowrap"><MapPin className="w-3 h-3" /> {l.location}</span>
-                                            <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full flex-shrink-0"></span>
-                                            <span className="flex items-center gap-1 whitespace-nowrap"><Tag className="w-3 h-3" /> {l.category}{l.subcategory ? ` > ${l.subcategory}` : ''}</span>
-                                            <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full flex-shrink-0"></span>
-                                            <span className="flex items-center gap-1 text-red-500 whitespace-nowrap"><Heart className="w-3 h-3 fill-current" /> {l.favorites?.[0]?.count || 0}</span>
-                                        </div>
+                            <div className="flex-1 min-w-0 w-full flex flex-col md:flex-row gap-4 md:items-center justify-between">
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                        <h3 className="text-base font-black text-[var(--ag-sys-color-text)] line-clamp-1">{l.title}</h3>
+                                        <span className="text-base font-black text-[var(--ag-sys-color-primary)]">{formatCurrency(l.price)}</span>
                                     </div>
-                                    <div className="text-right flex-shrink-0">
-                                        <p className="text-2xl font-black text-[var(--ag-sys-color-primary)]">{formatCurrency(l.price)}</p>
+                                    <div className="flex items-center gap-2 text-[10px] text-[var(--ag-sys-color-text-muted)] font-bold flex-wrap">
+                                        <span className="flex items-center gap-1 whitespace-nowrap"><MapPin className="w-3 h-3" /> {l.location}</span>
+                                        <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full flex-shrink-0"></span>
+                                        <span className="flex items-center gap-1 whitespace-nowrap"><Tag className="w-3 h-3" /> {l.category}{l.subcategory ? ` > ${l.subcategory}` : ''}</span>
+                                        <span className="w-1 h-1 bg-[var(--ag-sys-color-border)] rounded-full flex-shrink-0"></span>
+                                        <span className="flex items-center gap-1 text-red-500 whitespace-nowrap"><Heart className="w-3 h-3 fill-current" /> {l.favorites?.[0]?.count || 0}</span>
                                     </div>
                                 </div>
 
-                                <p className="text-sm text-[var(--ag-sys-color-text-muted)] line-clamp-2 mb-6">
-                                    {l.description}
-                                </p>
-
-                                <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-[var(--ag-sys-color-border)]">
-                                    {/* Seller Info & Actions */}
-                                    <div className="flex items-center justify-between w-full">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] flex items-center justify-center text-[var(--ag-sys-color-primary)] overflow-hidden flex-shrink-0">
-                                                {(l.seller as Record<string, string | null>)?.avatar_url ? <Image src={(l.seller as Record<string, string | null>).avatar_url as string} alt="" width={32} height={32} /> : <UserCheck className="w-4 h-4" />}
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-bold text-[var(--ag-sys-color-text)] leading-none mb-1">{(l.seller as Record<string, string | null>)?.name || 'Vendedor'}</p>
-                                                <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider font-bold">{formatRelativeTime(l.created_at)}</span>
-                                            </div>
+                                {/* Seller Info & Actions */}
+                                <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-4 flex-shrink-0">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-md bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] flex items-center justify-center text-[var(--ag-sys-color-primary)] overflow-hidden flex-shrink-0">
+                                            {(l.seller as Record<string, string | null>)?.avatar_url ? <Image src={(l.seller as Record<string, string | null>).avatar_url as string} alt="" width={24} height={24} /> : <UserCheck className="w-3 h-3" />}
                                         </div>
-                                        
-                                        <div className="flex items-center gap-2">
-                                            <Link href={`/admin/listings/edit/${encodeId(l.id)}`} title="Editar anuncio" className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-600 border border-blue-100 rounded-full hover:bg-blue-100 transition-all">
-                                                <Edit className="w-4 h-4" />
-                                            </Link>
-                                            <Link href={`/item/${encodeId(l.id)}`} target="_blank" title="Ver anuncio" className="flex items-center justify-center w-8 h-8 bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-full hover:bg-[var(--ag-sys-color-border)] transition-all">
-                                                <Eye className="w-4 h-4" />
-                                            </Link>
-                                            <DeleteButton listingId={l.id} title={l.title} sellerEmail={(l.seller as Record<string, string | null>)?.email || undefined} iconOnly={true} />
+                                        <div className="hidden md:block">
+                                            <p className="text-[10px] font-bold text-[var(--ag-sys-color-text)] leading-none mb-0.5 truncate max-w-[100px]">{(l.seller as Record<string, string | null>)?.name || 'Vendedor'}</p>
+                                            <span className="text-[9px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider font-bold">{formatRelativeTime(l.created_at)}</span>
                                         </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-1.5">
+                                        <Link href={`/admin/listings/edit/${encodeId(l.id)}`} title="Editar anuncio" className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-600 border border-blue-100 rounded-full hover:bg-blue-100 transition-all">
+                                            <Edit className="w-4 h-4" />
+                                        </Link>
+                                        <Link href={`/anuncio/${l.slug || 'anuncio-' + encodeId(l.id)}`} target="_blank" title="Ver anuncio" className="flex items-center justify-center w-8 h-8 bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] rounded-full hover:bg-[var(--ag-sys-color-border)] transition-all">
+                                            <Eye className="w-4 h-4" />
+                                        </Link>
+                                        <DeleteButton listingId={l.id} title={l.title} sellerEmail={(l.seller as Record<string, string | null>)?.email || undefined} iconOnly={true} />
                                     </div>
                                 </div>
                             </div>
