@@ -10,7 +10,7 @@ import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
-import { getDefaultTenantFilterString } from "@/config/tenants";
+import { getServerTenantFilterString } from "@/utils/tenant/server";
 
 export async function ListingsGrid({ searchParams, isHome = false, disableInFeedAds = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean, disableInFeedAds?: boolean }) {
     let supabase = await createClient();
@@ -45,7 +45,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         );
     }
 
-    const buildQuery = (fallbackLevel = 0) => {
+    const buildQuery = async (fallbackLevel = 0) => {
         let query = supabase
             .from("listings")
             .select(`
@@ -66,7 +66,8 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         }
 
         // FASE 6: Multi-tenant filter
-        query = query.or(getDefaultTenantFilterString());
+        const tenantFilter = await getServerTenantFilterString();
+        query = query.or(tenantFilter);
 
         // Apply Sorting
         switch (sortParam) {
@@ -149,7 +150,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
     };
 
     // Attempt primary strict AND search
-    let query = buildQuery(0);
+    let query = await buildQuery(0);
     let { data: listings, error, count } = await query.range(from, to);
 
     const isMultiWordSearch = typeof searchParams.q === 'string' && searchParams.q.trim().split(/[\s\-]+/).filter(t => t.length > 2).length > 1;
@@ -158,7 +159,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     // Retry with OR fallback if needed
     if (!error && (!listings || listings.length === 0) && isMultiWordSearch) {
-        query = buildQuery(1);
+        query = await buildQuery(1);
         const fallbackRes = await query.range(from, to);
         listings = fallbackRes.data;
         count = fallbackRes.count;
@@ -167,7 +168,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     // Ultra fallback: Retry with Accent/Vowel wildcards if still no results
     if (!error && (!listings || listings.length === 0) && typeof searchParams.q === 'string') {
-        query = buildQuery(2);
+        query = await buildQuery(2);
         const wildcardRes = await query.range(from, to);
         listings = wildcardRes.data;
         count = wildcardRes.count;
@@ -176,7 +177,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     // SEO Fallback 1: Keep only Category, drop subcategory, search and location
     if (!error && (!listings || listings.length === 0) && searchParams.category) {
-        query = buildQuery(3);
+        query = await buildQuery(3);
         const catRes = await query.range(from, to);
         listings = catRes.data;
         count = catRes.count;
@@ -193,7 +194,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     // SEO Fallback 2: Drop absolutely everything to prevent 0 results (Soft 404 Google warning)
     if (!error && (!listings || listings.length === 0)) {
-        query = buildQuery(4);
+        query = await buildQuery(4);
         const globalRes = await query.range(from, to);
         listings = globalRes.data;
         count = globalRes.count;

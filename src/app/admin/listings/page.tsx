@@ -21,7 +21,7 @@ import { encodeId } from "@/utils/idUtils";
 import Link from "next/link";
 
 import { Pagination } from "@/components/ui/Pagination";
-import { getDefaultTenantFilterString } from "@/config/tenants";
+import { getServerTenantFilterString } from "@/utils/tenant/server";
 
 export default async function AdminListingsPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -36,7 +36,7 @@ export default async function AdminListingsPage(props: {
     let query = supabase
         .from("listings")
         .select("*, seller:users(*), favorites(count)", { count: "exact" })
-        .or(getDefaultTenantFilterString())
+        .or(await getServerTenantFilterString())
         .order("created_at", { ascending: false })
         .range(from, to);
 
@@ -69,7 +69,7 @@ export default async function AdminListingsPage(props: {
         query = supabase
             .from("listings")
             .select("*, seller:users(*), favorites(count)", { count: "exact" })
-            .or(getDefaultTenantFilterString())
+            .or(await getServerTenantFilterString())
             .order("created_at", { ascending: false });
             
         if (searchParams.userId && typeof searchParams.userId === 'string') {
