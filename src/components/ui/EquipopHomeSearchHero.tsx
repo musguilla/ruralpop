@@ -69,7 +69,7 @@ export function EquipopHomeSearchHero() {
                     <Search className="w-5 h-5 text-gray-400" />
                     <input
                         type="text"
-                        placeholder="Buscar caballos, equipamiento, servicios..."
+                        placeholder="silla salto, manta, botas, ..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         className="w-full h-10 bg-transparent text-[var(--ag-sys-color-text)] outline-none"
@@ -120,7 +120,7 @@ export function EquipopHomeSearchHero() {
                         <Search className="w-5 h-5 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Buscar caballos, equipamiento..."
+                            placeholder="silla salto, manta, botas, ..."
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             className="w-full bg-transparent outline-none"
