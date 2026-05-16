@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Instagram } from "lucide-react";
 import { LocalizedLink } from "@/components/ui/LocalizedLink";
 import { headers } from "next/headers";
@@ -71,7 +72,7 @@ export async function EquipopFooter() {
                 <div className="flex flex-col max-w-sm gap-4">
                     <div className="flex items-center gap-6">
                         <LocalizedLink href="/" className="hover:opacity-80 transition-opacity">
-                            <span className="text-2xl font-extrabold tracking-tight text-[var(--ag-sys-color-text)]">Equipop</span>
+                            <Image src="/equipop-logo.png" alt="Equipop" width={140} height={40} className="object-contain dark:invert" />
                         </LocalizedLink>
                         <a href="https://www.instagram.com/ruralpopapp" target="_blank" rel="noopener noreferrer" className="text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors" aria-label="Instagram">
                             <Instagram className="w-7 h-7" strokeWidth={2.25} />

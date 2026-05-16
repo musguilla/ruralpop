@@ -10,6 +10,7 @@ import { UserMenu } from "@/components/layout/UserMenu";
 import { CartDropdown } from "@/components/layout/CartDropdown";
 import { LocalizedLink } from "@/components/ui/LocalizedLink";
 import { headers } from "next/headers";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 import { getDictionary } from "@/i18n/dictionaries";
 import { LocaleCode } from "@/i18n/config";
 
@@ -24,6 +25,9 @@ export async function Header() {
         const val = dict[key];
         return typeof val === 'string' ? val : String(key);
     };
+    
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
 
     // Fetch initial unread count
     const { count: unreadCount } = user ? await supabase
@@ -52,7 +56,13 @@ export async function Header() {
                     href="/"
                     className="flex items-center hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-md px-1 flex-shrink-0"
                 >
-                    <Image src="/ruralpop-logo.png" alt="Ruralpop" width={140} height={40} className="object-contain w-auto h-6 sm:h-8 md:h-[40px]" priority />
+                    <Image 
+                        src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"} 
+                        alt={isEquipop ? "Equipop" : "Ruralpop"} 
+                        width={140} height={40} 
+                        className="object-contain w-auto h-6 sm:h-8 md:h-[40px]" 
+                        priority 
+                    />
                 </LocalizedLink>
 
                 {/* Empty flex-1 to push actions to the right */}
