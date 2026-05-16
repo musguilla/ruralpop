@@ -14,6 +14,7 @@ import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityMo
 import { DogLawModal } from '../../src/components/ui/modals/DogLawModal';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
+import { getRuralpopDatabaseId } from '../../src/config/tenants';
 
 export default function PublishScreen() {
     const { session, user, isLoading } = useAuth();
@@ -280,7 +281,8 @@ export default function PublishScreen() {
                     contact_phone: phone,
                     vender_online: allowOnlineSale,
                     shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : 0,
-                    status: 'active'
+                    status: 'active',
+                    tenant_id: getRuralpopDatabaseId() || undefined
                 })
                 .select()
                 .single();

@@ -7,6 +7,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { ChevronLeft, Send, ImageIcon } from 'lucide-react-native';
+import { getDefaultTenantFilterString } from '../../src/config/tenants';
 
 interface Message {
     id: string;
@@ -90,7 +91,7 @@ export default function ChatScreen() {
 
     async function fetchListingData() {
         if (!listingId) return;
-        const { data } = await supabase.from('listings').select('title, price, image_urls').eq('id', listingId).single();
+        const { data } = await supabase.from('listings').select('title, price, image_urls').eq('id', listingId).or(getDefaultTenantFilterString()).single();
         if (data) {
             setListingData({
                 title: data.title,

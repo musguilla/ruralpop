@@ -12,6 +12,7 @@ import { FiltersModal } from '../../src/components/ui/modals/FiltersModal';
 import { CATEGORIES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { getDefaultTenantFilterString } from '../../src/config/tenants';
 
 const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 1;
@@ -75,7 +76,8 @@ export default function SearchScreen() {
           status,
           is_featured
         `)
-                .eq('status', 'active');
+                .eq('status', 'active')
+                .or(getDefaultTenantFilterString());
 
             if (activeQuery) {
                 // Use .or() to search across multiple columns like the web app

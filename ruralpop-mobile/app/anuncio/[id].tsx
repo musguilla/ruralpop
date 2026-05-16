@@ -14,6 +14,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useStripe } from '@stripe/stripe-react-native';
 import { calculateRuralpopFee } from '../../src/lib/escrow';
 import { buildWebListingUrl } from '../../src/lib/urls';
+import { getDefaultTenantFilterString } from '../../src/config/tenants';
 
 const { width, height } = Dimensions.get('window');
 
@@ -61,6 +62,7 @@ export default function ListingDetailsScreen() {
             seller:users (id, name, avatar_url, created_at, role, commercial_name)
           `)
                     .eq('id', id)
+                    .or(getDefaultTenantFilterString())
                     .single();
 
                 if (error) throw error;

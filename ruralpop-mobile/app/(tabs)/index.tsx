@@ -10,6 +10,7 @@ import { Listing } from '../../src/types';
 import { Search } from 'lucide-react-native';
 import { TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
+import { getDefaultTenantFilterString } from '../../src/config/tenants';
 
 const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 2;
@@ -80,6 +81,7 @@ export default function Home() {
                   is_featured
                 `)
                 .eq('status', 'active')
+                .or(getDefaultTenantFilterString())
                 .order('is_featured', { ascending: false, nullsFirst: false })
                 .order('created_at', { ascending: false })
                 .range(from, to);

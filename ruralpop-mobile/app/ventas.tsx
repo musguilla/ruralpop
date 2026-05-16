@@ -8,6 +8,7 @@ import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../src/lib/image-optimization';
 import { Listing } from '../src/types';
 import { ListingCard } from '../src/components/ui/ListingCard';
+import { getDefaultTenantFilterString } from '../src/config/tenants';
 
 export default function VentasScreen() {
     const { user } = useAuth();
@@ -77,6 +78,7 @@ export default function VentasScreen() {
                 .from('listings')
                 .select('*')
                 .eq('user_id', user.id)
+                .or(getDefaultTenantFilterString())
                 .order('created_at', { ascending: false });
 
             if (escrowError) throw escrowError;

@@ -5,6 +5,27 @@ import { getInternalSpanishRoute } from "@/i18n/utils";
 export async function middleware(request: NextRequest) {
     const { pathname, search } = request.nextUrl;
 
+    // --- Multi-Tenant: Equipop Domain Detection ---
+    const hostname = request.headers.get('host') || '';
+    // Reconocemos equipop.net, www.equipop.net, o entornos locales como equipop.localhost:3000
+    if (hostname.includes('equipop')) {
+        // Evitamos bucles si el middleware procesa internamente la ruta ya reescrita
+        if (!pathname.startsWith('/equipop') && !pathname.startsWith('/_next')) {
+            const url = request.nextUrl.clone();
+            url.pathname = `/equipop${pathname === '/' ? '' : pathname}`;
+            
+            const requestHeaders = new Headers(request.headers);
+            requestHeaders.set('x-tenant', 'equipop');
+            
+            let response = NextResponse.rewrite(url, {
+                request: { headers: requestHeaders }
+            });
+            
+            // Refrescar sesión Supabase de todas formas para Equipop
+            return await updateSession(request, response);
+        }
+    }
+
     // Redirigir URLs heredadas como /vaca/anuncio/[slug] o con dobles barras /vaca//anuncio/[slug]
     // hacia la nueva estructura limpia /anuncio/[slug]
     if (pathname.includes('/anuncio/')) {

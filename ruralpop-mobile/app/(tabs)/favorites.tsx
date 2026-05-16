@@ -8,6 +8,7 @@ import { supabase } from "../../src/lib/supabase";
 import { ListingCard } from "../../src/components/ui/ListingCard";
 import { Listing } from "../../src/types";
 import { useFavorites } from "../../src/contexts/FavoritesContext";
+import { getDefaultTenantFilterString } from "../../src/config/tenants";
 
 const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 2;
@@ -35,6 +36,7 @@ export default function FavoritesScreen() {
                 .select('*')
                 .in('id', Array.from(favorites))
                 .eq('status', 'active')
+                .or(getDefaultTenantFilterString())
                 .order('created_at', { ascending: false });
 
             if (error) throw error;

@@ -9,6 +9,7 @@ import { MessageCircle, Search, User as UserIcon } from 'lucide-react-native';
 import { supabase } from '../../src/lib/supabase';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { getDefaultTenantFilterString } from '../../src/config/tenants';
 
 interface Conversation {
     other_user_id: string;
@@ -54,11 +55,12 @@ export default function MessagesScreen() {
                     sender_id,
                     receiver_id,
                     listing_id,
-                    listings (title, price, image_urls),
+                    listings!inner (title, price, image_urls),
                     sender:users!messages_sender_id_fkey(id, name, commercial_name, avatar_url),
                     receiver:users!messages_receiver_id_fkey(id, name, commercial_name, avatar_url)
                 `)
                 .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+                .or(getDefaultTenantFilterString(), { referencedTable: 'listings' })
                 .order('created_at', { ascending: false });
 
             if (error) throw error;

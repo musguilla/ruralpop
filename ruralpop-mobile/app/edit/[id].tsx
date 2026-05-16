@@ -15,6 +15,7 @@ import { DogLawModal } from '../../src/components/ui/modals/DogLawModal';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
+import { getDefaultTenantFilterString } from '../../src/config/tenants';
 
 export default function EditListingScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -63,6 +64,7 @@ export default function EditListingScreen() {
                     .select('*')
                     .eq('id', id)
                     .eq('user_id', user!.id)
+                    .or(getDefaultTenantFilterString())
                     .single();
 
                 if (error) throw error;
