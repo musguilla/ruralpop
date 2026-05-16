@@ -80,7 +80,12 @@ export const getTenantFilterString = (tenantSlugOrId: string): string => {
   // Si nos pasan el slug, sacamos el ID. Si ya es un ID (no coincide con slug), lo usamos directamente.
   const config = getTenantConfig(tenantSlugOrId);
   const uuid = config.id || tenantSlugOrId;
-  return `tenant_id.eq.${uuid},tenant_id.is.null`;
+  
+  if (config.slug === RURALPOP_TENANT_SLUG || tenantSlugOrId === RURALPOP_TENANT_SLUG) {
+    return `tenant_id.eq.${uuid},tenant_id.is.null`;
+  }
+  
+  return `tenant_id.eq.${uuid}`;
 };
 
 /**
