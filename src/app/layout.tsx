@@ -101,6 +101,16 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
+      {tenant === 'equipop' && (
+        <head>
+          <style>{`
+            :root {
+              --ag-sys-color-primary: #96f1d6;
+              --ag-sys-color-primary-hover: #7bceb4;
+            }
+          `}</style>
+        </head>
+      )}
       <body
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col font-sans antialiased`}
       >
