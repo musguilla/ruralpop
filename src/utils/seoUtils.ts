@@ -40,18 +40,7 @@ interface SeoUrlParams {
 }
 
 export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlParams): string {
-    // Mapeo especial para Rutas Cortas (Short SEO slugs configurados en routeTranslations)
-    // Esto se hace ANTES del procesamiento estándar para asegurar coincidencia con el diccionario i18n
-    if ((!q || !q.trim()) && !province_id) {
-        if (category === "ganaderia") {
-            if (subcategory === "Bovino") return "/ganado-bovino";
-            if (subcategory === "Ovino") return "/ovejas";
-            if (subcategory === "Caprino") return "/cabras";
-            if (subcategory === "Equino") return "/caballos";
-            if (!subcategory) return "/ganaderia";
-        }
-        if (category === "maquinaria" && !subcategory) return "/maquinaria-agricola";
-    }
+    // Mapeo especial eliminado para usar la URL larga estándar /anuncios-[categoria]-[subcategoria]
 
     const parts: string[] = [];
 
