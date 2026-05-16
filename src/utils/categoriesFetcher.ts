@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
+import { getTenantFilterString } from "@/config/tenants";
 
 export interface CategoryData {
     id: string;
@@ -17,10 +18,12 @@ const supabaseAdmin = createClient(
 /**
  * Función interna que hace la llamada real a base de datos.
  */
-async function fetchCategoriesFromDB(): Promise<CategoryData[]> {
+async function fetchCategoriesFromDB(tenantSlug: string): Promise<CategoryData[]> {
+    const tenantFilterString = getTenantFilterString(tenantSlug);
+    
     const [catRes, subcatRes] = await Promise.all([
-        supabaseAdmin.from("categories").select("id, name, order_index").order("order_index", { ascending: true }),
-        supabaseAdmin.from("subcategories").select("category_id, name, order_index").order("order_index", { ascending: true })
+        supabaseAdmin.from("categories").select("id, name, order_index").or(tenantFilterString).order("order_index", { ascending: true }),
+        supabaseAdmin.from("subcategories").select("category_id, name, order_index").or(tenantFilterString).order("order_index", { ascending: true })
     ]);
 
     if (!catRes.data) return [];
@@ -39,11 +42,14 @@ async function fetchCategoriesFromDB(): Promise<CategoryData[]> {
 
 /**
  * Función cacheada para Next.js App Router.
- * Cacheamos la respuesta por 1 hora (3600 segundos) o hasta revalidación manual,
- * para evitar consultar Supabase en cada carga de página en el root layout.
+ * Cacheamos la respuesta por 1 hora o hasta revalidación manual,
+ * aislada por tenant para evitar fugas de datos entre plataformas.
  */
-export const getCategories = unstable_cache(
-    async () => fetchCategoriesFromDB(),
-    ['global-categories'],
-    { revalidate: 3600, tags: ['categories'] }
-);
+export const getCategories = async (tenantSlug: string) => {
+    const cachedFn = unstable_cache(
+        async () => fetchCategoriesFromDB(tenantSlug),
+        [`global-categories-${tenantSlug}`],
+        { revalidate: 3600, tags: ['categories', `categories-${tenantSlug}`] }
+    );
+    return cachedFn();
+};

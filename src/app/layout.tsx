@@ -93,11 +93,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const categories = await getCategories();
   const headersList = await headers();
   const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
   const dictionary = await getDictionary(locale);
   const tenant = await getServerTenantSlug();
+  const categories = await getCategories(tenant || 'ruralpop');
 
   return (
     <html lang={locale}>
