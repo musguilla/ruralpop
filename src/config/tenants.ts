@@ -15,6 +15,7 @@ export const EQUIPOP_TENANT_SLUG = 'equipop';
 // Configuración estática que actúa como "fuente de verdad" rápida para la UI
 export const TENANTS_CONFIG: Record<string, TenantConfig> = {
   [RURALPOP_TENANT_SLUG]: {
+    id: 'ea2490cc-dc33-48f3-bc7b-82b14aa70eb9',
     slug: RURALPOP_TENANT_SLUG,
     name: 'Ruralpop',
     marketplaceMode: 'classifieds',
@@ -22,6 +23,7 @@ export const TENANTS_CONFIG: Record<string, TenantConfig> = {
     allowHandDeal: true,
   },
   [EQUIPOP_TENANT_SLUG]: {
+    id: '69d55371-2f70-4e67-b55c-4502bce305bb',
     slug: EQUIPOP_TENANT_SLUG,
     name: 'Equipop',
     marketplaceMode: 'escrow_only',
@@ -72,9 +74,13 @@ export const getRuralpopDatabaseId = (): string | null => {
 /**
  * Helper: Construye el string de filtro PostgREST para queries de Supabase.
  * Permite leer registros del tenant actual o legacy (null).
+ * Convierte el slug (ej. 'equipop') en su UUID real para evitar errores de sintaxis en PostgREST.
  */
-export const getTenantFilterString = (tenantId: string): string => {
-  return `tenant_id.eq.${tenantId},tenant_id.is.null`;
+export const getTenantFilterString = (tenantSlugOrId: string): string => {
+  // Si nos pasan el slug, sacamos el ID. Si ya es un ID (no coincide con slug), lo usamos directamente.
+  const config = getTenantConfig(tenantSlugOrId);
+  const uuid = config.id || tenantSlugOrId;
+  return `tenant_id.eq.${uuid},tenant_id.is.null`;
 };
 
 /**
