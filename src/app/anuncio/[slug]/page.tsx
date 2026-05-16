@@ -23,6 +23,7 @@ import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
+import { getDefaultTenantFilterString } from "@/config/tenants";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -58,6 +59,7 @@ export async function generateMetadata(
         .from("listings")
         .select("title, description, price, image_urls, location, category")
         .eq("id", id)
+        .or(getDefaultTenantFilterString())
         .single();
 
     if (!listing) {
@@ -166,6 +168,7 @@ export default async function ListingDetailPage(props: Props) {
       seller:users(id, name, avatar_url, created_at, role, commercial_name, email)
     `)
         .eq("id", id)
+        .or(getDefaultTenantFilterString())
         .single();
 
     if (error || !listing) {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, TrendingUp, RefreshCw, ChevronRight, ShieldCheck, Zap, ExternalLink } from "lucide-react";
 import { ProSubscriptionManager } from "@/components/dashboard/ProSubscriptionManager";
 import { slugify } from "@/utils/seoUtils";
+import { getDefaultTenantFilterString } from "@/config/tenants";
 
 export const dynamic = "force-dynamic";
 
@@ -45,12 +46,14 @@ export default async function ProfessionalDashboardPage(props: Props) {
         .from('listings')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
-        .eq('status', 'active');
+        .eq('status', 'active')
+        .or(getDefaultTenantFilterString());
     
     const { count: totalListings } = await supabase
         .from('listings')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .or(getDefaultTenantFilterString());
 
     const isStartPlan = publicUser.plan_type === 'start';
     const isProPlan = publicUser.plan_type === 'pro';

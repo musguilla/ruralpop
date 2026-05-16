@@ -9,6 +9,7 @@ import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Tractor, MapPin, Tag, Clock } from "lucide-react";
 import { DashboardListingActions } from "@/components/dashboard/DashboardListingActions";
 import { UnifiedListingCard, UnifiedItem } from "@/components/dashboard/UnifiedListingCard";
+import { getDefaultTenantFilterString } from "@/config/tenants";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,7 @@ export default async function DashboardPage(props: Props) {
         .select("*")
         .eq("user_id", user.id)
         .eq("status", currentTab)
+        .or(getDefaultTenantFilterString())
         .order("created_at", { ascending: false });
 
     if (error) {
@@ -89,7 +91,8 @@ export default async function DashboardPage(props: Props) {
     const { count: totalListingsCount } = await supabase
         .from("listings")
         .select("*", { count: 'exact', head: true })
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .or(getDefaultTenantFilterString());
 
     const hasAnyListing = totalListingsCount ? totalListingsCount > 0 : false;
 

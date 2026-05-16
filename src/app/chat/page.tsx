@@ -4,6 +4,7 @@ import { ChatInboxList } from "@/components/chat/ChatInboxList";
 import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { getDefaultTenantFilterString } from "@/config/tenants";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,7 @@ export default async function ChatInboxPage() {
       receiver:users!messages_receiver_id_fkey(name, avatar_url)
     `)
         .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+        .or(getDefaultTenantFilterString())
         .order("created_at", { ascending: false });
 
     if (error) {

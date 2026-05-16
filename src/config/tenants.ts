@@ -68,3 +68,20 @@ export const allowsHandDeal = (slug: string = RURALPOP_TENANT_SLUG): boolean => 
 export const getRuralpopDatabaseId = (): string | null => {
   return process.env.NEXT_PUBLIC_RURALPOP_TENANT_ID || null;
 };
+
+/**
+ * Helper: Construye el string de filtro PostgREST para queries de Supabase.
+ * Permite leer registros del tenant actual o legacy (null).
+ */
+export const getTenantFilterString = (tenantId: string): string => {
+  return `tenant_id.eq.${tenantId},tenant_id.is.null`;
+};
+
+/**
+ * Helper: Construye el string de filtro para el tenant principal por defecto (Ruralpop).
+ */
+export const getDefaultTenantFilterString = (): string => {
+  const defaultId = getRuralpopDatabaseId();
+  if (!defaultId) return 'tenant_id.is.null'; // Fallback seguro si no hay env configurado
+  return getTenantFilterString(defaultId);
+};

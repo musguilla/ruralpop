@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
+import { getRuralpopDatabaseId } from "@/config/tenants";
 
 export async function sendMessage(formData: FormData) {
     const supabase = await createClient();
@@ -20,7 +21,8 @@ export async function sendMessage(formData: FormData) {
         sender_id: user.id,
         receiver_id,
         listing_id,
-        content: content.trim()
+        content: content.trim(),
+        tenant_id: getRuralpopDatabaseId() || undefined
     });
 
     if (error) {

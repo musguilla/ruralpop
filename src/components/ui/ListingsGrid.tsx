@@ -10,6 +10,7 @@ import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { getDefaultTenantFilterString } from "@/config/tenants";
 
 export async function ListingsGrid({ searchParams, isHome = false, disableInFeedAds = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean, disableInFeedAds?: boolean }) {
     let supabase = await createClient();
@@ -63,6 +64,9 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
                 query = query.eq("status", "active").eq("user_id", userIdFilter);
             }
         }
+
+        // FASE 6: Multi-tenant filter
+        query = query.or(getDefaultTenantFilterString());
 
         // Apply Sorting
         switch (sortParam) {
