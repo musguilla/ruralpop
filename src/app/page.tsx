@@ -3,6 +3,8 @@ import { ListingCardSkeleton } from "@/components/ui/ListingCard";
 import { Suspense } from "react";
 import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
 import { HomeSearchHero } from "@/components/ui/HomeSearchHero";
+import { EquipopHomeSearchHero } from "@/components/ui/EquipopHomeSearchHero";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { HomeStoreSection } from "@/components/store/HomeStoreSection";
 import { Metadata } from "next";
@@ -40,6 +42,7 @@ export default async function Home(props: {
   const searchParams = await props.searchParams;
   const headersList = await headers();
   const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+  const tenant = await getServerTenantSlug();
 
   const parsedSlug = {
     q: searchParams.q as string | undefined,
@@ -59,7 +62,7 @@ export default async function Home(props: {
 
       {/* Conditionally render Search Hero or Active Search Bar */}
       {Object.keys(searchParams).length === 0 ? (
-        <HomeSearchHero />
+        tenant === 'equipop' ? <EquipopHomeSearchHero /> : <HomeSearchHero />
       ) : (
         <>
           <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2 pt-2 sm:pt-0">
@@ -77,9 +80,11 @@ export default async function Home(props: {
       </Suspense>
 
       {/* Store Section */}
-      <Suspense fallback={null}>
-        <HomeStoreSection />
-      </Suspense>
+      {tenant !== 'equipop' && (
+        <Suspense fallback={null}>
+          <HomeStoreSection />
+        </Suspense>
+      )}
 
     </div>
   );

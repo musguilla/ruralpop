@@ -7,12 +7,19 @@ import { getTenantFilterString } from "@/config/tenants";
  * Si no está, hace fallback a la variable de entorno base de Ruralpop.
  */
 export async function getServerTenantFilterString(): Promise<string> {
+    const activeTenant = await getServerTenantSlug();
+    if (!activeTenant) return 'tenant_id.is.null';
+    return getTenantFilterString(activeTenant);
+}
+
+/**
+ * Devuelve el slug identificador del tenant actual (ej. 'equipop' o 'ruralpop')
+ * Ideal para rendering condicional en Server Components.
+ */
+export async function getServerTenantSlug(): Promise<string | null> {
     const headersList = await headers();
     const headerTenant = headersList.get('x-tenant');
     const envTenant = process.env.NEXT_PUBLIC_RURALPOP_TENANT_ID;
     
-    const activeTenant = headerTenant || envTenant || null;
-    
-    if (!activeTenant) return 'tenant_id.is.null';
-    return getTenantFilterString(activeTenant);
+    return headerTenant || envTenant || null;
 }

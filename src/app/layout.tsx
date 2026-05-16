@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { EquipopFooter } from "@/components/layout/EquipopFooter";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { CategoriesProvider } from "@/context/CategoriesContext";
 import { getCategories } from "@/utils/categoriesFetcher";
@@ -29,6 +31,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
   const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
   const originalPathname = headersList.get('x-original-pathname') || '/';
+  const tenant = await getServerTenantSlug();
+
+  const isEquipop = tenant === 'equipop';
 
   const metadataObj: Metadata = {
     metadataBase: new URL("https://www.ruralpop.com"),
@@ -36,9 +41,13 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: getCanonicalUrl(originalPathname, locale),
       languages: getHreflangLinks(originalPathname),
     },
-    title: "Ruralpop - App gratis para comprar y vender ganado",
-    description: "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
-    applicationName: "Ruralpop",
+    title: isEquipop 
+      ? "Equipop - Material equitación segunda mano" 
+      : "Ruralpop - App gratis para comprar y vender ganado",
+    description: isEquipop
+      ? "App móvil gratis para buscar, vender y comprar caballos, accesorios, monturas y encontrar servicios ecuestres."
+      : "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
+    applicationName: isEquipop ? "Equipop" : "Ruralpop",
     icons: {
       icon: [
         { url: '/favicon.ico', sizes: 'any' },
@@ -49,7 +58,7 @@ export async function generateMetadata(): Promise<Metadata> {
       ],
     },
     appleWebApp: {
-      title: "Ruralpop",
+      title: isEquipop ? "Equipop" : "Ruralpop",
       statusBarStyle: "default",
     },
     itunes: {
@@ -88,6 +97,7 @@ export default async function RootLayout({
   const headersList = await headers();
   const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
   const dictionary = await getDictionary(locale);
+  const tenant = await getServerTenantSlug();
 
   return (
     <html lang={locale}>
@@ -123,7 +133,7 @@ export default async function RootLayout({
               {children}
             </main>
             <SeoFooterTabs />
-            <Footer />
+            {tenant === 'equipop' ? <EquipopFooter /> : <Footer />}
             <CookieBanner />
           </NotificationProvider>
         </CategoriesProvider>
