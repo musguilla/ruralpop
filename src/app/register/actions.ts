@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { Resend } from "resend";
+import { getRuralpopDatabaseId } from "@/config/tenants";
 
 export async function signup(formData: FormData) {
     const supabase = await createClient();
@@ -44,6 +45,7 @@ export async function signup(formData: FormData) {
             data: {
                 name: name,
                 full_name: name,
+                tenant_id: getRuralpopDatabaseId() || undefined,
             },
         }
     });
