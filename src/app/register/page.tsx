@@ -4,6 +4,7 @@ import { PasswordInput } from "@/components/auth/PasswordInput";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { signup } from "./actions";
 import { Metadata } from "next";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export const metadata: Metadata = {
     title: "Crea una Cuenta | Ruralpop",
@@ -15,6 +16,10 @@ export default async function RegisterPage(props: {
     searchParams: Promise<{ error?: string }>;
 }) {
     const searchParams = await props.searchParams;
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] w-full py-12 px-4 sm:px-6 lg:px-8">
@@ -22,7 +27,7 @@ export default async function RegisterPage(props: {
 
                 <div className="text-center flex flex-col items-center">
                     <div className="mb-4">
-                        <Image src="/ruralpop-logo.png" alt="Ruralpop" width={160} height={40} className="object-contain" priority />
+                        <Image src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"} alt={isEquipop ? "Equipop" : "Ruralpop"} width={160} height={40} className="object-contain" priority />
                     </div>
                     <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
                         Crea una Cuenta

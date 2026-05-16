@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export async function forgotPassword(formData: FormData) {
     const email = formData.get("email") as string;
@@ -25,9 +26,12 @@ export async function forgotPassword(formData: FormData) {
             }
         );
 
-        // Forzamos la URL de producción para los emails independientemente de las variables de entorno locales
-        const siteUrl = "https://www.ruralpop.com";
-
+        const tenant = await getServerTenantSlug();
+        const isEquipop = tenant === 'equipop';
+        const siteUrl = isEquipop ? "https://www.equipop.net" : "https://www.ruralpop.com";
+        const tenantName = isEquipop ? "Equipop" : "Ruralpop";
+        const logoUrl = isEquipop ? "https://www.equipop.net/equipop-logo.png" : "https://www.ruralpop.com/ruralpop-logo.png";
+        
         const { data, error } = await adminSupabase.auth.admin.generateLink({
             type: "recovery",
             email: email,
@@ -67,10 +71,10 @@ export async function forgotPassword(formData: FormData) {
                 </head>
                 <body>
                     <div class="container">
-                        <img src="https://www.ruralpop.com/ruralpop-logo.png" alt="Ruralpop" class="logo" />
+                        <img src="${logoUrl}" alt="${tenantName}" class="logo" />
                         <h1 class="title">Recupera tu contraseña</h1>
                         <p class="text">
-                            Hemos recibido una solicitud para cambiar tu contraseña en <strong>Ruralpop</strong>. <br/><br/>
+                            Hemos recibido una solicitud para cambiar tu contraseña en <strong>${tenantName}</strong>. <br/><br/>
                             Haz clic en el siguiente botón para establecer una nueva contraseña de forma segura.
                         </p>
                         <a href="${actionLink}" class="button" style="color: #ffffff; text-decoration: none;">Restablecer mi contraseña</a>
@@ -81,17 +85,17 @@ export async function forgotPassword(formData: FormData) {
                         </p>
                         <p class="footer">
                             Si no has solicitado este cambio, por favor ignora este correo electrónico.<br/><br/>
-                            © ${new Date().getFullYear()} Ruralpop. El gran mercado agrícola.
+                            © ${new Date().getFullYear()} ${tenantName}.
                         </p>
                     </div>
                 </body>
                 </html>
-                `;
+                \`;
 
                     const { error: resendError } = await resend.emails.send({
-                        from: "Ruralpop <no-reply@ruralpop.com>",
+                        from: \`${tenantName} <no-reply@ruralpop.com>\`,
                         to: [email],
-                        subject: "Recupera tu contraseña en Ruralpop",
+                        subject: \`Recupera tu contraseña en ${tenantName}\`,
                         html: emailHtml,
                     });
 

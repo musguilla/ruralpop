@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { Resend } from "resend";
-import { getRuralpopDatabaseId } from "@/config/tenants";
+import { getRuralpopDatabaseId, getTenantConfig } from "@/config/tenants";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export async function signup(formData: FormData) {
     const supabase = await createClient();
@@ -13,6 +14,11 @@ export async function signup(formData: FormData) {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const passwordConfirm = formData.get("password_confirm") as string;
+    
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const tenantConfig = getTenantConfig(tenant || 'ruralpop');
+    const activeTenantId = tenantConfig.id || getRuralpopDatabaseId() || undefined;
 
     let redirectPath = "/login?message=Cuenta creada correctamente.";
 
@@ -45,7 +51,7 @@ export async function signup(formData: FormData) {
             data: {
                 name: name,
                 full_name: name,
-                tenant_id: getRuralpopDatabaseId() || undefined,
+                tenant_id: activeTenantId,
             },
         }
     });
@@ -64,7 +70,9 @@ export async function signup(formData: FormData) {
         try {
             if (process.env.RESEND_API_KEY) {
                 const resend = new Resend(process.env.RESEND_API_KEY);
-                const siteUrl = "https://www.ruralpop.com";
+                const siteUrl = isEquipop ? "https://www.equipop.net" : "https://www.ruralpop.com";
+                const tenantName = isEquipop ? "Equipop" : "Ruralpop";
+                const logoUrl = isEquipop ? "https://www.equipop.net/equipop-logo.png" : "https://www.ruralpop.com/ruralpop-logo.png";
 
                 const emailHtml = `
             <!DOCTYPE html>
@@ -83,26 +91,26 @@ export async function signup(formData: FormData) {
             </head>
             <body>
                 <div class="container">
-                    <img src="https://www.ruralpop.com/ruralpop-logo.png" alt="Ruralpop" class="logo" />
+                    <img src="${logoUrl}" alt="${tenantName}" class="logo" />
                     <h1 class="title">¡Hola, ${name}!</h1>
                     <p class="text">
-                        Te damos la bienvenida a <strong>Ruralpop</strong>.<br/><br/>
-                        Estamos encantados de tenerte con nosotros en el gran mercado ganadero y agrícola que es Ruralpop. Empieza a vender y comprar ya! Descubre los mejores anuncios, gestiona tus favoritos y conecta con miles de usuarios al instante.
+                        Te damos la bienvenida a <strong>${tenantName}</strong>.<br/><br/>
+                        Estamos encantados de tenerte con nosotros en el gran mercado que es ${tenantName}. Empieza a vender y comprar ya! Descubre los mejores anuncios, gestiona tus favoritos y conecta con miles de usuarios al instante.
                     </p>
-                    <a href="${siteUrl}/account" class="button" style="color: #ffffff; text-decoration: none;">Entrar a Ruralpop</a>
+                    <a href="${siteUrl}/account" class="button" style="color: #ffffff; text-decoration: none;">Entrar a ${tenantName}</a>
                     <p class="footer">
-                        Estás recibiendo este correo porque acabas de crear una cuenta en Ruralpop.<br/><br/>
-                        © ${new Date().getFullYear()} Ruralpop
+                        Estás recibiendo este correo porque acabas de crear una cuenta en ${tenantName}.<br/><br/>
+                        © ${new Date().getFullYear()} ${tenantName}
                     </p>
                 </div>
             </body>
             </html>
-            `;
+            \`;
 
                 const { error: resendError } = await resend.emails.send({
-                    from: "Ruralpop <no-reply@ruralpop.com>",
+                    from: \`${tenantName} <no-reply@ruralpop.com>\`,
                     to: [email],
-                    subject: "¡Bienvenido/a a Ruralpop!",
+                    subject: \`¡Bienvenido/a a ${tenantName}!\`,
                     html: emailHtml,
                 });
 
@@ -120,7 +128,7 @@ export async function signup(formData: FormData) {
             console.error("revalidatePath error:", e);
         }
 
-        redirectPath = `/login?message=${encodeURIComponent("Cuenta creada correctamente. ¡Bienvenido/a a Ruralpop!")}`;
+        redirectPath = `/login?message=${encodeURIComponent(`Cuenta creada correctamente. ¡Bienvenido/a a ${tenantName}!`)}`;
     }
 
     redirect(redirectPath);

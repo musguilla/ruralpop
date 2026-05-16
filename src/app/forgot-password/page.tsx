@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { forgotPassword } from "./actions";
 import { Metadata } from "next";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export const metadata: Metadata = {
     title: "Recuperar Contraseña | Ruralpop",
@@ -13,6 +14,8 @@ export default async function ForgotPasswordPage(props: {
     searchParams: Promise<{ error?: string, message?: string }>;
 }) {
     const searchParams = await props.searchParams;
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] w-full py-12 px-4 sm:px-6 lg:px-8">
@@ -21,7 +24,7 @@ export default async function ForgotPasswordPage(props: {
                 <div className="text-center flex flex-col items-center">
                     <div className="mb-4">
                         <Link href="/">
-                            <Image src="/ruralpop-logo.png" alt="Ruralpop" width={160} height={40} className="object-contain" priority />
+                            <Image src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"} alt={isEquipop ? "Equipop" : "Ruralpop"} width={160} height={40} className="object-contain" priority />
                         </Link>
                     </div>
                     <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">

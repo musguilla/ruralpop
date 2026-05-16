@@ -14,11 +14,13 @@ export default function UpdatePasswordPage() {
     const [message, setMessage] = useState<string | null>(null);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isExchangingCode, setIsExchangingCode] = useState(false);
+    const [isEquipop, setIsEquipop] = useState(false);
 
     const router = useRouter();
     const supabase = createClient();
 
     useEffect(() => {
+        setIsEquipop(window.location.hostname.includes("equipop"));
         const setupSession = async () => {
             // 1. Manejo de Flujo Implícito (Hash fragment: #access_token=...) generado por admin.generateLink()
             const hash = window.location.hash.substring(1);
@@ -127,7 +129,7 @@ export default function UpdatePasswordPage() {
                 <div className="text-center flex flex-col items-center">
                     <div className="mb-4">
                         <Link href="/">
-                            <Image src="/ruralpop-logo.png" alt="Ruralpop" width={160} height={40} className="object-contain" priority />
+                            <Image src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"} alt={isEquipop ? "Equipop" : "Ruralpop"} width={160} height={40} className="object-contain" priority />
                         </Link>
                     </div>
                     <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
