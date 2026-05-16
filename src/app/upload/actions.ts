@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { getRuralpopDatabaseId } from "@/config/tenants";
 
 export async function createListing(formData: FormData) {
     const supabase = await createClient();
@@ -66,7 +67,8 @@ export async function createListing(formData: FormData) {
         shipping_price,
         image_urls,
         user_id: user.id,
-        status: "active"
+        status: "active",
+        tenant_id: getRuralpopDatabaseId() || undefined
     }).select('id').single();
 
     if (error) {
