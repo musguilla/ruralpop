@@ -76,12 +76,11 @@ export async function HomePopularListings() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {topListings.map((listing: any) => (
-                    <div key={listing.id} className="h-[420px]">
-                        <ListingCard 
-                            listing={listing as Listing} 
-                            isFavorited={userFavs.includes(listing.id)} 
-                        />
-                    </div>
+                    <ListingCard 
+                        key={listing.id}
+                        listing={listing as Listing} 
+                        isFavorited={userFavs.includes(listing.id)} 
+                    />
                 ))}
             </div>
             

@@ -8,6 +8,7 @@ import { getServerTenantSlug } from "@/utils/tenant/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { HomeLatestListings } from "@/components/home/HomeLatestListings";
 import { HomeDirectBuySlider } from "@/components/home/HomeDirectBuySlider";
+import { HomeFeaturedSlider } from "@/components/home/HomeFeaturedSlider";
 import { HomePopularListings } from "@/components/home/HomePopularListings";
 import { HomeStoreSection } from "@/components/store/HomeStoreSection";
 import { Metadata } from "next";
@@ -86,6 +87,10 @@ export default async function Home(props: {
 
               <Suspense fallback={null}>
                   <HomeDirectBuySlider />
+              </Suspense>
+
+              <Suspense fallback={null}>
+                  <HomeFeaturedSlider />
               </Suspense>
 
               <Suspense fallback={<GridSkeleton />}>

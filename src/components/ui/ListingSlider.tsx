@@ -93,13 +93,11 @@ export function ListingSlider({ title, listings, userFavs }: ListingSliderProps)
                 style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 {listings.map((listing) => (
-                    <div key={listing.id} className="w-[280px] sm:w-[320px] lg:w-[calc(25%-1.125rem)] flex-shrink-0 snap-start">
-                        <div className="h-[420px]">
-                            <ListingCard 
-                                listing={listing} 
-                                isFavorited={userFavs.includes(listing.id)}
-                            />
-                        </div>
+                    <div key={listing.id} className="w-[280px] sm:w-[320px] lg:w-[calc(25%-1.125rem)] flex-shrink-0 snap-start h-full">
+                        <ListingCard 
+                            listing={listing} 
+                            isFavorited={userFavs.includes(listing.id)}
+                        />
                     </div>
                 ))}
             </div>
@@ -108,7 +106,6 @@ export function ListingSlider({ title, listings, userFavs }: ListingSliderProps)
             {/*
                 * Decisiones Técnicas:
                 * - Se ha creado un componente Slider reutilizable para Listings basado en el StoreSlider original.
-                * - Se ha forzado una altura definida h-[420px] en el contenedor de las tarjetas para igualarlas y que no afecte el snap scroll.
             */}
         </section>
     );

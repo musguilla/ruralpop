@@ -57,12 +57,11 @@ export async function HomeLatestListings() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {listings.map((listing: any) => (
-                    <div key={listing.id} className="h-[420px]">
-                        <ListingCard 
-                            listing={listing as Listing} 
-                            isFavorited={userFavs.includes(listing.id)} 
-                        />
-                    </div>
+                    <ListingCard 
+                        key={listing.id}
+                        listing={listing as Listing} 
+                        isFavorited={userFavs.includes(listing.id)} 
+                    />
                 ))}
             </div>
 
@@ -71,7 +70,6 @@ export async function HomeLatestListings() {
                 * Decisiones Técnicas:
                 * - Server component puro para SSR pre-renderizado del bloque de últimos anuncios.
                 * - Se aplica un hard limit de 8 elementos de BD, filtrando "image_urls" para garantizar solo anuncios con fotos.
-                * - Se le pasa un contenedor padre con h-[420px] a las tarjetas para que no se descuadre la UI del Grid.
             */}
         </section>
     );
