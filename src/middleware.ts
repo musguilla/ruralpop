@@ -9,8 +9,8 @@ export async function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || '';
     // Reconocemos equipop.net, www.equipop.net, o entornos locales como equipop.localhost:3000
     if (hostname.includes('equipop')) {
-        // Evitamos bucles si el middleware procesa internamente la ruta ya reescrita
-        if (!pathname.startsWith('/equipop') && !pathname.startsWith('/_next')) {
+        // Evitamos bucles y también ignoramos rutas de API estáticas para que funcionen igual
+        if (!pathname.startsWith('/equipop') && !pathname.startsWith('/_next') && !pathname.startsWith('/api')) {
             const url = request.nextUrl.clone();
             url.pathname = `/equipop${pathname === '/' ? '' : pathname}`;
             
