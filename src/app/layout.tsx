@@ -49,12 +49,20 @@ export async function generateMetadata(): Promise<Metadata> {
       : "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
     applicationName: isEquipop ? "Equipop" : "Ruralpop",
     icons: {
-      icon: [
-        { url: '/favicon.ico', sizes: 'any' },
-        { url: '/favicon.png', type: 'image/png' },
-      ],
+      icon: isEquipop 
+        ? [
+            { url: '/equipop-favicon.png', type: 'image/png', sizes: '512x512' },
+          ]
+        : [
+            { url: '/favicon.ico', sizes: 'any' },
+            { url: '/favicon.png', type: 'image/png' },
+          ],
       apple: [
-        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+        { 
+          url: isEquipop ? '/equipop-favicon.png' : '/apple-touch-icon.png', 
+          sizes: isEquipop ? '512x512' : '180x180', 
+          type: 'image/png' 
+        },
       ],
     },
     appleWebApp: {
