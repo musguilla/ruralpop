@@ -223,14 +223,11 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         return (
             <div className="flex flex-col items-center justify-center p-16 text-center bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl">
                 {isEquipop ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4">
-                        <path d="M6 10c1-3 4-4 6-4s5 1 6 4c1 2 2 5 2 5H4s1-3 2-5z" />
-                        <path d="M7 15l1 5s1 1 2 1 2-1 2-1v-5" />
-                        <path d="M17 15l-1 5s-1 1-2 1-2-1-2-1v-5" />
-                        <path d="M6 10v5" />
-                        <path d="M18 10v5" />
-                        <path d="M11 15v3" />
-                        <path d="M13 15v3" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4">
+                        <path d="M3 6c1-2 3-3 5-1 2 2 5 2 7 0 2-2 4-1 5 1 1 2-1 4-3 4-4 0-7 2-10 0-2-1-3-2-4-4Z" />
+                        <path d="M7 10c-1 3 0 7 2 8h4c2 0 4-4 3-8" />
+                        <path d="M15 10v9" />
+                        <path d="M13 19v1a2 2 0 0 0 4 0v-1h-4Z" />
                     </svg>
                 ) : (
                     <Tractor className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4" />
