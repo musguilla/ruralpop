@@ -20,8 +20,7 @@ export async function HomePopularListings() {
         .eq("status", "active")
         .eq("users.is_ghost", false)
         .neq("image_urls", "{}")
-        .order("created_at", { ascending: false })
-        .limit(100);
+        .order("created_at", { ascending: false });
 
     query = query.or(tenantFilterString);
 

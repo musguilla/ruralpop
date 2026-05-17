@@ -88,11 +88,9 @@ export default async function Home(props: {
                   <HomeDirectBuySlider />
               </Suspense>
 
-              {/* TODO: Temporarily hidden until popular listings logic is refined based on real likes data
               <Suspense fallback={<GridSkeleton />}>
                   <HomePopularListings />
               </Suspense>
-              */}
           </>
       ) : (
           <Suspense fallback={<GridSkeleton />}>
