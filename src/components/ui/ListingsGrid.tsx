@@ -247,15 +247,17 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
                             <path d="M4 12h16M4 16h16" />
                         </svg>
 
-                        {/* Caballo y jinete vectorizados */}
-                        <svg className="absolute animate-horse-jump w-14 h-14 text-[var(--ag-sys-color-border)] opacity-80" viewBox="0 0 64 64" fill="currentColor">
-                            {/* Cuerpo */}
-                            <path d="M51.9,32c-1.3-1.6-3.2-2.7-5.3-3.1l-6-1.1c-1.6-0.3-3.1-1.1-4.2-2.3l-4.7-5C30.2,19.1,28.2,18,26,18h-4 c-2.2,0-4,1.8-4,4s1.8,4,4,4h1.1l3.6,5.3c1,1.5,2.6,2.4,4.4,2.5l5.5,0.4l-4,10c-0.8,2-2.9,3.1-4.9,2.8c-0.2,0-0.4-0.1-0.6-0.2 l-7.6-4c-1.9-1-4.3-0.3-5.3,1.6s-0.3,4.3,1.6,5.3l7.6,4c1,0.5,2.1,0.8,3.2,0.8c2.4,0,4.7-1.4,5.7-3.6l3.3-8.1l4.4,12 c0.6,1.6,2,2.7,3.6,2.9c0.2,0,0.5,0,0.7,0c1.5-0.1,2.8-1,3.4-2.4l5.3-11.8C54,41,53.8,36.5,51.9,32z" />
-                            {/* Cabeza */}
-                            <path d="M12.9,23l2.8-6.9c0.7-1.6,2.3-2.6,4-2.6h2.2c1.8,0,3.5-1,4.4-2.6l1.2-2.1c0.8-1.5,0.4-3.5-1.1-4.4 c-1.5-0.8-3.5-0.4-4.4,1.1l-0.7,1.3l-5.3,2c-2.4,0.9-4,3.2-4,5.7v2c0,0.6-0.1,1.3-0.3,1.9L9.1,24.1c-1,2.3,0.1,4.9,2.4,5.9 c0.6,0.2,1.2,0.4,1.8,0.4c1.7,0,3.3-1,4-2.6L12.9,23z" />
-                            {/* Jinete (casco/cabeza) */}
-                            <path d="M37.5,7.9c1.9,0,3.4-1.5,3.4-3.4s-1.5-3.4-3.4-3.4c-1.9,0-3.4,1.5-3.4,3.4S35.6,7.9,37.5,7.9z" />
-                        </svg>
+                        {/* Caballo animado utilizando imagen externa (equipop-empty.png) */}
+                        <img 
+                            src="/equipop-empty.png" 
+                            alt="Caballo saltando" 
+                            className="absolute animate-horse-jump w-16 h-16 object-contain"
+                            style={{ filter: 'grayscale(100%)', mixBlendMode: 'multiply', opacity: 0.65 }}
+                            onError={(e) => {
+                                // Fallback por si la imagen aún no existe
+                                e.currentTarget.style.display = 'none';
+                            }}
+                        />
                     </div>
                 ) : (
                     <Tractor className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4" />
