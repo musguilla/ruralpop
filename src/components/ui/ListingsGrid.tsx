@@ -253,10 +253,6 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
                             alt="Caballo saltando" 
                             className="absolute animate-horse-jump w-16 h-16 object-contain"
                             style={{ filter: 'grayscale(100%)', mixBlendMode: 'multiply', opacity: 0.65 }}
-                            onError={(e) => {
-                                // Fallback por si la imagen aún no existe
-                                e.currentTarget.style.display = 'none';
-                            }}
                         />
                     </div>
                 ) : (
