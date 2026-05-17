@@ -252,7 +252,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
                             src="/equipop-favicon.png" 
                             alt="Caballo saltando" 
                             className="absolute animate-horse-jump w-12 h-12 object-contain"
-                            style={{ filter: 'brightness(0) opacity(0.35)' }}
+                            style={{ filter: 'grayscale(100%)', mixBlendMode: 'multiply', opacity: 0.65 }}
                         />
                     </div>
                 ) : (
