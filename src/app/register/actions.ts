@@ -19,6 +19,7 @@ export async function signup(formData: FormData) {
     const isEquipop = tenant === 'equipop';
     const tenantConfig = getTenantConfig(tenant || 'ruralpop');
     const activeTenantId = tenantConfig.id || getRuralpopDatabaseId() || undefined;
+    const tenantName = isEquipop ? "Equipop" : "Ruralpop";
 
     let redirectPath = "/login?message=Cuenta creada correctamente.";
 
@@ -71,7 +72,6 @@ export async function signup(formData: FormData) {
             if (process.env.RESEND_API_KEY) {
                 const resend = new Resend(process.env.RESEND_API_KEY);
                 const siteUrl = isEquipop ? "https://www.equipop.net" : "https://www.ruralpop.com";
-                const tenantName = isEquipop ? "Equipop" : "Ruralpop";
                 const logoUrl = isEquipop ? "https://www.equipop.net/equipop-logo.png" : "https://www.ruralpop.com/ruralpop-logo.png";
 
                 const emailHtml = `
@@ -104,13 +104,13 @@ export async function signup(formData: FormData) {
                     </p>
                 </div>
             </body>
-            </html>
-            \`;
+                </html>
+            `;
 
                 const { error: resendError } = await resend.emails.send({
-                    from: \`${tenantName} <no-reply@ruralpop.com>\`,
+                    from: `${tenantName} <no-reply@ruralpop.com>`,
                     to: [email],
-                    subject: \`¡Bienvenido/a a ${tenantName}!\`,
+                    subject: `¡Bienvenido/a a ${tenantName}!`,
                     html: emailHtml,
                 });
 

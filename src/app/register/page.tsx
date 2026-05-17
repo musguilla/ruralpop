@@ -18,8 +18,6 @@ export default async function RegisterPage(props: {
     const searchParams = await props.searchParams;
     const tenant = await getServerTenantSlug();
     const isEquipop = tenant === 'equipop';
-    const tenant = await getServerTenantSlug();
-    const isEquipop = tenant === 'equipop';
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] w-full py-12 px-4 sm:px-6 lg:px-8">

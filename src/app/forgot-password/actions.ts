@@ -90,12 +90,12 @@ export async function forgotPassword(formData: FormData) {
                     </div>
                 </body>
                 </html>
-                \`;
+                `;
 
                     const { error: resendError } = await resend.emails.send({
-                        from: \`${tenantName} <no-reply@ruralpop.com>\`,
+                        from: `${tenantName} <no-reply@ruralpop.com>`,
                         to: [email],
-                        subject: \`Recupera tu contraseña en ${tenantName}\`,
+                        subject: `Recupera tu contraseña en ${tenantName}`,
                         html: emailHtml,
                     });
 
