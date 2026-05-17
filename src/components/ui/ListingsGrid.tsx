@@ -247,9 +247,9 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
                             <path d="M4 12h16M4 16h16" />
                         </svg>
 
-                        {/* Caballo animado utilizando imagen externa (equipop-empty.png) */}
+                        {/* Caballo animado utilizando imagen externa (equipop-empty.webp) */}
                         <img 
-                            src="/equipop-empty.png" 
+                            src="/equipop-empty.webp" 
                             alt="Caballo saltando" 
                             className="absolute animate-horse-jump w-16 h-16 object-contain"
                             style={{ filter: 'grayscale(100%)', mixBlendMode: 'multiply', opacity: 0.65 }}
