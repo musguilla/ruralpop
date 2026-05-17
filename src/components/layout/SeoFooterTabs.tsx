@@ -13,6 +13,15 @@ export function SeoFooterTabs() {
     const CATEGORIES = useCategories();
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<"provinces" | "categories" | "popular">("provinces");
+    const [isEquipop, setIsEquipop] = useState(false);
+
+    React.useEffect(() => {
+        const isEq = window.location.hostname.includes("equipop");
+        setIsEquipop(isEq);
+        if (isEq) {
+            setActiveTab("categories");
+        }
+    }, []);
 
     // Ocultar si no estamos en la portada
     if (pathname !== "/") return null;
@@ -24,20 +33,22 @@ export function SeoFooterTabs() {
         <div className="bg-[var(--ag-sys-color-surface)] border-t border-[var(--ag-sys-color-border)] py-12 pb-24">
             <div className="container mx-auto px-4 max-w-7xl">
                 <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-8">
-                    Lo más buscado en Ruralpop
+                    {isEquipop ? "Lo más buscado en Equipop" : "Lo más buscado en Ruralpop"}
                 </h2>
 
                 {/* Tabs */}
                 <div className="flex flex-wrap border-b border-[var(--ag-sys-color-border)] mb-8">
-                    <button
-                        onClick={() => setActiveTab("provinces")}
-                        className={`py-3 px-6 font-bold text-sm tracking-wide transition-all ${activeTab === "provinces"
-                            ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
-                            : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
-                            }`}
-                    >
-                        Por provincias
-                    </button>
+                    {!isEquipop && (
+                        <button
+                            onClick={() => setActiveTab("provinces")}
+                            className={`py-3 px-6 font-bold text-sm tracking-wide transition-all ${activeTab === "provinces"
+                                ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
+                                : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
+                                }`}
+                        >
+                            Por provincias
+                        </button>
+                    )}
                     <button
                         onClick={() => setActiveTab("categories")}
                         className={`py-3 px-6 font-bold text-sm tracking-wide transition-all ${activeTab === "categories"
@@ -60,7 +71,7 @@ export function SeoFooterTabs() {
 
                 {/* Tab Contents */}
                 <div className="text-sm">
-                    {activeTab === "provinces" && (
+                    {activeTab === "provinces" && !isEquipop && (
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-4 gap-x-6">
                             {provinces.map((prov) => (
                                 <Link
@@ -74,7 +85,24 @@ export function SeoFooterTabs() {
                         </div>
                     )}
 
-                    {activeTab === "categories" && (
+                    {activeTab === "categories" && isEquipop && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-8 gap-x-6">
+                            {CATEGORIES.map(cat => (
+                                <div key={cat.id} className="flex flex-col gap-2">
+                                    <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                        {cat.label}
+                                    </Link>
+                                    {cat.subcategories.map((sub) => (
+                                        <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                            {sub}
+                                        </Link>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {activeTab === "categories" && !isEquipop && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-6">
                             {/* Columna 1: Ganadería */}
                             <div className="flex flex-col gap-2">
@@ -158,7 +186,13 @@ export function SeoFooterTabs() {
                         </div>
                     )}
 
-                    {activeTab === "popular" && (
+                    {activeTab === "popular" && isEquipop && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-4 gap-x-6">
+                            {/* De momento vacío */}
+                        </div>
+                    )}
+
+                    {activeTab === "popular" && !isEquipop && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-4 gap-x-6">
                             {SEO_LANDINGS.map((landing) => (
                                 <Link
