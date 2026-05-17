@@ -27,7 +27,7 @@ export async function EquipopFooter() {
                         Conexión Equipop
                     </span>
                     <LocalizedLink href="/tienda" className="text-base font-medium text-[var(--ag-sys-color-primary)] hover:opacity-80 transition-opacity">
-                        {t("tienda")}
+                        Tienda Equipop
                     </LocalizedLink>
                 </div>
 
@@ -43,7 +43,7 @@ export async function EquipopFooter() {
                         {t("faq")}
                     </LocalizedLink>
                     <LocalizedLink href="/empresas-profesionales-sector-rural" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        {t("eres_profesional")}
+                        Equipop PRO
                     </LocalizedLink>
                 </div>
 
