@@ -10,7 +10,7 @@ import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
-import { getServerTenantFilterString } from "@/utils/tenant/server";
+import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
 
 export async function ListingsGrid({ searchParams, isHome = false, disableInFeedAds = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean, disableInFeedAds?: boolean }) {
     let supabase = await createClient();
@@ -48,6 +48,8 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
     // Obtenemos el filtro de tenant ANTES de construir el builder para no hacer async la función
     // y evitar que JavaScript resuelva prematuramente el Builder Thenable.
     const tenantFilterString = await getServerTenantFilterString();
+    const tenantSlug = await getServerTenantSlug();
+    const isEquipop = tenantSlug === 'equipop';
 
     const buildQuery = (fallbackLevel = 0) => {
         let query = supabase
@@ -220,7 +222,19 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
     if (!listings || listings.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center p-16 text-center bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl">
-                <Tractor className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4" />
+                {isEquipop ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4">
+                        <path d="M6 10c1-3 4-4 6-4s5 1 6 4c1 2 2 5 2 5H4s1-3 2-5z" />
+                        <path d="M7 15l1 5s1 1 2 1 2-1 2-1v-5" />
+                        <path d="M17 15l-1 5s-1 1-2 1-2-1-2-1v-5" />
+                        <path d="M6 10v5" />
+                        <path d="M18 10v5" />
+                        <path d="M11 15v3" />
+                        <path d="M13 15v3" />
+                    </svg>
+                ) : (
+                    <Tractor className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4" />
+                )}
                 <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-2">
                     {t("no_resultados")}
                 </h3>
