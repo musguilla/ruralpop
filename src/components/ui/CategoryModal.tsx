@@ -75,9 +75,11 @@ export function CategoryModal({
     const CATEGORIES = useCategories();
     const [searchTerm, setSearchTerm] = useState("");
     const [activeParent, setActiveParent] = useState<string | null>(null);
+    const [isEquipop, setIsEquipop] = useState(false);
 
     // Reset when modal closes/opens
     React.useEffect(() => {
+        setIsEquipop(window.location.hostname.includes("equipop"));
         if (isOpen) {
             setSearchTerm("");
             setActiveParent(null);
@@ -178,9 +180,11 @@ export function CategoryModal({
                                     }`}
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className={`p-2 rounded-lg transition-colors ${!selectedCategory ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
-                                        <List className={`w-5 h-5 ${!selectedCategory ? 'text-emerald-700' : 'text-gray-500'}`} />
-                                    </div>
+                                    {!isEquipop && (
+                                        <div className={`p-2 rounded-lg transition-colors ${!selectedCategory ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
+                                            <List className={`w-5 h-5 ${!selectedCategory ? 'text-emerald-700' : 'text-gray-500'}`} />
+                                        </div>
+                                    )}
                                     <span>Todas las categorías</span>
                                 </div>
                                 {!selectedCategory && <Check className="w-5 h-5 text-emerald-600" />}
@@ -191,17 +195,29 @@ export function CategoryModal({
                             {/* Category Items */}
                             {filteredCategories.map((cat) => (
                                 <React.Fragment key={cat.id}>
+                                    {isEquipop && !searchTerm && cat.label === 'Sillas de montar y accesorios' && (
+                                        <div className="px-4 py-2 mt-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                            Para Caballos
+                                        </div>
+                                    )}
+                                    {isEquipop && !searchTerm && cat.label === 'Calzado ecuestre' && (
+                                        <div className="px-4 py-2 mt-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                            Para Riders
+                                        </div>
+                                    )}
                                     <button
                                         onClick={() => handleCategoryClick(cat)}
                                         className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedCategory === cat.id && !selectedSubcategory ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
                                             }`}
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className={`p-2 rounded-lg transition-colors ${selectedCategory === cat.id ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
-                                                <div className={selectedCategory === cat.id ? 'text-emerald-700' : 'text-emerald-800'}>
-                                                    {CATEGORY_ICONS[cat.id] || <List className="w-5 h-5" />}
+                                            {!isEquipop && (
+                                                <div className={`p-2 rounded-lg transition-colors ${selectedCategory === cat.id ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
+                                                    <div className={selectedCategory === cat.id ? 'text-emerald-700' : 'text-emerald-800'}>
+                                                        {CATEGORY_ICONS[cat.id] || <List className="w-5 h-5" />}
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}
                                             <span>{cat.label}</span>
                                         </div>
                                         {cat.subcategories.length > 0 ? (
