@@ -56,7 +56,7 @@ export function EquipopHomeSearchHero() {
     return (
         <div className="w-full flex flex-col items-center py-6 sm:py-10">
             <h1 className="hidden md:block text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-8 text-center">
-                {t("que_quieres_encontrar")}
+                ¿Qué equipamiento buscas?
             </h1>
 
             {/* Desktop Search Bar */}
