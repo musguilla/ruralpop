@@ -6,6 +6,9 @@ import { HomeSearchHero } from "@/components/ui/HomeSearchHero";
 import { EquipopHomeSearchHero } from "@/components/ui/EquipopHomeSearchHero";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
+import { HomeLatestListings } from "@/components/home/HomeLatestListings";
+import { HomeDirectBuySlider } from "@/components/home/HomeDirectBuySlider";
+import { HomePopularListings } from "@/components/home/HomePopularListings";
 import { HomeStoreSection } from "@/components/store/HomeStoreSection";
 import { Metadata } from "next";
 import { generateSeoH1 } from "@/utils/h1Generator";
@@ -74,10 +77,26 @@ export default async function Home(props: {
         </>
       )}
 
-      {/* Grid Server-side */}
-      <Suspense fallback={<GridSkeleton />}>
-        <ListingsGrid searchParams={searchParams} isHome={true} />
-      </Suspense>
+      {/* Render Dynamic Homepage Sections vs Search Results */}
+      {Object.keys(searchParams).length === 0 ? (
+          <>
+              <Suspense fallback={<GridSkeleton />}>
+                  <HomeLatestListings />
+              </Suspense>
+
+              <Suspense fallback={null}>
+                  <HomeDirectBuySlider />
+              </Suspense>
+
+              <Suspense fallback={<GridSkeleton />}>
+                  <HomePopularListings />
+              </Suspense>
+          </>
+      ) : (
+          <Suspense fallback={<GridSkeleton />}>
+              <ListingsGrid searchParams={searchParams} isHome={true} />
+          </Suspense>
+      )}
 
       {/* Store Section */}
       {tenant !== 'equipop' && (
