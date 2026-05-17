@@ -8,50 +8,61 @@ export async function HomePopularListings() {
     const supabase = await createClient();
     const tenantFilterString = await getServerTenantFilterString();
 
-    // Traemos un bloque generoso de listings con fotos y activos, junto a su conteo de favoritos
-    // Limitamos a los 50 más recientes para no traer toda la base de datos a memoria
+    // 1. Obtener todos los favoritos para saber cuáles son los más populares reales
+    // Usamos el cliente admin para asegurar que podemos ver todos los favoritos si hay RLS
+    const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
+    const supabaseAdmin = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { data: allFavorites, error: favError } = await supabaseAdmin
+        .from("favorites")
+        .select("listing_id");
+
+    if (favError || !allFavorites || allFavorites.length === 0) {
+        return null;
+    }
+
+    // 2. Contar la popularidad de cada anuncio en memoria
+    const favCounts: Record<string, number> = {};
+    for (const fav of allFavorites) {
+        favCounts[fav.listing_id] = (favCounts[fav.listing_id] || 0) + 1;
+    }
+
+    // 3. Obtener los IDs de los 30 anuncios con más me gusta (margen por si algunos están inactivos)
+    const topListingIds = Object.entries(favCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 30)
+        .map(entry => entry[0]);
+
+    if (topListingIds.length === 0) return null;
+
+    // 4. Traer esos anuncios específicos desde la base de datos (aplicando filtros de fotos y estado)
     let query = supabase
         .from("listings")
         .select(`
             id, title, price, location, image_urls, created_at, category, price_type, is_featured,
-            users!inner(is_ghost),
-            favorites(count)
+            users!inner(is_ghost)
         `)
         .eq("status", "active")
         .eq("users.is_ghost", false)
         .neq("image_urls", "{}")
-        .order("created_at", { ascending: false });
+        .in("id", topListingIds);
 
     query = query.or(tenantFilterString);
 
     const { data: listings, error } = await query;
 
-    if (error) {
+    if (error || !listings || listings.length === 0) {
         console.error("Error fetching popular listings:", error);
         return null;
     }
 
-    if (!listings || listings.length === 0) {
-        return null;
-    }
-
-    // Sort in memory by favorites count descending
-    const sortedListings = [...listings].sort((a: any, b: any) => {
-        const countA = a.favorites?.[0]?.count || 0;
-        const countB = b.favorites?.[0]?.count || 0;
-        return countB - countA;
-    });
-
-    // Filtramos para asegurar que tengan al menos 1 me gusta (opcional, pero asegura popularidad)
-    // Si no hay con me gusta, cogemos los 8 con más (que serían 0, pero bueno)
-    let topListings = sortedListings.filter((l: any) => (l.favorites?.[0]?.count || 0) > 0);
-    
-    // Si la BD es muy nueva y no hay likes, hacemos fallback a los normales para no dejar hueco
-    if (topListings.length < 8) {
-        topListings = sortedListings.slice(0, 8);
-    } else {
-        topListings = topListings.slice(0, 8);
-    }
+    // 5. Los resultados de 'in' no vienen ordenados, así que los ordenamos según nuestro ranking de favCounts
+    const topListings = [...listings]
+        .sort((a: any, b: any) => (favCounts[b.id] || 0) - (favCounts[a.id] || 0))
+        .slice(0, 8); // Nos quedamos solo con los top 8 absolutos
 
     const userFavs = await getUserFavoriteIds();
 
@@ -77,9 +88,9 @@ export async function HomePopularListings() {
             {/* Documentación de memoria */}
             {/*
                 * Decisiones Técnicas:
-                * - Para obtener los más populares sin una vista SQL o RPC, se piden los 100 anuncios con foto más recientes.
-                * - Se hace el join `favorites(count)` que Supabase traduce en subquery.
-                * - Se ordenan en memoria (Node.js/NextSSR) por la cantidad de likes y se extraen los top 8.
+                * - Para garantizar que mostramos los más populares reales, primero se hace un fetch a la tabla `favorites` y se cuenta la frecuencia.
+                * - Una vez tenemos los IDs más populares, se pide solo esos anuncios a la tabla de listings filtrando los inactivos o sin foto.
+                * - De esta forma no dependemos de un `.limit()` ciego que nos excluya anuncios antiguos con muchos me gusta.
             */}
         </section>
     );
