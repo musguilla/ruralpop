@@ -223,12 +223,38 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         return (
             <div className="flex flex-col items-center justify-center p-16 text-center bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl">
                 {isEquipop ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4">
-                        <path d="M3 6c1-2 3-3 5-1 2 2 5 2 7 0 2-2 4-1 5 1 1 2-1 4-3 4-4 0-7 2-10 0-2-1-3-2-4-4Z" />
-                        <path d="M7 10c-1 3 0 7 2 8h4c2 0 4-4 3-8" />
-                        <path d="M15 10v9" />
-                        <path d="M13 19v1a2 2 0 0 0 4 0v-1h-4Z" />
-                    </svg>
+                    <div className="relative w-32 h-24 mb-4 flex items-end justify-center overflow-hidden">
+                        <style>{`
+                            @keyframes horseJump {
+                                0% { transform: translate(-40px, 10px) rotate(-15deg); opacity: 0; }
+                                15% { opacity: 0.4; }
+                                30% { transform: translate(-10px, -20px) rotate(-5deg); }
+                                50% { transform: translate(5px, -25px) rotate(5deg); }
+                                70% { transform: translate(20px, -10px) rotate(15deg); }
+                                85% { opacity: 0.4; }
+                                100% { transform: translate(50px, 15px) rotate(25deg); opacity: 0; }
+                            }
+                            .animate-horse-jump {
+                                animation: horseJump 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+                            }
+                        `}</style>
+                        
+                        {/* Obstáculo (Salto de competición) */}
+                        <svg className="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 text-[var(--ag-sys-color-border)] opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            {/* Postes */}
+                            <path d="M6 22V8m12 14V8" />
+                            {/* Barras horizontales */}
+                            <path d="M4 12h16M4 16h16" />
+                        </svg>
+
+                        {/* Caballo animado utilizando el favicon como silueta */}
+                        <img 
+                            src="/equipop-favicon.png" 
+                            alt="Caballo saltando" 
+                            className="absolute animate-horse-jump w-12 h-12 object-contain"
+                            style={{ filter: 'brightness(0) opacity(0.35)' }}
+                        />
+                    </div>
                 ) : (
                     <Tractor className="w-16 h-16 text-[var(--ag-sys-color-border)] mb-4" />
                 )}
