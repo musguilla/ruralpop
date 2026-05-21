@@ -73,27 +73,30 @@ export class MarketETLService {
                 if (existingSnapshot) {
                     console.log(`Skipping ${source.name}: Content has not changed since last successful fetch (checksum match).`);
                     
-                    // Update last success at
-                    await supabase
-                        .from('market_sources')
-                        .update({ last_success_at: new Date().toISOString() })
-                        .eq('id', source.id);
-                        
+                    // Si se ha pedido forzar (sourceId existe) lanzamos un error amigable para que la UI no marque un falso éxito nuevo.
+                    if (sourceId) {
+                        throw new Error("El archivo original en la web no ha cambiado. No hay precios nuevos que importar.");
+                    }
+                    
                     continue;
                 }
                 
-                // 4. Save Raw Snapshot
+                // 4. Validate before saving
+                if (result.prices.length === 0) {
+                    throw new Error("El parser funcionó pero no extrajo ningún precio (0 registros). Es probable que la estructura del documento haya cambiado.");
+                }
+
+                // 5. Save Raw Snapshot
                 await supabase.from('raw_market_snapshots').insert({
                     market_source_id: source.id,
                     source_url: source.source_url,
                     content_type: result.contentType,
                     raw_content: result.rawContent,
-                    parsed_successfully: result.prices.length > 0,
-                    parser_version: '1.0.0',
+                    parsed_successfully: true,
+                    parser_version: '1.0.1',
                     checksum: checksum
                 });
                 
-                // 5. Insert Prices (Upsert / Ignore duplicates using unique constraint)
                 if (result.prices.length > 0) {
                     const pricesToInsert = result.prices.map(p => ({
                         ...p,
@@ -109,6 +112,7 @@ export class MarketETLService {
                             
                         if (insertError) {
                             console.error(`Error inserting chunk for ${source.name} (index ${i}):`, insertError);
+                            throw new Error(`Error en la inserción de base de datos: ${insertError.message}`);
                         }
                     }
                     console.log(`Inserted up to ${result.prices.length} prices for ${source.name}`);
