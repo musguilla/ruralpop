@@ -131,6 +131,11 @@ export class MarketETLService {
                     .from('market_sources')
                     .update({ last_error_at: new Date().toISOString() })
                     .eq('id', source.id);
+                    
+                // Si el usuario forzó esta importación de manera individual, queremos que la API capture el error para notificarlo.
+                if (sourceId) {
+                    throw err;
+                }
             }
         }
         

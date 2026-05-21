@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { MarketSource } from '@/types/livestock';
-import { triggerEtlAction } from './actions';
 import { Play, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface LonjasClientProps {
     sources: MarketSource[];
@@ -13,6 +13,8 @@ export function LonjasClient({ sources }: LonjasClientProps) {
     const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
     const [globalLoading, setGlobalLoading] = useState(false);
 
+    const router = useRouter();
+
     const handleRun = async (id?: string) => {
         if (id) {
             setLoadingIds(prev => new Set(prev).add(id));
@@ -21,9 +23,20 @@ export function LonjasClient({ sources }: LonjasClientProps) {
         }
 
         try {
-            await triggerEtlAction(id);
+            const response = await fetch('/api/admin/etl', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sourceId: id })
+            });
+            const result = await response.json();
+            
+            if (!result.success) {
+                alert(`Hubo un error al procesar: ${result.error}`);
+            }
+            router.refresh(); // Force Next.js to re-fetch Server Components (update table timestamps)
         } catch (error) {
             console.error(error);
+            alert('Error crítico de red al contactar con el servidor.');
         } finally {
             if (id) {
                 setLoadingIds(prev => {
