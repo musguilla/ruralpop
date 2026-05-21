@@ -50,109 +50,114 @@ export class TalaveraParser {
                 throw new Error('Could not find any valid Talavera PDF in the last 14 days.');
             }
             
-            const best = validResults[0];
-            const pdfBuffer = best.pdfBuffer;
-            const foundDate = best.foundDate;
-            const foundUrl = best.foundUrl;
-            
-            // 2. Parse PDF
-            const buffer = new Uint8Array(pdfBuffer);
-            const parser = new PDFParse(buffer);
-            const result = await parser.getText();
-            const text = result.text;
-            
             const prices: Omit<ETLParserResult['prices'][0], 'id' | 'market_source_id' | 'created_at' | 'updated_at'>[] = [];
+            const rawContents: string[] = [];
             
-            // 3. Parse lines
-            const lines = text.split('\n');
-            let currentSegment: SegmentType = 'vida';
-            
-            for (const line of lines) {
-                const rawLine = line.trim();
-                const upperLine = rawLine.toUpperCase();
+            // 2. Parse ALL valid PDFs found
+            for (const item of validResults) {
+                const { pdfBuffer, foundDate, foundUrl } = item;
                 
-                if (!rawLine) continue;
-                
-                // Detect segments
-                if (upperLine.includes('VACUNO DE VIDA')) {
-                    currentSegment = 'vida';
-                    continue;
-                }
-                if (upperLine.includes('VACUNO DE ABASTO VIVO')) {
-                    currentSegment = 'abasto';
-                    continue;
-                }
-                if (upperLine.includes('VACUNO DE ABASTO PRECIO CANAL')) {
-                    currentSegment = 'abasto';
-                    continue;
-                }
-                
-                // Exclude headers
-                if (upperLine.includes('TIPOS DE GANADO') || upperLine.includes('PRECIO ANTERIOR')) continue;
-                
-                // Regex to capture Category Name, Previous Price, Current Price, and Unit
-                const match = rawLine.match(/^(.+?)\s+([\d,.]+)\s+([\d,.]+)\s+(Unidad|Kg\.\/v\.|Kg\.\/c\.)$/i);
-                
-                if (match) {
-                    const categoryName = match[1].trim();
-                    // Fix thousand separators (e.g. 2.000,00 -> 2000.00)
-                    const rawPrice = match[3];
-                    const currentPrice = parseFloat(rawPrice.replace(/\./g, '').replace(',', '.'));
-                    const unitStr = match[4].toLowerCase();
+                try {
+                    const buffer = new Uint8Array(pdfBuffer);
+                    const parser = new PDFParse(buffer);
+                    const result = await parser.getText();
+                    const text = result.text;
                     
-                    let unit: UnitType = 'eur_unidad';
-                    if (unitStr.includes('kg./v.')) unit = 'eur_kg_vivo';
-                    else if (unitStr.includes('kg./c.')) unit = 'eur_kg_canal';
+                    rawContents.push(`--- PDF: ${foundUrl} ---`);
+                    rawContents.push(text);
                     
-                    let finalCategoryName = categoryName;
-                    const upperCat = categoryName.toUpperCase();
+                    // 3. Parse lines
+                    const lines = text.split('\n');
+                    let currentSegment: SegmentType = 'vida';
                     
-                    if (upperCat.startsWith('TORO DEL PAIS')) {
-                        finalCategoryName = `TOROS DEL PAIS - ${categoryName.replace('TORO DEL PAIS ', '')}`;
-                    } else if (upperCat.startsWith('VACAS') && !upperCat.includes('VACA ')) {
-                        finalCategoryName = `VACAS - ${categoryName}`;
-                    } else if (upperCat.includes('1 A 3 SEMANAS')) {
-                        finalCategoryName = `TERNEROS 1 A 3 SEMANAS - ${categoryName}`;
-                    } else if (upperCat.includes('6 MESES')) {
-                        finalCategoryName = `TERNEROS 6 MESES - ${categoryName}`;
-                    } else if (upperCat.includes('VACA AVILEÑA') || upperCat.includes('VACA RETINTA') || upperCat.includes('VACA CRUZADA') || upperCat.includes('VACA CHAROLAISE')) {
-                        finalCategoryName = `VACAS DE VIDA - ${categoryName}`;
-                    } else if (upperCat.includes('TERNERA CRUZADA 1ª') || upperCat.includes('TERNERA CRUZADA 2ª')) {
-                        finalCategoryName = `TERNERA CRUZADA (BASE 200 KG) - ${categoryName}`;
-                    } else if (upperCat.includes('TERNERO CRUZADO 1ª') || upperCat.includes('TERNERO CRUZADO 2ª')) {
-                        finalCategoryName = `TERNERO CRUZADO (BASE 200 KG) - ${categoryName}`;
-                    } else if (upperCat.includes('TERNERO DEL PAIS')) {
-                        finalCategoryName = `TERNERO DEL PAÍS - ${categoryName}`;
-                    } else if (upperCat.includes('TERNERA DEL PAIS')) {
-                        finalCategoryName = `TERNERA DEL PAÍS - ${categoryName}`;
-                    } else if (!categoryName.includes('-')) {
-                        // If it still doesn't have a dash, we can default to using the first two words as a group
-                        const words = categoryName.split(' ');
-                        if (words.length > 2) {
-                            finalCategoryName = `${words[0]} ${words[1]} - ${categoryName}`;
-                        } else {
-                            finalCategoryName = `${words[0]} - ${categoryName}`;
+                    for (const line of lines) {
+                        const rawLine = line.trim();
+                        const upperLine = rawLine.toUpperCase();
+                        
+                        if (!rawLine) continue;
+                        
+                        // Detect segments
+                        if (upperLine.includes('VACUNO DE VIDA')) {
+                            currentSegment = 'vida';
+                            continue;
+                        }
+                        if (upperLine.includes('VACUNO DE ABASTO VIVO')) {
+                            currentSegment = 'abasto';
+                            continue;
+                        }
+                        if (upperLine.includes('VACUNO DE ABASTO PRECIO CANAL')) {
+                            currentSegment = 'abasto';
+                            continue;
+                        }
+                        
+                        // Exclude headers
+                        if (upperLine.includes('TIPOS DE GANADO') || upperLine.includes('PRECIO ANTERIOR')) continue;
+                        
+                        // Regex to capture Category Name, Previous Price, Current Price, and Unit
+                        const match = rawLine.match(/^(.+?)\s+([\d,.]+)\s+([\d,.]+)\s+(Unidad|Kg\.\/v\.|Kg\.\/c\.)$/i);
+                        
+                        if (match) {
+                            const categoryName = match[1].trim();
+                            const rawPrice = match[3];
+                            const currentPrice = parseFloat(rawPrice.replace(/\./g, '').replace(',', '.'));
+                            const unitStr = match[4].toLowerCase();
+                            
+                            let unit: UnitType = 'eur_unidad';
+                            if (unitStr.includes('kg./v.')) unit = 'eur_kg_vivo';
+                            else if (unitStr.includes('kg./c.')) unit = 'eur_kg_canal';
+                            
+                            let finalCategoryName = categoryName;
+                            const upperCat = categoryName.toUpperCase();
+                            
+                            if (upperCat.startsWith('TORO DEL PAIS')) {
+                                finalCategoryName = `TOROS DEL PAIS - ${categoryName.replace('TORO DEL PAIS ', '')}`;
+                            } else if (upperCat.startsWith('VACAS') && !upperCat.includes('VACA ')) {
+                                finalCategoryName = `VACAS - ${categoryName}`;
+                            } else if (upperCat.includes('1 A 3 SEMANAS')) {
+                                finalCategoryName = `TERNEROS 1 A 3 SEMANAS - ${categoryName}`;
+                            } else if (upperCat.includes('6 MESES')) {
+                                finalCategoryName = `TERNEROS 6 MESES - ${categoryName}`;
+                            } else if (upperCat.includes('VACA AVILEÑA') || upperCat.includes('VACA RETINTA') || upperCat.includes('VACA CRUZADA') || upperCat.includes('VACA CHAROLAISE')) {
+                                finalCategoryName = `VACAS DE VIDA - ${categoryName}`;
+                            } else if (upperCat.includes('TERNERA CRUZADA 1ª') || upperCat.includes('TERNERA CRUZADA 2ª')) {
+                                finalCategoryName = `TERNERA CRUZADA (BASE 200 KG) - ${categoryName}`;
+                            } else if (upperCat.includes('TERNERO CRUZADO 1ª') || upperCat.includes('TERNERO CRUZADO 2ª')) {
+                                finalCategoryName = `TERNERO CRUZADO (BASE 200 KG) - ${categoryName}`;
+                            } else if (upperCat.includes('TERNERO DEL PAIS')) {
+                                finalCategoryName = `TERNERO DEL PAÍS - ${categoryName}`;
+                            } else if (upperCat.includes('TERNERA DEL PAIS')) {
+                                finalCategoryName = `TERNERA DEL PAÍS - ${categoryName}`;
+                            } else if (!categoryName.includes('-')) {
+                                const words = categoryName.split(' ');
+                                if (words.length > 2) {
+                                    finalCategoryName = `${words[0]} ${words[1]} - ${categoryName}`;
+                                } else {
+                                    finalCategoryName = `${words[0]} - ${categoryName}`;
+                                }
+                            }
+                            
+                            if (!isNaN(currentPrice) && currentPrice > 0) {
+                                prices.push({
+                                    date: foundDate, // Assigns the date of the specific PDF document
+                                    species: 'bovino',
+                                    segment: currentSegment,
+                                    category_name: finalCategoryName,
+                                    normalized_category: TalaveraParser.normalizeCategory(categoryName),
+                                    price_avg: currentPrice,
+                                    unit: unit,
+                                    trend: 'unknown' as TrendType
+                                });
+                            }
                         }
                     }
-                    
-                    if (!isNaN(currentPrice) && currentPrice > 0) {
-                        prices.push({
-                            date: foundDate,
-                            species: 'bovino',
-                            segment: currentSegment,
-                            category_name: finalCategoryName,
-                            normalized_category: TalaveraParser.normalizeCategory(categoryName),
-                            price_avg: currentPrice,
-                            unit: unit,
-                            trend: 'unknown' as TrendType
-                        });
-                    }
+                } catch (pdfErr) {
+                    console.warn(`Failed to parse Talavera PDF at ${foundUrl}:`, pdfErr);
+                    // Silently continue to the next valid PDF rather than crashing the entire batch
                 }
-            }
-            
+       }
             return {
                 prices,
-                rawContent: `--- PDF: ${foundUrl} ---\n${text}`,
+                rawContent: rawContents.join('\n\n'),
                 contentType: 'application/pdf'
             };
             
