@@ -1,4 +1,3 @@
-import { PDFParse } from 'pdf-parse';
 import { ETLParserResult, TrendType, UnitType, MarketSource, SegmentType } from '@/types/livestock';
 
 export class TalaveraParser {
@@ -58,10 +57,24 @@ export class TalaveraParser {
                 const { pdfBuffer, foundDate, foundUrl } = item;
                 
                 try {
-                    const buffer = new Uint8Array(pdfBuffer);
-                    const parser = new PDFParse(buffer);
-                    const result = await parser.getText();
-                    const text = result.text;
+                    let text = '';
+                    const mod = await import('pdf-parse');
+                    const PDFP = mod.default || (mod as any).PDFParse || mod;
+                    
+                    if (typeof PDFP === 'function' && !PDFP.prototype?.getText) {
+                        // Classical pdf-parse usage
+                        const data = await PDFP(Buffer.from(pdfBuffer));
+                        text = data.text;
+                    } else {
+                        // Alternative/Fork usage
+                        const parser = new PDFP(new Uint8Array(pdfBuffer));
+                        const result = await parser.getText();
+                        text = result.text;
+                    }
+                    
+                    if (!text || text.trim() === '') {
+                        throw new Error("El PDF fue parseado pero el texto resultante está vacío.");
+                    }
                     
                     rawContents.push(`--- PDF: ${foundUrl} ---`);
                     rawContents.push(text);
