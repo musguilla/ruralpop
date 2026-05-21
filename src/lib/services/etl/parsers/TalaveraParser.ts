@@ -58,8 +58,8 @@ export class TalaveraParser {
                 
                 try {
                     let text = '';
-                    const mod = await import('pdf-parse');
-                    const PDFP = mod.default || (mod as any).PDFParse || mod;
+                    const mod: any = await import('pdf-parse');
+                    const PDFP = mod.default || mod.PDFParse || mod;
                     
                     if (typeof PDFP === 'function' && !PDFP.prototype?.getText) {
                         // Classical pdf-parse usage
