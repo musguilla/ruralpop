@@ -49,7 +49,7 @@ export function FavoriteButton({ listingId, initialIsFavorited, className = "" }
             aria-label={isFavorited ? "Quitar de favoritos" : "Añadir a favoritos"}
         >
             <Heart
-                className={`transition-colors duration-300 ${isFavorited ? "fill-rose-500 text-rose-500" : "text-gray-600 hover:text-rose-500"}`}
+                className={`w-5 h-5 transition-colors duration-300 ${isFavorited ? "fill-rose-500 text-rose-500" : "text-gray-600 hover:text-rose-500"}`}
             />
         </button>
     );
