@@ -130,7 +130,7 @@ export function ImageGallery({ images, title, likesCount }: ImageGalleryProps) {
 
                 {/* Wallapop style likes badge */}
                 {likesCount !== undefined && likesCount >= 0 && (
-                    <div className="absolute z-10 bottom-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-md text-gray-900 text-base font-semibold pointer-events-none">
+                    <div className="absolute z-10 bottom-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full bg-[#ffffffad] backdrop-blur-md shadow-md text-gray-900 text-base font-semibold pointer-events-none">
                         <Heart className="w-5 h-5 text-gray-900 stroke-[2px]" />
                         <span>{likesCount}</span>
                     </div>
