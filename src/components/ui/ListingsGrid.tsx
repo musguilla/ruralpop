@@ -56,7 +56,8 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             .from("listings")
             .select(`
                 id, title, price, location, image_urls, created_at, category, price_type, is_featured,
-                users!inner(is_ghost)
+                users!inner(is_ghost),
+                favorites(count)
             `, { count: "exact" })
             .order("is_featured", { ascending: false, nullsFirst: false });
 

@@ -2,16 +2,17 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import supabaseLoader from "@/utils/supabase-image-loader";
 
 interface ImageGalleryProps {
     images: string[];
     title: string;
+    likesCount?: number;
 }
 
-export function ImageGallery({ images, title }: ImageGalleryProps) {
+export function ImageGallery({ images, title, likesCount }: ImageGalleryProps) {
     const [[page, direction], setPage] = useState([0, 0]);
 
     // Usamos módulo seguro para arrays circulares (índice real)
@@ -120,10 +121,17 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
                             <ChevronRight className="w-6 h-6" />
                         </button>
 
-                        <div className="absolute z-10 bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 text-white text-xs font-medium backdrop-blur-sm pointer-events-none">
+                        <div className="absolute z-10 bottom-4 left-4 px-3 py-1.5 rounded-full bg-black/50 text-white text-xs font-medium backdrop-blur-sm pointer-events-none">
                             {activeIndex + 1} / {images.length}
                         </div>
                     </>
+                )}
+
+                {likesCount !== undefined && likesCount >= 0 && (
+                    <div className="absolute z-10 bottom-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 text-white text-xs font-medium backdrop-blur-sm pointer-events-none">
+                        <Heart className="w-3.5 h-3.5 fill-current text-white" />
+                        {likesCount}
+                    </div>
                 )}
             </div>
 

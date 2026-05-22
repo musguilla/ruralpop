@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
-import { MapPin, Image as ImageIcon, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { MapPin, Image as ImageIcon, ChevronLeft, ChevronRight, ExternalLink, Heart } from "lucide-react";
 import { slugify } from "@/utils/seoUtils";
 import { encodeId } from "@/utils/idUtils";
 import { FavoriteButton } from "./FavoriteButton";
@@ -23,6 +23,7 @@ export interface Listing {
     category: string;
     price_type: string;
     is_featured?: boolean;
+    favorites?: Array<{ count: number }>;
 }
 
 export function ListingCard({ listing, isFavorited = false, isGhostPreview = false }: { listing: Listing; isFavorited?: boolean; isGhostPreview?: boolean }) {
@@ -163,10 +164,18 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                     </div>
                 </div>
 
-                {/* Title */}
-                <h3 className="font-bold text-[var(--ag-sys-color-text)] line-clamp-2 leading-tight uppercase mb-auto group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                    {listing.title}
-                </h3>
+                {/* Title & Likes */}
+                <div className="flex items-start justify-between gap-2 mb-auto">
+                    <h3 className="font-bold text-[var(--ag-sys-color-text)] line-clamp-2 leading-tight uppercase group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        {listing.title}
+                    </h3>
+                    {listing.favorites?.[0]?.count !== undefined && (
+                        <span className="inline-flex flex-shrink-0 items-center gap-1 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-[10px] font-bold px-2 py-0.5 rounded border border-red-100 dark:border-red-900/50" title={`${listing.favorites[0].count} likes`}>
+                            <Heart className="w-3 h-3 fill-current text-red-500" />
+                            {listing.favorites[0].count}
+                        </span>
+                    )}
+                </div>
 
                 {/* Meta: Location & Time */}
                 <div className="mt-4 pt-4 border-t border-[var(--ag-sys-color-border)] flex items-center justify-between text-xs text-[var(--ag-sys-color-text-muted)]">
