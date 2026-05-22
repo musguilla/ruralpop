@@ -138,12 +138,12 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                     </div>
                 )}
 
-                {/* Favorite Badge (Light Style) at bottom right of image */}
+                {/* Favorite Button (Circular, lighter) at bottom right of image */}
                 <div className="absolute bottom-2 right-2 z-20 pointer-events-auto" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                     <FavoriteButton
                         listingId={listing.id}
                         initialIsFavorited={isFavorited}
-                        className="!w-auto !h-auto px-2 py-1 !rounded border border-[var(--ag-sys-color-border)] !bg-white/90 shadow-sm"
+                        className="!w-8 !h-8 !p-0 flex items-center justify-center !rounded-full border border-[var(--ag-sys-color-border)] !bg-white/70 shadow-sm"
                     />
                 </div>
             </div>
