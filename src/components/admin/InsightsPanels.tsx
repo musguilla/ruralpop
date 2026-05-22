@@ -108,7 +108,10 @@ export function InsightsPanels({
     };
 
     if (detailView) {
-        const maxVal = Math.max(...detailView.items.map(i => Number(i[detailView.valueKey]) || 0));
+        const maxVal = detailView.items.length > 0
+            ? Math.max(...detailView.items.map(i => Number(i[detailView.valueKey]) || 0))
+            : 0;
+        const showChart = maxVal > 0;
         const hoveredData = hoveredIndex !== null ? detailView.items[hoveredIndex] : null;
 
         return (
@@ -116,88 +119,90 @@ export function InsightsPanels({
                 <div className="flex items-center gap-4 mb-2">
                     <button 
                         onClick={() => setDetailView(null)}
-                        className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-600 flex items-center justify-center bg-gray-50 border border-gray-200 shrink-0"
+                        className="p-2 rounded-full hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors text-[var(--ag-sys-color-text-muted)] flex items-center justify-center bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] shrink-0"
                         title="Volver"
                     >
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <div>
-                        <h2 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
-                            <BarChart2 className="w-6 h-6 text-gray-500" />
+                        <h2 className="text-xl md:text-2xl font-bold text-[var(--ag-sys-color-text)] flex items-center gap-2">
+                            <BarChart2 className="w-6 h-6 text-[var(--ag-sys-color-text-muted)]" />
                             {detailView.title}
                         </h2>
-                        <p className="text-sm text-gray-500 mt-1 uppercase tracking-wider">Top {detailView.items.length} resultados - Gráfico vertical</p>
+                        <p className="text-sm text-[var(--ag-sys-color-text-muted)] mt-1 uppercase tracking-wider">Top {detailView.items.length} resultados - {showChart ? "Gráfico vertical" : "Vista detallada"}</p>
                     </div>
                 </div>
 
                 {detailView.items.length === 0 ? (
-                    <div className="text-center py-20 text-gray-400">No hay datos disponibles</div>
+                    <div className="text-center py-20 text-[var(--ag-sys-color-text-muted)]">No hay datos disponibles</div>
                 ) : (
                     <>
                         {/* Dynamic Tooltip Display Area */}
                         <div className="h-10 mb-2 flex items-center px-2">
                             {hoveredData ? (
-                                <div className="text-sm md:text-base font-medium text-gray-800 flex items-center gap-3 animate-in fade-in duration-200">
-                                    <span className="font-bold text-gray-400">#{hoveredIndex! + 1}</span>
+                                <div className="text-sm md:text-base font-medium text-[var(--ag-sys-color-text)] flex items-center gap-3 animate-in fade-in duration-200">
+                                    <span className="font-bold text-[var(--ag-sys-color-text-muted)]">#{hoveredIndex! + 1}</span>
                                     <span className="truncate max-w-[200px] md:max-w-[400px]">{hoveredData[detailView.labelKey]}</span>
-                                    <span className={`px-2 py-1 rounded-md bg-gray-100 text-gray-900 font-bold flex items-center gap-1`}>
+                                    <span className={`px-2 py-1 rounded-md bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] font-bold flex items-center gap-1 border border-[var(--ag-sys-color-border)]`}>
                                         {hoveredData[detailView.valueKey]} {detailView.icon && <span className="opacity-60">{detailView.icon}</span>}
                                     </span>
                                 </div>
                             ) : (
-                                <div className="text-sm text-gray-400 italic flex items-center gap-2">
-                                    Pasa el ratón sobre una barra para ver detalles
+                                <div className="text-sm text-[var(--ag-sys-color-text-muted)] italic flex items-center gap-2">
+                                    {showChart ? "Pasa el ratón sobre una barra para ver detalles" : ""}
                                 </div>
                             )}
                         </div>
 
                         {/* Vertical Bar Chart */}
-                        <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 md:p-6 mb-8 overflow-hidden">
-                            <div className="flex gap-1.5 overflow-x-auto items-end h-[300px] border-b border-gray-200 pb-2 px-1 custom-scrollbar">
-                                {detailView.items.map((item, index) => {
-                                    const val = Number(item[detailView.valueKey]) || 0;
-                                    const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
-                                    const isHovered = hoveredIndex === index;
-                                    
-                                    return (
-                                        <div 
-                                            key={index} 
-                                            className="w-8 md:w-10 flex-shrink-0 flex flex-col justify-end group cursor-pointer relative h-full transition-all"
-                                            onMouseEnter={() => setHoveredIndex(index)}
-                                            onMouseLeave={() => setHoveredIndex(null)}
-                                            onTouchStart={() => setHoveredIndex(index)}
-                                        >
-                                            {/* Bar */}
+                        {showChart && (
+                            <div className="bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-xl p-4 md:p-6 mb-8 overflow-hidden">
+                                <div className="flex gap-1.5 overflow-x-auto items-end h-[300px] border-b border-[var(--ag-sys-color-border)] pb-2 px-1 custom-scrollbar">
+                                    {detailView.items.map((item, index) => {
+                                        const val = Number(item[detailView.valueKey]) || 0;
+                                        const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                                        const isHovered = hoveredIndex === index;
+                                        
+                                        return (
                                             <div 
-                                                className={`w-full rounded-t-sm transition-all duration-700 ease-in-out ${detailView.colorClass} shadow-sm ${isHovered ? 'opacity-100 ring-2 ring-offset-1 ring-gray-300' : 'opacity-70 group-hover:opacity-100'}`}
-                                                style={{ height: `${Math.max(pct, 1)}%` }}
-                                            />
-                                            {/* Label under X-axis */}
-                                            <div className={`text-[10px] md:text-xs text-center mt-2 font-medium ${isHovered ? 'text-gray-800' : 'text-gray-400'}`}>
-                                                {index + 1}
+                                                key={index} 
+                                                className="w-8 md:w-10 flex-shrink-0 flex flex-col justify-end group cursor-pointer relative h-full transition-all"
+                                                onMouseEnter={() => setHoveredIndex(index)}
+                                                onMouseLeave={() => setHoveredIndex(null)}
+                                                onTouchStart={() => setHoveredIndex(index)}
+                                            >
+                                                {/* Bar */}
+                                                <div 
+                                                    className={`w-full rounded-t-sm transition-all duration-700 ease-in-out ${detailView.colorClass} shadow-sm ${isHovered ? 'opacity-100 ring-2 ring-offset-1 ring-[var(--ag-sys-color-border)]' : 'opacity-70 group-hover:opacity-100'}`}
+                                                    style={{ height: `${Math.max(pct, 1)}%` }}
+                                                />
+                                                {/* Label under X-axis */}
+                                                <div className={`text-[10px] md:text-xs text-center mt-2 font-medium ${isHovered ? 'text-[var(--ag-sys-color-text)]' : 'text-[var(--ag-sys-color-text-muted)]'}`}>
+                                                    {index + 1}
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Detail List */}
                         <div>
-                            <h3 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Listado detallado</h3>
+                            <h3 className="text-lg font-bold text-[var(--ag-sys-color-text)] mb-4 border-b border-[var(--ag-sys-color-border)] pb-2">Listado detallado</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                 {detailView.items.map((item, index) => {
                                     const content = (
                                         <div 
-                                            className={`bg-gray-50 border rounded-lg p-3 flex justify-between items-center transition-colors group/item h-full ${hoveredIndex === index ? 'border-gray-400 bg-gray-100' : 'border-gray-100 hover:bg-gray-100'}`}
+                                            className={`bg-[var(--ag-sys-color-background)] border rounded-lg p-3 flex justify-between items-center transition-colors group/item h-full ${hoveredIndex === index ? 'border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5' : 'border-[var(--ag-sys-color-border)] hover:bg-[var(--ag-sys-color-primary)]/5'}`}
                                             onMouseEnter={() => setHoveredIndex(index)}
                                             onMouseLeave={() => setHoveredIndex(null)}
                                         >
                                             <div className="truncate pr-3 flex items-center gap-2">
-                                                <span className="text-gray-400 text-xs font-bold w-5">{index + 1}.</span>
-                                                <span className="text-sm font-medium text-gray-800 truncate group-hover/item:text-gray-900">{item[detailView.labelKey]}</span>
+                                                <span className="text-[var(--ag-sys-color-text-muted)] text-xs font-bold w-5">{index + 1}.</span>
+                                                <span className="text-sm font-medium text-[var(--ag-sys-color-text)] truncate group-hover/item:text-[var(--ag-sys-color-primary)]">{item[detailView.labelKey]}</span>
                                             </div>
-                                            <span className="font-bold text-gray-900 text-sm whitespace-nowrap flex items-center gap-1">
+                                            <span className="font-bold text-[var(--ag-sys-color-text)] text-sm whitespace-nowrap flex items-center gap-1">
                                                 {detailView.icon && <span className="opacity-50">{detailView.icon}</span>}
                                                 {item[detailView.valueKey] || 0}
                                             </span>
@@ -266,7 +271,7 @@ export function InsightsPanels({
                             </button>
                         </div>
                         <div className="space-y-2">
-                            {topProvinces.slice(0,5).map((prov: any, i: number) => (
+                            {topProvinces.slice(0,5).map((prov: ProvinceInsight, i: number) => (
                                 <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
                                     <div className="flex items-center gap-2">
                                         <MapPin className="w-4 h-4 text-[var(--ag-sys-color-text-muted)]" />
@@ -275,7 +280,7 @@ export function InsightsPanels({
                                     <span className="font-bold text-[var(--ag-sys-color-primary)]">{prov.users_count} usr</span>
                                 </div>
                             ))}
-                            {topProvinces.length === 0 && <p className="text-xs text-gray-500">Cargando o sin datos...</p>}
+                            {topProvinces.length === 0 && <p className="text-xs text-[var(--ag-sys-color-text-muted)]">Cargando o sin datos...</p>}
                         </div>
                     </section>
 
@@ -284,12 +289,12 @@ export function InsightsPanels({
                         <div className="flex justify-between items-center mb-3">
                             <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Usuarios más conectados hoy</h3>
                             <button onClick={() => openDetail('Usuarios más conectados hoy', topConnectedUsers, 'name', 'time_label', null, 'bg-emerald-500')} 
-                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full" style={{display: 'none'}}>
+                            className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
                                 <BarChart2 className="w-3 h-3"/> Ver todo
                             </button>
                         </div>
                         <div className="space-y-2">
-                            {topConnectedUsers.slice(0,5).map((usr: any, i: number) => (
+                            {topConnectedUsers.slice(0,5).map((usr: ConnectedUserInsight, i: number) => (
                                 <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
                                     <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{usr.name}</span>
                                     <span className="text-xs text-[var(--ag-sys-color-text-muted)]">
@@ -297,6 +302,9 @@ export function InsightsPanels({
                                     </span>
                                 </div>
                             ))}
+                            {topConnectedUsers.length === 0 && (
+                                <p className="text-xs text-[var(--ag-sys-color-text-muted)]">Sin conexiones registradas hoy...</p>
+                            )}
                         </div>
                     </section>
 
@@ -310,8 +318,8 @@ export function InsightsPanels({
                             </button>
                         </div>
                         <div className="space-y-2">
-                            {topUsersListings.slice(0,5).map((usr: any, i: number) => (
-                                <Link href={`/admin/listings?userId=${usr.user_id}`} key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3 hover:bg-gray-50 transition-colors group">
+                            {topUsersListings.slice(0,5).map((usr: UserListingsInsight, i: number) => (
+                                <Link href={`/admin/listings?userId=${usr.user_id}`} key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group border border-transparent animate-in fade-in duration-200">
                                     <span className="font-medium text-[var(--ag-sys-color-text)] truncate group-hover:text-[var(--ag-sys-color-primary)] transition-colors">{usr.name}</span>
                                     <span className="font-bold text-[var(--ag-sys-color-primary)]">{usr.listings_count} anuncios</span>
                                 </Link>
@@ -329,7 +337,7 @@ export function InsightsPanels({
                             </button>
                         </div>
                         <div className="space-y-2">
-                            {topUsersChats.slice(0,5).map((usr, i) => (
+                            {topUsersChats.slice(0,5).map((usr: UserChatsInsight, i: number) => (
                                 <button 
                                     key={i} 
                                     onClick={() => setSelectedChatUserId(usr.user_id)}
@@ -342,7 +350,7 @@ export function InsightsPanels({
                                     </span>
                                 </button>
                             ))}
-                            {topUsersChats.length === 0 && <p className="text-xs text-gray-500">Sin datos de chats...</p>}
+                            {topUsersChats.length === 0 && <p className="text-xs text-[var(--ag-sys-color-text-muted)]">Sin datos de chats...</p>}
                         </div>
                     </section>
                 </div>
@@ -368,13 +376,13 @@ export function InsightsPanels({
                             </button>
                         </div>
                         <div className="space-y-2">
-                            {topCategories?.slice(0,5).map((cat: any, i: number) => (
+                            {topCategories?.slice(0,5).map((cat: CategoryInsight, i: number) => (
                                 <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate flex items-center gap-2"><Package className="w-4 h-4 text-gray-400"/> {cat.name}</span>
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate flex items-center gap-2"><Package className="w-4 h-4 text-[var(--ag-sys-color-text-muted)]"/> {cat.name}</span>
                                     <span className="font-bold text-[var(--ag-sys-color-primary)]">{cat.count} anuncios</span>
                                 </div>
                             ))}
-                            {(!topCategories || topCategories.length === 0) && <p className="text-xs text-gray-500">Sin categorías...</p>}
+                            {(!topCategories || topCategories.length === 0) && <p className="text-xs text-[var(--ag-sys-color-text-muted)]">Sin categorías...</p>}
                         </div>
                     </section>
                     
@@ -387,13 +395,13 @@ export function InsightsPanels({
                             </button>
                         </div>
                         <div className="space-y-2">
-                            {topVisitedListings?.slice(0,5).map((lst: any, i: number) => (
+                            {topVisitedListings?.slice(0,5).map((lst: VisitedListingInsight, i: number) => (
                                 <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
                                     <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
                                     <span className="font-bold text-[var(--ag-sys-color-primary)]">{lst.visits_count || 0} views</span>
                                 </div>
                             ))}
-                            {(!topVisitedListings || topVisitedListings.length === 0) && <p className="text-xs text-gray-500">Sin datos de visitas...</p>}
+                            {(!topVisitedListings || topVisitedListings.length === 0) && <p className="text-xs text-[var(--ag-sys-color-text-muted)]">Sin datos de visitas...</p>}
                         </div>
                     </section>
 
@@ -406,7 +414,7 @@ export function InsightsPanels({
                             </button>
                         </div>
                         <div className="space-y-2">
-                            {topLikesListings.slice(0,5).map((lst: any, i: number) => (
+                            {topLikesListings.slice(0,5).map((lst: LikesListingInsight, i: number) => (
                                 <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
                                     <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
                                     <span className="font-bold text-red-500 flex items-center gap-1"><Heart className="w-4 h-4 fill-current"/> {lst.likes_count}</span>
@@ -424,13 +432,13 @@ export function InsightsPanels({
                             </button>
                         </div>
                         <div className="space-y-2">
-                            {topListingsChats.slice(0,5).map((lst: any, i: number) => (
+                            {topListingsChats.slice(0,5).map((lst: ListingsChatsInsight, i: number) => (
                                 <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
                                     <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
                                     <span className="font-bold text-blue-500 flex items-center gap-1"><MessageSquare className="w-4 h-4" /> {lst.chats_count}</span>
                                 </div>
                             ))}
-                            {topListingsChats.length === 0 && <p className="text-xs text-gray-500">Sin datos de chats...</p>}
+                            {topListingsChats.length === 0 && <p className="text-xs text-[var(--ag-sys-color-text-muted)]">Sin datos de chats...</p>}
                         </div>
                     </section>
                 </div>
