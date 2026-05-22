@@ -8,37 +8,26 @@ export async function HomePopularListings() {
     const supabase = await createClient();
     const tenantFilterString = await getServerTenantFilterString();
 
-    // 1. Obtener todos los favoritos para saber cuáles son los más populares reales
-    // Usamos el cliente admin para asegurar que podemos ver todos los favoritos si hay RLS
-    const { createClient: createSupabaseClient } = await import("@supabase/supabase-js");
-    const supabaseAdmin = createSupabaseClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    // 1. Obtener los IDs del caché global calculado por Insights (para evitar límite de 1000 de Supabase)
+    const { data: cacheData, error: cacheError } = await supabase.storage
+        .from('wpublic')
+        .download('admin-insights-cache.json');
 
-    const { data: allFavorites, error: favError } = await supabaseAdmin
-        .from("favorites")
-        .select("listing_id");
+    if (cacheError || !cacheData) return null;
 
-    if (favError || !allFavorites || allFavorites.length === 0) {
+    const insightsStr = await cacheData.text();
+    const insights = JSON.parse(insightsStr);
+
+    if (!insights || !insights.topLikesListings || insights.topLikesListings.length === 0) {
         return null;
     }
 
-    // 2. Contar la popularidad de cada anuncio en memoria
-    const favCounts: Record<string, number> = {};
-    for (const fav of allFavorites) {
-        favCounts[fav.listing_id] = (favCounts[fav.listing_id] || 0) + 1;
-    }
-
-    // 3. Obtener los IDs de los 30 anuncios con más me gusta (margen por si algunos están inactivos)
-    const topListingIds = Object.entries(favCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 30)
-        .map(entry => entry[0]);
+    // 2. Extraer los IDs de los 30 anuncios más populares reales
+    const topListingIds = insights.topLikesListings.slice(0, 30).map((l: any) => l.listing_id);
 
     if (topListingIds.length === 0) return null;
 
-    // 4. Traer esos anuncios específicos desde la base de datos (aplicando filtros de fotos y estado)
+    // 3. Traer esos anuncios específicos desde la base de datos
     let query = supabase
         .from("listings")
         .select(`
@@ -59,10 +48,14 @@ export async function HomePopularListings() {
         return null;
     }
 
-    // 5. Los resultados de 'in' no vienen ordenados, así que los ordenamos según nuestro ranking de favCounts
+    // 4. Ordenar exactamente igual que el ranking global de Insights
     const topListings = [...listings]
-        .sort((a: any, b: any) => (favCounts[b.id] || 0) - (favCounts[a.id] || 0))
-        .slice(0, 8); // Nos quedamos solo con los top 8 absolutos
+        .sort((a: any, b: any) => {
+            const indexA = topListingIds.indexOf(a.id);
+            const indexB = topListingIds.indexOf(b.id);
+            return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+        })
+        .slice(0, 8);
 
     const userFavs = await getUserFavoriteIds();
 
