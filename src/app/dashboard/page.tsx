@@ -45,7 +45,7 @@ export default async function DashboardPage(props: Props) {
     // Obtener anuncios del usuario actual filtrados por pestaña
     const { data: listings, error } = await supabase
         .from("listings")
-        .select("*")
+        .select("*, favorites(count)")
         .eq("user_id", user.id)
         .eq("status", currentTab)
         .or(await getServerTenantFilterString())
@@ -62,7 +62,7 @@ export default async function DashboardPage(props: Props) {
             .from("escrow_orders")
             .select(`
                 *,
-                listings (*),
+                listings (*, favorites(count)),
                 buyer:users!escrow_orders_buyer_id_fkey(email)
             `)
             .eq("seller_id", user.id)

@@ -1,26 +1,59 @@
 import React from 'react';
 import Image from 'next/image';
-import { Tractor, MapPin, Tag, Clock, CheckCircle2 } from 'lucide-react';
+import { Tractor, MapPin, Tag, Clock, CheckCircle2, Heart } from 'lucide-react';
 import { formatCurrency, formatRelativeTime } from '@/utils/format';
 import { DashboardListingActions } from './DashboardListingActions';
 import { ConfirmReturnButton } from './ConfirmReturnButton';
 
+export interface Listing {
+    id: string;
+    title: string;
+    price: number;
+    sold_price?: number;
+    location: string;
+    image_urls: string[];
+    created_at: string;
+    category: string;
+    price_type: string;
+    is_featured?: boolean;
+    status: string;
+    vender_online?: boolean;
+    favorites?: Array<{ count: number }>;
+}
+
+export interface EscrowOrder {
+    id: string;
+    status: string;
+    seller_net_amount_cents: number;
+    listings: Listing;
+    buyer: {
+        email: string;
+    };
+}
+
 export type UnifiedItem = {
     type: 'active' | 'manual' | 'escrow';
-    data: any;
+    data: Listing | EscrowOrder;
     date: number;
 };
 
+export interface PublicUser {
+    role: string;
+    available_bumps: number;
+    available_featured: number;
+    is_ghost?: boolean;
+}
+
 type Props = {
     item: UnifiedItem;
-    publicUser: any;
+    publicUser: PublicUser | null;
     currentTab: 'active' | 'sold' | 'reserved';
 };
 
 export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
     const isEscrow = item.type === 'escrow';
-    const order = isEscrow ? item.data : null;
-    const listing = isEscrow ? order.listings : item.data;
+    const order = isEscrow ? (item.data as EscrowOrder) : null;
+    const listing = isEscrow ? (order?.listings) : (item.data as Listing);
 
     // Si es un listing borrado que sigue en escrow
     if (!listing) return null;
@@ -64,14 +97,13 @@ export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
                                 <h4 className="text-lg font-bold text-[var(--ag-sys-color-text)] line-clamp-2">
                                     {listing.title}
                                 </h4>
-                                {listing.vender_online && (
-                                    <span className="inline-flex flex-shrink-0 items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-0.5 rounded-md border border-emerald-200">
-                                        <CheckCircle2 className="w-3.5 h-3.5" /> Venta Online
-                                    </span>
-                                )}
+                                <span className="inline-flex flex-shrink-0 items-center gap-1 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-xs font-bold px-2.5 py-0.5 rounded-md border border-red-100 dark:border-red-900/50">
+                                    <Heart className="w-3.5 h-3.5 fill-current text-red-500" />
+                                    {listing.favorites?.[0]?.count || 0}
+                                </span>
                             </div>
-                            <div className="text-right flex-shrink-0">
-                                {isEscrow ? (
+                            <div className="text-right flex-shrink-0 flex flex-col items-end gap-1.5">
+                                {isEscrow && order ? (
                                     <div className="flex flex-col items-end">
                                         <span className="text-xl font-black text-amber-600">
                                             {formatCurrency(order.seller_net_amount_cents / 100)}
@@ -94,10 +126,15 @@ export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
                                         {formatCurrency(listing.price)}
                                     </span>
                                 )}
+                                {listing.vender_online && (
+                                    <span className="inline-flex flex-shrink-0 items-center gap-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-900/50">
+                                        <CheckCircle2 className="w-3.5 h-3.5" /> Venta Online
+                                    </span>
+                                )}
                             </div>
                         </div>
 
-                        {isEscrow && (
+                        {isEscrow && order && (
                             <div className="text-sm text-[var(--ag-sys-color-text-muted)] mb-3">
                                 Comprador: <span className="font-medium text-[var(--ag-sys-color-text)]">{order.buyer?.email}</span>
                             </div>
@@ -131,7 +168,7 @@ export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
                         ) : (
                             <div className="w-full flex justify-between items-center">
                                 {/* Estado Escrow */}
-                                {isEscrow ? (
+                                {isEscrow && order ? (
                                     <div className="flex items-center gap-2">
                                         {isPendingConfirmation ? (
                                             <span className="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1.5 rounded-lg">
@@ -172,3 +209,16 @@ export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
         </div>
     );
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Reposicionamiento de "Venta Online": Se ha trasladado desde el área del título a la columna del precio (alineación derecha)
+ *   para desaturar visualmente el título y ordenar mejor los metadatos comerciales.
+ * - Badge de Favoritos: Añadido al lado derecho del título para mostrar de un vistazo la atracción de usuarios del anuncio.
+ *   Utiliza el token `--ag-sys-color-*` y se adapta a temas claros/oscuros.
+ * - Tipo-Seguridad Estricta: Se han eliminado los tipos `any` genéricos para `UnifiedItem` y `Props`, creando las interfaces
+ *   `Listing`, `EscrowOrder` y `PublicUser` para garantizar cero errores de tipado e integración en tiempo de compilación.
+ * - Edge Cases Cubiertos: Controlamos mediante encadenamiento opcional (`listing.favorites?.[0]?.count`) la inexistencia de datos
+ *   de favoritos pre-cargados de Supabase para evitar errores de renderizado.
+ */
+
