@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { Users, Package, MapPin, Heart, MessageSquare, ArrowLeft, BarChart2 } from "lucide-react";
 import Link from "next/link";
 import { UserChatsExplorer } from "./UserChatsExplorer";
+import { slugify } from "@/utils/seoUtils";
+import { encodeId } from "@/utils/idUtils";
 
 type ProvinceInsight = {
     province_id: number;
@@ -76,6 +78,7 @@ type DetailData = {
     colorClass: string;
     isLink?: boolean;
     isChatUser?: boolean;
+    isListingLink?: boolean;
 };
 
 export function InsightsPanels({
@@ -100,9 +103,10 @@ export function InsightsPanels({
         icon: React.ReactNode,
         colorClass: string,
         isLink: boolean = false,
-        isChatUser: boolean = false
+        isChatUser: boolean = false,
+        isListingLink: boolean = false
     ) => {
-        setDetailView({ title, items, labelKey, valueKey, icon, colorClass, isLink, isChatUser });
+        setDetailView({ title, items, labelKey, valueKey, icon, colorClass, isLink, isChatUser, isListingLink });
         setHoveredIndex(null);
         window.scrollTo({ top: 100, behavior: 'smooth' });
     };
@@ -228,6 +232,16 @@ export function InsightsPanels({
                                             >
                                                 {content}
                                             </button>
+                                        );
+                                    }
+                                    if (detailView.isListingLink) {
+                                        const id = String(item.listing_id || item.id);
+                                        const title = String(item.title || item.name || 'anuncio');
+                                        const slug = `${slugify(title)}-${encodeId(id)}`;
+                                        return (
+                                            <Link href={`/anuncio/${slug}`} key={index} className="block" target="_blank">
+                                                {content}
+                                            </Link>
                                         );
                                     }
                                     return <div key={index}>{content}</div>;
@@ -389,17 +403,22 @@ export function InsightsPanels({
                     <section>
                         <div className="flex justify-between items-center mb-3">
                             <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Más visitados</h3>
-                            <button onClick={() => openDetail('Anuncios más visitados', topVisitedListings, 'title', 'visits_count', null, 'bg-emerald-500')} 
+                            <button onClick={() => openDetail('Anuncios más visitados', topVisitedListings, 'title', 'visits_count', null, 'bg-emerald-500', false, false, true)} 
                             className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
                                 <BarChart2 className="w-3 h-3"/> Ver todo
                             </button>
                         </div>
                         <div className="space-y-2">
                             {topVisitedListings?.slice(0,5).map((lst: VisitedListingInsight, i: number) => (
-                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
+                                <Link 
+                                    href={`/anuncio/${slugify(lst.title || 'anuncio')}-${encodeId(lst.id)}`}
+                                    key={i}
+                                    target="_blank"
+                                    className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group border border-transparent hover:border-[var(--ag-sys-color-border)] duration-200"
+                                >
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate group-hover:text-[var(--ag-sys-color-primary)] transition-colors">{lst.title}</span>
                                     <span className="font-bold text-[var(--ag-sys-color-primary)]">{lst.visits_count || 0} views</span>
-                                </div>
+                                </Link>
                             ))}
                             {(!topVisitedListings || topVisitedListings.length === 0) && <p className="text-xs text-[var(--ag-sys-color-text-muted)]">Sin datos de visitas...</p>}
                         </div>
@@ -408,35 +427,46 @@ export function InsightsPanels({
                     <section>
                         <div className="flex justify-between items-center mb-3">
                             <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más likes</h3>
-                            <button onClick={() => openDetail('Anuncios con más likes', topLikesListings, 'title', 'likes_count', <Heart className="w-3 h-3 fill-current"/>, 'bg-red-500')} 
+                            <button onClick={() => openDetail('Anuncios con más likes', topLikesListings, 'title', 'likes_count', <Heart className="w-3 h-3 fill-current"/>, 'bg-red-500', false, false, true)} 
                             className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
                                 <BarChart2 className="w-3 h-3"/> Ver todo
                             </button>
                         </div>
                         <div className="space-y-2">
                             {topLikesListings.slice(0,5).map((lst: LikesListingInsight, i: number) => (
-                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
+                                <Link 
+                                    href={`/anuncio/${slugify(lst.title || 'anuncio')}-${encodeId(lst.listing_id)}`}
+                                    key={i}
+                                    target="_blank"
+                                    className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group border border-transparent hover:border-[var(--ag-sys-color-border)] duration-200"
+                                >
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate group-hover:text-[var(--ag-sys-color-primary)] transition-colors">{lst.title}</span>
                                     <span className="font-bold text-red-500 flex items-center gap-1"><Heart className="w-4 h-4 fill-current"/> {lst.likes_count}</span>
-                                </div>
+                                </Link>
                             ))}
+                            {topLikesListings.length === 0 && <p className="text-xs text-[var(--ag-sys-color-text-muted)]">Sin datos de likes...</p>}
                         </div>
                     </section>
 
                     <section>
                         <div className="flex justify-between items-center mb-3">
                             <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más interacciones (chats)</h3>
-                            <button onClick={() => openDetail('Anuncios con más interacciones', topListingsChats, 'title', 'chats_count', <MessageSquare className="w-3 h-3"/>, 'bg-blue-500')} 
+                            <button onClick={() => openDetail('Anuncios con más interacciones', topListingsChats, 'title', 'chats_count', <MessageSquare className="w-3 h-3"/>, 'bg-blue-500', false, false, true)} 
                             className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
                                 <BarChart2 className="w-3 h-3"/> Ver todo
                             </button>
                         </div>
                         <div className="space-y-2">
                             {topListingsChats.slice(0,5).map((lst: ListingsChatsInsight, i: number) => (
-                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
-                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{lst.title}</span>
+                                <Link 
+                                    href={`/anuncio/${slugify(lst.title || 'anuncio')}-${encodeId(lst.listing_id)}`}
+                                    key={i}
+                                    target="_blank"
+                                    className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3 hover:bg-[var(--ag-sys-color-primary)]/5 transition-colors group border border-transparent hover:border-[var(--ag-sys-color-border)] duration-200"
+                                >
+                                    <span className="font-medium text-[var(--ag-sys-color-text)] truncate group-hover:text-[var(--ag-sys-color-primary)] transition-colors">{lst.title}</span>
                                     <span className="font-bold text-blue-500 flex items-center gap-1"><MessageSquare className="w-4 h-4" /> {lst.chats_count}</span>
-                                </div>
+                                </Link>
                             ))}
                             {topListingsChats.length === 0 && <p className="text-xs text-[var(--ag-sys-color-text-muted)]">Sin datos de chats...</p>}
                         </div>
@@ -453,4 +483,5 @@ export function InsightsPanels({
  * - Agregado de soporte para navegación y apertura directa del detalle de chats del usuario (`selectedChatUserId`) mediante callbacks desde el panel general de insights.
  * - Asegurado del tipo de dato `number` para el cálculo proporcional de barras del gráfico de estadísticas convirtiendo explícitamente mediante `Number(...)` para evitar advertencias de compilación y evitar el uso de `any`.
  * - Control de casos borde como usuarios sin identificador o conjuntos de datos nulos/vacíos en la carga estadística.
+ * - Los listados de anuncios (más visitados, con más likes, con más interacciones) tanto en la vista resumen como en la vista de detalle se enlazan directamente a su página pública de detalles en una pestaña nueva usando el slug `slugify(title)-encodeId(id)`, optimizando la operatividad del administrador sin interrumpir el estado de los insights.
  */
