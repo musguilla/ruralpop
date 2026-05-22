@@ -131,10 +131,10 @@ export async function POST() {
                 .slice(0, 100);
 
             if (sortedListUsers.length > 0) {
-                const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name, email').in('id', sortedListUsers.map(u => u.user_id));
+                const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name, commercial_name, email').in('id', sortedListUsers.map(u => u.user_id));
                 topUsersListings = sortedListUsers.map(u => ({
                     ...u,
-                    name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
+                    name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.commercial_name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
                 }));
             }
         }
@@ -157,10 +157,10 @@ export async function POST() {
             const sortedListChats = Object.entries(listChatsCounts).map(([listing_id, chats_count]) => ({ listing_id, chats_count })).sort((a, b) => b.chats_count - a.chats_count).slice(0, 100);
 
             if (sortedUserChats.length > 0) {
-                const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name, email').in('id', sortedUserChats.map(u => u.user_id));
+                const { data: userProfiles } = await supabaseAdmin.from('users').select('id, name, commercial_name, email').in('id', sortedUserChats.map(u => u.user_id));
                 topUsersChats = sortedUserChats.map(u => ({
                     ...u,
-                    name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
+                    name: userProfiles?.find((p: any) => p.id === u.user_id)?.name || userProfiles?.find((p: any) => p.id === u.user_id)?.commercial_name || userProfiles?.find((p: any) => p.id === u.user_id)?.email || 'Desconocido'
                 }));
             }
 

@@ -3,15 +3,79 @@
 import React, { useState } from "react";
 import { Users, Package, MapPin, Heart, MessageSquare, ArrowLeft, BarChart2 } from "lucide-react";
 import Link from "next/link";
+import { UserChatsExplorer } from "./UserChatsExplorer";
+
+type ProvinceInsight = {
+    province_id: number;
+    name: string;
+    users_count: number;
+};
+
+type ConnectedUserInsight = {
+    id: string;
+    email: string;
+    last_sign_in_at: string;
+    name: string;
+    time_label: string;
+};
+
+type UserListingsInsight = {
+    user_id: string;
+    listings_count: number;
+    name: string;
+};
+
+type UserChatsInsight = {
+    user_id: string;
+    chats_count: number;
+    name: string;
+};
+
+type VisitedListingInsight = {
+    id: string;
+    title: string;
+    visits_count: number;
+};
+
+type LikesListingInsight = {
+    listing_id: string;
+    likes_count: number;
+    title: string;
+};
+
+type ListingsChatsInsight = {
+    listing_id: string;
+    chats_count: number;
+    title: string;
+};
+
+type CategoryInsight = {
+    name: string;
+    count: number;
+};
+
+interface InsightsPanelsProps {
+    topProvinces: ProvinceInsight[];
+    topConnectedUsers: ConnectedUserInsight[];
+    topUsersListings: UserListingsInsight[];
+    topUsersChats: UserChatsInsight[];
+    topVisitedListings: VisitedListingInsight[];
+    topLikesListings: LikesListingInsight[];
+    topListingsChats: ListingsChatsInsight[];
+    topCategories: CategoryInsight[];
+}
+
+type DetailItem = Record<string, string | number | boolean | null | undefined | React.ReactNode | string[]>;
 
 type DetailData = {
     title: string;
-    items: any[];
+    items: DetailItem[];
     labelKey: string;
     valueKey: string;
     icon: React.ReactNode;
     colorClass: string;
     isLink?: boolean;
+    isChatUser?: boolean;
 };
 
 export function InsightsPanels({
@@ -23,26 +87,28 @@ export function InsightsPanels({
     topLikesListings,
     topListingsChats,
     topCategories
-}: any) {
+}: InsightsPanelsProps) {
     const [detailView, setDetailView] = useState<DetailData | null>(null);
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+    const [selectedChatUserId, setSelectedChatUserId] = useState<string | null>(null);
 
     const openDetail = (
         title: string,
-        items: any[],
+        items: DetailItem[],
         labelKey: string,
         valueKey: string,
         icon: React.ReactNode,
         colorClass: string,
-        isLink: boolean = false
+        isLink: boolean = false,
+        isChatUser: boolean = false
     ) => {
-        setDetailView({ title, items, labelKey, valueKey, icon, colorClass, isLink });
+        setDetailView({ title, items, labelKey, valueKey, icon, colorClass, isLink, isChatUser });
         setHoveredIndex(null);
         window.scrollTo({ top: 100, behavior: 'smooth' });
     };
 
     if (detailView) {
-        const maxVal = Math.max(...detailView.items.map(i => i[detailView.valueKey] || 0));
+        const maxVal = Math.max(...detailView.items.map(i => Number(i[detailView.valueKey]) || 0));
         const hoveredData = hoveredIndex !== null ? detailView.items[hoveredIndex] : null;
 
         return (
@@ -89,7 +155,7 @@ export function InsightsPanels({
                         <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 md:p-6 mb-8 overflow-hidden">
                             <div className="flex gap-1.5 overflow-x-auto items-end h-[300px] border-b border-gray-200 pb-2 px-1 custom-scrollbar">
                                 {detailView.items.map((item, index) => {
-                                    const val = item[detailView.valueKey] || 0;
+                                    const val = Number(item[detailView.valueKey]) || 0;
                                     const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
                                     const isHovered = hoveredIndex === index;
                                     
@@ -140,9 +206,23 @@ export function InsightsPanels({
 
                                     if (detailView.isLink && item.user_id) {
                                         return (
-                                            <Link href={`/admin/listings?userId=${item.user_id}`} key={index} className="block">
+                                            <Link href={`/admin/listings?userId=${String(item.user_id)}`} key={index} className="block">
                                                 {content}
                                             </Link>
+                                        );
+                                    }
+                                    if (detailView.isChatUser && item.user_id) {
+                                        return (
+                                            <button 
+                                                onClick={() => {
+                                                    setSelectedChatUserId(String(item.user_id));
+                                                    setDetailView(null);
+                                                }}
+                                                key={index} 
+                                                className="block w-full text-left"
+                                            >
+                                                {content}
+                                            </button>
                                         );
                                     }
                                     return <div key={index}>{content}</div>;
@@ -152,6 +232,15 @@ export function InsightsPanels({
                     </>
                 )}
             </div>
+        );
+    }
+
+    if (selectedChatUserId) {
+        return (
+            <UserChatsExplorer 
+                userId={selectedChatUserId} 
+                onClose={() => setSelectedChatUserId(null)} 
+            />
         );
     }
 
@@ -234,17 +323,24 @@ export function InsightsPanels({
                     <section>
                         <div className="flex justify-between items-center mb-3">
                             <h3 className="text-sm font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Con más chats</h3>
-                            <button onClick={() => openDetail('Usuarios con más Chats', topUsersChats, 'name', 'chats_count', <MessageSquare className="w-3 h-3"/>, 'bg-blue-500')} 
+                            <button onClick={() => openDetail('Usuarios con más Chats', topUsersChats, 'name', 'chats_count', <MessageSquare className="w-3 h-3"/>, 'bg-blue-500', false, true)} 
                             className="text-xs text-[var(--ag-sys-color-primary)] font-semibold flex items-center gap-1 hover:underline px-2 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full">
                                 <BarChart2 className="w-3 h-3"/> Ver todo
                             </button>
                         </div>
                         <div className="space-y-2">
-                            {topUsersChats.slice(0,5).map((usr: any, i: number) => (
-                                <div key={i} className="flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3">
+                            {topUsersChats.slice(0,5).map((usr, i) => (
+                                <button 
+                                    key={i} 
+                                    onClick={() => setSelectedChatUserId(usr.user_id)}
+                                    className="w-full flex justify-between items-center bg-[var(--ag-sys-color-background)] rounded-lg p-3 hover:bg-[var(--ag-sys-color-primary)]/5 hover:border-[var(--ag-sys-color-primary)] border border-transparent transition-all text-left"
+                                >
                                     <span className="font-medium text-[var(--ag-sys-color-text)] truncate">{usr.name}</span>
-                                    <span className="font-bold text-[var(--ag-sys-color-primary)]">{usr.chats_count} chats</span>
-                                </div>
+                                    <span className="font-bold text-[var(--ag-sys-color-primary)] flex items-center gap-1">
+                                        <MessageSquare className="w-3.5 h-3.5 opacity-60" />
+                                        {usr.chats_count} chats
+                                    </span>
+                                </button>
                             ))}
                             {topUsersChats.length === 0 && <p className="text-xs text-gray-500">Sin datos de chats...</p>}
                         </div>
@@ -338,7 +434,14 @@ export function InsightsPanels({
                         </div>
                     </section>
                 </div>
-            </div>
         </div>
     );
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Conversión de las interfaces de Insights a alias de tipo (`type`) para que TypeScript asigne implícitamente index signatures y sean compatibles con `DetailItem` en la función genérica `openDetail`.
+ * - Agregado de soporte para navegación y apertura directa del detalle de chats del usuario (`selectedChatUserId`) mediante callbacks desde el panel general de insights.
+ * - Asegurado del tipo de dato `number` para el cálculo proporcional de barras del gráfico de estadísticas convirtiendo explícitamente mediante `Number(...)` para evitar advertencias de compilación y evitar el uso de `any`.
+ * - Control de casos borde como usuarios sin identificador o conjuntos de datos nulos/vacíos en la carga estadística.
+ */
