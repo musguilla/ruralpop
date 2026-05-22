@@ -137,6 +137,15 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                         <span className="text-xs font-medium">{t("sin_imagen")}</span>
                     </div>
                 )}
+
+                {/* Favorite Badge (Light Style) at bottom right of image */}
+                <div className="absolute bottom-2 right-2 z-20 pointer-events-auto" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                    <FavoriteButton
+                        listingId={listing.id}
+                        initialIsFavorited={isFavorited}
+                        className="!w-auto !h-auto px-2 py-1 !rounded border border-[var(--ag-sys-color-border)] !bg-white/90 shadow-sm"
+                    />
+                </div>
             </div>
 
             <div className="p-4 flex flex-col flex-1">
@@ -164,18 +173,10 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                     </div>
                 </div>
 
-                {/* Title & Likes */}
-                <div className="flex items-start justify-between gap-2 mb-auto">
-                    <h3 className="font-bold text-[var(--ag-sys-color-text)] line-clamp-2 leading-tight uppercase group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        {listing.title}
-                    </h3>
-                    {listing.favorites?.[0]?.count !== undefined && (
-                        <span className="inline-flex flex-shrink-0 items-center gap-1 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-[10px] font-bold px-2 py-0.5 rounded border border-red-100 dark:border-red-900/50" title={`${listing.favorites[0].count} likes`}>
-                            <Heart className="w-3 h-3 fill-current text-red-500" />
-                            {listing.favorites[0].count}
-                        </span>
-                    )}
-                </div>
+                {/* Title */}
+                <h3 className="font-bold text-[var(--ag-sys-color-text)] line-clamp-2 leading-tight uppercase mb-auto group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    {listing.title}
+                </h3>
 
                 {/* Meta: Location & Time */}
                 <div className="mt-4 pt-4 border-t border-[var(--ag-sys-color-border)] flex items-center justify-between text-xs text-[var(--ag-sys-color-text-muted)]">
@@ -203,14 +204,7 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                 </LocalizedLink>
             )}
 
-            {/* Absolute positioning of the heart above the image but inside the relative container */}
-            <div className="absolute top-3 right-3 z-10">
-                <FavoriteButton
-                    listingId={listing.id}
-                    initialIsFavorited={isFavorited}
-                    className="w-10 h-10 shadow-md"
-                />
-            </div>
+
         </div>
     );
 }
