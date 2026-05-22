@@ -121,16 +121,18 @@ export function ImageGallery({ images, title, likesCount }: ImageGalleryProps) {
                             <ChevronRight className="w-6 h-6" />
                         </button>
 
-                        <div className="absolute z-10 bottom-4 left-4 px-3 py-1.5 rounded-full bg-black/50 text-white text-xs font-medium backdrop-blur-sm pointer-events-none">
-                            {activeIndex + 1} / {images.length}
+                        {/* Wallapop style photo counter */}
+                        <div className="absolute z-10 bottom-4 left-4 px-3.5 py-1.5 rounded-lg bg-black/60 text-white text-sm font-semibold shadow-sm pointer-events-none tracking-wide">
+                            {activeIndex + 1}/{images.length}
                         </div>
                     </>
                 )}
 
+                {/* Wallapop style likes badge */}
                 {likesCount !== undefined && likesCount >= 0 && (
-                    <div className="absolute z-10 bottom-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 text-white text-xs font-medium backdrop-blur-sm pointer-events-none">
-                        <Heart className="w-3.5 h-3.5 fill-current text-white" />
-                        {likesCount}
+                    <div className="absolute z-10 bottom-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-md text-gray-900 text-base font-semibold pointer-events-none">
+                        <Heart className="w-5 h-5 text-gray-900 stroke-[2px]" />
+                        <span>{likesCount}</span>
                     </div>
                 )}
             </div>
