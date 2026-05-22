@@ -434,6 +434,7 @@ export function InsightsPanels({
                         </div>
                     </section>
                 </div>
+            </div>
         </div>
     );
 }
