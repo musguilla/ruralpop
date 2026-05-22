@@ -298,7 +298,13 @@ export default async function ListingDetailPage(props: Props) {
 
                     {/* Columna Izquierda: Galería e Información */}
                     <div className="w-full min-w-0 lg:w-[728px] lg:max-w-[728px] flex-shrink-0 space-y-8">
-                        <ImageGallery images={resolvedImageUrls} title={listing.title} likesCount={listing.favorites?.[0]?.count} />
+                        <ImageGallery 
+                            images={resolvedImageUrls} 
+                            title={listing.title} 
+                            likesCount={listing.favorites?.[0]?.count} 
+                            listingId={listing.id}
+                            initialIsFavorited={isFavorited}
+                        />
                         <div className="bg-[var(--ag-sys-color-surface)] rounded-2xl p-6 sm:p-8 border border-[var(--ag-sys-color-border)]">
                             <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
                                 <div>
@@ -401,10 +407,6 @@ export default async function ListingDetailPage(props: Props) {
                             </div>
 
                             <div className="space-y-3">
-                                <FavoriteDetailButton
-                                    listingId={listing.id}
-                                    initialIsFavorited={isFavorited}
-                                />
 
                                 <ChatButton
                                     listingId={listing.id}

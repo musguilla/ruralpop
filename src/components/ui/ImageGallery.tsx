@@ -1,18 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import supabaseLoader from "@/utils/supabase-image-loader";
+import { toggleFavorite } from "@/app/favoritos/actions";
 
 interface ImageGalleryProps {
     images: string[];
     title: string;
     likesCount?: number;
+    listingId?: string;
+    initialIsFavorited?: boolean;
 }
 
-export function ImageGallery({ images, title, likesCount }: ImageGalleryProps) {
+export function ImageGallery({ images, title, likesCount, listingId, initialIsFavorited = false }: ImageGalleryProps) {
+    const [isFavorited, setIsFavorited] = useState(initialIsFavorited);
+    const [optimisticLikesCount, setOptimisticLikesCount] = useState(likesCount ?? 0);
+    const [isPending, startTransition] = useTransition();
     const [[page, direction], setPage] = useState([0, 0]);
 
     // Usamos módulo seguro para arrays circulares (índice real)
@@ -25,6 +31,31 @@ export function ImageGallery({ images, title, likesCount }: ImageGalleryProps) {
             </div>
         );
     }
+
+    const handleToggleFavorite = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!listingId) return;
+
+        // Optimistic update
+        setIsFavorited(!isFavorited);
+        setOptimisticLikesCount((prev) => isFavorited ? Math.max(0, prev - 1) : prev + 1);
+
+        startTransition(async () => {
+            const result = await toggleFavorite(listingId);
+            if (result.error) {
+                setIsFavorited(isFavorited);
+                setOptimisticLikesCount(likesCount ?? 0);
+                if (result.code === "UNAUTHORIZED") {
+                    window.location.href = "/login?redirectTo=" + encodeURIComponent(window.location.pathname);
+                } else {
+                    alert(result.error);
+                }
+            } else if (result.success !== undefined) {
+                setIsFavorited(result.isFavorited);
+            }
+        });
+    };
 
     const paginate = (newDirection: number) => {
         setPage([page + newDirection, newDirection]);
@@ -128,12 +159,17 @@ export function ImageGallery({ images, title, likesCount }: ImageGalleryProps) {
                     </>
                 )}
 
-                {/* Wallapop style likes badge */}
-                {likesCount !== undefined && likesCount >= 0 && (
-                    <div className="absolute z-10 bottom-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full bg-[#ffffffad] backdrop-blur-md shadow-md text-gray-900 text-base font-semibold pointer-events-none">
-                        <Heart className="w-5 h-5 text-gray-900 stroke-[2px]" />
-                        <span>{likesCount}</span>
-                    </div>
+                {/* Wallapop style likes badge (Interactive) */}
+                {optimisticLikesCount !== undefined && optimisticLikesCount >= 0 && (
+                    <button 
+                        onClick={handleToggleFavorite}
+                        disabled={isPending}
+                        className="absolute z-20 bottom-4 right-4 flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#ffffffad] backdrop-blur-md shadow-md text-gray-900 text-base font-semibold hover:scale-105 active:scale-95 transition-all focus:outline-none disabled:opacity-70"
+                        title={isFavorited ? "Quitar de favoritos" : "Guardar en favoritos"}
+                    >
+                        <Heart className={`w-5 h-5 transition-colors duration-300 ${isFavorited ? "fill-red-500 text-red-500 stroke-red-500" : "fill-transparent text-gray-900 stroke-[2px]"}`} />
+                        <span>{optimisticLikesCount}</span>
+                    </button>
                 )}
             </div>
 
