@@ -199,7 +199,12 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                     {cardContent}
                 </div>
             ) : (
-                <LocalizedLink href={`/anuncio/${listingSlug}-${shortId}`} className="block h-full">
+                <LocalizedLink 
+                    href={`/anuncio/${listingSlug}-${shortId}`} 
+                    className="block h-full"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
                     {cardContent}
                 </LocalizedLink>
             )}
