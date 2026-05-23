@@ -19,6 +19,7 @@ export interface Listing {
     status: string;
     vender_online?: boolean;
     favorites?: Array<{ count: number }>;
+    tags?: string[];
 }
 
 export interface EscrowOrder {

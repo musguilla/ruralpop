@@ -24,6 +24,7 @@ export interface Listing {
     price_type: string;
     is_featured?: boolean;
     favorites?: Array<{ count: number }>;
+    tags?: string[];
 }
 
 export function ListingCard({ listing, isFavorited = false, isGhostPreview = false }: { listing: Listing; isFavorited?: boolean; isGhostPreview?: boolean }) {

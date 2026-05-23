@@ -44,6 +44,9 @@ export async function createListing(formData: FormData) {
         return { error: "Debes subir al menos una fotografía para tu anuncio." };
     }
 
+    const tagsStr = formData.get("tags") as string;
+    const tags = tagsStr ? JSON.parse(tagsStr) : [];
+
     // Si el usuario puso un teléfono, lo guardamos en su perfil también
     // (para no tener que volver a escribirlo en el siguiente anuncio)
     if (contact_phone && contact_phone.trim().length > 0) {
@@ -66,6 +69,7 @@ export async function createListing(formData: FormData) {
         vender_online,
         shipping_price,
         image_urls,
+        tags,
         user_id: user.id,
         status: "active",
         tenant_id: getRuralpopDatabaseId() || undefined

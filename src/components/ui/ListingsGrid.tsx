@@ -112,17 +112,17 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             let queryTerms = sanitizedQuery.split(/[\s\-]+/).filter(t => t.length > 2);
             
             if (queryTerms.length <= 1) {
-                query = query.or(`title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%,location.ilike.%${sanitizedQuery}%`);
+                query = query.or(`title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%,location.ilike.%${sanitizedQuery}%,tags.cs.{"${sanitizedQuery}"}`);
             } else {
                 if (fallbackLevel === 0) {
                     // AND Logic (default)
-                    queryTerms.forEach(term => {
-                        query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`);
-                    });
+                    // Nested AND inside OR so exact tag matches bypass the individual term checks
+                    const andConditions = queryTerms.map(term => `and(or(title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%))`).join(',');
+                    query = query.or(`and(${andConditions}),tags.cs.{"${sanitizedQuery}"}`);
                 } else {
                     // OR Logic Fallback (fallbackLevel 1 and 2)
                     const orConditions = queryTerms.map(term => `title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`).join(',');
-                    query = query.or(orConditions);
+                    query = query.or(`${orConditions},tags.cs.{"${sanitizedQuery}"}`);
                 }
             }
         }

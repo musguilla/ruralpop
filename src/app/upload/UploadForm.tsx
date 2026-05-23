@@ -7,6 +7,7 @@ import { ImageUploader } from "@/components/ui/ImageUploader";
 import { createListing, getMunicipalities } from "./actions";
 import { Tractor, MapPin, Euro, Phone, Info, Loader2 } from "lucide-react";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
+import { TagSelector } from "@/components/ui/TagSelector";
 
 import { useRouter } from "next/navigation";
 import { useNotification } from "@/context/NotificationContext";
@@ -238,6 +239,15 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                 className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all resize-none"
                             />
                         </div>
+
+                        {categoryData && (
+                            <div className="col-span-1 md:col-span-2 mt-2">
+                                <TagSelector 
+                                    category={categoryData.label} 
+                                    subcategory={formDataState.subcategory} 
+                                />
+                            </div>
+                        )}
                     </div>
                 </section>
 
