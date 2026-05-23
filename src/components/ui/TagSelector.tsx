@@ -86,7 +86,7 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
         <div className="space-y-4">
             <label className="block text-sm font-medium flex items-center gap-2">
                 <Tag className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                Etiquetas (opcional)
+                Etiquetas
                 <span className="text-xs text-[var(--ag-sys-color-text-muted)] font-normal ml-2">
                     Ayuda a los compradores a encontrarte (Máx 10)
                 </span>
