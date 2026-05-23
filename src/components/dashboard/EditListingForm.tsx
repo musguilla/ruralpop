@@ -239,15 +239,13 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                 />
                             </div>
 
-                            {categoryData && (
-                                <div className="col-span-1 md:col-span-2 mt-2">
-                                    <TagSelector 
-                                        category={categoryData.label} 
-                                        subcategory={formDataState.subcategory} 
-                                        initialTags={listing.tags}
-                                    />
-                                </div>
-                            )}
+                            <div className="col-span-1 md:col-span-2 mt-2">
+                                <TagSelector 
+                                    category={categoryData?.label || ""} 
+                                    subcategory={formDataState.subcategory || ""} 
+                                    initialTags={listing.tags}
+                                />
+                            </div>
                         </div>
                     </section>
 

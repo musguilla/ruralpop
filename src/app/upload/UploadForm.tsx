@@ -240,14 +240,12 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                             />
                         </div>
 
-                        {categoryData && (
-                            <div className="col-span-1 md:col-span-2 mt-2">
-                                <TagSelector 
-                                    category={categoryData.label} 
-                                    subcategory={formDataState.subcategory} 
-                                />
-                            </div>
-                        )}
+                        <div className="col-span-1 md:col-span-2 mt-2">
+                            <TagSelector 
+                                category={categoryData?.label || ""} 
+                                subcategory={formDataState.subcategory || ""} 
+                            />
+                        </div>
                     </div>
                 </section>
 

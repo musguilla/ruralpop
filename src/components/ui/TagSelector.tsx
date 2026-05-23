@@ -82,8 +82,6 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
         }
     };
 
-    if (availableTags.length === 0) return null;
-
     return (
         <div className="space-y-4">
             <label className="block text-sm font-medium flex items-center gap-2">
@@ -106,8 +104,9 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Buscar características ej: 'vacas lecheras', 'john deere'..."
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
+                    placeholder={category ? "Buscar características ej: 'vacas lecheras', 'john deere'..." : "Selecciona una categoría primero para ver etiquetas..."}
+                    disabled={!category}
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 />
             </div>
 
