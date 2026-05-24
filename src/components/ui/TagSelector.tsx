@@ -70,8 +70,8 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
         );
     }, [availableTags, selectedTags, searchTerm, category]);
 
-    // Mostramos máximo 8 etiquetas sugeridas a la vez
-    const suggestedTags = filteredTags.slice(0, 8);
+    // Mostramos máximo 11 etiquetas sugeridas a la vez
+    const suggestedTags = filteredTags.slice(0, 11);
 
     const toggleTag = (tag: string) => {
         if (selectedTags.includes(tag)) {
@@ -124,9 +124,9 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
                             {tag}
                         </button>
                     ))}
-                    {filteredTags.length > 8 && (
+                    {filteredTags.length > 11 && (
                         <span className="inline-flex items-center px-2 py-1.5 text-sm text-gray-400">
-                            +{filteredTags.length - 8} más...
+                            +{filteredTags.length - 11} más...
                         </span>
                     )}
                 </div>
