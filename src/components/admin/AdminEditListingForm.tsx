@@ -8,6 +8,7 @@ import { adminUpdateListing } from "@/app/admin/listings/actions";
 import { getMunicipalities } from "@/app/upload/actions";
 import { Tractor, MapPin, Euro, Phone, Info, Loader2, ArrowLeft } from "lucide-react";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
+import { TagSelector } from "@/components/ui/TagSelector";
 
 import { useRouter } from "next/navigation";
 import { useNotification } from "@/context/NotificationContext";
@@ -224,6 +225,14 @@ export default function AdminEditListingForm({ listing, initialProvinces, initia
                                     rows={5}
                                     placeholder="Describe el estado..."
                                     className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all resize-none"
+                                />
+                            </div>
+
+                            <div className="col-span-1 md:col-span-2 mt-2">
+                                <TagSelector 
+                                    category={categoryData?.label || ""} 
+                                    subcategory={formDataState.subcategory || ""} 
+                                    initialTags={listing.tags}
                                 />
                             </div>
                         </div>

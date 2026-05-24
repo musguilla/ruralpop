@@ -62,12 +62,13 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
 
     // Etiquetas filtradas por el buscador y excluyendo las ya seleccionadas
     const filteredTags = useMemo(() => {
+        if (!category) return []; // Si no hay categoría, no sugerimos nada
         if (!availableTags) return [];
         return availableTags.filter(t => 
             !selectedTags.includes(t) && 
             t.toLowerCase().includes(searchTerm.toLowerCase())
         );
-    }, [availableTags, selectedTags, searchTerm]);
+    }, [availableTags, selectedTags, searchTerm, category]);
 
     // Mostramos máximo 8 etiquetas sugeridas a la vez
     const suggestedTags = filteredTags.slice(0, 8);

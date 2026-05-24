@@ -115,6 +115,9 @@ export async function adminUpdateListing(listingId: string, formData: FormData) 
     const vender_online = formData.get("vender_online") === "on";
     const imageUrlsString = formData.get("image_urls") as string;
     const image_urls = imageUrlsString ? JSON.parse(imageUrlsString) : [];
+    
+    const tagsString = formData.get("tags") as string;
+    const tags = tagsString ? JSON.parse(tagsString) : [];
 
     const { error } = await supabaseAdmin
         .from("listings")
@@ -130,7 +133,8 @@ export async function adminUpdateListing(listingId: string, formData: FormData) 
             price_type,
             image_urls,
             contact_phone,
-            vender_online
+            vender_online,
+            tags
         })
         .eq("id", listingId);
 
