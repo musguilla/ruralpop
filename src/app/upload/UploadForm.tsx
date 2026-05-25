@@ -17,6 +17,9 @@ import { useTranslation } from "@/context/LocaleContext";
 
 interface UploadFormProps {
     savedPhone: string | null;
+    initialProvinces: { id: number; name: string }[];
+    userEmail?: string;
+    hasWalletConfigured?: boolean;
     isProfesional?: boolean;
     userProfile?: {
         name: string;
