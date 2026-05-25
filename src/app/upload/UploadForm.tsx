@@ -422,7 +422,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                     isOpen={showWelfareModal} 
                     onClose={() => {
                         setShowWelfareModal(false);
-                        router.push("/dashboard");
+                        // router.push("/dashboard"); // Removido para que el usuario pueda corregir su anuncio sin perder los datos
                     }}
                     listingId={welfareListingId}
                     listingSlug=""
