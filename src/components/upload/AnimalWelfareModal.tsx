@@ -190,7 +190,7 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
 
                                 <div>
                                     <label className="block text-xs font-bold text-[var(--ag-sys-color-primary)] mb-1 uppercase tracking-wider">
-                                        Nº Reg. Núcleo Zoológico / Explotación
+                                        Nº Reg. Núcleo Zoológico / Explotación / Criadero
                                     </label>
                                     <input 
                                         type="text" 
