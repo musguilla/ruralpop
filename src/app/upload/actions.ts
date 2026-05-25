@@ -30,7 +30,7 @@ export async function createListing(formData: FormData) {
     if (subcategory && subcategory.toLowerCase() === "perros") {
         isRestricted = true;
     } else {
-        const restrictedKeywords = ["agaporni", "ninfa", "periquito", "cotorra", "canario", "loro", "lorito", "papillero", "papillera", "anillado", "anillada", "paloma", "palomas", "palomo", "palomos"];
+        const restrictedKeywords = ["agaporni", "ninfa", "periquito", "cotorra", "canario", "loro", "lorito", "papillero", "papillera", "anillado", "anillada", "paloma", "palomas", "palomo", "palomos", "gato", "gatos", "gata", "gatas"];
         const combinedText = `${lowerTitle} ${lowerDesc} ${lowerTags.join(" ")}`;
         
         for (const word of restrictedKeywords) {
