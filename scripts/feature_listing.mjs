@@ -44,7 +44,7 @@ function decodeId(shortId) {
 }
 
 async function main() {
-    const shortIds = ['7lAkSUWLOCjZ1m1QccdfuB', '4yqDlfAjNEkQIOG1kiIeDb'];
+    const shortIds = ['ygVLZL8hfCj2yJyWQUclk'];
     const listingIds = shortIds.map(decodeId).filter(id => id !== null);
     
     if (listingIds.length === 0) {

@@ -13,12 +13,12 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function run() {
-    console.log("🔍 Fetching the latest 150 listings...");
+    console.log("🔍 Fetching the latest 500 listings...");
     const { data: listings, error } = await supabase
         .from('listings')
         .select('id, user_id, image_urls, title')
         .order('created_at', { ascending: false })
-        .limit(50);
+        .limit(500);
 
     if (error) {
         console.error("❌ Error fetching listings:", error);

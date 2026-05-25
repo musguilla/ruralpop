@@ -1,0 +1,53 @@
+Probando talavera pdf...
+------------------- RAW TEXT -------------------
+TERNERO 1 a 3 SEMANAS FRISON 	300,00 	300,00 	Unidad
+TERNERA 1 a 3 SEMANAS FRISONA 	500,00 	500,00 	Unidad
+TERNERO 1 a 3 SEMANAS CRUZADO 	480,00 	480,00 	Unidad
+TERNERA 1 a 3 SEMANAS CRUZADA 	400,00 	400,00 	Unidad
+TERNERO FRISON DE 6 MESES 	750,00 	750,00 	Unidad
+TERNERA FRISONA 6 MESES Aptitud cárnica 	700,00 	700,00 	Unidad
+TERNERA FRISONA 6 MESES Aptitud láctea 	1.200,00 	1.200,00 	Unidad
+TERNERO CRUZADO 1ª (base 200 Kg) 	6,75 	6,72 	Kg./v.
+TERNERO CRUZADO 2ª (base 200 Kg) 	5,79 	5,76 	Kg./v.
+TERNERA CRUZADA 1ª (base 200 Kg) 	5,73 	5,70 	Kg./v.
+TERNERA CRUZADA 2ª (base 200 Kg) 	5,17 	5,14 	Kg./v.
+TERNERO DEL PAIS (base 200 Kg) 	4,90 	4,87 	Kg./v.
+TERNERA DEL PAIS (base 200 Kg) 	3,90 	3,87 	Kg./v.
+VACA AVILEÑA 	2.000,00 	2.000,00 	Unidad
+VACA RETINTA 	2.000,00 	2.000,00 	Unidad
+VACA CRUZADA 	2.000,00 	2.000,00 	Unidad
+VACUNO DE ABASTO VIVO
+TERNERA CRUZADA 	4,66 	4,65 	Kg./v.
+AÑOJO CRUZADO 	4,79 	4,78 	Kg./v.
+TORO DEL PAIS 1ª 	2,58 	2,56 	Kg./v.
+TORO DEL PAIS 2ª 	2,38 	2,36 	Kg./v.
+VACAS 1ª 	2,72 	2,70 	Kg./v.
+VACAS 2ª 	2,52 	2,50 	Kg./v.
+Unidad Kg./c.
+TERNERA CRUZADA 200/250 kg. - U 	7,86 	7,84 	Kg./c.
+TERNERA CRUZADA 200/250 kg. - R 	7,56 	7,54 	Kg./c.
+TERNERA CRUZADA 251/300 kg. - U 	7,86 	7,84 	Kg./c.
+TERNERA CRUZADA 251/300 kg. - R 	7,56 	7,54 	Kg./c.
+AÑOJO CRUZADO 331/370 kg. - U 	7,73 	7,71 	Kg./c.
+AÑOJO CRUZADO 331/370 kg. - R 	7,63 	7,61 	Kg./c.
+AÑOJO CRUZADO 	+371 kg. - U 	7,73 	7,71 	Kg./c.
+AÑOJO CRUZADO 	+371 kg. - R 	7,63 	7,61 	Kg./c.
+VACUNO DE ABASTO PRECIO CANAL
+Comentario: La oferta de carne sigue pesada. La temporada del año en la que nos encontramos, mas la planificación en cebaderos justifica
+esta ligera bajada en el vacuno de vida.
+VACUNO DE VIDA
+Mesa de precios de ganado vacuno para el día 13 de mayo de 2026
+TIPOS DE GANADO PRECIO
+ANTERIOR
+PRECIO
+ACTUAL Unidad Kg./v.
+LONJA AGROPECUARIA
+DE TALAVERA DE LA REINA
+Paseo Fernando de los Ríos, s/n - Tl: 925 721 830
+www.talavera-ferial.com
+reconocida como LONJA DE REFERENCIA
+
+-- 1 of 1 --
+
+
+------------------------------------------------

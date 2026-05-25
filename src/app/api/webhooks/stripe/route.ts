@@ -52,6 +52,7 @@ export async function POST(req: Request) {
                     updateData = {
                         is_featured: true,
                         featured_until: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
+                    };
                 } else if (planId === "animal_welfare_validation") {
                     updateData = {
                         status: 'active'
