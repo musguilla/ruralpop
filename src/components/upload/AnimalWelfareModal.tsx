@@ -101,17 +101,14 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                                     Para publicar anuncios de perros, aves de compañía y otros animales regulados, es necesario disponer de un perfil profesional verificado donde debes introducir número de registro de núcleo zoológico, explotación o criadero.
                                 </p>
                                 <p>
-                                    En Ruralpop puedes hacerlo de forma sencilla activando <strong>Ruralpop Pro por solo 1,99€</strong>, lo que te permitirá:
+                                    En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Anuncio Pro por solo 1,99€</strong>, lo que te permitirá:
                                 </p>
                                 <ul className="list-disc pl-5 space-y-1 font-semibold text-[var(--ag-sys-color-text)]">
-                                    <li>Publicar anuncios autorizados</li>
+                                    <li>Publicar este anuncio autorizado</li>
                                     <li>Mostrar tu perfil como profesional verificado</li>
                                     <li>Cumplir con la normativa vigente</li>
                                     <li>Generar mayor confianza a los compradores</li>
                                 </ul>
-                                <p className="text-xs text-gray-400 italic pt-2">
-                                    * Nota: Este pago es necesario para validar cada anuncio de este tipo, el cual se guardará como borrador hasta completar el pago.
-                                </p>
                             </div>
 
                             <div className="flex flex-col gap-3 pt-4 border-t border-[var(--ag-sys-color-border)]">
@@ -119,7 +116,7 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                                     onClick={() => setStep('form')}
                                     className="w-full py-4 bg-[var(--ag-sys-color-primary)] text-white font-black rounded-2xl hover:opacity-90 transition-opacity"
                                 >
-                                    Activar Ruralpop Pro · 1,99€
+                                    Activar Anuncio Pro · 1,99€
                                 </button>
                                 <button
                                     onClick={onClose}

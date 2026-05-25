@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowUpCircle, Sparkles, Crown, ArrowLeft } from "lucide-react";
+import { ArrowUpCircle, Sparkles, Crown, ArrowLeft, ShieldCheck } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
@@ -38,6 +38,16 @@ export const STRIPE_PLANS = [
         icon: Crown,
         color: "amber",
         badge: null
+    },
+    {
+        id: "animal_welfare_validation",
+        name: "Anuncio Pro",
+        description: "Validación de Bienestar Animal para cumplir la normativa vigente.",
+        price: 1.99,
+        priceId: "price_welfare",
+        icon: ShieldCheck,
+        color: "primary",
+        badge: "obligatorio"
     }
 ];
 
