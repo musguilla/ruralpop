@@ -19,10 +19,25 @@ export async function createListing(formData: FormData) {
     const subcategory = formData.get("subcategory") as string;
     const location = formData.get("location") as string;
 
+    const tagsStr = formData.get("tags") as string;
+    const tags = tagsStr ? JSON.parse(tagsStr) : [];
+
+    let isRestricted = false;
+    const lowerTitle = title.toLowerCase();
+    const lowerDesc = description.toLowerCase();
+    const lowerTags = tags.map((t: string) => t.toLowerCase());
+    
     if (subcategory && subcategory.toLowerCase() === "perros") {
-        const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
-        if (profile?.role !== 'profesional') {
-            return { error: "La subcategoría 'Perros' está restringida a cuentas profesionales por la Ley de Bienestar Animal." };
+        isRestricted = true;
+    } else if (category && category.toLowerCase() === "animales") {
+        const restrictedKeywords = ["agaporni", "ninfa", "periquito", "cotorra", "canario", "loro", "lorito", "papillero", "papillera", "anillado", "anillada"];
+        const combinedText = `${lowerTitle} ${lowerDesc} ${lowerTags.join(" ")}`;
+        
+        for (const word of restrictedKeywords) {
+            if (combinedText.includes(word)) {
+                isRestricted = true;
+                break;
+            }
         }
     }
 
@@ -44,8 +59,7 @@ export async function createListing(formData: FormData) {
         return { error: "Debes subir al menos una fotografía para tu anuncio." };
     }
 
-    const tagsStr = formData.get("tags") as string;
-    const tags = tagsStr ? JSON.parse(tagsStr) : [];
+
 
     // Si el usuario puso un teléfono, lo guardamos en su perfil también
     // (para no tener que volver a escribirlo en el siguiente anuncio)
@@ -71,7 +85,7 @@ export async function createListing(formData: FormData) {
         image_urls,
         tags,
         user_id: user.id,
-        status: "active",
+        status: isRestricted ? "draft" : "active",
         tenant_id: getRuralpopDatabaseId() || undefined
     }).select('id').single();
 
@@ -81,7 +95,7 @@ export async function createListing(formData: FormData) {
     }
 
     revalidatePath("/");
-    return { success: true, listingId: insertedData.id };
+    return { success: true, restricted: isRestricted, listingId: insertedData.id };
 }
 
 export async function getMunicipalities(provinceId: number) {

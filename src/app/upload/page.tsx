@@ -16,7 +16,7 @@ export default async function UploadPage() {
     // Fetch user profile to get saved phone
     const { data: profile } = await supabase
         .from("users")
-        .select("phone, is_ghost, role")
+        .select("phone, is_ghost, role, nif, zoo_register_number, name")
         .eq("id", user.id)
         .single();
 
@@ -52,6 +52,11 @@ export default async function UploadPage() {
     }
 
     const isProfesional = profile?.role === 'profesional';
+    const userProfile = {
+        name: profile?.name || "",
+        nif: profile?.nif || "",
+        zoo_register_number: profile?.zoo_register_number || ""
+    };
 
-    return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} userEmail={user.email} hasWalletConfigured={isStripeReady} isProfesional={isProfesional} />;
+    return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} userEmail={user.email} hasWalletConfigured={isStripeReady} isProfesional={isProfesional} userProfile={userProfile} />;
 }

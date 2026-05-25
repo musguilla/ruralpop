@@ -165,7 +165,7 @@ export default async function ListingDetailPage(props: Props) {
         .from("listings")
         .select(`
       *,
-      seller:users(id, name, avatar_url, created_at, role, commercial_name, email),
+      seller:users(id, name, avatar_url, created_at, role, commercial_name, email, zoo_register_number),
       favorites(count)
     `)
         .eq("id", id)
@@ -402,6 +402,13 @@ export default async function ListingDetailPage(props: Props) {
                                         <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
                                             {t("en_ruralpop_desde")} {sellerJoinedDate || t("recientemente")}
                                         </p>
+                                    )}
+
+                                    {listing.category?.toLowerCase() === 'animales' && listing.seller?.zoo_register_number && (
+                                        <div className="mt-2 text-xs text-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/10 px-2.5 py-1.5 rounded-lg border border-[var(--ag-sys-color-primary)]/20 inline-block font-semibold flex items-center gap-1.5">
+                                            <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" />
+                                            <span>Reg. Zoológico: {listing.seller.zoo_register_number}</span>
+                                        </div>
                                     )}
                                 </div>
                             </div>

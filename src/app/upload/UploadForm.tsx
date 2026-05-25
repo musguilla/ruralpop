@@ -8,6 +8,7 @@ import { createListing, getMunicipalities } from "./actions";
 import { Tractor, MapPin, Euro, Phone, Info, Loader2 } from "lucide-react";
 import { SearchableSelect } from "@/components/ui/SearchableSelect";
 import { TagSelector } from "@/components/ui/TagSelector";
+import { AnimalWelfareModal } from "@/components/upload/AnimalWelfareModal";
 
 import { useRouter } from "next/navigation";
 import { useNotification } from "@/context/NotificationContext";
@@ -16,13 +17,15 @@ import { useTranslation } from "@/context/LocaleContext";
 
 interface UploadFormProps {
     savedPhone: string | null;
-    initialProvinces: { id: number; name: string }[];
-    userEmail?: string;
-    hasWalletConfigured?: boolean;
     isProfesional?: boolean;
+    userProfile?: {
+        name: string;
+        nif: string;
+        zoo_register_number: string;
+    };
 }
 
-export default function UploadForm({ savedPhone, initialProvinces, userEmail, hasWalletConfigured = false, isProfesional = false }: UploadFormProps) {
+export default function UploadForm({ savedPhone, initialProvinces, userEmail, hasWalletConfigured = false, isProfesional = false, userProfile }: UploadFormProps) {
     const { t } = useTranslation();
     const CATEGORIES = useCategories();
     const router = useRouter();
@@ -32,7 +35,10 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
     const [isPending, setIsPending] = useState(false);
     const isTestPro = true;
     const [sellOnline, setSellOnline] = useState(false);
-    const [showDogModal, setShowDogModal] = useState(false);
+    
+    // Animal Welfare restrictions
+    const [welfareListingId, setWelfareListingId] = useState<string | null>(null);
+    const [showWelfareModal, setShowWelfareModal] = useState(false);
 
     // Location state
     const [selectedProvince, setSelectedProvince] = useState<number | "">("");
@@ -138,9 +144,14 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                 });
                 setIsPending(false);
             } else if (res?.success && res.listingId) {
-                // Redirect to highlight flow after successful publish
-                router.push(`/dashboard/destacar/${res.listingId}?published=true`);
-                router.refresh();
+                if (res.restricted) {
+                    setWelfareListingId(res.listingId);
+                    setShowWelfareModal(true);
+                } else {
+                    // Redirect to highlight flow after successful publish
+                    router.push(`/dashboard/destacar/${res.listingId}?published=true`);
+                    router.refresh();
+                }
             }
         } catch (err) {
             console.error(err);
@@ -216,12 +227,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                     value={formDataState.subcategory}
                                     onChange={(val) => {
                                         const subcat = val as string;
-                                        if (subcat.toLowerCase() === "perros" && !isProfesional) {
-                                            setShowDogModal(true);
-                                            setFormDataState(prev => ({ ...prev, subcategory: "" }));
-                                        } else {
-                                            setFormDataState(prev => ({ ...prev, subcategory: subcat }));
-                                        }
+                                        setFormDataState(prev => ({ ...prev, subcategory: subcat }));
                                     }}
                                     placeholder={t('upload.subcategory_placeholder')}
                                     searchPlaceholder="Buscar subcategoría..."
@@ -408,38 +414,22 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                 </div>
             </form>
 
-            {showDogModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg border border-[var(--ag-sys-color-border)]">
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                                <Info className="w-6 h-6 text-red-600" />
-                            </div>
-                            <h3 className="text-2xl font-black text-[var(--ag-sys-color-text)] tracking-tight">Anuncios para profesionales</h3>
-                        </div>
-                        
-                        <div className="text-gray-600 mb-8 leading-relaxed space-y-4">
-                            <p>
-                                La Ley de Bienestar Animal (Ley 7/2023) en España, vigente desde el 29 de septiembre de 2023, prohíbe terminantemente la venta directa de animales de compañía (perros, gatos, hurones, roedores, pájaros) a través de Internet, portales web o aplicaciones por usuarios no profesionales.
-                            </p>
-                            <p>
-                                Si eres un profesional con número de registro de núcleo zoológico puedes crear un plan Ruralpop Plan Pro
-                            </p>
-                        </div>
-
-                        <div className="flex flex-col gap-3">
-                            <Link href="/profesionales" className="w-full py-4 bg-[var(--ag-sys-color-primary)] text-white text-center font-bold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all">
-                                Hacerme Ruralpop Pro
-                            </Link>
-                            <button
-                                onClick={() => setShowDogModal(false)}
-                                className="w-full py-4 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-all"
-                            >
-                                Cerrar
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            {showWelfareModal && welfareListingId && (
+                <AnimalWelfareModal 
+                    isOpen={showWelfareModal} 
+                    onClose={() => {
+                        setShowWelfareModal(false);
+                        router.push("/dashboard");
+                    }}
+                    listingId={welfareListingId}
+                    listingSlug=""
+                    initialData={{
+                        name: userProfile?.name,
+                        nif: userProfile?.nif,
+                        zoo_register_number: userProfile?.zoo_register_number,
+                        contact_phone: savedPhone || undefined
+                    }}
+                />
             )}
         </div>
     );

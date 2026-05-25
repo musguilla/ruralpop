@@ -6,6 +6,7 @@ const STRIPE_PLANS = {
     bump: { price: 149, name: "Subir arriba" },
     highlight_7: { price: 299, name: "Destacar 7 días" },
     highlight_20: { price: 499, name: "Destacar 20 días" },
+    animal_welfare_validation: { price: 199, name: "Validación Bienestar Animal" },
 };
 
 export async function POST(req: Request) {
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { listingId, planId } = body;
+        const { listingId, planId, welfareDetails } = body;
 
         if (!listingId || !planId || !(planId in STRIPE_PLANS)) {
             return new NextResponse("Invalid request", { status: 400 });
@@ -38,15 +39,25 @@ export async function POST(req: Request) {
         const plan = STRIPE_PLANS[planId as keyof typeof STRIPE_PLANS];
 
         // Create a PaymentIntent with the order amount and currency
+        const metadata: any = {
+            listingId: listing.id,
+            planId: planId,
+            userId: user.id
+        };
+
+        if (welfareDetails) {
+            if (welfareDetails.nif) metadata.welfare_nif = welfareDetails.nif;
+            if (welfareDetails.zoo_register_number) metadata.welfare_zoo_register_number = welfareDetails.zoo_register_number;
+            if (welfareDetails.phone) metadata.welfare_phone = welfareDetails.phone;
+            if (welfareDetails.name) metadata.welfare_name = welfareDetails.name;
+            if (welfareDetails.lastName) metadata.welfare_lastName = welfareDetails.lastName;
+        }
+
         const paymentIntent = await stripe.paymentIntents.create({
             amount: plan.price, // in cents (149 = 1.49 EUR)
             currency: "eur",
             payment_method_types: ['card'],
-            metadata: {
-                listingId: listing.id,
-                planId: planId,
-                userId: user.id
-            }
+            metadata: metadata
         });
 
         return NextResponse.json({

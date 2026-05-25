@@ -52,7 +52,23 @@ export async function POST(req: Request) {
                     updateData = {
                         is_featured: true,
                         featured_until: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
+                } else if (planId === "animal_welfare_validation") {
+                    updateData = {
+                        status: 'active'
                     };
+
+                    // Update the user's profile with legal data
+                    const { userId, welfare_nif, welfare_zoo_register_number, welfare_phone, welfare_name, welfare_lastName } = paymentIntent.metadata;
+                    if (userId) {
+                        const userUpdate: any = { role: 'profesional' };
+                        if (welfare_nif) userUpdate.nif = welfare_nif;
+                        if (welfare_zoo_register_number) userUpdate.zoo_register_number = welfare_zoo_register_number;
+                        if (welfare_phone) userUpdate.contact_phone = welfare_phone;
+                        // name and lastName might be joined into commercial_name or just name. We'll leave them alone if we don't have fields for them,
+                        // except we can update 'name' if it's missing.
+                        
+                        await supabaseAdmin.from("users").update(userUpdate).eq("id", userId);
+                    }
                 }
 
                 if (Object.keys(updateData).length > 0) {
