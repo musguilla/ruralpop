@@ -29,7 +29,7 @@ export async function createListing(formData: FormData) {
     
     if (subcategory && subcategory.toLowerCase() === "perros") {
         isRestricted = true;
-    } else if (category && category.toLowerCase() === "animales") {
+    } else {
         const restrictedKeywords = ["agaporni", "ninfa", "periquito", "cotorra", "canario", "loro", "lorito", "papillero", "papillera", "anillado", "anillada", "paloma", "palomas", "palomo", "palomos"];
         const combinedText = `${lowerTitle} ${lowerDesc} ${lowerTags.join(" ")}`;
         
