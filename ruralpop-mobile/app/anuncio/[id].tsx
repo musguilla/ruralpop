@@ -37,7 +37,10 @@ export default function ListingDetailsScreen() {
             router.push('/(auth)/login');
             return;
         }
-        if (id) toggleFavorite(id);
+        if (id) {
+            toggleFavorite(id);
+            setLikesCount(prev => prev !== undefined ? (isFavorited ? Math.max(0, prev - 1) : prev + 1) : 1);
+        }
     };
 
     const [listing, setListing] = useState<ExtendedListing | null>(null);
@@ -47,6 +50,7 @@ export default function ListingDetailsScreen() {
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [isCheckoutSummaryVisible, setIsCheckoutSummaryVisible] = useState(false);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const [likesCount, setLikesCount] = useState<number | undefined>(undefined);
 
     // Scroll Animation - Simplified to avoid Animated/Native driver crashes
     const [isScrolled, setIsScrolled] = useState(false);
@@ -59,7 +63,8 @@ export default function ListingDetailsScreen() {
                     .from('listings')
                     .select(`
             *,
-            seller:users (id, name, avatar_url, created_at, role, commercial_name)
+            seller:users (id, name, avatar_url, created_at, role, commercial_name),
+            favorites (count)
           `)
                     .eq('id', id)
                     .or(getDefaultTenantFilterString())
@@ -67,6 +72,13 @@ export default function ListingDetailsScreen() {
 
                 if (error) throw error;
                 setListing(data as ExtendedListing);
+                
+                // Set initial likes count
+                if (data.favorites && Array.isArray(data.favorites) && data.favorites.length > 0) {
+                    setLikesCount(data.favorites[0].count);
+                } else {
+                    setLikesCount(0);
+                }
             } catch (error) {
                 console.error('Error fetching listing details:', error);
             } finally {
@@ -289,14 +301,21 @@ export default function ListingDetailsScreen() {
                         </View>
                     )}
 
-                    {/* Favorite Button Overlay (Bottom Right) */}
-                    <TouchableOpacity 
-                        onPress={handleFavoritePress} 
-                        className="absolute bottom-4 right-4 w-12 h-12 bg-white rounded-full items-center justify-center shadow-lg pt-0.5"
-                        style={{ elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 }}
-                    >
-                        <Heart color={isFavorited ? "#ef4444" : "#111827"} fill={isFavorited ? "#ef4444" : "transparent"} size={22} />
-                    </TouchableOpacity>
+                    {/* Likes Badge (Interactive) */}
+                    {likesCount !== undefined && likesCount >= 0 && (
+                        <TouchableOpacity 
+                            onPress={handleFavoritePress} 
+                            className="absolute bottom-4 right-4 bg-[#e4e5db] px-4 py-2.5 rounded-full flex-row items-center justify-center shadow-sm"
+                            style={{ elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 }}
+                        >
+                            <Heart 
+                                color={isFavorited ? "#ef4444" : "#111827"} 
+                                fill={isFavorited ? "#ef4444" : "transparent"} 
+                                size={20} 
+                            />
+                            <Text className="font-bold text-gray-900 ml-2 text-base">{likesCount}</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 {/* Content Details */}
