@@ -470,6 +470,17 @@ export default function ListingDetailsScreen() {
                     </TouchableOpacity>
                 ) : (
                     <View className="flex-row justify-between w-full" style={{ gap: 12 }}>
+                        {hasPhone && (
+                            <TouchableOpacity
+                                onPress={handleCall}
+                                className="flex-1 flex-row justify-center items-center py-4 rounded-full bg-white border-2 border-primary"
+                                activeOpacity={0.8}
+                            >
+                                <Phone color="#059669" size={20} />
+                                <Text className="text-primary font-bold text-lg ml-2">Llamar</Text>
+                            </TouchableOpacity>
+                        )}
+
                         <TouchableOpacity
                             onPress={() => {
                                 if (!user) {
@@ -491,23 +502,12 @@ export default function ListingDetailsScreen() {
                                     });
                                 }
                             }}
-                            className={`flex-1 flex-row justify-center items-center py-4 rounded-full ${hasPhone ? 'bg-white border-2 border-primary' : 'bg-primary shadow-sm'}`}
+                            className="flex-1 flex-row justify-center items-center py-4 rounded-full bg-primary shadow-sm"
                             activeOpacity={0.8}
                         >
-                            <Mail color={hasPhone ? "#059669" : "#ffffff"} size={20} />
-                            <Text className={`${hasPhone ? 'text-primary' : 'text-white'} font-bold text-lg ml-2`}>Chat</Text>
+                            <Mail color="#ffffff" size={20} />
+                            <Text className="text-white font-bold text-lg ml-2">Chat</Text>
                         </TouchableOpacity>
-
-                        {hasPhone && (
-                            <TouchableOpacity
-                                onPress={handleCall}
-                                className="flex-1 bg-primary py-4 rounded-full flex-row justify-center items-center shadow-sm"
-                                activeOpacity={0.8}
-                            >
-                                <Phone color="#ffffff" size={20} />
-                                <Text className="text-white font-bold text-lg ml-2">Llamar</Text>
-                            </TouchableOpacity>
-                        )}
                     </View>
                 )}
             </View>
