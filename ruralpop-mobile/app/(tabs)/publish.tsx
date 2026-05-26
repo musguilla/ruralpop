@@ -298,7 +298,6 @@ export default function PublishScreen() {
                     category: finalCategory,
                     subcategory: finalSubcategory,
                     contact_phone: phone,
-                    is_pro: isProfesional,
                     status: isRestricted ? 'draft' : 'active',
                     shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : null,
                     tags: tags,
