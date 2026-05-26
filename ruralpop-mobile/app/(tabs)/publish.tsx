@@ -12,6 +12,7 @@ import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
 import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';
 import { AnimalWelfareModal } from '../../src/components/ui/modals/AnimalWelfareModal';
+import { TagSelector } from '../../src/components/ui/TagSelector';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 import { getRuralpopDatabaseId } from '../../src/config/tenants';
@@ -29,6 +30,7 @@ export default function PublishScreen() {
     const [municipality, setMunicipality] = useState<{ id: number, name: string } | null>(null);
     const [phone, setPhone] = useState('');
     const [images, setImages] = useState<string[]>([]);
+    const [tags, setTags] = useState<string[]>([]);
     const [isProfesional, setIsProfesional] = useState(false);
     
     // Escrow / Venta Online
@@ -271,7 +273,7 @@ export default function PublishScreen() {
                 isRestricted = true;
             } else if (!isProfesional) {
                 const restrictedKeywords = ["agaporni", "ninfa", "periquito", "cotorra", "canario", "loro", "lorito", "papillero", "papillera", "anillado", "anillada", "paloma", "palomas", "palomo", "palomos", "gato", "gatos", "gata", "gatas", "perro", "perros", "cachorro", "cachorros", "perra", "mastin", "mastina"];
-                const combinedText = `${title.toLowerCase()} ${description.toLowerCase()}`;
+                const combinedText = `${title.toLowerCase()} ${description.toLowerCase()} ${tags.join(" ").toLowerCase()}`;
                 
                 for (const word of restrictedKeywords) {
                     if (combinedText.includes(word)) {
@@ -296,6 +298,7 @@ export default function PublishScreen() {
                     category: finalCategory,
                     subcategory: finalSubcategory,
                     contact_phone: phone,
+                    tags,
                     vender_online: allowOnlineSale,
                     shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : 0,
                     status: isRestricted ? 'draft' : 'active',
@@ -320,6 +323,7 @@ export default function PublishScreen() {
                     setMunicipality(null);
                     setCategoryId(null);
                     setImages([]);
+                    setTags([]);
                     setSuccess(false);
                     router.push('/(tabs)/');
                 }, 2000);
@@ -411,6 +415,15 @@ export default function PublishScreen() {
                             numberOfLines={4}
                             textAlignVertical="top"
                             className="w-full h-32 bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text"
+                        />
+                    </View>
+
+                    <View className="mb-6">
+                        <TagSelector 
+                            category={categoryId} 
+                            subcategory={null} 
+                            initialTags={tags} 
+                            onTagsChange={setTags} 
                         />
                     </View>
 
@@ -606,6 +619,7 @@ export default function PublishScreen() {
                         setMunicipality(null);
                         setCategoryId(null);
                         setImages([]);
+                        setTags([]);
                         setSuccess(false);
                         router.push('/(tabs)/');
                     }, 2000);
