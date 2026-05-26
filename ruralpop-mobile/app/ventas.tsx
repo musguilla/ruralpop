@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, SafeAreaView, Modal, TextInput, Alert } from 'react-native';
 import { useAuth } from '../src/contexts/AuthContext';
 import { supabase } from '../src/lib/supabase';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { ChevronLeft, Package, Clock, CheckCircle, Tag, Edit3, Trash2, PackageOpen } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../src/lib/image-optimization';
@@ -107,9 +107,11 @@ export default function VentasScreen() {
         }
     }
 
-    useEffect(() => {
-        fetchData();
-    }, [user]);
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchData();
+        }, [user])
+    );
 
     // Derived state for display
     useEffect(() => {

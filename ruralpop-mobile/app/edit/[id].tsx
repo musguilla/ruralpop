@@ -370,7 +370,7 @@ export default function EditListingScreen() {
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
                         {images.map((uri, index) => (
                             <View key={index} className="relative w-24 h-24 rounded-xl overflow-hidden mr-3 border border-gray-200">
-                                <Image source={{ uri: getOptimizedImageUrl(uri, { width: 300 }) || uri }} className="w-full h-full" contentFit="cover" />
+                                <Image source={{ uri: getOptimizedImageUrl(uri, { width: 300 }) || uri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 <TouchableOpacity
                                     onPress={() => removeImage(index)}
                                     className="absolute top-1 right-1 bg-black/50 rounded-full p-1"
