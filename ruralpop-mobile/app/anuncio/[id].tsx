@@ -15,6 +15,7 @@ import { useStripe } from '@stripe/stripe-react-native';
 import { calculateRuralpopFee } from '../../src/lib/escrow';
 import { buildWebListingUrl } from '../../src/lib/urls';
 import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
 
 const { width, height } = Dimensions.get('window');
 
@@ -410,6 +411,18 @@ export default function ListingDetailsScreen() {
                         <Text className="text-text-muted text-[17px] leading-relaxed">
                             {listing.description}
                         </Text>
+                    </View>
+
+                    {/* Ad Unit & Edited Date */}
+                    <View className="mt-8 mb-4">
+                        <View className="w-full items-center justify-center bg-gray-50/50 mb-6 rounded-xl overflow-hidden">
+                            <NativeAdCard />
+                        </View>
+                        <View className="border-t border-gray-200 pt-4 flex-row items-center">
+                            <Text className="text-gray-500 text-sm">
+                                Editado el {new Date((listing as any).updated_at || listing.created_at).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
+                            </Text>
+                        </View>
                     </View>
                 </View>
             </ScrollView>

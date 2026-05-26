@@ -191,15 +191,10 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
                     {listing.title}
                 </Text>
 
-                <View className="flex-row items-center justify-between mt-auto">
-                    <View className="flex-row items-center flex-1 mr-2">
-                        <MapPin color="#9ca3af" size={14} style={{ marginRight: 4 }} />
-                        <Text className="text-sm text-text-muted truncate flex-1" numberOfLines={1}>
-                            {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
-                        </Text>
-                    </View>
-                    <Text className="text-xs text-gray-400">
-                        {new Date(listing.created_at).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
+                <View className="flex-row items-center mt-auto">
+                    <MapPin color="#9ca3af" size={14} style={{ marginRight: 4 }} />
+                    <Text className="text-sm text-text-muted truncate flex-1" numberOfLines={1}>
+                        {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
                     </Text>
                 </View>
             </TouchableOpacity>
