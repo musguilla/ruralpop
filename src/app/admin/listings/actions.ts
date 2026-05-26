@@ -185,5 +185,18 @@ export async function deleteListingAndSendEmail(listingId: string, email: string
         console.error("Resend catch error:", e);
     }
 
+    if (reason === 'bienestar_animal') {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        if (supabaseUrl && serviceRoleKey) {
+            const supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey);
+            await supabaseAdmin.from('listings').update({ status: 'draft' }).eq('id', listingId);
+            revalidatePath("/admin/listings");
+            revalidatePath("/");
+            revalidatePath(`/anuncio/anuncio-${listingId.substring(0, 8)}`);
+            return { success: true };
+        }
+    }
+
     return await deleteListing(listingId);
 }
