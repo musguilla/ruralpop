@@ -13,9 +13,9 @@ import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';
 import { AnimalWelfareModal } from '../../src/components/ui/modals/AnimalWelfareModal';
 import { TagSelector } from '../../src/components/ui/TagSelector';
+import { getRuralpopDatabaseId } from '../../src/config/tenants';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
-import { getRuralpopDatabaseId } from '../../src/config/tenants';
 
 export default function PublishScreen() {
     const { session, user, isLoading } = useAuth();
@@ -298,10 +298,10 @@ export default function PublishScreen() {
                     category: finalCategory,
                     subcategory: finalSubcategory,
                     contact_phone: phone,
-                    tags,
-                    vender_online: allowOnlineSale,
-                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : 0,
+                    is_pro: isProfesional,
                     status: isRestricted ? 'draft' : 'active',
+                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : null,
+                    tags: tags,
                     tenant_id: getRuralpopDatabaseId() || undefined
                 })
                 .select()

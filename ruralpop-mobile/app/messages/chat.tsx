@@ -7,7 +7,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { ChevronLeft, Send, ImageIcon } from 'lucide-react-native';
-import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import { getDefaultTenantFilterString, getRuralpopDatabaseId } from '../../src/config/tenants';
 import { formatPrice } from '../../src/lib/formatters';
 
 interface Message {
@@ -162,6 +162,7 @@ export default function ChatScreen() {
                 receiver_id: otherUserId,
                 listing_id: listingId,
                 content: content,
+                tenant_id: getRuralpopDatabaseId() || undefined,
             });
 
             if (error) throw error;

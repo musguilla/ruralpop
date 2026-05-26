@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Scro
 import { useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { UserPlus } from 'lucide-react-native';
+import { getRuralpopDatabaseId } from '../../src/config/tenants';
 
 export default function RegisterScreen() {
     const [email, setEmail] = useState('');
@@ -28,6 +29,7 @@ export default function RegisterScreen() {
                 data: {
                     full_name: fullName,
                     name: fullName,  // Added so the database trigger handles it properly
+                    tenant_id: getRuralpopDatabaseId() || undefined,
                 }
             }
         });
