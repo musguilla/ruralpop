@@ -6,10 +6,14 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder");
 
-export default function ValidarPerfilPage() {
+function ValidarPerfilContent() {
+    const searchParams = useSearchParams();
+    const listingId = searchParams.get('listingId');
     const [step, setStep] = useState<'info' | 'form' | 'payment'>('info');
     
     // Form fields
@@ -39,6 +43,7 @@ export default function ValidarPerfilPage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ 
+                    listingId,
                     welfareDetails: {
                         name,
                         lastName,
@@ -214,7 +219,7 @@ export default function ValidarPerfilPage() {
                                 Pago Seguro
                             </h2>
                             <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
-                                <CheckoutForm planId="profile_validation" listingId="profile" />
+                                <CheckoutForm planId="animal_welfare_validation" listingId={listingId || "profile"} />
                             </Elements>
                             <button
                                 onClick={() => setStep('form')}
@@ -231,9 +236,17 @@ export default function ValidarPerfilPage() {
     );
 }
 
+export default function ValidarPerfilPage() {
+    return (
+        <Suspense fallback={<div className="p-8 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-[var(--ag-sys-color-primary)]" /></div>}>
+            <ValidarPerfilContent />
+        </Suspense>
+    );
+}
+
 /**
  * Memory / Decisiones Técnicas:
- * - Esta página de validación de perfil es similar a AnimalWelfareModal, pero no está atada a un listingId concreto.
- * - Su objetivo es permitir a los usuarios verificar su perfil con el núcleo zoológico de forma proactiva.
- * - Hemos creado un nuevo endpoint 'create-profile-payment-intent' que no verifica listing_id.
+ * - Esta página se usa para validar un Anuncio Pro por la Ley de Bienestar Animal.
+ * - Recibe 'listingId' por query params y lo envía a la API.
+ * - Envolvemos en Suspense por el uso de useSearchParams.
  */

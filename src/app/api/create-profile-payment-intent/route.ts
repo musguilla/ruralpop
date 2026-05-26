@@ -14,11 +14,16 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { welfareDetails } = body;
+        const { welfareDetails, listingId } = body;
+
+        if (!listingId) {
+            return new NextResponse("Missing listingId", { status: 400 });
+        }
 
         // Create a PaymentIntent with the order amount and currency
         const metadata: any = {
-            planId: "profile_validation",
+            planId: "animal_welfare_validation",
+            listingId: listingId,
             userId: user.id
         };
 

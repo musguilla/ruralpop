@@ -221,11 +221,11 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
             <li style="margin-bottom: 8px;">Cumplir con la normativa vigente</li>
             <li style="margin-bottom: 8px;">Generar mayor confianza a los compradores</li>
         </ul>
-        <div style="margin-top: 40px; margin-bottom: 40px;">
-            <a href="https://www.ruralpop.com/dashboard/validar-perfil" class="button" style="color: #ffffff; text-decoration: none;">Activar Anuncio Pro · 1,99€</a>
+        <div style="margin-top: 40px; margin-bottom: 40px; text-align: center;">
+            <a href="https://www.ruralpop.com/dashboard/validar-perfil?listingId={{LISTING_ID}}" class="button" style="color: #ffffff; text-decoration: none;">Activar Anuncio Pro · 1,99€</a>
         </div>
-        <p class="text" style="color: #9ca3af; text-align: center; margin-bottom: 32px; font-size: 14px;">
-            Estás recibiendo este correo porque tienes una cuenta en Ruralpop.
+        <p class="text" style="color: #9ca3af; text-align: center; margin-top: 60px; margin-bottom: 32px; font-size: 14px;">
+            Estás recibiendo este email porque eres usuario de Ruralpop.
         </p>
         <p class="footer">
             Ruralpop - El mercado del campo<br/>

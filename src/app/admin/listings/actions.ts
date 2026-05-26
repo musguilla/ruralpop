@@ -175,7 +175,7 @@ export async function deleteListingAndSendEmail(listingId: string, email: string
             from: "Soporte Ruralpop <soporte@ruralpop.com>",
             to: email,
             subject: template.subject,
-            html: template.htmlContent
+            html: template.htmlContent.replace('{{LISTING_ID}}', listingId)
         });
 
         if (resendError) {
