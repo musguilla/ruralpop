@@ -60,7 +60,7 @@ export function TagSelector({ category, subcategory, initialTags = [], onTagsCha
         );
     }, [availableTags, selectedTags, searchTerm, category]);
 
-    const suggestedTags = filteredTags.slice(0, 11);
+    const suggestedTags = filteredTags.slice(0, 3);
 
     const toggleTag = (tag: string) => {
         let newTags;
@@ -86,34 +86,31 @@ export function TagSelector({ category, subcategory, initialTags = [], onTagsCha
             </View>
 
             {/* Buscador de etiquetas */}
-            <View className="relative mb-3">
-                <View className="absolute inset-y-0 left-0 pl-3 flex justify-center z-10 pointer-events-none">
-                    <Search color="#9ca3af" size={18} style={{ marginTop: 14 }} />
-                </View>
+            <View className="mb-3">
                 <TextInput
                     value={searchTerm}
                     onChangeText={setSearchTerm}
                     placeholder={category ? "Busca etiquetas..." : "Selecciona una categoría primero"}
                     editable={!!category}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-surface-muted text-text"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-surface-muted text-text"
                 />
             </View>
 
             {/* Etiquetas sugeridas */}
             {suggestedTags.length > 0 && (
-                <View className="flex-row flex-wrap gap-2 mb-2">
+                <View className="flex-row w-full mb-2" style={{ gap: 8 }}>
                     {suggestedTags.map((tag) => (
                         <TouchableOpacity
                             key={tag}
                             onPress={() => toggleTag(tag)}
-                            className="flex-row items-center px-3 py-1.5 rounded-full bg-gray-100 border border-transparent mr-2 mb-2"
+                            className="flex-1 items-center justify-center px-1 py-2.5 rounded-xl bg-gray-100 border border-transparent"
                         >
-                            <Text className="text-sm font-medium text-gray-700">{tag}</Text>
+                            <Text className="text-[13px] font-medium text-gray-700 text-center" numberOfLines={2}>{tag}</Text>
                         </TouchableOpacity>
                     ))}
-                    {filteredTags.length > 11 && (
-                        <View className="px-2 py-1.5 justify-center mr-2 mb-2">
-                            <Text className="text-sm text-gray-400">+{filteredTags.length - 11} más...</Text>
+                    {filteredTags.length > 3 && (
+                        <View className="justify-center pl-1 pr-2">
+                            <Text className="text-xs text-gray-400">+{filteredTags.length - 3} más</Text>
                         </View>
                     )}
                 </View>
