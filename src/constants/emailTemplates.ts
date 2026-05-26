@@ -197,7 +197,7 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
         name: "Rechazo: Ley Bienestar Animal",
         description: "Plantilla para notificar a un usuario que su anuncio ha sido eliminado por incumplir la Ley de Bienestar Animal.",
         category: "Moderación",
-        subject: "Importante: Tu anuncio ha sido eliminado por normativa vigente",
+        subject: "Importante: Tu anuncio requiere validación profesional",
         htmlContent: `
 <!DOCTYPE html>
 <html lang="es">
@@ -208,16 +208,21 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
 <body>
     <div class="container">
         <img src="https://www.ruralpop.com/ruralpop-logo.png" alt="Ruralpop" class="logo" />
-        <h1 class="title">Aviso Legal de Moderación</h1>
+        <h1 class="title">Anuncios para profesionales</h1>
         <p class="text">
             Hola,<br/><br/>
-            Te contactamos desde el equipo de moderación de Ruralpop para informarte que tu anuncio ha sido eliminado de la plataforma.<br/><br/>
-            Te recordamos que la Ley de Bienestar Animal (Ley 7/2023) en España, vigente desde el 29 de septiembre de 2023, prohíbe terminantemente la venta directa de animales de compañía (perros, gatos, hurones, roedores, pájaros) a través de Internet, portales web o aplicaciones por usuarios no profesionales.<br/><br/>
-            Para cumplir estrictamente con la legalidad, no podemos mantener este tipo de anuncios públicos.<br/><br/>
-            En Ruralpop estamos comprometidos con la tenencia y adquisición responsable de animales de compañía y por ello solo permitimos anuncios con número de registro del núcleo zoológico por parte de usuarios profesionales que publican con el sello de "Profesional" y cuentan con <a href="https://www.ruralpop.com/empresas-profesionales-sector-rural" style="color: #10b981; font-weight: bold; text-decoration: none;">Ruralpop Plan Pro</a>.
+            Te recordamos que la Ley de Bienestar Animal (Ley 7/2023) en España limita la publicación de anuncios de determinados animales de compañía por parte de usuarios particulares en plataformas online.<br/><br/>
+            Para publicar anuncios de perros, aves de compañía y otros animales regulados, es necesario disponer de un perfil profesional verificado donde debes introducir número de registro de núcleo zoológico, explotación o criadero.<br/><br/>
+            En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Anuncio Pro por solo 1,99€</strong>, lo que te permitirá:
         </p>
+        <ul class="text" style="padding-left: 20px; font-weight: bold; margin-bottom: 32px;">
+            <li style="margin-bottom: 8px;">Publicar tu anuncio autorizado</li>
+            <li style="margin-bottom: 8px;">Mostrar tu perfil como profesional verificado</li>
+            <li style="margin-bottom: 8px;">Cumplir con la normativa vigente</li>
+            <li style="margin-bottom: 8px;">Generar mayor confianza a los compradores</li>
+        </ul>
+        <a href="https://www.ruralpop.com/dashboard" class="button" style="color: #ffffff; text-decoration: none;">Activar Anuncio Pro · 1,99€</a>
         <p class="footer">
-            Agradecemos tu comprensión.<br/><br/>
             Ruralpop - El mercado del campo<br/>
             © ${new Date().getFullYear()} Ruralpop
         </p>
