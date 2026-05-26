@@ -15,7 +15,7 @@ import { useStripe } from '@stripe/stripe-react-native';
 import { calculateRuralpopFee } from '../../src/lib/escrow';
 import { buildWebListingUrl } from '../../src/lib/urls';
 import { getDefaultTenantFilterString } from '../../src/config/tenants';
-import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
+import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
 
 const { width, height } = Dimensions.get('window');
 
@@ -422,7 +422,7 @@ export default function ListingDetailsScreen() {
                     {/* Ad Unit & Edited Date */}
                     <View className="mt-8 mb-4">
                         <View className="w-full items-center justify-center bg-gray-50/50 mb-6 rounded-xl overflow-hidden">
-                            <NativeAdCard />
+                            <RectangularBanner />
                         </View>
                         <View className="border-t border-gray-200 pt-4 flex-row items-center">
                             <Text className="text-gray-500 text-sm">
