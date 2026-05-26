@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { DeleteButton } from "./DeleteButton";
 import { AdminFilters } from "./AdminFilters";
 
@@ -27,7 +27,11 @@ export default async function AdminListingsPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
     const searchParams = await props.searchParams;
-    const supabase = await createClient();
+    
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+    const supabase = createAdminClient(supabaseUrl, serviceRoleKey);
+    
     const PAGE_SIZE = 40;
     const currentPage = Number(searchParams.page) || 1;
     const from = (currentPage - 1) * PAGE_SIZE;
