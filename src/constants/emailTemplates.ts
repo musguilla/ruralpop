@@ -224,10 +224,8 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
         <div style="margin-top: 40px; margin-bottom: 40px; text-align: center;">
             <a href="https://www.ruralpop.com/dashboard/validar-perfil?listingId={{LISTING_ID}}" class="button" style="color: #ffffff; text-decoration: none;">Activar Anuncio Pro · 1,99€</a>
         </div>
-        <p class="text" style="color: #9ca3af; text-align: center; margin-top: 60px; margin-bottom: 32px; font-size: 14px;">
-            Estás recibiendo este email porque eres usuario de Ruralpop.
-        </p>
         <p class="footer">
+            Estás recibiendo este email porque eres usuario de Ruralpop.<br/><br/>
             Ruralpop - El mercado del campo<br/>
             © ${new Date().getFullYear()} Ruralpop
         </p>
