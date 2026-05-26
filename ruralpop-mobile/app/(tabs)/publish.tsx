@@ -299,7 +299,7 @@ export default function PublishScreen() {
                     subcategory: finalSubcategory,
                     contact_phone: phone,
                     status: isRestricted ? 'draft' : 'active',
-                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : null,
+                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : 0,
                     tags: tags,
                     tenant_id: getRuralpopDatabaseId() || undefined
                 })
