@@ -41,12 +41,22 @@ export const STRIPE_PLANS = [
     },
     {
         id: "animal_welfare_validation",
-        name: "Anuncio Pro",
-        description: "Validación de Bienestar Animal para cumplir la normativa vigente.",
+        name: "Validar Anuncio Pro",
         price: 1.99,
+        description: "Publica tu anuncio como profesional certificado y cumple la normativa.",
         priceId: "price_welfare",
         icon: ShieldCheck,
-        color: "primary",
+        color: "blue",
+        badge: "obligatorio"
+    },
+    {
+        id: "profile_validation",
+        name: "Validar Perfil Pro",
+        price: 1.99,
+        description: "Valida tu perfil como profesional certificado y cumple la normativa.",
+        priceId: "price_profile",
+        icon: ShieldCheck,
+        color: "blue",
         badge: "obligatorio"
     }
 ];

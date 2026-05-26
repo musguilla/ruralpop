@@ -34,7 +34,26 @@ export async function POST(req: Request) {
 
         console.log(`💰 PaymentIntent status: ${paymentIntent.status}`);
 
-        if (listingId && planId) {
+        if (planId === "profile_validation" && paymentIntent.metadata.userId) {
+            try {
+                const { userId, welfare_nif, welfare_zoo_register_number, welfare_phone, welfare_name, welfare_lastName } = paymentIntent.metadata;
+                const userUpdate: any = { role: 'profesional' };
+                if (welfare_nif) userUpdate.nif = welfare_nif;
+                if (welfare_zoo_register_number) userUpdate.zoo_register_number = welfare_zoo_register_number;
+                if (welfare_phone) userUpdate.contact_phone = welfare_phone;
+                
+                const { error } = await supabaseAdmin.from("users").update(userUpdate).eq("id", userId);
+                if (error) {
+                    console.error(`Failed to update user ${userId} in DB:`, error.message);
+                    return new NextResponse("DB Update Failed", { status: 500 });
+                }
+                console.log(`✅ Successfully validated profile for user ${userId}`);
+            } catch (err: unknown) {
+                const errorMessage = err instanceof Error ? err.message : "Unknown error";
+                console.error("Database Error on Webhook (profile_validation):", err);
+                return new NextResponse(`Database Error: ${errorMessage}`, { status: 500 });
+            }
+        } else if (listingId && planId) {
             try {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 let updateData: any = {};

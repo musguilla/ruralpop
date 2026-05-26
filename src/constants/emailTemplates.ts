@@ -212,7 +212,7 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
         <p class="text">
             Hola,<br/><br/>
             Te recordamos que la Ley de Bienestar Animal (Ley 7/2023) en España limita la publicación de anuncios de determinados animales de compañía por parte de usuarios particulares en plataformas online.<br/><br/>
-            Para publicar anuncios de perros, aves de compañía y otros animales regulados, es necesario disponer de un perfil profesional verificado donde debes introducir número de registro de núcleo zoológico, explotación o criadero.<br/><br/>
+            Para publicar anuncios de perros, aves de compañía y otros animales regulados, es necesario disponer de un perfil verificado donde debes introducir número de registro de núcleo zoológico, explotación o criadero.<br/><br/>
             En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Anuncio Pro por solo 1,99€</strong>, lo que te permitirá:
         </p>
         <ul class="text" style="padding-left: 20px; font-weight: bold; margin-bottom: 32px;">
@@ -221,7 +221,12 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
             <li style="margin-bottom: 8px;">Cumplir con la normativa vigente</li>
             <li style="margin-bottom: 8px;">Generar mayor confianza a los compradores</li>
         </ul>
-        <a href="https://www.ruralpop.com/dashboard" class="button" style="color: #ffffff; text-decoration: none;">Activar Anuncio Pro · 1,99€</a>
+        <div style="margin-top: 40px; margin-bottom: 40px;">
+            <a href="https://www.ruralpop.com/dashboard/validar-perfil" class="button" style="color: #ffffff; text-decoration: none;">Activar Anuncio Pro · 1,99€</a>
+        </div>
+        <p class="text" style="color: #9ca3af; text-align: center; margin-bottom: 32px; font-size: 14px;">
+            Estás recibiendo este correo porque tienes una cuenta en Ruralpop.
+        </p>
         <p class="footer">
             Ruralpop - El mercado del campo<br/>
             © ${new Date().getFullYear()} Ruralpop
