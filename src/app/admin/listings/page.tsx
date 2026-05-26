@@ -48,6 +48,10 @@ export default async function AdminListingsPage(props: {
         query = query.eq('status', 'sold');
     }
 
+    if (searchParams.status === 'draft') {
+        query = query.eq('status', 'draft');
+    }
+
     if (searchParams.online === 'true') {
         query = query.eq('vender_online', true);
     }
@@ -160,6 +164,12 @@ export default async function AdminListingsPage(props: {
                         className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${searchParams.status === 'sold' ? 'bg-[var(--ag-sys-color-primary)] text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-gray-50'}`}
                     >
                         Vendidos
+                    </Link>
+                    <Link 
+                        href={buildLink("draft")} 
+                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${searchParams.status === 'draft' ? 'bg-red-500 text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-red-50'}`}
+                    >
+                        Borradores
                     </Link>
                     <Link 
                         href={buildOnlineLink()} 
