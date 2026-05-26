@@ -5,6 +5,7 @@ import { supabase } from '../src/lib/supabase';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, Wallet, AlertCircle, ExternalLink, ShieldCheck } from 'lucide-react-native';
 import * as WebBrowser from 'expo-web-browser';
+import { formatPrice } from '../src/lib/formatters';
 
 export default function MonederoScreen() {
     const { user } = useAuth();
@@ -147,7 +148,7 @@ export default function MonederoScreen() {
                                 </View>
                                 <Text className="text-white/80 font-medium text-base mb-1">Saldo Disponible</Text>
                                 <Text className="text-4xl font-extrabold text-white mb-6">
-                                    {(wallet.available_balance_cents / 100).toFixed(2)} €
+                                    {formatPrice(wallet.available_balance_cents / 100)}
                                 </Text>
                                 <View className="bg-black/10 rounded-xl p-3 flex-row items-start">
                                     <AlertCircle color="white" size={16} className="mt-0.5 shrink-0" />
@@ -162,7 +163,7 @@ export default function MonederoScreen() {
                                 <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                                     <Text className="text-gray-500 text-sm mb-1">Saldo Retenido</Text>
                                     <Text className="text-2xl font-bold text-text">
-                                        {(wallet.pending_balance_cents / 100).toFixed(2)} €
+                                        {formatPrice(wallet.pending_balance_cents / 100)}
                                     </Text>
                                     <Text className="text-xs text-gray-400 mt-2">
                                         Se liberará cuando el comprador confirme la entrega.
@@ -173,7 +174,7 @@ export default function MonederoScreen() {
                                 <View className="flex-1 bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
                                     <Text className="text-gray-500 text-sm mb-1">Histórico</Text>
                                     <Text className="text-2xl font-bold text-text">
-                                        {(wallet.total_earned_cents / 100).toFixed(2)} €
+                                        {formatPrice(wallet.total_earned_cents / 100)}
                                     </Text>
                                     <Text className="text-xs text-gray-400 mt-2">
                                         Total acumulado en la plataforma.
@@ -210,7 +211,7 @@ export default function MonederoScreen() {
                                                 </View>
                                                 <View className="items-end">
                                                     <Text className="text-text font-bold text-base mb-1">
-                                                        {(tx.seller_net_amount_cents / 100).toFixed(2)} €
+                                                        {formatPrice(tx.seller_net_amount_cents / 100)}
                                                     </Text>
                                                     {tx.status === 'paid_out' || tx.status === 'buyer_confirmed' ? (
                                                         <View className="bg-green-100 px-2 py-0.5 rounded-md">

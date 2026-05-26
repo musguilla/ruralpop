@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { ChevronLeft, Package, Clock, CheckCircle } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../src/lib/image-optimization';
+import { formatPrice } from '../src/lib/formatters';
 
 export default function ComprasScreen() {
     const { user } = useAuth();
@@ -106,7 +107,7 @@ export default function ComprasScreen() {
                             {listing?.title || 'Producto desconocido'}
                         </Text>
                         <Text className="text-lg font-extrabold text-primary">
-                            {(item.gross_amount_cents / 100).toFixed(2)} €
+                            {formatPrice(item.gross_amount_cents / 100)}
                         </Text>
                     </View>
                 </View>

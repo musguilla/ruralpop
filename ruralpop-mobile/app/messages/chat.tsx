@@ -8,6 +8,7 @@ import { supabase } from '../../src/lib/supabase';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { ChevronLeft, Send, ImageIcon } from 'lucide-react-native';
 import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import { formatPrice } from '../../src/lib/formatters';
 
 interface Message {
     id: string;
@@ -254,7 +255,7 @@ export default function ChatScreen() {
                 {/* Listing Details */}
                 <View className="flex-1 mr-2 justify-center">
                     <Text className="text-[17px] font-bold text-gray-900 leading-tight">
-                        {listingData?.price !== undefined ? `${listingData.price} €` : listingPrice ? `${listingPrice} €` : 'Consultar'}
+                        {listingData?.price !== undefined ? formatPrice(listingData.price) : listingPrice ? formatPrice(listingPrice) : 'Consultar'}
                     </Text>
                     <Text className="text-[14px] text-gray-500 truncate" numberOfLines={1}>
                         {listingData?.title || listingTitle || 'Anuncio'}

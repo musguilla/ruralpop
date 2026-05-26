@@ -8,6 +8,7 @@ import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../src/lib/image-optimization';
 import { Listing } from '../src/types';
 import { ListingCard } from '../src/components/ui/ListingCard';
+import { formatPrice } from '../src/lib/formatters';
 import { getDefaultTenantFilterString } from '../src/config/tenants';
 
 export default function VentasScreen() {
@@ -272,10 +273,10 @@ export default function VentasScreen() {
                         </Text>
                         <Text className="text-lg font-extrabold text-primary">
                             {isEscrow 
-                                ? `${(order.seller_net_amount_cents / 100).toFixed(2)} € `
+                                ? `${formatPrice(order.seller_net_amount_cents / 100)} `
                                 : listing?.sold_price 
-                                    ? `${listing.sold_price.toFixed(2)} € ` 
-                                    : `${listing?.price?.toFixed(2) || '0.00'} € `
+                                    ? `${formatPrice(listing.sold_price)} ` 
+                                    : `${formatPrice(listing?.price)} `
                             }
                             {isEscrow && <Text className="text-sm font-normal text-gray-500">(Neto)</Text>}
                         </Text>
