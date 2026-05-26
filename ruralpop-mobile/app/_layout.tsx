@@ -1,8 +1,9 @@
 import "react-native-reanimated";
 import "../global.css";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import * as Notifications from "expo-notifications";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import { FavoritesProvider } from "../src/contexts/FavoritesContext";
@@ -22,6 +23,32 @@ export default function RootLayout() {
             }
         })();
     }, []);
+
+    const router = useRouter();
+    const lastNotificationResponse = Notifications.useLastNotificationResponse();
+
+    useEffect(() => {
+        if (
+            lastNotificationResponse &&
+            lastNotificationResponse.notification.request.content.data
+        ) {
+            const data = lastNotificationResponse.notification.request.content.data as any;
+
+            if (data.url) {
+                // If it contains a URL (like /ventas or /anuncio/123)
+                router.push(data.url);
+            } else if (data.listingId && data.otherUserId) {
+                // Legacy Chat Notification Format
+                router.push({
+                    pathname: '/messages/chat',
+                    params: {
+                        listingId: data.listingId,
+                        otherUserId: data.otherUserId,
+                    }
+                });
+            }
+        }
+    }, [lastNotificationResponse]);
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>

@@ -262,7 +262,7 @@ export async function POST(req: Request) {
                                     sound: 'default',
                                     title: '¡Has vendido un artículo!',
                                     body: `El pago seguro por tu anuncio "${listing?.title || 'artículo'}" se ha completado. Tienes el dinero retenido en tu monedero.`,
-                                    data: { url: `/anuncio/${order.listing_id}` },
+                                    data: { url: `/ventas` },
                                 }),
                             });
                             console.log(`✅ Push notification sent to seller ${order.seller_id} for order ${escrowOrderId}`);
