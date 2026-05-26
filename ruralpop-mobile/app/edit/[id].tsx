@@ -11,7 +11,7 @@ import { decode } from "base64-arraybuffer";
 import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
 import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';
-import { DogLawModal } from '../../src/components/ui/modals/DogLawModal';
+import { AnimalWelfareModal } from '../../src/components/ui/modals/AnimalWelfareModal';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
@@ -43,7 +43,8 @@ export default function EditListingScreen() {
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
     const [isMunicipalityModalOpen, setIsMunicipalityModalOpen] = useState(false);
-    const [isDogLawModalOpen, setIsDogLawModalOpen] = useState(false);
+    const [isAnimalWelfareModalOpen, setIsAnimalWelfareModalOpen] = useState(false);
+    const [welfareListingId, setWelfareListingId] = useState<string>('');
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isPicking, setIsPicking] = useState(false);
@@ -281,6 +282,21 @@ export default function EditListingScreen() {
             const provinceNumericId = selectedProvinceObj ? parseInt(selectedProvinceObj.id, 10) : null;
             const fullLocationString = municipality ? `${municipality.name}, ${locationId}` : locationId;
 
+            let isRestricted = false;
+            if (finalSubcategory && finalSubcategory.toLowerCase() === "perros" && !isProfesional) {
+                isRestricted = true;
+            } else if (!isProfesional) {
+                const restrictedKeywords = ["agaporni", "ninfa", "periquito", "cotorra", "canario", "loro", "lorito", "papillero", "papillera", "anillado", "anillada", "paloma", "palomas", "palomo", "palomos", "gato", "gatos", "gata", "gatas", "perro", "perros", "cachorro", "cachorros", "perra", "mastin", "mastina"];
+                const combinedText = `${title.toLowerCase()} ${description.toLowerCase()}`;
+                
+                for (const word of restrictedKeywords) {
+                    if (combinedText.includes(word)) {
+                        isRestricted = true;
+                        break;
+                    }
+                }
+            }
+
             const { error } = await supabase
                 .from('listings')
                 .update({
@@ -296,19 +312,24 @@ export default function EditListingScreen() {
                     subcategory: finalSubcategory,
                     contact_phone: phone,
                     vender_online: allowOnlineSale,
-                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : 0
+                    shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : 0,
+                    status: isRestricted ? 'draft' : undefined
                 })
                 .eq('id', id)
                 .eq('user_id', user.id);
 
             if (error) throw error;
 
-            setSuccess(true);
-
-            setTimeout(() => {
-                setSuccess(false);
-                router.back();
-            }, 2000);
+            if (isRestricted) {
+                setWelfareListingId(id);
+                setIsAnimalWelfareModalOpen(true);
+            } else {
+                setSuccess(true);
+                setTimeout(() => {
+                    setSuccess(false);
+                    router.back();
+                }, 2000);
+            }
 
         } catch (error: any) {
             Alert.alert('Error', error.message || 'Error al guardar el anuncio');
@@ -537,13 +558,8 @@ export default function EditListingScreen() {
                 onClose={() => setIsCategoryModalOpen(false)}
                 selectedCategory={categoryId}
                 onSelect={(cat) => {
-                    if (cat.toLowerCase() === 'perros' && !isProfesional) {
-                        setIsCategoryModalOpen(false);
-                        setIsDogLawModalOpen(true);
-                    } else {
-                        setCategoryId(cat);
-                        setIsCategoryModalOpen(false);
-                    }
+                    setCategoryId(cat);
+                    setIsCategoryModalOpen(false);
                 }}
             />
 
@@ -569,9 +585,18 @@ export default function EditListingScreen() {
                 }}
             />
 
-            <DogLawModal 
-                visible={isDogLawModalOpen}
-                onClose={() => setIsDogLawModalOpen(false)}
+            <AnimalWelfareModal 
+                visible={isAnimalWelfareModalOpen}
+                onClose={() => setIsAnimalWelfareModalOpen(false)}
+                listingId={welfareListingId}
+                onSuccess={() => {
+                    setIsAnimalWelfareModalOpen(false);
+                    setSuccess(true);
+                    setTimeout(() => {
+                        setSuccess(false);
+                        router.back();
+                    }, 2000);
+                }}
             />
         </SafeAreaView>
     );

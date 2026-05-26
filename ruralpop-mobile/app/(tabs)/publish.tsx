@@ -11,7 +11,7 @@ import { decode } from "base64-arraybuffer";
 import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
 import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';
-import { DogLawModal } from '../../src/components/ui/modals/DogLawModal';
+import { AnimalWelfareModal } from '../../src/components/ui/modals/AnimalWelfareModal';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 import { getRuralpopDatabaseId } from '../../src/config/tenants';
@@ -39,7 +39,8 @@ export default function PublishScreen() {
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
     const [isMunicipalityModalOpen, setIsMunicipalityModalOpen] = useState(false);
-    const [isDogLawModalOpen, setIsDogLawModalOpen] = useState(false);
+    const [isAnimalWelfareModalOpen, setIsAnimalWelfareModalOpen] = useState(false);
+    const [welfareListingId, setWelfareListingId] = useState<string>('');
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isPicking, setIsPicking] = useState(false);
@@ -264,6 +265,22 @@ export default function PublishScreen() {
                 }
             }
 
+            // [Antigravity Sync]: Animal Welfare Restriction Check (Igual que en la web)
+            let isRestricted = false;
+            if (finalSubcategory && finalSubcategory.toLowerCase() === "perros" && !isProfesional) {
+                isRestricted = true;
+            } else if (!isProfesional) {
+                const restrictedKeywords = ["agaporni", "ninfa", "periquito", "cotorra", "canario", "loro", "lorito", "papillero", "papillera", "anillado", "anillada", "paloma", "palomas", "palomo", "palomos", "gato", "gatos", "gata", "gatas", "perro", "perros", "cachorro", "cachorros", "perra", "mastin", "mastina"];
+                const combinedText = `${title.toLowerCase()} ${description.toLowerCase()}`;
+                
+                for (const word of restrictedKeywords) {
+                    if (combinedText.includes(word)) {
+                        isRestricted = true;
+                        break;
+                    }
+                }
+            }
+
             const { data, error } = await supabase
                 .from('listings')
                 .insert({
@@ -281,7 +298,7 @@ export default function PublishScreen() {
                     contact_phone: phone,
                     vender_online: allowOnlineSale,
                     shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : 0,
-                    status: 'active',
+                    status: isRestricted ? 'draft' : 'active',
                     tenant_id: getRuralpopDatabaseId() || undefined
                 })
                 .select()
@@ -289,20 +306,24 @@ export default function PublishScreen() {
 
             if (error) throw error;
 
-            setSuccess(true);
-
-            // Reset form
-            setTimeout(() => {
-                setTitle('');
-                setDescription('');
-                setPrice('');
-                setLocationId(null);
-                setMunicipality(null);
-                setCategoryId(null);
-                setImages([]);
-                setSuccess(false);
-                router.push('/(tabs)/');
-            }, 2000);
+            if (isRestricted) {
+                setWelfareListingId(data.id);
+                setIsAnimalWelfareModalOpen(true);
+            } else {
+                setSuccess(true);
+                // Reset form
+                setTimeout(() => {
+                    setTitle('');
+                    setDescription('');
+                    setPrice('');
+                    setLocationId(null);
+                    setMunicipality(null);
+                    setCategoryId(null);
+                    setImages([]);
+                    setSuccess(false);
+                    router.push('/(tabs)/');
+                }, 2000);
+            }
 
         } catch (error: any) {
             Alert.alert('Error', error.message || 'Error al publicar el anuncio');
@@ -543,18 +564,8 @@ export default function PublishScreen() {
                 onClose={() => setIsCategoryModalOpen(false)}
                 selectedCategory={categoryId}
                 onSelect={(cat) => {
-                    if (cat && cat.toLowerCase() === 'perros' && !isProfesional) {
-                        setIsCategoryModalOpen(false);
-                        // [Antigravity Sync]: Aumentamos timeout a 600ms para asegurar
-                        // que la animación de cierre del Modal nativo de iOS termine
-                        // antes de montar otro Modal nativo, evitando bloqueos de interfaz.
-                        setTimeout(() => {
-                            setIsDogLawModalOpen(true);
-                        }, 600);
-                    } else {
-                        setCategoryId(cat);
-                        setIsCategoryModalOpen(false);
-                    }
+                    setCategoryId(cat);
+                    setIsCategoryModalOpen(false);
                 }}
             />
 
@@ -580,9 +591,25 @@ export default function PublishScreen() {
                 }}
             />
 
-            <DogLawModal 
-                visible={isDogLawModalOpen}
-                onClose={() => setIsDogLawModalOpen(false)}
+            <AnimalWelfareModal 
+                visible={isAnimalWelfareModalOpen}
+                onClose={() => setIsAnimalWelfareModalOpen(false)}
+                listingId={welfareListingId}
+                onSuccess={() => {
+                    setIsAnimalWelfareModalOpen(false);
+                    setSuccess(true);
+                    setTimeout(() => {
+                        setTitle('');
+                        setDescription('');
+                        setPrice('');
+                        setLocationId(null);
+                        setMunicipality(null);
+                        setCategoryId(null);
+                        setImages([]);
+                        setSuccess(false);
+                        router.push('/(tabs)/');
+                    }, 2000);
+                }}
             />
         </SafeAreaView>
     );
