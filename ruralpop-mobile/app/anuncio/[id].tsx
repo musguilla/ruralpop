@@ -400,8 +400,19 @@ export default function ListingDetailsScreen() {
                 {listing.vender_online ? (
                     <TouchableOpacity
                         onPress={() => {
+                            if (!user) {
+                                router.push('/(auth)/login');
+                                return;
+                            }
                             if (user?.id === listing.user_id) {
                                 Alert.alert("Aviso", "No puedes comprar tu propio producto.");
+                                return;
+                            }
+                            if (!user?.user_metadata?.shipping_address) {
+                                router.push({
+                                    pathname: '/edit-shipping-address',
+                                    params: { returnToCheckout: 'true' }
+                                });
                                 return;
                             }
                             setIsCheckoutSummaryVisible(true);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, SafeAreaView, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../src/lib/supabase';
 import { useAuth } from '../src/contexts/AuthContext';
 import { ChevronLeft, ChevronDown } from 'lucide-react-native';
@@ -8,6 +8,8 @@ import { ChevronLeft, ChevronDown } from 'lucide-react-native';
 export default function EditShippingAddressScreen() {
     const { user, session } = useAuth();
     const router = useRouter();
+    const params = useLocalSearchParams();
+    const isFromCheckout = params.returnToCheckout === 'true';
     const [loading, setLoading] = useState(false);
 
     const [fullName, setFullName] = useState('');
@@ -58,7 +60,14 @@ export default function EditShippingAddressScreen() {
             });
 
             if (error) throw error;
-            router.back();
+            
+            if (isFromCheckout) {
+                Alert.alert("Dirección guardada", "Ya puedes continuar con la compra.", [
+                    { text: "OK", onPress: () => router.back() }
+                ]);
+            } else {
+                router.back();
+            }
         } catch (error: any) {
             Alert.alert("Error", "No se pudo guardar la dirección. Inténtalo de nuevo.");
         } finally {
@@ -73,7 +82,7 @@ export default function EditShippingAddressScreen() {
                     <ChevronLeft color="#111827" size={28} />
                 </TouchableOpacity>
                 <View className="flex-1 items-center pr-6">
-                    <Text className="text-[17px] font-bold text-gray-900">Edita tu dirección</Text>
+                    <Text className="text-[17px] font-bold text-gray-900">{isFromCheckout ? 'Dirección de envío' : 'Edita tu dirección'}</Text>
                 </View>
             </View>
 
