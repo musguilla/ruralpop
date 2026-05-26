@@ -106,6 +106,7 @@ export default function Home() {
             }
         } catch (error) {
             console.error('Error fetching listings:', error);
+            setHasMore(false);
         } finally {
             setLoading(false);
             setRefreshing(false);
