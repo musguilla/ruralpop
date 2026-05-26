@@ -6,12 +6,10 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder");
 
 export default function ValidarPerfilPage() {
-    const { user } = useAuth();
     const [step, setStep] = useState<'info' | 'form' | 'payment'>('info');
     
     // Form fields
