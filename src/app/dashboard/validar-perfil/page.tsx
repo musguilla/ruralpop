@@ -93,7 +93,7 @@ export default function ValidarPerfilPage() {
                                     En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Perfil Pro por solo 1,99€</strong>, lo que te permitirá:
                                 </p>
                                 <ul className="list-disc pl-6 space-y-2 font-semibold text-[var(--ag-sys-color-text)]">
-                                    <li>Publicar anuncios autorizados</li>
+                                    <li>Publicar este anuncio autorizado</li>
                                     <li>Mostrar tu perfil como profesional verificado</li>
                                     <li>Cumplir con la normativa vigente</li>
                                     <li>Generar mayor confianza a los compradores</li>

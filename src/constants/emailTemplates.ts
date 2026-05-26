@@ -216,7 +216,7 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
             En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Anuncio Pro por solo 1,99€</strong>, lo que te permitirá:
         </p>
         <ul class="text" style="padding-left: 20px; font-weight: bold; margin-bottom: 32px;">
-            <li style="margin-bottom: 8px;">Publicar tu anuncio autorizado</li>
+            <li style="margin-bottom: 8px;">Publicar este anuncio autorizado</li>
             <li style="margin-bottom: 8px;">Mostrar tu perfil como profesional verificado</li>
             <li style="margin-bottom: 8px;">Cumplir con la normativa vigente</li>
             <li style="margin-bottom: 8px;">Generar mayor confianza a los compradores</li>
