@@ -76,6 +76,14 @@ export default function AjustesScreen() {
                     </TouchableOpacity>
 
                     <TouchableOpacity
+                        onPress={() => router.push('/shipping-address')}
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-100"
+                    >
+                        <Text className="text-[17px] text-gray-800">Dirección de envío</Text>
+                        <ChevronRight color="#9ca3af" size={20} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
                         onPress={handleSignOut}
                         className="flex-row justify-between items-center px-6 py-5"
                     >
