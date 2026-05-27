@@ -10,7 +10,6 @@ import { HomeLatestListings } from "@/components/home/HomeLatestListings";
 import { HomeDirectBuySlider } from "@/components/home/HomeDirectBuySlider";
 import { HomeFeaturedSlider } from "@/components/home/HomeFeaturedSlider";
 import { HomePopularListings } from "@/components/home/HomePopularListings";
-import { HomeStoreSection } from "@/components/store/HomeStoreSection";
 import { Metadata } from "next";
 import { generateSeoH1 } from "@/utils/h1Generator";
 import { LOCATIONS } from "@/constants/locations";
@@ -101,13 +100,6 @@ export default async function Home(props: {
           <Suspense fallback={<GridSkeleton />}>
               <ListingsGrid searchParams={searchParams} isHome={true} />
           </Suspense>
-      )}
-
-      {/* Store Section */}
-      {tenant !== 'equipop' && (
-        <Suspense fallback={null}>
-          <HomeStoreSection />
-        </Suspense>
       )}
 
     </div>

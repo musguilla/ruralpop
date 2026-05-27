@@ -26,14 +26,14 @@ export async function Footer() {
                     <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         {t("conexion_rural")}
                     </span>
-                    <LocalizedLink href="/tienda" className="text-base font-medium text-[var(--ag-sys-color-primary)] hover:opacity-80 transition-opacity">
-                        {t("tienda")}
+                    <LocalizedLink href="/tractores" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        {t("catalogos_tractores")}
                     </LocalizedLink>
                     <LocalizedLink href="/magazine" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         {t("magazine")}
                     </LocalizedLink>
-                    <LocalizedLink href="/tractores" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        {t("catalogos_tractores")}
+                    <LocalizedLink href="/tienda" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        {t("tienda")}
                     </LocalizedLink>
                 </div>
 
