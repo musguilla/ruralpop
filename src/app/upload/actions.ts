@@ -66,7 +66,7 @@ export async function createListing(formData: FormData) {
     if (contact_phone && contact_phone.trim().length > 0) {
         await supabase
             .from("users")
-            .update({ phone: contact_phone.trim() })
+            .update({ contact_phone: contact_phone.trim() })
             .eq("id", user.id);
     }
 
@@ -83,6 +83,7 @@ export async function createListing(formData: FormData) {
         vender_online,
         shipping_price,
         image_urls,
+        contact_phone,
         tags,
         user_id: user.id,
         status: isRestricted ? "draft" : "active",

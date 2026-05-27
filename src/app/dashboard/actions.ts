@@ -87,7 +87,7 @@ export async function updateListing(listingId: string, formData: FormData) {
     if (contact_phone && contact_phone.trim().length > 0) {
         await supabase
             .from("users")
-            .update({ phone: contact_phone.trim() })
+            .update({ contact_phone: contact_phone.trim() })
             .eq("id", user.id);
     }
 
