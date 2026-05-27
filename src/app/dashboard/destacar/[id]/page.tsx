@@ -125,6 +125,7 @@ export default async function DestacarAnuncioPage(props: Props) {
                     isProfesional={isProfesional}
                     availableFeatured={profile?.available_featured || 0}
                     availableBumps={profile?.available_bumps || 0}
+                    isNewlyPublished={isNewlyPublished}
                 />
 
                 {isNewlyPublished && (

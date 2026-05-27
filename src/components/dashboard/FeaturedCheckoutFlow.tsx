@@ -48,13 +48,15 @@ export interface FeaturedCheckoutFlowProps {
     isProfesional?: boolean;
     availableFeatured?: number;
     availableBumps?: number;
+    isNewlyPublished?: boolean;
 }
 
 export function FeaturedCheckoutFlow({ 
     listingId, 
     isProfesional = false, 
     availableFeatured = 0, 
-    availableBumps = 0 
+    availableBumps = 0,
+    isNewlyPublished = false
 }: FeaturedCheckoutFlowProps) {
     const router = useRouter();
     const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
@@ -205,11 +207,15 @@ export function FeaturedCheckoutFlow({
         );
     }
 
+    const plansToShow = isNewlyPublished 
+        ? STRIPE_PLANS.filter(p => p.id !== "bump")
+        : STRIPE_PLANS;
+
     return (
         <div className="space-y-6 mb-16">
             <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Selecciona un plan</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {STRIPE_PLANS.map((plan) => {
+            <div className={`grid grid-cols-1 md:grid-cols-${plansToShow.length} gap-6`}>
+                {plansToShow.map((plan) => {
                     const Icon = plan.icon;
                     const isSelected = selectedPlanId === plan.id;
                     const isLoading = isCreatingIntent && isSelected;
