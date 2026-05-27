@@ -263,7 +263,7 @@ export default function EditListingScreen() {
 
             // Guardar el telefono si hay uno nuevo
             if (phone && phone.trim().length > 0) {
-                await supabase.from('users').update({ phone: phone.trim() }).eq('id', user.id);
+                await supabase.from('users').update({ contact_phone: phone.trim() }).eq('id', user.id);
             }
 
             // Derivar category y subcategory a raiz de categoryId
