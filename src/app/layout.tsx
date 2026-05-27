@@ -113,8 +113,8 @@ export default async function RootLayout({
         <head>
           <style>{`
             :root {
-              --ag-sys-color-primary: #7bceb4;
-              --ag-sys-color-primary-hover: #96f1d6;
+              --ag-sys-color-primary: #194152;
+              --ag-sys-color-primary-hover: #102B37;
             }
           `}</style>
         </head>

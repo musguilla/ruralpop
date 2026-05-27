@@ -162,22 +162,22 @@ export function EquipopHomeSearchHero() {
 
             {/* Wallapop-style Hero Banner */}
             <div className="w-full max-w-7xl mx-auto px-4 mt-6">
-                <div className="flex flex-col md:flex-row w-full rounded-2xl overflow-hidden shadow-sm bg-[#E9FBB1]">
+                <div className="flex flex-col md:flex-row w-full rounded-2xl overflow-hidden shadow-sm bg-[#194152]">
                     {/* Left side: Text & Button */}
-                    <div className="flex-1 p-10 md:p-16 flex flex-col justify-center items-start">
-                        <h2 className="text-3xl md:text-5xl font-extrabold text-[#13605C] leading-tight mb-8">
+                    <div className="w-full md:w-5/12 p-10 md:p-16 flex flex-col justify-center items-start">
+                        <h2 className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-8">
                             Compra y vende<br />productos de<br />segunda mano.
                         </h2>
                         <button 
                             onClick={() => router.push('/upload')}
-                            className="bg-[#13605C] hover:bg-[#0E4A47] text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-colors"
+                            className="bg-white hover:bg-gray-100 text-[#194152] px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-colors"
                         >
                             <Plus className="w-5 h-5" />
                             Vender ahora
                         </button>
                     </div>
                     {/* Right side: Image */}
-                    <div className="flex-1 relative min-h-[300px] md:min-h-full">
+                    <div className="w-full md:w-7/12 relative min-h-[300px] md:min-h-full">
                         <img 
                             src="/equipop-hero-web.jpg" 
                             alt="Equipop compra y venta" 
