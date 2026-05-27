@@ -7,10 +7,10 @@ import { sendGhostInvites, saveCompanyEmails } from "./actions";
 
 type GhostCompany = {
     id: string;
-    commercial_name: string;
+    commercial_name: string | null;
     ghost_token: string;
-    avatar_url: string;
-    company_logo_url: string;
+    avatar_url: string | null;
+    company_logo_url: string | null;
     created_at: string;
     email: string | null;
 };
@@ -77,7 +77,7 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
             const emails = getEmailForCompany(id).split(",").map(e => e.trim()).filter(Boolean);
             return {
                 companyId: id,
-                commercialName: company.commercial_name,
+                commercialName: company.commercial_name || 'Empresa sin nombre',
                 token: company.ghost_token,
                 emails
             };
@@ -155,13 +155,16 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
                             </tr>
                         ) : companies.map(company => {
                             const isSelected = selectedIds.has(company.id);
-                            const magicUrlPath = `/empresa/${slugify(company.commercial_name)}?token=${company.ghost_token}`;
+                            const safeCommercialNameSlug = company.commercial_name ? slugify(company.commercial_name) : 'empresa';
+                            const magicUrlPath = `/empresa/${safeCommercialNameSlug}?token=${company.ghost_token}`;
                             
                             // Client-side origin building
                             const urlObj = typeof window !== 'undefined' ? new URL(window.location.href) : null;
                             const baseUrl = urlObj ? `${urlObj.protocol}//${urlObj.host}` : 'https://www.ruralpop.com';
                             const absoluteMagicUrl = `${baseUrl}${magicUrlPath}`;
 
+                            const safeCommercialName = company.commercial_name || 'Empresa sin nombre';
+                            
                             return (
                                 <tr key={company.id} className={`hover:bg-gray-50/50 transition-colors ${isSelected ? 'bg-blue-50/20' : ''}`}>
                                     <td className="p-4">
@@ -177,13 +180,13 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
                                             {company.avatar_url || company.company_logo_url ? (
-                                                <img src={company.avatar_url || company.company_logo_url} alt={company.commercial_name} className="w-10 h-10 object-cover rounded-lg border border-gray-200" />
+                                                <img src={(company.avatar_url || company.company_logo_url)!} alt={safeCommercialName} className="w-10 h-10 object-cover rounded-lg border border-gray-200" />
                                             ) : (
                                                 <div className="w-10 h-10 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center font-bold text-gray-400">
-                                                    {company.commercial_name.charAt(0)}
+                                                    {safeCommercialName.charAt(0)}
                                                 </div>
                                             )}
-                                            <span className="font-bold text-[var(--ag-sys-color-text)]">{company.commercial_name}</span>
+                                            <span className="font-bold text-[var(--ag-sys-color-text)]">{safeCommercialName}</span>
                                         </div>
                                     </td>
                                     <td className="p-4">
