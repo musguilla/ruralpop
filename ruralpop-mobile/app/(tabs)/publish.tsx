@@ -12,6 +12,7 @@ import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
 import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityModal';
 import { AnimalWelfareModal } from '../../src/components/ui/modals/AnimalWelfareModal';
+import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';
 import { TagSelector } from '../../src/components/ui/TagSelector';
 import { getRuralpopDatabaseId } from '../../src/config/tenants';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
@@ -46,7 +47,7 @@ export default function PublishScreen() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isPicking, setIsPicking] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const [successListingId, setSuccessListingId] = useState<string | null>(null);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -312,20 +313,7 @@ export default function PublishScreen() {
                 setWelfareListingId(data.id);
                 setIsAnimalWelfareModalOpen(true);
             } else {
-                setSuccess(true);
-                // Reset form
-                setTimeout(() => {
-                    setTitle('');
-                    setDescription('');
-                    setPrice('');
-                    setLocationId(null);
-                    setMunicipality(null);
-                    setCategoryId(null);
-                    setImages([]);
-                    setTags([]);
-                    setSuccess(false);
-                    router.push('/(tabs)/');
-                }, 2000);
+                setSuccessListingId(data.id);
             }
 
         } catch (error: any) {
@@ -335,13 +323,23 @@ export default function PublishScreen() {
         }
     };
 
-    if (success) {
+    if (successListingId) {
         return (
-            <View className="flex-1 items-center justify-center bg-surface px-6">
-                <CheckCircle2 className="text-primary mb-4" size={64} />
-                <Text className="text-2xl font-bold text-text mb-2 text-center">¡Anuncio publicado!</Text>
-                <Text className="text-text-muted text-center">Tu anuncio ya está visible para todos.</Text>
-            </View>
+            <FeaturedCheckoutMobile 
+                listingId={successListingId}
+                onSkip={() => {
+                    setTitle('');
+                    setDescription('');
+                    setPrice('');
+                    setLocationId(null);
+                    setMunicipality(null);
+                    setCategoryId(null);
+                    setImages([]);
+                    setTags([]);
+                    setSuccessListingId(null);
+                    router.push('/(tabs)/');
+                }}
+            />
         );
     }
 
