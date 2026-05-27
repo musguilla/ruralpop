@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, List, MapPin } from "lucide-react";
+import { Search, List, MapPin, Plus } from "lucide-react";
 import { useCategories } from "@/context/CategoriesContext";
 import { useTranslation } from "@/context/LocaleContext";
 import { useLocalizedRoute } from "@/i18n/hooks";
@@ -54,12 +54,13 @@ export function EquipopHomeSearchHero() {
     };
 
     return (
-        <div className="w-full flex flex-col items-center py-6 sm:py-10">
-            <h1 className="hidden md:block text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-8 text-center">
-                ¿Qué equipamiento buscas?
-            </h1>
+        <div className="w-full flex flex-col items-center py-6 sm:py-10 gap-6">
+            <div className="w-full max-w-4xl px-4 flex flex-col items-center">
+                <h1 className="hidden md:block text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-8 text-center">
+                    ¿Qué equipamiento buscas?
+                </h1>
 
-            {/* Desktop Search Bar */}
+                {/* Desktop Search Bar */}
             <form
                 onSubmit={handleSearch}
                 className="hidden md:flex flex-row items-center w-full max-w-4xl bg-white border border-[var(--ag-sys-color-border)] rounded-full p-1.5 shadow-sm hover:shadow-md transition-shadow"
@@ -157,6 +158,34 @@ export function EquipopHomeSearchHero() {
                     {t("buscar")}
                 </button>
             </form>
+            </div>
+
+            {/* Wallapop-style Hero Banner */}
+            <div className="w-full max-w-7xl mx-auto px-4 mt-6">
+                <div className="flex flex-col md:flex-row w-full rounded-2xl overflow-hidden shadow-sm bg-[#E9FBB1]">
+                    {/* Left side: Text & Button */}
+                    <div className="flex-1 p-10 md:p-16 flex flex-col justify-center items-start">
+                        <h2 className="text-3xl md:text-5xl font-extrabold text-[#13605C] leading-tight mb-8">
+                            Compra y vende<br />productos de<br />segunda mano.
+                        </h2>
+                        <button 
+                            onClick={() => router.push('/upload')}
+                            className="bg-[#13605C] hover:bg-[#0E4A47] text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-colors"
+                        >
+                            <Plus className="w-5 h-5" />
+                            Vender ahora
+                        </button>
+                    </div>
+                    {/* Right side: Image */}
+                    <div className="flex-1 relative min-h-[300px] md:min-h-full">
+                        <img 
+                            src="/equipop-hero-web.jpg" 
+                            alt="Equipop compra y venta" 
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+                    </div>
+                </div>
+            </div>
 
             {/* Category Modal */}
             <CategoryModal
