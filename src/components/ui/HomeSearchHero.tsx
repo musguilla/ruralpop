@@ -110,7 +110,7 @@ export function HomeSearchHero() {
     };
 
     return (
-        <div className="w-full flex flex-col items-center py-6 sm:py-10">
+        <div className="w-full flex flex-col items-center pb-6 sm:pb-10 pt-0">
             <h1 className="hidden md:block text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-8 text-center">
                 {t("que_quieres_encontrar")}
             </h1>

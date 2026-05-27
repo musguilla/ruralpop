@@ -54,7 +54,7 @@ export function EquipopHomeSearchHero() {
     };
 
     return (
-        <div className="w-full flex flex-col items-center py-6 sm:py-10 gap-6">
+        <div className="w-full flex flex-col items-center pb-6 sm:pb-10 pt-0 gap-6">
             <div className="w-full max-w-4xl px-4 flex flex-col items-center">
                 <h1 className="hidden md:block text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-8 text-center">
                     ¿Qué equipamiento buscas?
