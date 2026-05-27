@@ -6,7 +6,7 @@ export class SieroParser {
     
     static async parse(source: MarketSource): Promise<ETLParserResult> {
         // 1. Fetch Siero Market Page
-        const response = await fetch(source.source_url);
+        const response = await fetch(source.source_url, { cache: 'no-store' });
         if (!response.ok) {
             throw new Error(`Siero API returned ${response.status}`);
         }
@@ -44,7 +44,7 @@ export class SieroParser {
             
             try {
                 // Fetch the PDF
-                const pdfRes = await fetch(absoluteUrl);
+                const pdfRes = await fetch(absoluteUrl, { cache: 'no-store' });
                 if (!pdfRes.ok) continue;
                 
                 const arrayBuffer = await pdfRes.arrayBuffer();

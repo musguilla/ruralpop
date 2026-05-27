@@ -23,7 +23,7 @@ export class LeonParser {
                 
                 for (const url of urls) {
                     fetchPromises.push(
-                        fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' } })
+                        fetch(url, { cache: 'no-store', headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' } })
                             .then(async (response) => {
                                 if (response.ok) {
                                     return {
