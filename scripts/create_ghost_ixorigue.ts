@@ -92,8 +92,21 @@ async function run() {
         userId = authData.user.id;
         const ghostToken = crypto.randomUUID();
 
-        // Wait a bit for the Supabase trigger handle_new_user to create the row in public.users
-        await new Promise(r => setTimeout(r, 1000));
+        // Wait for the Supabase trigger to finish creating the row
+        let triggerFinished = false;
+        for (let i = 0; i < 20; i++) {
+            const { data } = await supabase.from('users').select('id').eq('id', userId).single();
+            if (data) {
+                triggerFinished = true;
+                break;
+            }
+            await new Promise(r => setTimeout(r, 500));
+        }
+
+        if (!triggerFinished) {
+            console.error("❌ Timeout: El trigger de Supabase no creó el usuario a tiempo.");
+            process.exit(1);
+        }
 
         console.log(`✨ Actualizando perfil profesional en tabla users...`);
         const { error: profileError } = await supabase.from('users').update({

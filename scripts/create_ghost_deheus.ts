@@ -79,9 +79,21 @@ async function run() {
         
         const newId = authUser.user.id;
         
-        // Let the trigger run, then update the row
-        // Wait a tiny bit just in case trigger is async
-        await new Promise(r => setTimeout(r, 1000));
+        // Wait for the Supabase trigger to finish creating the row
+        let triggerFinished = false;
+        for (let i = 0; i < 20; i++) {
+            const { data } = await supabase.from('users').select('role').eq('id', newId).single();
+            if (data) {
+                triggerFinished = true;
+                break;
+            }
+            await new Promise(r => setTimeout(r, 500));
+        }
+
+        if (!triggerFinished) {
+            console.error("❌ Timeout: El trigger de Supabase no creó el usuario a tiempo.");
+            process.exit(1);
+        }
 
         const { error } = await supabase
             .from('users')
