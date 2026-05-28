@@ -3,13 +3,14 @@ import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, SafeAreaView
 import { useAuth } from '../src/contexts/AuthContext';
 import { supabase } from '../src/lib/supabase';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { ChevronLeft, Package, Clock, CheckCircle, Tag, Edit3, Trash2, PackageOpen } from 'lucide-react-native';
+import { ChevronLeft, Package, Clock, CheckCircle, Tag, Edit3, Trash2, PackageOpen, Sparkles } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../src/lib/image-optimization';
 import { Listing } from '../src/types';
 import { ListingCard } from '../src/components/ui/ListingCard';
 import { formatPrice } from '../src/lib/formatters';
 import { getDefaultTenantFilterString } from '../src/config/tenants';
+import { FeaturedCheckoutMobile } from '../src/components/upload/FeaturedCheckoutMobile';
 
 export default function VentasScreen() {
     const { user } = useAuth();
@@ -30,6 +31,10 @@ export default function VentasScreen() {
     const [soldModalVisible, setSoldModalVisible] = useState(false);
     const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
     const [soldPriceInput, setSoldPriceInput] = useState("");
+    
+    // Modal states for Featured
+    const [featuredModalVisible, setFeaturedModalVisible] = useState(false);
+    const [selectedFeaturedListingId, setSelectedFeaturedListingId] = useState<string | null>(null);
 
     const handleEscrowAction = async (action: string, orderId: string) => {
         setActionLoading(`${action}_${orderId}`);
@@ -228,18 +233,27 @@ export default function VentasScreen() {
                             </Text>
                         </TouchableOpacity>
 
-                        <View className="flex-row space-x-3">
+                        <View className="flex-row space-x-2">
                             <TouchableOpacity
                                 onPress={() => router.push(`/edit/${listing.id}`)}
-                                className="w-11 h-11 bg-white rounded-full items-center justify-center border border-gray-200 shadow-sm"
+                                className="w-14 h-11 bg-white rounded-2xl items-center justify-center border border-gray-200"
                             >
                                 <Edit3 color="#6b7280" size={18} />
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => handleDelete(listing.id)}
-                                className="w-11 h-11 bg-red-50 rounded-full items-center justify-center border border-red-100 shadow-sm"
+                                className="w-14 h-11 bg-red-50 rounded-2xl items-center justify-center border border-red-100"
                             >
                                 <Trash2 color="#ef4444" size={18} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setSelectedFeaturedListingId(listing.id);
+                                    setFeaturedModalVisible(true);
+                                }}
+                                className="w-14 h-11 bg-amber-50 rounded-2xl items-center justify-center border border-amber-200"
+                            >
+                                <Sparkles color="#d97706" size={18} />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -459,6 +473,24 @@ export default function VentasScreen() {
                         </View>
                     </View>
                 </View>
+            </Modal>
+
+            {/* Featured Stripe Checkout Modal */}
+            <Modal
+                visible={featuredModalVisible}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setFeaturedModalVisible(false)}
+            >
+                {selectedFeaturedListingId && (
+                    <FeaturedCheckoutMobile 
+                        listingId={selectedFeaturedListingId} 
+                        onSkip={() => {
+                            setFeaturedModalVisible(false);
+                            setSelectedFeaturedListingId(null);
+                        }} 
+                    />
+                )}
             </Modal>
         </SafeAreaView>
     );
