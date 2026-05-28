@@ -4,7 +4,7 @@ async function test() {
     const res = await TalaveraParser.parse({} as any);
     const dateCount: any = {};
     res.prices.forEach(p => {
-        const d = p.date.toISOString().split('T')[0];
+        const d = new Date(p.date).toISOString().split('T')[0];
         dateCount[d] = (dateCount[d] || 0) + 1;
     });
     console.log("Precios extraídos por fecha:", dateCount);
