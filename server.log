@@ -1,0 +1,17 @@
+
+> ruralpopv1@0.1.0 start
+> next start
+
+▲ Next.js 16.1.6
+- Local:         http://localhost:3001
+- Network:       http://192.168.1.130:3001
+
+✓ Starting...
+✓ Ready in 659ms
+⨯ Error: Event handlers cannot be passed to Client Component props.
+  {src: ..., alt: ..., className: ..., style: ..., onError: function onError}
+                                                            ^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>) {
+  digest: '1036884938'
+}

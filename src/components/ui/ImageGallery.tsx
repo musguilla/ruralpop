@@ -93,6 +93,19 @@ export function ImageGallery({ images, title, likesCount, listingId, initialIsFa
         return Math.abs(offset) * velocity;
     };
 
+    const getSeoAltText = (index: number) => {
+        const titlePrefix = title.trim().split(/\s+/).slice(0, 3).join('-');
+        switch(index) {
+            case 0: return titlePrefix;
+            case 1: return `venta-${titlePrefix}`;
+            case 2: return `compra-${titlePrefix}`;
+            case 3: return `compraventa-${titlePrefix}`;
+            case 4: return `vender-${titlePrefix}`;
+            case 5: return `comprar-${titlePrefix}`;
+            default: return `${titlePrefix}-${index + 1}`;
+        }
+    };
+
     return (
         <div className="space-y-4 overflow-hidden">
             {/* Contenedor Físico (Framer Motion) */}
@@ -127,7 +140,7 @@ export function ImageGallery({ images, title, likesCount, listingId, initialIsFa
                         <Image
                             loader={supabaseLoader}
                             src={images[activeIndex]}
-                            alt={`${title} - imagen ${activeIndex + 1}`}
+                            alt={getSeoAltText(activeIndex)}
                             fill
                             priority
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
@@ -189,14 +202,14 @@ export function ImageGallery({ images, title, likesCount, listingId, initialIsFa
                                 : "border-transparent opacity-60 hover:opacity-100 hover:scale-105"
                                 }`}
                         >
-                            <Image
-                                loader={supabaseLoader}
-                                src={img}
-                                alt={`Thumbnail ${idx + 1}`}
-                                fill
-                                sizes="80px"
-                                className="object-cover pointer-events-none"
-                            />
+                                <Image
+                                    loader={supabaseLoader}
+                                    src={img}
+                                    alt={getSeoAltText(idx)}
+                                    fill
+                                    sizes="80px"
+                                    className="object-cover pointer-events-none"
+                                />
                         </button>
                     ))}
                 </div>
