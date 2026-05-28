@@ -42,6 +42,36 @@ export default async function DashboardPage(props: Props) {
         redirect("/profesionales?ghost_claim=true");
     }
 
+    // Interfaces locales para tipado seguro
+    interface DBListing {
+        id: string;
+        title: string;
+        price: number;
+        sold_price?: number;
+        location: string;
+        image_urls: string[];
+        created_at: string;
+        category: string;
+        price_type: string;
+        is_featured?: boolean;
+        status: string;
+        vender_online?: boolean;
+        favorites: Array<{ count: number }>;
+    }
+
+    interface DBEscrowOrder {
+        id: string;
+        status: string;
+        seller_net_amount_cents: number;
+        listing_id: string;
+        listings: DBListing;
+        buyer: {
+            email: string;
+        };
+        created_at: string;
+        updated_at?: string;
+    }
+
     // Obtener anuncios del usuario actual filtrados por pestaña
     const { data: listings, error } = await supabase
         .from("listings")
@@ -55,35 +85,66 @@ export default async function DashboardPage(props: Props) {
         console.error("Error fetching user listings:", error);
     }
 
-    // Obtener operaciones de Escrow si estamos en la pestaña de vendidos
-    let escrowOrders: any[] = [];
-    if (currentTab === 'sold') {
-        const { data: eo } = await supabase
-            .from("escrow_orders")
-            .select(`
-                *,
-                listings (*, favorites(count)),
-                buyer:users!escrow_orders_buyer_id_fkey(email)
-            `)
-            .eq("seller_id", user.id)
-            .neq("status", "pending_checkout")
-            .order("created_at", { ascending: false });
-        escrowOrders = eo || [];
+    // Obtener operaciones de Escrow del usuario
+    let escrowOrders: DBEscrowOrder[] = [];
+    let inProgressEscrowListingIds: string[] = [];
+
+    const { data: eo } = await supabase
+        .from("escrow_orders")
+        .select(`
+            *,
+            listings (*, favorites(count)),
+            buyer:users!escrow_orders_buyer_id_fkey(email)
+        `)
+        .eq("seller_id", user.id)
+        .neq("status", "pending_checkout")
+        .order("created_at", { ascending: false });
+
+    const rawEscrows = (eo as unknown as DBEscrowOrder[]) || [];
+
+    if (currentTab === 'active') {
+        const inProgressEscrows = rawEscrows.filter(
+            (e) => e.status !== 'paid_out' && e.status !== 'refunded' && e.status !== 'cancelled'
+        );
+        inProgressEscrowListingIds = inProgressEscrows.map((e) => e.listing_id);
+    } else if (currentTab === 'reserved') {
+        escrowOrders = rawEscrows.filter(
+            (e) => e.status !== 'paid_out' && e.status !== 'refunded' && e.status !== 'cancelled'
+        );
+    } else if (currentTab === 'sold') {
+        escrowOrders = rawEscrows.filter(
+            (e) => e.status === 'paid_out' || e.status === 'refunded' || e.status === 'cancelled'
+        );
     }
 
     // Combinar y deduplicar
     let combinedItems: UnifiedItem[] = [];
     if (currentTab === 'active') {
-        combinedItems = (listings || []).map((l: any) => ({ type: 'active', data: l, date: new Date(l.created_at).getTime() }));
-    } else {
-        const escrowListingIds = new Set(escrowOrders.map((o: any) => o.listing_id));
-        const manualSoldListings = (listings || []).filter((l: any) => !escrowListingIds.has(l.id));
+        const filteredListings = (listings as unknown as DBListing[] || [])
+            .filter((l) => !inProgressEscrowListingIds.includes(l.id));
 
-        const escrowItems: UnifiedItem[] = escrowOrders.map((o: any) => ({ type: 'escrow', data: o, date: new Date(o.created_at).getTime() }));
-        const manualItems: UnifiedItem[] = manualSoldListings.map((l: any) => ({ type: 'manual', data: l, date: new Date(l.updated_at || l.created_at).getTime() }));
+        combinedItems = filteredListings.map((l) => ({
+            type: 'active',
+            data: l as any,
+            date: new Date(l.created_at).getTime()
+        }));
+    } else {
+        const escrowListingIds = new Set(escrowOrders.map((o) => o.listing_id));
+        const manualListings = (listings as unknown as DBListing[] || [])
+            .filter((l) => !escrowListingIds.has(l.id));
+
+        const escrowItems: UnifiedItem[] = escrowOrders.map((o) => ({
+            type: 'escrow',
+            data: o as any,
+            date: new Date(o.created_at).getTime()
+        }));
+        const manualItems: UnifiedItem[] = manualListings.map((l) => ({
+            type: 'manual',
+            data: l as any,
+            date: new Date(l.created_at || l.created_at).getTime()
+        }));
 
         // Orden cronológico (más recientes primero)
-        // El usuario pidió "las más antiguas más abajo", es decir, descendente.
         combinedItems = [...escrowItems, ...manualItems].sort((a, b) => b.date - a.date);
     }
 
@@ -235,7 +296,11 @@ export default async function DashboardPage(props: Props) {
 
 /**
  * Memory / Decisiones Técnicas:
- * - Filtramos por status: "active" o "sold" usando URL Params `?tab=vendidos`.
+ * - Filtramos por status: "active" o "sold" usando URL Params `?tab=vendidos` para Finalizadas y `?tab=en_curso` para En curso.
  * - "Zero Errors": En vez de `useState` en Server Component, delegamos el tab a URL searchParams.
+ * - Filtrado Dinámico de Escrow: Separamos los pedidos en custodia (Escrow) según su estado. Los pendientes
+ *   de confirmación (no finalizados/no devueltos) se envían al tab 'reserved' (En curso). Los finalizados se envían al tab 'sold' (Finalizadas).
+ * - Ocultación en Venta: Para evitar duplicados y listados incoherentes, los anuncios activos que tengan un pago en custodia activo
+ *   se ocultan automáticamente del tab 'active' (En venta) y reaparecen únicamente si la transacción se cancela.
  * - Soporte adaptativo para mostrar precio tachado en vendidos si existe `sold_price`.
  */

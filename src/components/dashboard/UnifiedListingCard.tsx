@@ -84,9 +84,17 @@ export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
 
                     {/* Status Badge */}
                     <div className={`absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm text-white ${
-                        currentTab === 'active' ? 'bg-green-500/90' : 'bg-amber-500/90'
+                        currentTab === 'active' 
+                            ? 'bg-green-500/90' 
+                            : currentTab === 'reserved' 
+                            ? 'bg-blue-500/90' 
+                            : 'bg-amber-500/90'
                     }`}>
-                        {currentTab === 'active' ? 'Activo' : 'Vendido'}
+                        {currentTab === 'active' 
+                            ? 'Activo' 
+                            : currentTab === 'reserved' 
+                            ? 'En curso' 
+                            : 'Vendido'}
                     </div>
                 </div>
 
@@ -221,5 +229,8 @@ export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
  *   `Listing`, `EscrowOrder` y `PublicUser` para garantizar cero errores de tipado e integración en tiempo de compilación.
  * - Edge Cases Cubiertos: Controlamos mediante encadenamiento opcional (`listing.favorites?.[0]?.count`) la inexistencia de datos
  *   de favoritos pre-cargados de Supabase para evitar errores de renderizado.
+ * - Badge de Estado Dinámico (En venta / En curso / Vendido): Se actualizó la lógica del status badge para que, además de los
+ *   estados 'Activo' (En venta) y 'Vendido' (Finalizadas), soporte correctamente 'En curso' (pestaña 'reserved') con un color
+ *   azul distintivo, alineándose con el flujo de transacciones protegidas (Escrow) del usuario.
  */
 

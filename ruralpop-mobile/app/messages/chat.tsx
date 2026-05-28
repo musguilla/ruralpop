@@ -277,7 +277,7 @@ export default function ChatScreen() {
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0} // Ajustado a 0 para eliminar el espacio en blanco en iPhone
             >
                 {loading ? (
                     <View className="flex-1 justify-center items-center">
