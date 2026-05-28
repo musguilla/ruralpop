@@ -607,7 +607,6 @@ export default function PublishScreen() {
                 listingId={welfareListingId}
                 onSuccess={() => {
                     setIsAnimalWelfareModalOpen(false);
-                    setSuccess(true);
                     setTimeout(() => {
                         setTitle('');
                         setDescription('');
@@ -617,7 +616,6 @@ export default function PublishScreen() {
                         setCategoryId(null);
                         setImages([]);
                         setTags([]);
-                        setSuccess(false);
                         router.push('/(tabs)/');
                     }, 2000);
                 }}

@@ -20,7 +20,7 @@ import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
 const { width, height } = Dimensions.get('window');
 
 interface ExtendedListing extends Listing {
-    seller?: User;
+    seller?: User & { zoo_register_number?: string };
 }
 
 export default function ListingDetailsScreen() {

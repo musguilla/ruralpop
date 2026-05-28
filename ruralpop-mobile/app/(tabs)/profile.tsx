@@ -12,7 +12,7 @@ export default function ProfileScreen() {
     const { session, user, isLoading } = useAuth();
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const [profile, setProfile] = useState<{ name?: string; commercial_name?: string; avatar_url?: string; role?: string } | null>(null);
+    const [profile, setProfile] = useState<{ name?: string; commercial_name?: string; avatar_url?: string; role?: string; company_logo_url?: string } | null>(null);
 
     useEffect(() => {
         if (!user?.id) return;
