@@ -41,6 +41,7 @@ const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit }: { searchQue
 
 export default function Home() {
     const [listings, setListings] = useState<Listing[]>([]);
+    const [featuredListings, setFeaturedListings] = useState<Listing[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -49,6 +50,22 @@ export default function Home() {
     const [loadingMore, setLoadingMore] = useState(false);
     const router = useRouter();
     const insets = useSafeAreaInsets();
+
+    async function fetchFeatured() {
+        try {
+            const { data, error } = await supabase
+                .from('listings')
+                .select(`id, title, price, price_type, location, image_urls, created_at, category, description, user_id, status, is_featured`)
+                .eq('status', 'active')
+                .eq('is_featured', true)
+                .or(getDefaultTenantFilterString())
+                .order('created_at', { ascending: false })
+                .limit(50);
+            if (!error && data) setFeaturedListings(data);
+        } catch (e) {
+            console.error('Error fetching featured:', e);
+        }
+    }
 
     async function fetchListings(pageIndex = 0) {
         if (pageIndex === 0) {
@@ -78,8 +95,8 @@ export default function Home() {
                   is_featured
                 `)
                 .eq('status', 'active')
+                .eq('is_featured', false)
                 .or(getDefaultTenantFilterString())
-                .order('is_featured', { ascending: false, nullsFirst: false })
                 .order('created_at', { ascending: false })
                 .range(from, to);
 
@@ -113,12 +130,14 @@ export default function Home() {
 
     useEffect(() => {
         setPage(0);
+        fetchFeatured();
         fetchListings(0);
     }, []);
 
     const onRefresh = () => {
         setPage(0);
         setRefreshing(true);
+        fetchFeatured();
         fetchListings(0);
     };
 
@@ -141,10 +160,20 @@ export default function Home() {
         let adCount = 0;
         let itemsSinceLastAd = 0;
         let totalItems = 0;
+        let featuredIndex = 0;
         
         let currentRow: Listing[] = [];
         
         listings.forEach((item) => {
+            if (totalItems > 0 && totalItems % 10 === 0 && featuredIndex < featuredListings.length) {
+                currentRow.push(featuredListings[featuredIndex]);
+                featuredIndex++;
+                if (currentRow.length === numColumns) {
+                    rows.push({ isRow: true, id: `row-feat-${featuredIndex}`, items: currentRow });
+                    currentRow = [];
+                }
+            }
+            
             currentRow.push(item);
             totalItems++;
             itemsSinceLastAd++;
@@ -179,7 +208,7 @@ export default function Home() {
         }
         
         return rows;
-    }, [listings]);
+    }, [listings, featuredListings]);
 
     // Header is handled by HomeHeader component Above
     return (
