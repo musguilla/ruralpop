@@ -39,7 +39,7 @@ export async function GET() {
 
     for (const listing of listings) {
         if (listing.tags && Array.isArray(listing.tags) && listing.tags.length > 0 && listing.province_id) {
-            const prov = LOCATIONS.find(l => l.id === listing.province_id);
+            const prov = LOCATIONS.find(l => Number(l.id) === Number(listing.province_id));
             if (prov) {
                 const provSlug = normalizeUrlString(prov.name);
                 for (const tag of listing.tags) {
@@ -50,6 +50,10 @@ export async function GET() {
                 }
             }
         }
+    }
+
+    if (uniqueUrls.size === 0) {
+        uniqueUrls.add(`${baseUrl}/`);
     }
 
     const xmlUrls = Array.from(uniqueUrls).map(url => `
