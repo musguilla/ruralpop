@@ -73,7 +73,7 @@ export const CATEGORIES = [
     },
     {
         id: "alimentos",
-        label: "Alimentos Km0",
+        label: "Alimentos",
         subcategories: [],
     },
 ];

@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CategoriesSlider } from '../../src/components/ui/CategoriesSlider';
 import { ListingCard } from '../../src/components/ui/ListingCard';
 import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
-import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
 import { Search } from 'lucide-react-native';
@@ -34,9 +33,7 @@ const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit }: { searchQue
 
         <CategoriesSlider />
 
-        <RectangularBanner />
-
-        <View className="px-4 mb-4 mt-2">
+        <View className="px-4 mb-4 mt-4">
             <Text className="text-xl font-bold text-text">Últimos anuncios</Text>
         </View>
     </View>

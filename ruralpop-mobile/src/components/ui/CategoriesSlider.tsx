@@ -17,7 +17,7 @@ const VISUAL_CATEGORIES = [
     { id: 'agricultura', type: 'category', label: 'Agricultura', image: require('../../../assets/icon-agricultura.png') },
     { id: 'fincas', type: 'category', label: 'Fincas', image: require('../../../assets/icon-fincas.webp') },
     { id: 'forraje', type: 'category', label: 'Forraje', image: require('../../../assets/icon-forraje.png') },
-    { id: 'alimentos', type: 'category', label: 'Km0', image: require('../../../assets/icon-alimentos.png') },
+    { id: 'alimentos', type: 'category', label: 'Alimentos', image: require('../../../assets/icon-alimentos.png') },
     { id: 'Transporte', type: 'subcategory', label: 'Transporte', image: require('../../../assets/icon-transportes.png') },
     { id: 'Veterinarios', type: 'subcategory', label: 'Veterinarios', image: require('../../../assets/icon-veterinarios.png') },
     { id: 'Herradores', type: 'subcategory', label: 'Herradores', image: require('../../../assets/icon-herradores.png') },
