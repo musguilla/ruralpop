@@ -12,7 +12,20 @@ const STRIPE_PLANS = {
 export async function POST(req: Request) {
     try {
         const supabase = await createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        
+        // Next.js createClient() relies on cookies, which mobile fetch doesn't send by default.
+        // We must manually parse the Bearer token if provided.
+        const authHeader = req.headers.get('authorization');
+        let user;
+        
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.split(' ')[1];
+            const { data } = await supabase.auth.getUser(token);
+            user = data.user;
+        } else {
+            const { data } = await supabase.auth.getUser();
+            user = data.user;
+        }
 
         if (!user) {
             return new NextResponse("Unauthorized", { status: 401 });

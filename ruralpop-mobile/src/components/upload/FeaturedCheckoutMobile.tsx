@@ -11,6 +11,17 @@ interface FeaturedCheckoutMobileProps {
 
 const STRIPE_PLANS = [
     {
+        id: "bump",
+        name: "Subir arriba",
+        description: "Tu anuncio volverá a la primera posición de los resultados de búsqueda más recientes.",
+        price: 1.49,
+        icon: Sparkles,
+        color: "#3b82f6", // blue
+        bg: "bg-blue-50",
+        border: "border-blue-200",
+        badge: null
+    },
+    {
         id: "highlight_7",
         name: "Destacar 7 días",
         description: "Tu anuncio aparecerá en primeras posiciones durante los próximos 7 días en su categoría.",
@@ -108,9 +119,9 @@ export function FeaturedCheckoutMobile({ listingId, onSkip }: FeaturedCheckoutMo
     };
 
     return (
-        <View className="flex-1 bg-surface pt-10 px-6">
-            <View className="items-center mb-8">
-                <View className="bg-green-100 p-4 rounded-full mb-4">
+        <View className="flex-1 bg-surface pt-16 px-6">
+            <View className="items-center mb-8 mt-4">
+                <View className="bg-green-100 p-4 rounded-full mb-4 mt-2">
                     <CheckCircle2 color="#059669" size={48} />
                 </View>
                 <Text className="text-3xl font-black text-text mb-2 text-center">¡Anuncio subido!</Text>
@@ -121,7 +132,7 @@ export function FeaturedCheckoutMobile({ listingId, onSkip }: FeaturedCheckoutMo
 
             <Text className="text-lg font-bold text-text mb-4">Elige un plan opcional:</Text>
 
-            <View className="space-y-4 mb-8">
+            <View className="space-y-5 mb-8">
                 {STRIPE_PLANS.map((plan) => {
                     const Icon = plan.icon;
                     const isSelected = selectedPlanId === plan.id;
