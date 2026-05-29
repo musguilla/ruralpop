@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, Dimensions, RefreshControl, Modal, Platform } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, Dimensions, RefreshControl, Modal, Platform, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Search, MapPin, List, SlidersHorizontal, ArrowUpDown, ChevronLeft, ArrowLeft, X, Check } from 'lucide-react-native';
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
 import { ListingCard } from '../../src/components/ui/ListingCard';
 import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
+import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
 import { CategoryModal } from '../../src/components/ui/modals/CategoryModal';
 import { LocationModal } from '../../src/components/ui/modals/LocationModal';
 import { FiltersModal } from '../../src/components/ui/modals/FiltersModal';
@@ -15,7 +16,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { getDefaultTenantFilterString } from '../../src/config/tenants';
 
 const { width } = Dimensions.get('window');
-const numColumns = width > 768 ? 3 : 1;
+const numColumns = width > 768 ? 3 : 2;
 
 export default function SearchScreen() {
     const router = useRouter();
@@ -211,6 +212,51 @@ export default function SearchScreen() {
         return loc ? loc.name : locationId;
     };
 
+    const featuredListings = useMemo(() => listings.filter(l => l.is_featured), [listings]);
+    const normalListings = useMemo(() => listings.filter(l => !l.is_featured), [listings]);
+
+    const dataWithAds = useMemo(() => {
+        const rows: any[] = [];
+        let adCount = 0;
+        let itemsSinceLastAd = 0;
+        let totalItems = 0;
+        
+        let currentRow: Listing[] = [];
+        
+        const listToProcess = featuredListings.length >= 2 ? normalListings : listings;
+        
+        listToProcess.forEach((item) => {
+            currentRow.push(item);
+            totalItems++;
+            itemsSinceLastAd++;
+            
+            if (currentRow.length === numColumns) {
+                rows.push({ isRow: true, id: `row-${totalItems}`, items: currentRow });
+                currentRow = [];
+                
+                if (adCount === 0 && itemsSinceLastAd >= 8) {
+                    rows.push({ isAd: true, id: `ad-${totalItems}` });
+                    adCount++;
+                    itemsSinceLastAd = 0;
+                } else if (adCount === 1 && itemsSinceLastAd >= 10) {
+                    rows.push({ isAd: true, id: `ad-${totalItems}` });
+                    adCount++;
+                    itemsSinceLastAd = 0;
+                } else if (adCount >= 2 && itemsSinceLastAd >= 10) {
+                    rows.push({ isAd: true, id: `ad-${totalItems}` });
+                    adCount++;
+                    itemsSinceLastAd = 0;
+                }
+            }
+        });
+        
+        if (currentRow.length > 0) {
+            rows.push({ isRow: true, id: `row-last-${totalItems}`, items: currentRow });
+        }
+        
+        return rows;
+    }, [listings, featuredListings, normalListings]);
+
     return (
         <SafeAreaView className="flex-1 bg-surface-muted">
             {/* Header Search Area */}
@@ -300,17 +346,56 @@ export default function SearchScreen() {
                 </View>
             ) : (
                 <FlatList
-                    key={`grid-${numColumns}`}
-                    data={listings}
+                    key={`grid-rows`}
+                    data={dataWithAds}
                     keyExtractor={(item) => item.id}
-                    numColumns={numColumns}
-                    ListHeaderComponent={<RectangularBanner />}
-                    renderItem={({ item }) => (
-                        <View className="p-1" style={{ flex: 1, maxWidth: numColumns === 1 ? '100%' : `${100 / numColumns}%` }}>
-                            <ListingCard listing={item} isSingleColumn={numColumns === 1} />
+                    ListHeaderComponent={
+                        <View>
+                            {featuredListings.length >= 2 && (
+                                <View className="mb-4 bg-white py-2">
+                                    <View className="px-4 pb-3">
+                                        <Text className="text-xl font-bold text-text">Productos destacados</Text>
+                                    </View>
+                                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 12 }}>
+                                        {featuredListings.map(listing => (
+                                            <View key={listing.id} className="p-1" style={{ width: width * 0.45, maxWidth: 200 }}>
+                                                <ListingCard listing={listing} isSingleColumn={false} />
+                                            </View>
+                                        ))}
+                                    </ScrollView>
+                                </View>
+                            )}
+                            <View className="px-4 pb-2 pt-2">
+                                <Text className="text-xl font-bold text-text">Encuentra lo que buscas</Text>
+                            </View>
                         </View>
-                    )}
-                    contentContainerStyle={{ padding: 8, paddingBottom: 40 }}
+                    }
+                    renderItem={({ item }) => {
+                        if (item.isAd) {
+                            return (
+                                <View className="px-2 py-4">
+                                    <NativeAdCard />
+                                </View>
+                            );
+                        }
+                        
+                        if (item.isRow) {
+                            return (
+                                <View className="flex-row" style={{ width: '100%' }}>
+                                    {item.items.map((listing: Listing) => (
+                                        <View key={listing.id} className="p-1" style={{ flex: 1, maxWidth: `${100 / numColumns}%` }}>
+                                            <ListingCard listing={listing} isSingleColumn={false} />
+                                        </View>
+                                    ))}
+                                    {Array.from({ length: numColumns - item.items.length }).map((_, i) => (
+                                        <View key={`empty-${i}`} style={{ flex: 1, maxWidth: `${100 / numColumns}%` }} />
+                                    ))}
+                                </View>
+                            );
+                        }
+                        return null;
+                    }}
+                    contentContainerStyle={{ paddingBottom: 40 }}
                     onEndReached={handleLoadMore}
                     onEndReachedThreshold={0.5}
                     refreshControl={
