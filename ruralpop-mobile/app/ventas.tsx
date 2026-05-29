@@ -233,7 +233,7 @@ export default function VentasScreen() {
                             </Text>
                         </TouchableOpacity>
 
-                        <View className="flex-row space-x-2">
+                        <View className="flex-row gap-3">
                             <TouchableOpacity
                                 onPress={() => router.push(`/edit/${listing.id}`)}
                                 className="w-14 h-11 bg-white rounded-2xl items-center justify-center border border-gray-200"
