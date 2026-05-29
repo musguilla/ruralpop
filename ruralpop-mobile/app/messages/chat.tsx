@@ -244,28 +244,27 @@ export default function ChatScreen() {
                     <ChevronLeft color="#374151" size={28} />
                 </TouchableOpacity>
 
-                {/* Product Image & Details (Clickable) */}
+                {/* Product Image (Clickable) */}
                 <TouchableOpacity 
-                    className="flex-row flex-1 items-center mr-2"
+                    className="w-12 h-12 rounded-xl bg-gray-100 mr-3 overflow-hidden border border-gray-100 items-center justify-center"
                     onPress={() => router.push({ pathname: '/anuncio/[id]', params: { id: listingId } })}
                 >
-                    <View className="w-12 h-12 rounded-xl bg-gray-100 mr-3 overflow-hidden border border-gray-100 items-center justify-center">
-                        {listingData?.image_url || listingImage ? (
-                            <Image source={{ uri: listingData?.image_url || listingImage }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
-                        ) : (
-                            <ImageIcon color="#9ca3af" size={20} />
-                        )}
-                    </View>
-
-                    <View className="flex-1 justify-center">
-                        <Text className="text-[17px] font-bold text-gray-900 leading-tight">
-                            {listingData?.price !== undefined ? formatPrice(listingData.price) : listingPrice ? formatPrice(listingPrice) : 'Consultar'}
-                        </Text>
-                        <Text className="text-[14px] text-gray-500 truncate" numberOfLines={1}>
-                            {listingData?.title || listingTitle || 'Anuncio'}
-                        </Text>
-                    </View>
+                    {listingData?.image_url || listingImage ? (
+                        <Image source={{ uri: listingData?.image_url || listingImage }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                    ) : (
+                        <ImageIcon color="#9ca3af" size={20} />
+                    )}
                 </TouchableOpacity>
+
+                {/* Listing Details (Not Clickable) */}
+                <View className="flex-1 mr-2 justify-center">
+                    <Text className="text-[17px] font-bold text-gray-900 leading-tight">
+                        {listingData?.price !== undefined ? formatPrice(listingData.price) : listingPrice ? formatPrice(listingPrice) : 'Consultar'}
+                    </Text>
+                    <Text className="text-[14px] text-gray-500 truncate" numberOfLines={1}>
+                        {listingData?.title || listingTitle || 'Anuncio'}
+                    </Text>
+                </View>
 
                 {/* User Avatar */}
                 <View className="w-8 h-8 rounded-full bg-primary-muted items-center justify-center mr-2 overflow-hidden border border-gray-100">
