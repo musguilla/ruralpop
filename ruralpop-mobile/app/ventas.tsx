@@ -489,6 +489,7 @@ export default function VentasScreen() {
                             setFeaturedModalVisible(false);
                             setSelectedFeaturedListingId(null);
                         }} 
+                        isFromVentas={true}
                     />
                 )}
             </Modal>

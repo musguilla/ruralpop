@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 interface FeaturedCheckoutMobileProps {
     listingId: string;
     onSkip: () => void;
+    isFromVentas?: boolean;
 }
 
 const STRIPE_PLANS = [
@@ -45,7 +46,7 @@ const STRIPE_PLANS = [
     }
 ];
 
-export function FeaturedCheckoutMobile({ listingId, onSkip }: FeaturedCheckoutMobileProps) {
+export function FeaturedCheckoutMobile({ listingId, onSkip, isFromVentas = false }: FeaturedCheckoutMobileProps) {
     const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     
@@ -124,7 +125,9 @@ export function FeaturedCheckoutMobile({ listingId, onSkip }: FeaturedCheckoutMo
                 <View className="bg-green-100 p-4 rounded-full mb-4 mt-2">
                     <CheckCircle2 color="#059669" size={48} />
                 </View>
-                <Text className="text-3xl font-black text-text mb-2 text-center">¡Anuncio subido!</Text>
+                <Text className="text-3xl font-black text-text mb-2 text-center">
+                    {isFromVentas ? 'Destaca tu anuncio' : '¡Anuncio subido!'}
+                </Text>
                 <Text className="text-text-muted text-center text-base">
                     Multiplica tus ventas destacando tu anuncio por encima de los demás.
                 </Text>
@@ -132,7 +135,7 @@ export function FeaturedCheckoutMobile({ listingId, onSkip }: FeaturedCheckoutMo
 
             <Text className="text-lg font-bold text-text mb-4">Elige un plan opcional:</Text>
 
-            <View className="space-y-5 mb-8">
+            <View className="mb-8">
                 {STRIPE_PLANS.map((plan) => {
                     const Icon = plan.icon;
                     const isSelected = selectedPlanId === plan.id;
@@ -142,7 +145,7 @@ export function FeaturedCheckoutMobile({ listingId, onSkip }: FeaturedCheckoutMo
                             key={plan.id}
                             onPress={() => setSelectedPlanId(plan.id)}
                             activeOpacity={0.8}
-                            className={`p-5 rounded-2xl border-2 flex-row items-center relative overflow-hidden ${isSelected ? `border-[${plan.color}] ${plan.bg}` : 'border-gray-200 bg-white'}`}
+                            className={`p-6 mb-4 rounded-2xl border flex-row items-center relative overflow-hidden ${isSelected ? `border-[${plan.color}] ${plan.bg}` : 'border-gray-300 bg-white'}`}
                         >
                             {plan.badge && (
                                 <View className="absolute top-0 right-0 bg-[#059669] px-3 py-1 rounded-bl-xl z-10">
@@ -185,7 +188,7 @@ export function FeaturedCheckoutMobile({ listingId, onSkip }: FeaturedCheckoutMo
                 disabled={isProcessing}
                 className="w-full py-4 rounded-full flex items-center justify-center mb-8 bg-gray-100"
             >
-                <Text className="text-gray-500 font-bold text-lg">No, gracias. Volver al inicio</Text>
+                <Text className="text-gray-500 font-bold text-lg">Volver al inicio</Text>
             </TouchableOpacity>
         </View>
     );
