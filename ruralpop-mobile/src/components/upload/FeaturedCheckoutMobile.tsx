@@ -80,12 +80,14 @@ export function FeaturedCheckoutMobile({ listingId, onSkip, isFromVentas = false
                 throw new Error(text || "Error creando el pago");
             }
 
-            const { clientSecret } = await res.json();
+            const { clientSecret, ephemeralKey, customer } = await res.json();
 
             // Initialize Stripe Payment Sheet
             const { error: initError } = await initPaymentSheet({
                 merchantDisplayName: 'Ruralpop',
                 paymentIntentClientSecret: clientSecret,
+                customerId: customer,
+                customerEphemeralKeySecret: ephemeralKey,
                 allowsDelayedPaymentMethods: false,
             });
 
