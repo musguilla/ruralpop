@@ -273,7 +273,7 @@ export default function PublishScreen() {
             if (finalSubcategory && finalSubcategory.toLowerCase() === "perros" && !isProfesional) {
                 isRestricted = true;
             } else if (!isProfesional) {
-                const restrictedKeywords = ["agaporni", "ninfa", "periquito", "cotorra", "canario", "loro", "lorito", "papillero", "papillera", "anillado", "anillada", "paloma", "palomas", "palomo", "palomos", "gato", "gatos", "gata", "gatas", "perro", "perros", "cachorro", "cachorros", "perra", "mastin", "mastina"];
+                const restrictedKeywords = ["agaporni", "agapornis", "ninfa", "ninfas", "periquito", "periquitos", "cotorra", "cotorras", "canario", "canarios", "loro", "loros", "lorito", "loritos", "papillero", "papilleros", "papillera", "papilleras", "anillado", "anillados", "anillada", "anilladas", "paloma", "palomas", "palomo", "palomos", "gato", "gatos", "gata", "gatas", "perro", "perros", "cachorro", "cachorros", "perra", "mastin", "mastina", "jilguero", "jilgueros", "camachuelo", "camachuelos", "lugano", "luganos", "pardillo", "pardillos", "verdecillo", "verdecillos", "verderones comunes", "verderon", "serrano", "serranos", "pinzones reales", "pinzones comunes", "pinzon"];
                 const combinedText = `${title.toLowerCase()} ${description.toLowerCase()} ${tags.join(" ").toLowerCase()}`;
                 
                 for (const word of restrictedKeywords) {
