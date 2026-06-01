@@ -63,7 +63,7 @@ export default function ProfileScreen() {
                 className="px-6 pb-4 border-b border-gray-100 bg-white"
                 style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 16) : 16 }}
             >
-                <Text className="text-2xl font-extrabold text-text">Mi Perfil</Text>
+                <Text className="text-2xl font-extrabold text-text">Perfil</Text>
             </View>
 
             <ScrollView className="flex-1 bg-gray-50 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
