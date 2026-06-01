@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Linking, Alert, Share as RNShare, Platform, Modal, FlatList } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Linking, Alert, Share as RNShare, Platform, Modal, FlatList, TextInput } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { Listing, User } from '../../src/types';
-import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon, X, ShieldCheck, Layers } from 'lucide-react-native';
+import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon, X, ShieldCheck, Layers, MoreVertical, Edit3 } from 'lucide-react-native';
 import ImageViewing from "react-native-image-viewing";
 import { formatPrice } from '../../src/lib/formatters';
 import { useAuth } from '../../src/contexts/AuthContext';
@@ -16,6 +16,7 @@ import { calculateRuralpopFee } from '../../src/lib/escrow';
 import { buildWebListingUrl } from '../../src/lib/urls';
 import { getDefaultTenantFilterString } from '../../src/config/tenants';
 import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
+import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';
 
 const { width, height } = Dimensions.get('window');
 
@@ -53,8 +54,16 @@ export default function ListingDetailsScreen() {
     const [isCheckingOut, setIsCheckingOut] = useState(false);
     const [likesCount, setLikesCount] = useState<number | undefined>(undefined);
 
+    // Modal states for Own Listing
+    const [isOptionsModalVisible, setIsOptionsModalVisible] = useState(false);
+    const [soldModalVisible, setSoldModalVisible] = useState(false);
+    const [soldPriceInput, setSoldPriceInput] = useState("");
+    const [featuredModalVisible, setFeaturedModalVisible] = useState(false);
+
     // Scroll Animation - Simplified to avoid Animated/Native driver crashes
     const [isScrolled, setIsScrolled] = useState(false);
+
+    const isOwnListing = user?.id === listing?.user_id;
 
     useEffect(() => {
         async function fetchListingDetails() {
@@ -149,6 +158,49 @@ export default function ListingDetailsScreen() {
         }, 100);
     };
 
+    const handleDelete = () => {
+        setIsOptionsModalVisible(false);
+        Alert.alert(
+            "Eliminar Anuncio",
+            "¿Estás seguro de que quieres eliminar este anuncio? Esta acción no se puede deshacer.",
+            [
+                { text: "Cancelar", style: "cancel" },
+                {
+                    text: "Eliminar",
+                    style: "destructive",
+                    onPress: async () => {
+                        const { error } = await supabase.from('listings').delete().eq('id', listing!.id);
+                        if (error) {
+                            Alert.alert("Error", error.message);
+                        } else {
+                            router.replace('/(tabs)/profile');
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
+    const submitSoldPrice = async () => {
+        if (!listing) return;
+
+        const numericPrice = parseFloat(soldPriceInput.replace(',', '.'));
+        const finalPrice = isNaN(numericPrice) ? null : numericPrice;
+
+        const { error } = await supabase
+            .from('listings')
+            .update({ status: 'sold', sold_price: finalPrice })
+            .eq('id', listing.id);
+
+        if (error) {
+            Alert.alert("Error", error.message);
+        } else {
+            setListing({ ...listing, status: 'sold', sold_price: finalPrice });
+            setSoldModalVisible(false);
+            Alert.alert("¡Enhorabuena!", "El producto se ha marcado como vendido.");
+        }
+    };
+
     const openGallery = (index: number) => {
         setCurrentImageIndex(index);
         setGalleryInitialIndex(index);
@@ -241,9 +293,23 @@ export default function ListingDetailsScreen() {
                         <ChevronLeft color={isScrolled ? "#111827" : "white"} size={24} />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={handleShare} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}>
-                        <ShareIcon color={isScrolled ? "#111827" : "white"} size={20} />
-                    </TouchableOpacity>
+                    {isOwnListing ? (
+                        <View className="flex-row items-center space-x-2 gap-2" pointerEvents="box-none">
+                            <TouchableOpacity onPress={() => router.push(`/edit/${listing.id}`)} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}>
+                                <Edit3 color={isScrolled ? "#111827" : "white"} size={20} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleShare} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}>
+                                <ShareIcon color={isScrolled ? "#111827" : "white"} size={20} />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => setIsOptionsModalVisible(true)} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}>
+                                <MoreVertical color={isScrolled ? "#111827" : "white"} size={20} />
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
+                        <TouchableOpacity onPress={handleShare} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}>
+                            <ShareIcon color={isScrolled ? "#111827" : "white"} size={20} />
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
 
@@ -321,6 +387,21 @@ export default function ListingDetailsScreen() {
 
                 {/* Content Details */}
                 <View className="p-6">
+                    {/* Own Listing Actions */}
+                    {isOwnListing && listing.status !== 'sold' && (
+                        <View className="flex-row items-center mb-6" style={{ gap: 12 }}>
+                            <TouchableOpacity 
+                                onPress={() => {
+                                    setSoldPriceInput("");
+                                    setSoldModalVisible(true);
+                                }}
+                                className="flex-1 py-3 items-center rounded-full border border-primary bg-white shadow-sm"
+                            >
+                                <Text className="font-bold text-primary text-base">Vendido</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+
                     {/* Title first */}
                     <Text className="text-3xl font-extrabold text-text mb-2 leading-tight">{listing.title}</Text>
                     
@@ -434,8 +515,20 @@ export default function ListingDetailsScreen() {
             </ScrollView>
 
             {/* Fixed Bottom Contact Bar */}
-            <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-8 flex-row justify-between items-center">
-                {listing.vender_online ? (
+            <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 pb-8 flex-row justify-between items-center z-10 shadow-sm" style={{ paddingBottom: Math.max(insets.bottom, 16) }}>
+                {isOwnListing && !listing.is_featured ? (
+                    <TouchableOpacity
+                        onPress={() => setFeaturedModalVisible(true)}
+                        className="w-full bg-primary py-4 rounded-full flex-row justify-center items-center shadow-sm"
+                        activeOpacity={0.8}
+                    >
+                        <Text className="text-white font-bold text-lg">Vende más rápido ahora</Text>
+                    </TouchableOpacity>
+                ) : isOwnListing && listing.is_featured ? (
+                    <View className="w-full bg-amber-50 border border-amber-200 py-4 rounded-full flex-row justify-center items-center">
+                        <Text className="text-amber-700 font-bold text-lg">Tu anuncio está destacado</Text>
+                    </View>
+                ) : listing.vender_online ? (
                     <TouchableOpacity
                         onPress={() => {
                             if (!user) {
@@ -614,6 +707,99 @@ export default function ListingDetailsScreen() {
                     </View>
                 )}
             />
+
+            {/* Sold Price Modal */}
+            <Modal
+                transparent={true}
+                visible={soldModalVisible}
+                animationType="fade"
+                onRequestClose={() => setSoldModalVisible(false)}
+            >
+                <View className="flex-1 justify-center items-center bg-black/50 px-4">
+                    <View className="bg-white w-full max-w-sm rounded-3xl p-6 shadow-xl">
+                        <Text className="text-xl font-bold text-text mb-2 text-center">¡Enhorabuena por la venta!</Text>
+                        <Text className="text-gray-500 text-center mb-6 text-sm">
+                            Este anuncio desaparecerá de las búsquedas. Para ayudarnos a analizar el mercado, ¿podrías indicarnos el precio final de venta?
+                        </Text>
+
+                        <View className="relative justify-center mb-6">
+                            <TextInput
+                                className="bg-surface-muted border border-gray-200 rounded-2xl px-4 py-4 pr-10 text-center text-2xl font-bold text-text"
+                                placeholder="0"
+                                keyboardType="numeric"
+                                value={soldPriceInput}
+                                onChangeText={setSoldPriceInput}
+                            />
+                            <Text className="absolute right-4 text-2xl font-bold text-gray-400">€</Text>
+                        </View>
+
+                        <View className="flex-row space-x-3 gap-3">
+                            <TouchableOpacity
+                                onPress={() => setSoldModalVisible(false)}
+                                className="flex-1 py-3 items-center rounded-full bg-gray-100"
+                            >
+                                <Text className="font-bold text-gray-600">Cancelar</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={submitSoldPrice}
+                                className="flex-1 py-3 items-center rounded-full bg-primary"
+                            >
+                                <Text className="font-bold text-white">Confirmar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Options Bottom Sheet */}
+            <Modal
+                transparent={true}
+                visible={isOptionsModalVisible}
+                animationType="fade"
+                onRequestClose={() => setIsOptionsModalVisible(false)}
+            >
+                <TouchableOpacity 
+                    className="flex-1 justify-end bg-black/40" 
+                    activeOpacity={1} 
+                    onPress={() => setIsOptionsModalVisible(false)}
+                >
+                    <View 
+                        className="bg-transparent px-4 pb-8" 
+                        style={{ paddingBottom: Math.max(insets.bottom, 20) }}
+                    >
+                        <View className="bg-white rounded-2xl overflow-hidden mb-2">
+                            <TouchableOpacity 
+                                onPress={handleDelete}
+                                className="py-4 items-center justify-center border-b border-gray-100"
+                            >
+                                <Text className="text-red-500 font-normal text-lg">Borrar producto</Text>
+                            </TouchableOpacity>
+                        </View>
+                        
+                        <View className="bg-white rounded-2xl overflow-hidden">
+                            <TouchableOpacity 
+                                onPress={() => setIsOptionsModalVisible(false)}
+                                className="py-4 items-center justify-center"
+                            >
+                                <Text className="text-blue-500 font-bold text-lg">Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+
+            {/* Featured Stripe Checkout Modal */}
+            <Modal
+                visible={featuredModalVisible}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setFeaturedModalVisible(false)}
+            >
+                <FeaturedCheckoutMobile 
+                    listingId={listing.id} 
+                    onSkip={() => setFeaturedModalVisible(false)} 
+                />
+            </Modal>
         </View>
     );
 }

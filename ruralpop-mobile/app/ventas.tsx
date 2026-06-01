@@ -217,46 +217,16 @@ export default function VentasScreen() {
         if (item.type === 'active_listing') {
             const listing = item.data as Listing;
             return (
-                <View className="mb-6">
-                    <View className="w-full self-center">
-                        <ListingCard listing={listing} />
-                    </View>
-
-                    <View className="flex-row justify-between items-center mt-3 px-1">
-                        <TouchableOpacity
-                            onPress={() => handleMarkSold(listing.id)}
-                            className="flex-row items-center px-4 py-2.5 rounded-2xl bg-primary-muted/30"
-                        >
-                            <CheckCircle color="#059669" size={18} />
-                            <Text className="ml-2 font-bold text-primary">
-                                Marcar Vendido
-                            </Text>
-                        </TouchableOpacity>
-
-                        <View className="flex-row gap-3">
-                            <TouchableOpacity
-                                onPress={() => router.push(`/edit/${listing.id}`)}
-                                className="w-14 h-11 bg-white rounded-2xl items-center justify-center border border-gray-200"
-                            >
-                                <Edit3 color="#6b7280" size={18} />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => handleDelete(listing.id)}
-                                className="w-14 h-11 bg-red-50 rounded-2xl items-center justify-center border border-red-100"
-                            >
-                                <Trash2 color="#ef4444" size={18} />
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setSelectedFeaturedListingId(listing.id);
-                                    setFeaturedModalVisible(true);
-                                }}
-                                className="w-14 h-11 bg-amber-50 rounded-2xl items-center justify-center border border-amber-200"
-                            >
-                                <Sparkles color="#d97706" size={18} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                <View className="flex-1 p-1 mb-2">
+                    <ListingCard 
+                        listing={listing} 
+                        isSingleColumn={false}
+                        showFeatureButton={!listing.is_featured} 
+                        onFeaturePress={() => {
+                            setSelectedFeaturedListingId(listing.id);
+                            setFeaturedModalVisible(true);
+                        }}
+                    />
                 </View>
             );
         }
@@ -376,10 +346,13 @@ export default function VentasScreen() {
                 </View>
             ) : (
                 <FlatList
+                    key={activeTab === 'en_venta' ? 'grid' : 'list'}
+                    numColumns={activeTab === 'en_venta' ? 2 : 1}
                     data={displayItems}
                     keyExtractor={(item, index) => `${item.type}_${item.data?.id || index}`}
                     renderItem={renderItem}
                     contentContainerStyle={{ padding: 16 }}
+                    columnWrapperStyle={activeTab === 'en_venta' ? { paddingHorizontal: 0, justifyContent: 'space-between' } : undefined}
                     ListEmptyComponent={
                         <View className="flex-1 items-center justify-center py-20">
                             {activeTab === 'en_venta' ? (

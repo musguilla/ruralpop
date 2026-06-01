@@ -15,6 +15,7 @@ export interface Listing {
     is_featured?: boolean;
     vender_online?: boolean;
     shipping_price?: number;
+    sold_price?: number | null;
 }
 
 export interface User {
