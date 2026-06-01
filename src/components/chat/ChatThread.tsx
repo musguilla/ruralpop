@@ -28,11 +28,16 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
     const { showAlert } = useNotification();
     const [messages, setMessages] = useState<Message[]>(initialMessages);
     const [content, setContent] = useState("");
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
     const supabase = createClient();
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTo({
+                top: scrollContainerRef.current.scrollHeight,
+                behavior: "smooth"
+            });
+        }
     };
 
     useEffect(() => {
@@ -184,7 +189,7 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
             </div>
 
             {/* Cuerpo de Mensajes */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 hide-scrollbar bg-[var(--ag-sys-color-background)]/30">
+            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 hide-scrollbar bg-[var(--ag-sys-color-background)]/30">
                 {messages.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-40">
                         <div className="w-16 h-16 bg-[var(--ag-sys-color-surface)] rounded-2xl flex items-center justify-center mb-4 border border-[var(--ag-sys-color-border)]">
@@ -213,7 +218,6 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
                         );
                     })
                 )}
-                <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
