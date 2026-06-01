@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ListingCard } from '../../src/components/ui/ListingCard';
 import { Listing } from '../../src/types';
 import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';
+import { getDefaultTenantFilterString } from '../../src/config/tenants';
 
 export default function UserProfileScreen() {
     const { id } = useLocalSearchParams();
@@ -53,6 +54,7 @@ export default function UserProfileScreen() {
                     `)
                     .eq('user_id', id)
                     .eq('status', 'active')
+                    .or(getDefaultTenantFilterString())
                     .order('created_at', { ascending: false });
 
                 if (listingsData) {

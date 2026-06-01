@@ -221,6 +221,7 @@ export default function VentasScreen() {
                     <ListingCard 
                         listing={listing} 
                         isSingleColumn={false}
+                        hideLocation={true}
                         showFeatureButton={!listing.is_featured} 
                         onFeaturePress={() => {
                             setSelectedFeaturedListingId(listing.id);

@@ -14,9 +14,10 @@ interface ListingCardProps {
     isSingleColumn?: boolean;
     showFeatureButton?: boolean;
     onFeaturePress?: () => void;
+    hideLocation?: boolean;
 }
 
-export function ListingCard({ listing, isSingleColumn, showFeatureButton, onFeaturePress }: ListingCardProps) {
+export function ListingCard({ listing, isSingleColumn, showFeatureButton, onFeaturePress, hideLocation }: ListingCardProps) {
     const { user } = useAuth();
     const { favorites, toggleFavorite } = useFavorites();
     const router = useRouter();
@@ -193,12 +194,14 @@ export function ListingCard({ listing, isSingleColumn, showFeatureButton, onFeat
                     {listing.title}
                 </Text>
 
-                <View className="flex-row items-center mt-auto mb-2">
-                    <MapPin color="#9ca3af" size={14} style={{ marginRight: 4 }} />
-                    <Text className="text-sm text-text-muted truncate flex-1" numberOfLines={1}>
-                        {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
-                    </Text>
-                </View>
+                {!hideLocation && (
+                    <View className="flex-row items-center mt-auto mb-2">
+                        <MapPin color="#9ca3af" size={14} style={{ marginRight: 4 }} />
+                        <Text className="text-sm text-text-muted truncate flex-1" numberOfLines={1}>
+                            {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
+                        </Text>
+                    </View>
+                )}
 
                 {showFeatureButton && (
                     <TouchableOpacity 
