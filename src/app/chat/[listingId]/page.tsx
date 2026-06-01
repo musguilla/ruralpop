@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import { ChatThread } from "@/components/chat/ChatThread";
+import { getServerTenantFilterString } from "@/utils/tenant/server";
 
 export default async function ChatThreadPage(props: {
     params: Promise<{ listingId: string }>;
@@ -18,6 +19,7 @@ export default async function ChatThreadPage(props: {
         .from("listings")
         .select("id, title, image_urls, user_id")
         .eq("id", listingId)
+        .or(await getServerTenantFilterString())
         .single();
 
     if (!listing) notFound();
