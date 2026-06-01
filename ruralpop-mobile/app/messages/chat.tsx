@@ -267,13 +267,16 @@ export default function ChatScreen() {
                 </View>
 
                 {/* User Avatar */}
-                <View className="w-8 h-8 rounded-full bg-primary-muted items-center justify-center mr-2 overflow-hidden border border-gray-100">
+                <TouchableOpacity 
+                    className="w-11 h-11 rounded-full bg-primary-muted items-center justify-center mr-2 overflow-hidden border border-gray-100"
+                    onPress={() => router.push(`/user/${otherUserId}`)}
+                >
                     {otherUserAvatar ? (
                         <Image source={{ uri: getOptimizedImageUrl(otherUserAvatar, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                     ) : (
-                        <Text className="text-sm font-bold text-primary uppercase">{otherUserName.charAt(0)}</Text>
+                        <Text className="text-base font-bold text-primary uppercase">{otherUserName.charAt(0)}</Text>
                     )}
-                </View>
+                </TouchableOpacity>
 
             </View>
 
