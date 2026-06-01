@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, FlatList, ActivityIndicator, RefreshControl, Dimensions, Platform } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, RefreshControl, Dimensions, Platform, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CategoriesSlider } from '../../src/components/ui/CategoriesSlider';
 import { ListingCard } from '../../src/components/ui/ListingCard';
@@ -14,7 +14,7 @@ import { getDefaultTenantFilterString } from '../../src/config/tenants';
 const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 2;
 
-const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit }: { searchQuery: string, setSearchQuery: (s: string) => void, onSearchSubmit: () => void }) => (
+const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit, featuredListings }: { searchQuery: string, setSearchQuery: (s: string) => void, onSearchSubmit: () => void, featuredListings: Listing[] }) => (
     <View>
         <View className="px-4 mt-6">
             <View className="flex-row items-center bg-[#f8f9fa] border border-[#9ca3af] rounded-full h-[46px] px-4">
@@ -33,7 +33,22 @@ const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit }: { searchQue
 
         <CategoriesSlider />
 
-        <View className="px-4 mb-4 mt-4">
+        {featuredListings.length > 0 && (
+            <View className="mb-2 mt-4 bg-white py-2">
+                <View className="px-4 pb-3">
+                    <Text className="text-xl font-bold text-text">Anuncios destacados</Text>
+                </View>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 12 }}>
+                    {featuredListings.map(listing => (
+                        <View key={listing.id} className="p-1" style={{ width: width * 0.45, maxWidth: 200 }}>
+                            <ListingCard listing={listing} isSingleColumn={false} />
+                        </View>
+                    ))}
+                </ScrollView>
+            </View>
+        )}
+
+        <View className="px-4 mb-4 mt-2">
             <Text className="text-xl font-bold text-text">Últimos anuncios</Text>
         </View>
     </View>
@@ -260,6 +275,7 @@ export default function Home() {
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
                             onSearchSubmit={handleSearchSubmit}
+                            featuredListings={featuredListings}
                         />
                     }
                     contentContainerStyle={{ paddingBottom: 20 }}
