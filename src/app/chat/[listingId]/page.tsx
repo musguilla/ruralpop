@@ -14,15 +14,35 @@ export default async function ChatThreadPage(props: {
     const { data: { user: currentUser } } = await supabase.auth.getUser();
     if (!currentUser) redirect("/login");
 
-    // Obtener anuncio
-    const { data: listing } = await supabase
+    // Obtener anuncio (con el cliente autenticado)
+    let { data: listing } = await supabase
         .from("listings")
         .select("id, title, image_urls, user_id")
         .eq("id", listingId)
         .or(await getServerTenantFilterString())
         .single();
 
-    if (!listing) notFound();
+    // Si no se encuentra (por ejemplo, porque está vendido y el RLS lo oculta a los no propietarios),
+    // forzamos la carga con el cliente administrador para dar contexto al chat
+    if (!listing) {
+        const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
+        const adminSupabase = createSupabaseClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!, 
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+        const { data: adminListing } = await adminSupabase
+            .from("listings")
+            .select("id, title, image_urls, user_id")
+            .eq("id", listingId)
+            .or(await getServerTenantFilterString())
+            .single();
+            
+        if (adminListing) {
+            listing = adminListing;
+        } else {
+            notFound();
+        }
+    }
 
     // Determinar quién es el "otro" usuario
     const otherUserId = otherUserIdParam || listing.user_id;

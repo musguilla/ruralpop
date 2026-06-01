@@ -43,6 +43,32 @@ export default async function ChatInboxPage() {
 
     // Lógica para agrupar mensajes en hilos de conversación únicos
     const threadsMap = new Map<string, any>();
+    const missingListingIds = new Set<string>();
+
+    messages?.forEach((msg: any) => {
+        if (!msg.listing && msg.listing_id) {
+            missingListingIds.add(msg.listing_id);
+        }
+    });
+
+    // Fetch listings that are hidden by RLS (e.g. status = 'sold') using service role
+    const adminListingsMap = new Map<string, any>();
+    if (missingListingIds.size > 0) {
+        const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
+        const adminSupabase = createSupabaseClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!, 
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+        const { data: missingListings } = await adminSupabase
+            .from("listings")
+            .select("id, title, image_urls")
+            .in("id", Array.from(missingListingIds));
+            
+        missingListings?.forEach(l => {
+            adminListingsMap.set(l.id, l);
+        });
+    }
+
     messages?.forEach((msg: any) => {
         const otherUserId = msg.sender_id === user.id ? msg.receiver_id : msg.sender_id;
         const threadKey = `${msg.listing_id}-${otherUserId}`;
@@ -50,6 +76,7 @@ export default async function ChatInboxPage() {
 
         if (!threadsMap.has(threadKey)) {
             const otherUser = msg.sender_id === user.id ? msg.receiver : msg.sender;
+            const listingData = msg.listing || adminListingsMap.get(msg.listing_id);
             threadsMap.set(threadKey, {
                 lastMessage: {
                     id: msg.id,
@@ -58,7 +85,7 @@ export default async function ChatInboxPage() {
                     sender_id: msg.sender_id
                 },
                 otherUser: otherUser as { name: string; avatar_url: string | null },
-                listing: msg.listing as { title: string; image_urls: string[] | null },
+                listing: listingData as { title: string; image_urls: string[] | null },
                 listingId: msg.listing_id,
                 otherUserId,
                 unreadCount: isUnreadForMe ? 1 : 0
