@@ -12,9 +12,11 @@ import { formatPrice } from '../../lib/formatters';
 interface ListingCardProps {
     listing: Listing;
     isSingleColumn?: boolean;
+    showFeatureButton?: boolean;
+    onFeaturePress?: () => void;
 }
 
-export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
+export function ListingCard({ listing, isSingleColumn, showFeatureButton, onFeaturePress }: ListingCardProps) {
     const { user } = useAuth();
     const { favorites, toggleFavorite } = useFavorites();
     const router = useRouter();
@@ -191,12 +193,21 @@ export function ListingCard({ listing, isSingleColumn }: ListingCardProps) {
                     {listing.title}
                 </Text>
 
-                <View className="flex-row items-center mt-auto">
+                <View className="flex-row items-center mt-auto mb-2">
                     <MapPin color="#9ca3af" size={14} style={{ marginRight: 4 }} />
                     <Text className="text-sm text-text-muted truncate flex-1" numberOfLines={1}>
                         {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
                     </Text>
                 </View>
+
+                {showFeatureButton && (
+                    <TouchableOpacity 
+                        onPress={onFeaturePress}
+                        className="mt-3 py-2 px-4 rounded-full border border-[#059669] items-center"
+                    >
+                        <Text className="text-[#059669] font-bold">Destácalo ya</Text>
+                    </TouchableOpacity>
+                )}
             </TouchableOpacity>
         </View>
     );

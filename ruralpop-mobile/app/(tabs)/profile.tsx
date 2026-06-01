@@ -12,12 +12,12 @@ export default function ProfileScreen() {
     const { session, user, isLoading } = useAuth();
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const [profile, setProfile] = useState<{ name?: string; commercial_name?: string; avatar_url?: string; role?: string; company_logo_url?: string } | null>(null);
+    const [profile, setProfile] = useState<{ name?: string; commercial_name?: string; avatar_url?: string; role?: string; company_logo_url?: string; created_at?: string } | null>(null);
 
     useEffect(() => {
         if (!user?.id) return;
         const fetchProfile = async () => {
-            const { data } = await supabase.from('users').select('name, commercial_name, avatar_url, role').eq('id', user.id).single();
+            const { data } = await supabase.from('users').select('name, commercial_name, avatar_url, role, created_at').eq('id', user.id).single();
             if (data) setProfile(data);
         };
         fetchProfile();
@@ -25,6 +25,7 @@ export default function ProfileScreen() {
 
     const displayName = profile?.commercial_name || profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || 'Usuario Ruralpop';
     const avatarUrl = profile?.company_logo_url || profile?.avatar_url || user?.user_metadata?.avatar_url;
+    const joinedYear = profile?.created_at ? new Date(profile.created_at).getFullYear() : new Date().getFullYear();
 
     if (isLoading) return null;
 
@@ -67,12 +68,15 @@ export default function ProfileScreen() {
             </View>
 
             <ScrollView className="flex-1 bg-gray-50 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
-                <View className="px-6 items-center mb-8">
-                    <View className="relative">
+                <TouchableOpacity 
+                    onPress={() => router.push(`/user/${user?.id}`)}
+                    className="px-6 flex-row items-center mb-8 bg-white py-4 border-b border-gray-100"
+                >
+                    <View className="relative mr-4">
                         {avatarUrl ? (
                             <View 
-                                className="mb-4 border border-gray-200 bg-white overflow-hidden"
-                                style={{ width: 84, height: 84, borderRadius: 42 }}
+                                className="border border-gray-200 bg-white overflow-hidden"
+                                style={{ width: 72, height: 72, borderRadius: 36 }}
                             >
                                 <Image
                                     source={{ uri: getOptimizedImageUrl(avatarUrl) || avatarUrl }}
@@ -82,24 +86,32 @@ export default function ProfileScreen() {
                                 />
                             </View>
                         ) : (
-                            <View className="w-[84px] h-[84px] bg-primary-muted rounded-full items-center justify-center mb-4 border border-primary/10">
-                                <Text className="text-[32px] font-bold text-primary uppercase">
+                            <View className="w-[72px] h-[72px] bg-primary-muted rounded-full items-center justify-center border border-primary/10">
+                                <Text className="text-[28px] font-bold text-primary uppercase">
                                     {(displayName || 'U').charAt(0)}
                                 </Text>
                             </View>
                         )}
                         
                         {profile?.role === 'profesional' && (
-                            <View className="absolute bottom-4 -right-1 bg-white rounded-full border border-gray-50 shadow-sm items-center justify-center" style={{ width: 28, height: 28 }}>
-                                <BadgeCheck color="#3b82f6" fill="#3b82f6" size={24} stroke="#ffffff" strokeWidth={2} /> 
+                            <View className="absolute bottom-0 -right-1 bg-white rounded-full border border-gray-50 shadow-sm items-center justify-center" style={{ width: 24, height: 24 }}>
+                                <BadgeCheck color="#3b82f6" fill="#3b82f6" size={20} stroke="#ffffff" strokeWidth={2} /> 
                             </View>
                         )}
                     </View>
-                    <Text className="text-xl font-bold text-text mb-1">
-                        {displayName}
-                    </Text>
-                    <Text className="text-text-muted">{user?.email}</Text>
-                </View>
+                    
+                    <View className="flex-1 justify-center">
+                        <Text className="text-xl font-extrabold text-text mb-1" numberOfLines={1}>
+                            {displayName}
+                        </Text>
+                        <Text className="text-text-muted text-[15px]">En Ruralpop desde {joinedYear}</Text>
+                        {user?.email && <Text className="text-gray-400 text-xs mt-1" numberOfLines={1}>{user.email}</Text>}
+                    </View>
+                    
+                    <View className="ml-2">
+                        <ChevronRight color="#9ca3af" size={24} />
+                    </View>
+                </TouchableOpacity>
 
                 {/* Sección Transacciones */}
                 <View className="px-6 mb-2 mt-4">
