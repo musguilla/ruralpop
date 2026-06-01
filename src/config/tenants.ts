@@ -68,7 +68,7 @@ export const allowsHandDeal = (slug: string = RURALPOP_TENANT_SLUG): boolean => 
  * Esto lo añadiremos a tu .env.local para no hacer queries extra cada vez que alguien publique.
  */
 export const getRuralpopDatabaseId = (): string | null => {
-  return process.env.NEXT_PUBLIC_RURALPOP_TENANT_ID || null;
+  return process.env.NEXT_PUBLIC_RURALPOP_TENANT_ID || process.env.EXPO_PUBLIC_RURALPOP_TENANT_ID || TENANTS_CONFIG[RURALPOP_TENANT_SLUG]?.id || null;
 };
 
 /**
