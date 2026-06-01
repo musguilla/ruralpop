@@ -11,6 +11,7 @@ import { ListingCard } from '../../src/components/ui/ListingCard';
 import { Listing } from '../../src/types';
 import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';
 import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import ImageViewing from "react-native-image-viewing";
 
 export default function UserProfileScreen() {
     const { id } = useLocalSearchParams();
@@ -24,6 +25,7 @@ export default function UserProfileScreen() {
     
     const [featuredModalVisible, setFeaturedModalVisible] = useState(false);
     const [selectedFeaturedListingId, setSelectedFeaturedListingId] = useState<string | null>(null);
+    const [isAvatarExpanded, setIsAvatarExpanded] = useState(false);
 
     const isOwnProfile = currentUser?.id === id;
 
@@ -134,7 +136,8 @@ export default function UserProfileScreen() {
                             
                             <View className="relative">
                                 {avatarUrl ? (
-                                    <View 
+                                    <TouchableOpacity 
+                                        onPress={() => setIsAvatarExpanded(true)}
                                         className="border border-gray-200 bg-white overflow-hidden"
                                         style={{ width: 84, height: 84, borderRadius: 42 }}
                                     >
@@ -144,7 +147,7 @@ export default function UserProfileScreen() {
                                             contentFit="cover"
                                             transition={200}
                                         />
-                                    </View>
+                                    </TouchableOpacity>
                                 ) : (
                                     <View className="w-[84px] h-[84px] bg-primary-muted rounded-full items-center justify-center border border-primary/10">
                                         <Text className="text-[36px] font-bold text-primary uppercase">
@@ -209,6 +212,17 @@ export default function UserProfileScreen() {
                     />
                 )}
             </Modal>
+
+            {/* Avatar Fullscreen Viewer */}
+            {avatarUrl && (
+                <ImageViewing
+                    images={[{ uri: getOptimizedImageUrl(avatarUrl, { width: 1200 }) || avatarUrl }]}
+                    imageIndex={0}
+                    visible={isAvatarExpanded}
+                    onRequestClose={() => setIsAvatarExpanded(false)}
+                    swipeToCloseEnabled={true}
+                />
+            )}
         </SafeAreaView>
     );
 }
