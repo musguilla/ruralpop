@@ -82,16 +82,6 @@ export async function POST(req: Request) {
             // We don't abort necessarily, but it's bad
         }
 
-        // Reassign images
-        const { error: imagesError } = await supabaseAdmin
-            .from('listing_images')
-            .update({ user_id: newUserId })
-            .eq('user_id', oldGhostId);
-
-        if (imagesError) {
-            console.error("Error transferring images:", imagesError);
-        }
-
         // Finally, delete the old ghost user so we don't have dupes.
         // Note: this deletes from public.users table but it's technically enough 
         // since it never had an auth.users row anyway (it was a ghost).
