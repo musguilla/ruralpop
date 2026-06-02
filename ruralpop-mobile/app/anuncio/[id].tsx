@@ -436,7 +436,15 @@ export default function ListingDetailsScreen() {
 
                     {/* Seller Info Container */}
                     <View className="bg-primary-muted/10 border border-gray-200 rounded-2xl p-4 mb-8 flex-row items-center justify-between">
-                        <View className="flex-row items-center flex-1">
+                        <TouchableOpacity 
+                            onPress={() => {
+                                if (listing?.user_id) {
+                                    router.push(`/user/${listing.user_id}`);
+                                }
+                            }}
+                            className="flex-row items-center flex-1"
+                            activeOpacity={0.7}
+                        >
                             <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm mr-3 overflow-hidden border border-gray-100">
                                 {listing.seller?.avatar_url ? (
                                     <Image source={{ uri: getOptimizedImageUrl(listing.seller.avatar_url, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
@@ -462,7 +470,7 @@ export default function ListingDetailsScreen() {
                                     </View>
                                 )}
                             </View>
-                        </View>
+                        </TouchableOpacity>
                         {listing.vender_online && (
                             <TouchableOpacity
                                 onPress={() => {
