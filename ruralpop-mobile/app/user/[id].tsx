@@ -47,11 +47,10 @@ export default function UserProfileScreen() {
                 }
 
                 // Fetch listings
-                const { data: listingsData } = await supabase
+                const { data: listingsData, error: listingsError } = await supabase
                     .from('listings')
                     .select(`
                         *,
-                        listing_images (image_url, "order"),
                         users (name, commercial_name, avatar_url, company_logo_url, role)
                     `)
                     .eq('user_id', id)
@@ -59,11 +58,15 @@ export default function UserProfileScreen() {
                     .or(getDefaultTenantFilterString())
                     .order('created_at', { ascending: false });
 
+                if (listingsError) {
+                    console.error("Error fetching listings:", listingsError);
+                }
+
                 if (listingsData) {
                     // map to match the structure ListingCard expects
                     const mappedListings = listingsData.map(l => ({
                         ...l,
-                        image_urls: l.listing_images?.sort((a: any, b: any) => a.order - b.order).map((img: any) => img.image_url) || []
+                        image_urls: l.image_urls || []
                     })) as unknown as Listing[];
                     setListings(mappedListings);
                 }
