@@ -171,7 +171,11 @@ export default function ListingDetailsScreen() {
                     onPress: async () => {
                         const { error } = await supabase.from('listings').delete().eq('id', listing!.id);
                         if (error) {
-                            Alert.alert("Error", error.message);
+                            if (error.code === '23503' || error.message.includes('foreign key constraint')) {
+                                Alert.alert("No se puede eliminar", "Este anuncio tiene transacciones o compras asociadas por lo que debe mantenerse en el historial. Por favor, márcalo como Vendido en su lugar.");
+                            } else {
+                                Alert.alert("Error", error.message);
+                            }
                         } else {
                             router.replace('/(tabs)/profile');
                         }
@@ -392,7 +396,7 @@ export default function ListingDetailsScreen() {
                         <View className="flex-row items-center mb-6" style={{ gap: 12 }}>
                             <TouchableOpacity 
                                 onPress={() => {
-                                    setSoldPriceInput("");
+                                    setSoldPriceInput(listing.price ? listing.price.toString() : "");
                                     setSoldModalVisible(true);
                                 }}
                                 className="flex-1 py-3 items-center rounded-full border border-primary bg-white shadow-sm"
