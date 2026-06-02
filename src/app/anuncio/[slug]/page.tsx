@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { notFound, permanentRedirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { MapPin, Calendar, Phone, User, ArrowLeft, ShieldCheck, Tractor, Building2 } from "lucide-react";
@@ -173,7 +173,7 @@ export default async function ListingDetailPage(props: Props) {
         .single();
 
     if (error || !listing) {
-        notFound();
+        redirect('/');
     }
 
     if (listing.status === 'sold') {
