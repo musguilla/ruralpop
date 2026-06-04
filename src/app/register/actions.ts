@@ -71,8 +71,8 @@ export async function signup(formData: FormData) {
         try {
             if (process.env.RESEND_API_KEY) {
                 const resend = new Resend(process.env.RESEND_API_KEY);
-                const siteUrl = isEquipop ? "https://www.equipop.net" : "https://www.ruralpop.com";
-                const logoUrl = isEquipop ? "https://www.equipop.net/equipop-logo.png" : "https://www.ruralpop.com/ruralpop-logo.png";
+                const siteUrl = isEquipop ? "https://www.equipop.app" : "https://www.ruralpop.com";
+                const logoUrl = isEquipop ? "https://www.equipop.app/equipop-logo.png" : "https://www.ruralpop.com/ruralpop-logo.png";
 
                 const emailHtml = `
             <!DOCTYPE html>

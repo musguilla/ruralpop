@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
 
     // --- Multi-Tenant: Equipop Domain Detection ---
     const hostname = request.headers.get('host') || '';
-    // Reconocemos equipop.net, www.equipop.net, o entornos locales como equipop.localhost:3000
+    // Reconocemos equipop.app, www.equipop.app, o entornos locales como equipop.localhost:3000
     if (hostname.includes('equipop')) {
         // Evitamos bucles y también ignoramos rutas de API estáticas para que funcionen igual
         if (!pathname.startsWith('/equipop') && !pathname.startsWith('/_next') && !pathname.startsWith('/api')) {

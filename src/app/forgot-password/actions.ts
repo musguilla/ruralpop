@@ -28,9 +28,9 @@ export async function forgotPassword(formData: FormData) {
 
         const tenant = await getServerTenantSlug();
         const isEquipop = tenant === 'equipop';
-        const siteUrl = isEquipop ? "https://www.equipop.net" : "https://www.ruralpop.com";
+        const siteUrl = isEquipop ? "https://www.equipop.app" : "https://www.ruralpop.com";
         const tenantName = isEquipop ? "Equipop" : "Ruralpop";
-        const logoUrl = isEquipop ? "https://www.equipop.net/equipop-logo.png" : "https://www.ruralpop.com/ruralpop-logo.png";
+        const logoUrl = isEquipop ? "https://www.equipop.app/equipop-logo.png" : "https://www.ruralpop.com/ruralpop-logo.png";
         
         const { data, error } = await adminSupabase.auth.admin.generateLink({
             type: "recovery",
