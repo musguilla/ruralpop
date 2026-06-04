@@ -13,7 +13,8 @@ import {
     UserCheck,
     Edit,
     Heart,
-    Search
+    Search,
+    Star
 } from "lucide-react";
 import Image from "next/image";
 import SupabaseImage from "@/components/ui/SupabaseImage";
@@ -224,6 +225,11 @@ export default async function AdminListingsPage(props: {
                                         Online
                                     </div>
                                 )}
+                                {l.is_featured && (
+                                    <div className="absolute top-1 right-1 px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider backdrop-blur-md bg-amber-500/90 text-white flex items-center gap-0.5 shadow-sm border border-amber-400/50">
+                                        <Star className="w-2 h-2 fill-white" /> DESTACADO
+                                    </div>
+                                )}
                             </div>
 
                             {/* Info Wrapper */}
@@ -249,7 +255,12 @@ export default async function AdminListingsPage(props: {
                                             {(l.seller as Record<string, string | null>)?.avatar_url ? <Image src={(l.seller as Record<string, string | null>).avatar_url as string} alt="" width={24} height={24} /> : <UserCheck className="w-3 h-3" />}
                                         </div>
                                         <div className="hidden md:block">
-                                            <p className="text-[10px] font-bold text-[var(--ag-sys-color-text)] leading-none mb-0.5 truncate max-w-[100px]">{(l.seller as Record<string, string | null>)?.name || 'Vendedor'}</p>
+                                            <div className="flex items-center gap-1 mb-0.5 max-w-[120px]">
+                                                <p className="text-[10px] font-bold text-[var(--ag-sys-color-text)] leading-none truncate">{(l.seller as Record<string, string | null>)?.name || 'Vendedor'}</p>
+                                                {(l.seller as Record<string, string | null>)?.plan_type && (l.seller as Record<string, string | null>)?.plan_type !== 'free' && (
+                                                    <span className="text-[8px] px-1 py-[1px] bg-purple-100 text-purple-700 font-black rounded uppercase tracking-wider leading-none">{(l.seller as Record<string, string | null>)?.plan_type}</span>
+                                                )}
+                                            </div>
                                             <span className="text-[9px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider font-bold">{formatRelativeTime(l.created_at)}</span>
                                         </div>
                                     </div>
