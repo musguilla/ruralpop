@@ -200,3 +200,38 @@ export async function deleteListingAndSendEmail(listingId: string, email: string
 
     return await deleteListing(listingId);
 }
+
+export async function activateListing(listingId: string) {
+    if (!await isAdmin()) {
+        return { success: false, error: "No estás autorizado para realizar esta acción." };
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+        return { success: false, error: "Error de configuración de servidor." };
+    }
+
+    let supabaseAdmin;
+    try {
+        supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey);
+    } catch (err) {
+        return { success: false, error: "Hubo un error inicializando cliente backend." };
+    }
+
+    const { error } = await supabaseAdmin
+        .from("listings")
+        .update({ status: 'active' })
+        .eq("id", listingId);
+
+    if (error) {
+        return { success: false, error: error.message };
+    }
+
+    revalidatePath("/admin/listings");
+    revalidatePath("/");
+    revalidatePath(`/anuncio/anuncio-${listingId.substring(0, 8)}`);
+
+    return { success: true };
+}
