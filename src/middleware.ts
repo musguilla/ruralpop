@@ -9,20 +9,26 @@ export async function middleware(request: NextRequest) {
     const hostname = request.headers.get('host') || '';
     // Reconocemos equipop.app, www.equipop.app, o entornos locales como equipop.localhost:3000
     if (hostname.includes('equipop')) {
-        // Evitamos bucles y también ignoramos rutas de API estáticas para que funcionen igual
+        // Evitamos bucles y también ignoramos rutas de API estáticas
         if (!pathname.startsWith('/equipop') && !pathname.startsWith('/_next') && !pathname.startsWith('/api')) {
-            const url = request.nextUrl.clone();
-            url.pathname = `/equipop${pathname === '/' ? '' : pathname}`;
-            
             const requestHeaders = new Headers(request.headers);
             requestHeaders.set('x-tenant', 'equipop');
             
-            let response = NextResponse.rewrite(url, {
-                request: { headers: requestHeaders }
-            });
-            
-            // Refrescar sesión Supabase de todas formas para Equipop
-            return await updateSession(request, response);
+            // Para el panel de administración, no reescribimos la ruta, solo pasamos el tenant
+            if (pathname.startsWith('/admin')) {
+                let response = NextResponse.next({
+                    request: { headers: requestHeaders }
+                });
+                return await updateSession(request, response);
+            } else {
+                const url = request.nextUrl.clone();
+                url.pathname = `/equipop${pathname === '/' ? '' : pathname}`;
+                
+                let response = NextResponse.rewrite(url, {
+                    request: { headers: requestHeaders }
+                });
+                return await updateSession(request, response);
+            }
         }
     }
 
