@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { UserRow } from "./UserRow";
 import { SearchUsers } from "./SearchUsers";
 import { Pagination } from "@/components/ui/Pagination";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ type Props = {
 export default async function AdminUsersPage(props: Props) {
     const searchParams = await props.searchParams;
     const supabase = await createClient();
+    const tenant = await getServerTenantSlug();
     
     const page = parseInt(searchParams.page as string) || 1;
     const limit = 100;
@@ -20,6 +22,10 @@ export default async function AdminUsersPage(props: Props) {
     let query = supabase
         .from("users")
         .select("*, listings(count)", { count: "exact" });
+
+    if (tenant) {
+        query = query.eq('tenant_id', tenant);
+    }
 
     if (search) {
         query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,contact_phone.ilike.%${search}%`);

@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { Edit, Image as ImageIcon, Trash2, Globe, Plus } from "lucide-react";
 import Image from "next/image";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export const metadata = {
     title: "CMS | Admin Ruralpop"
@@ -18,11 +19,18 @@ type MagazinePost = {
 
 export default async function MarketingCMSPage() {
     const supabase = await createClient();
+    const tenant = await getServerTenantSlug();
 
-    const { data: posts, error } = await supabase
+    let query = supabase
         .from("magazine_posts")
         .select("*")
         .order("published_at", { ascending: false });
+
+    if (tenant) {
+        query = query.eq('tenant_id', tenant);
+    }
+
+    const { data: posts, error } = await query;
 
     return (
         <div className="p-8">

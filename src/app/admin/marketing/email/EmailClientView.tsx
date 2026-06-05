@@ -5,19 +5,37 @@ import { EMAIL_TEMPLATES, EmailTemplate } from "@/constants/emailTemplates";
 import { Search, Send, Mail, ChevronRight, CheckCircle2 } from "lucide-react";
 import { sendTemplateEmail } from "./actions";
 
-export default function EmailClientView() {
+export default function EmailClientView({ tenant }: { tenant: string | null }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(EMAIL_TEMPLATES[0]?.id || null);
     const [recipientsInput, setRecipientsInput] = useState("");
     const [isSending, setIsSending] = useState(false);
     const [sendSuccess, setSendSuccess] = useState<{msg: string, isError?: boolean} | null>(null);
 
-    const filteredTemplates = EMAIL_TEMPLATES.filter(t => 
+    const localizedTemplates = React.useMemo(() => {
+        return EMAIL_TEMPLATES.map(t => {
+            if (tenant === 'equipop') {
+                return {
+                    ...t,
+                    name: t.name.replace(/Ruralpop/g, 'Equipop'),
+                    description: t.description.replace(/Ruralpop/g, 'Equipop'),
+                    subject: t.subject.replace(/Ruralpop/g, 'Equipop'),
+                    htmlContent: t.htmlContent
+                        .replace(/ruralpop\.com/g, 'equipop.app')
+                        .replace(/Ruralpop/g, 'Equipop')
+                        .replace(/ruralpop-logo\.png/g, 'equipop-logo.png')
+                };
+            }
+            return t;
+        });
+    }, [tenant]);
+
+    const filteredTemplates = localizedTemplates.filter(t => 
         t.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
         t.category.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const selectedTemplate = EMAIL_TEMPLATES.find(t => t.id === selectedTemplateId);
+    const selectedTemplate = localizedTemplates.find(t => t.id === selectedTemplateId);
 
     const handleSend = async () => {
         if (!selectedTemplate) return;
