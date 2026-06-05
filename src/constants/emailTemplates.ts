@@ -234,3 +234,102 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
 </html>`
     }
 ];
+
+export const EQUIPOP_EMAIL_TEMPLATES: EmailTemplate[] = [
+    {
+        id: "nuevo-registro-equipop",
+        name: "Nuevo Registro",
+        description: "Email automático de bienvenida enviado al crear cuenta en Equipop.",
+        category: "Transaccional",
+        subject: "¡Bienvenido/a a Equipop!",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.equipop.app/equipop-logo.png" alt="Equipop" class="logo" />
+        <h1 class="title">¡Hola, Jinete!</h1>
+        <p class="text text-center">
+            Te damos la bienvenida a <strong>Equipop</strong>.<br/><br/>
+            Estamos encantados de tenerte con nosotros en el mercado ecuestre líder. ¡Empieza a vender y comprar ya! Descubre los mejores caballos y equipamiento, gestiona tus favoritos y conecta con miles de aficionados al mundo del caballo.
+        </p>
+        <a href="https://www.equipop.app/account" class="button" style="color: #ffffff; text-decoration: none;">Entrar a Equipop</a>
+        <p class="footer">
+            Estás recibiendo este correo porque tienes una cuenta en Equipop.<br/><br/>
+            © ${new Date().getFullYear()} Equipop
+        </p>
+    </div>
+</body>
+</html>`
+    },
+    {
+        id: "anuncio-destacado-30-dias-equipop",
+        name: "Anuncio destacado 30 días",
+        description: "Notifica al usuario que su anuncio ecuestre ha sido destacado.",
+        category: "Promocional",
+        subject: "¡Tu anuncio cabalga en primera posición por 30 días! 🚀",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.equipop.app/equipop-logo.png" alt="Equipop" class="logo" />
+        <h1 class="title">¡Enhorabuena! Tu anuncio destaca sobre el resto</h1>
+        <p class="text">
+            Tenemos una excelente noticia para ti. Hemos seleccionado tu anuncio y lo hemos <strong>Destacado gratis durante 30 días</strong>.
+            <br/><br/>
+            Al ser un anuncio destacado, disfrutarás de los siguientes beneficios:
+            <br/><br/>
+            ✅ <strong>Máxima visibilidad:</strong> Tu anuncio aparecerá en las primeras posiciones.<br/>
+            ✅ <strong>Diseño VIP:</strong> Resaltado especial para captar la atención rápidamente.<br/>
+            ✅ <strong>Más contactos:</strong> Los anuncios destacados reciben hasta un 500% más de visitas.
+        </p>
+        <a href="https://www.equipop.app/dashboard" class="button" style="color: #ffffff; text-decoration: none;">Ver mis anuncios</a>
+        <p class="footer">
+            Equipop - El mercado ecuestre<br/>
+            © ${new Date().getFullYear()} Equipop
+        </p>
+    </div>
+</body>
+</html>`
+    },
+    {
+        id: "no-aplica-anuncio-equipop",
+        name: "Rechazo: No aplica a Equipop",
+        description: "Plantilla para notificar a un usuario que su anuncio ha sido eliminado por no encajar en la temática ecuestre.",
+        category: "Moderación",
+        subject: "Tu anuncio ha sido eliminado de Equipop",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.equipop.app/equipop-logo.png" alt="Equipop" class="logo" />
+        <h1 class="title">Aviso de Moderación</h1>
+        <p class="text">
+            Hola,<br/><br/>
+            Te contactamos desde el equipo de moderación de Equipop para informarte que tu anuncio ha sido eliminado.<br/><br/>
+            Tras revisar el contenido, hemos determinado que no encaja en las categorías y la temática principal de nuestra plataforma, enfocada 100% al sector ecuestre y caballos.<br/><br/>
+            Si crees que ha sido un error, no dudes en contactarnos.
+        </p>
+        <p class="footer">
+            Equipop - El mercado ecuestre<br/>
+            © ${new Date().getFullYear()} Equipop
+        </p>
+    </div>
+</body>
+</html>`
+    }
+];
