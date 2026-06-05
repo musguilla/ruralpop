@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { AdminStatCard, Histograms } from "@/components/admin/AdminStatCard";
 import { AdminSalesChart } from "@/components/admin/AdminSalesChart";
+import { getServerTenantSlug } from "@/utils/tenant/server";
+import { TENANTS_CONFIG } from "@/config/tenants";
 
 export const dynamic = "force-dynamic";
 
@@ -74,12 +76,15 @@ function generateHistograms(items: { date: string, amount?: number }[], isCurren
     };
 }
 
-async function fetchAllDates(adminClient: any, table: string) {
+async function fetchAllDates(adminClient: any, table: string, tenantIdFilter?: string | null) {
     let allDates: any[] = [];
     let count = 0;
 
     // First fetch with head to get the exact count
-    const { count: exactCount } = await adminClient.from(table).select("*", { count: 'exact', head: true });
+    let countQuery = adminClient.from(table).select("*", { count: 'exact', head: true });
+    if (tenantIdFilter) countQuery = countQuery.eq('tenant_id', tenantIdFilter);
+    const { count: exactCount } = await countQuery;
+    
     count = exactCount || 0;
 
     // Fetch in parallel batches for speed
@@ -87,11 +92,11 @@ async function fetchAllDates(adminClient: any, table: string) {
         const step = 1000;
         const promises = [];
         for (let i = 0; i < count; i += step) {
-            promises.push(
-                adminClient.from(table)
+            let pQuery = adminClient.from(table)
                     .select("created_at")
-                    .range(i, i + step - 1)
-            );
+                    .range(i, i + step - 1);
+            if (tenantIdFilter) pQuery = pQuery.eq('tenant_id', tenantIdFilter);
+            promises.push(pQuery);
         }
         const results = await Promise.all(promises);
         for (const res of results) {
@@ -101,20 +106,24 @@ async function fetchAllDates(adminClient: any, table: string) {
     return { data: allDates, count };
 }
 
-async function fetchAllEscrows(adminClient: any) {
+async function fetchAllEscrows(adminClient: any, tenantIdFilter?: string | null) {
     let allData: any[] = [];
     let count = 0;
-    const { count: exactCount } = await adminClient.from("escrow_orders").select("*", { count: 'exact', head: true });
+    
+    let countQuery = adminClient.from("escrow_orders").select("*", { count: 'exact', head: true });
+    if (tenantIdFilter) countQuery = countQuery.eq('tenant_id', tenantIdFilter);
+    const { count: exactCount } = await countQuery;
+    
     count = exactCount || 0;
     if (count > 0) {
         const step = 1000;
         const promises = [];
         for (let i = 0; i < count; i += step) {
-            promises.push(
-                adminClient.from("escrow_orders")
+            let pQuery = adminClient.from("escrow_orders")
                     .select("created_at, status, gross_amount_cents, ruralpop_fee_cents")
-                    .range(i, i + step - 1)
-            );
+                    .range(i, i + step - 1);
+            if (tenantIdFilter) pQuery = pQuery.eq('tenant_id', tenantIdFilter);
+            promises.push(pQuery);
         }
         const results = await Promise.all(promises);
         for (const res of results) {
@@ -127,12 +136,25 @@ async function fetchAllEscrows(adminClient: any) {
 export default async function AdminDashboard() {
     const supabase = await createClient();
     
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const equipopId = TENANTS_CONFIG['equipop']?.id;
+    const filterId = isEquipop ? equipopId : null;
+    
     // Create an admin client to bypass RLS for accurate absolute counts across the database
     const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
     const adminClient = createSupabaseClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
+
+    let activeListingsQuery = adminClient.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active");
+    if (filterId) activeListingsQuery = activeListingsQuery.eq("tenant_id", filterId);
+
+    let walletsQuery = adminClient.from("professional_wallets")
+        .select(`created_at, stripe_connected_account_id, user:users${filterId ? '!inner' : ''}(email, tenant_id)`)
+        .order("created_at", { ascending: false });
+    if (filterId) walletsQuery = walletsQuery.eq("users.tenant_id", filterId);
 
     // Fetch metrics and all creation dates to build histograms using the pagination helper
     const [
@@ -142,11 +164,11 @@ export default async function AdminDashboard() {
         { data: allWallets },
         allEscrows
     ] = await Promise.all([
-        fetchAllDates(adminClient, "users"),
-        fetchAllDates(adminClient, "listings"),
-        adminClient.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active"),
-        adminClient.from("professional_wallets").select("created_at, stripe_connected_account_id, user:users(email)").order("created_at", { ascending: false }),
-        fetchAllEscrows(adminClient)
+        fetchAllDates(adminClient, "users", filterId),
+        fetchAllDates(adminClient, "listings", filterId),
+        activeListingsQuery,
+        walletsQuery,
+        fetchAllEscrows(adminClient, filterId)
     ]);
 
     const totalUsers = usersResult.count;
@@ -156,16 +178,30 @@ export default async function AdminDashboard() {
 
     // Fetch real revenue data from Stripe (Anuncios Destacados)
     const paymentIntentsResponse = await stripe.paymentIntents.list({ limit: 100 });
-    const successfulPayments = paymentIntentsResponse.data.filter(pi => 
+    let successfulPayments = paymentIntentsResponse.data.filter(pi => 
         pi.status === "succeeded" && pi.metadata?.listingId
     );
+    
+    if (isEquipop && successfulPayments.length > 0) {
+        const listingIds = successfulPayments.map(pi => pi.metadata?.listingId).filter(Boolean);
+        const { data: listingsData } = await adminClient.from('listings').select('id').eq('tenant_id', equipopId).in('id', listingIds);
+        const validListingIds = new Set(listingsData?.map((l: any) => l.id) || []);
+        successfulPayments = successfulPayments.filter(pi => validListingIds.has(pi.metadata?.listingId));
+    }
     
     const totalFeaturedRevenue = successfulPayments.reduce((acc, pi) => acc + pi.amount, 0) / 100;
     const paymentDates = successfulPayments.map(pi => ({ date: new Date(pi.created * 1000).toISOString(), amount: pi.amount / 100 }));
 
     // Fetch real subscription revenue data from Stripe (Perfiles Profesionales)
     const invoicesResponse = await stripe.invoices.list({ limit: 100 });
-    const paidInvoices = invoicesResponse.data.filter((inv: any) => inv.status === "paid" && inv.subscription);
+    let paidInvoices = invoicesResponse.data.filter((inv: any) => inv.status === "paid" && inv.subscription);
+    
+    if (isEquipop && paidInvoices.length > 0) {
+        const customerIds = paidInvoices.map((inv: any) => inv.customer).filter(Boolean);
+        const { data: usersData } = await adminClient.from('users').select('stripe_customer_id').eq('tenant_id', equipopId).in('stripe_customer_id', customerIds);
+        const validCustomerIds = new Set(usersData?.map((u: any) => u.stripe_customer_id) || []);
+        paidInvoices = paidInvoices.filter((inv: any) => validCustomerIds.has(inv.customer));
+    }
     
     const totalSubscriptionRevenue = paidInvoices.reduce((acc, inv) => acc + inv.amount_paid, 0) / 100;
     const subscriptionDates = paidInvoices.map(inv => ({ date: new Date(inv.created * 1000).toISOString(), amount: inv.amount_paid / 100 }));
