@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { createClient } from "@/utils/supabase/server";
+import { getServerTenantSlug } from "@/utils/tenant/server";
+import { TENANTS_CONFIG } from "@/config/tenants";
 
 export const maxDuration = 300; // 5 minutes max duration on Vercel Pro, to prevent timeouts
 
@@ -22,17 +24,26 @@ export async function POST() {
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
 
+        const tenantSlug = await getServerTenantSlug();
+        const isEquipop = tenantSlug === 'equipop';
+        const equipopId = TENANTS_CONFIG['equipop']?.id;
+        const filterId = isEquipop ? equipopId : null;
+        const cacheFileName = isEquipop ? 'admin-insights-cache-equipop.json' : 'admin-insights-cache.json';
+
         // Helper to fetch all records bypassing the 1000 limit
-        async function fetchAllRecords(table: string, selectQuery: string) {
+        async function fetchAllRecords(table: string, selectQuery: string, filterByTenant: boolean = true) {
             let allData: any[] = [];
             let from = 0;
             const step = 1000;
             
             while (true) {
-                const { data, error } = await supabaseAdmin
+                let query = supabaseAdmin
                     .from(table)
                     .select(selectQuery)
                     .range(from, from + step - 1);
+                if (filterByTenant && filterId) query = query.eq('tenant_id', filterId);
+                    
+                const { data, error } = await query;
                     
                 if (error || !data || data.length === 0) break;
                 allData = allData.concat(data);
@@ -44,7 +55,8 @@ export async function POST() {
 
         // --- 1. Usuarios por provincia (Top 100) ---
         let topProvinces: any[] = [];
-        const usersData = await fetchAllRecords('users', 'province_id');
+        const usersData = await fetchAllRecords('users', 'id, province_id');
+        const validUserIds = new Set(usersData?.map(u => u.id) || []);
         if (usersData) {
             const provCounts: Record<number, number> = {};
             usersData.forEach((u: any) => {
@@ -82,7 +94,7 @@ export async function POST() {
             const todayStart = new Date();
             todayStart.setHours(0, 0, 0, 0);
 
-            const activeToday = allAuthUsers.filter(u => u.last_sign_in_at && new Date(u.last_sign_in_at) >= todayStart);
+            const activeToday = allAuthUsers.filter(u => u.last_sign_in_at && new Date(u.last_sign_in_at) >= todayStart && (!filterId || validUserIds.has(u.id)));
             activeUsersTodayCount = activeToday.length;
 
             topConnectedUsers = activeToday
@@ -174,11 +186,13 @@ export async function POST() {
         }
 
         // --- 5. Anuncios más visitados ---
-        const { data: topVisitedListings } = await supabaseAdmin
+        let visitedQuery = supabaseAdmin
             .from('listings')
             .select('id, title, visits_count')
             .order('visits_count', { ascending: false, nullsFirst: false })
             .limit(100);
+        if (filterId) visitedQuery = visitedQuery.eq('tenant_id', filterId);
+        const { data: topVisitedListings } = await visitedQuery;
 
         // --- 6. Anuncios con más likes ---
         let topLikesListings: any[] = [];
@@ -224,7 +238,7 @@ export async function POST() {
         const { error: uploadError } = await supabaseAdmin
             .storage
             .from('wpublic')
-            .upload('admin-insights-cache.json', JSON.stringify(insightsData), {
+            .upload(cacheFileName, JSON.stringify(insightsData), {
                 contentType: 'application/json',
                 upsert: true,
                 cacheControl: '0'

@@ -3,6 +3,7 @@ import { AdminStatCard } from "@/components/admin/AdminStatCard";
 import { Users, Package, Eye, DatabaseBackup } from "lucide-react";
 import { InsightsPanels } from "@/components/admin/InsightsPanels";
 import { RefreshInsightsButton } from "@/components/admin/RefreshInsightsButton";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -14,11 +15,15 @@ export default async function InsightsPage() {
         process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
+    const tenantSlug = await getServerTenantSlug();
+    const isEquipop = tenantSlug === 'equipop';
+    const cacheFileName = isEquipop ? 'admin-insights-cache-equipop.json' : 'admin-insights-cache.json';
+
     // Intentamos descargar el JSON cacheado del bucket wpublic
     const { data: fileData, error: downloadError } = await supabaseAdmin
         .storage
         .from('wpublic')
-        .download('admin-insights-cache.json');
+        .download(cacheFileName);
 
     let insightsData = null;
 

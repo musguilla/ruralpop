@@ -8,10 +8,14 @@ export async function HomePopularListings() {
     const supabase = await createClient();
     const tenantFilterString = await getServerTenantFilterString();
 
+    const tenantSlug = await getServerTenantFilterString();
+    const isEquipop = tenantSlug.includes('equipop') || (await import('@/utils/tenant/server')).getServerTenantSlug().then(slug => slug === 'equipop');
+    const cacheFileName = isEquipop ? 'admin-insights-cache-equipop.json' : 'admin-insights-cache.json';
+
     // 1. Obtener los IDs del caché global calculado por Insights (para evitar límite de 1000 de Supabase)
     const { data: cacheData, error: cacheError } = await supabase.storage
         .from('wpublic')
-        .download('admin-insights-cache.json');
+        .download(cacheFileName);
 
     if (cacheError || !cacheData) return null;
 
