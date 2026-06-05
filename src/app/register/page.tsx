@@ -42,13 +42,14 @@ export default async function RegisterPage(props: {
                 </div>
 
                 {searchParams?.error === "user_exists" ? (
-                    <div className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm p-3 rounded-md border border-red-200 dark:border-red-800 text-center">
-                        Este correo electrónico ya está registrado. Por favor,{" "}
-                        <Link href="/login" className="font-semibold text-black dark:text-white underline hover:text-[var(--ag-sys-color-primary)]">
+                    <div className="p-4 bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm p-3 rounded-md border border-blue-200 dark:border-blue-800 text-center">
+                        <strong>¡Ya tienes una cuenta en nuestra red!</strong><br/>
+                        Este correo electrónico ya está registrado en {isEquipop ? "Ruralpop" : "Equipop"}. Puedes usar tu contraseña habitual para{" "}
+                        <Link href="/login" className="font-bold underline hover:text-[var(--ag-sys-color-primary)]">
                             Iniciar sesión
                         </Link>
-                        {" "}o utiliza{" "}
-                        <Link href="/forgot-password" className="font-semibold text-black dark:text-white underline hover:text-[var(--ag-sys-color-primary)]">
+                        {" "}en {isEquipop ? "Equipop" : "Ruralpop"}. Si no la recuerdas, utiliza{" "}
+                        <Link href="/forgot-password" className="font-bold underline hover:text-[var(--ag-sys-color-primary)]">
                             Recordar contraseña
                         </Link>
                         .

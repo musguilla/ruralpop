@@ -35,7 +35,18 @@ export default function RegisterScreen() {
         });
 
         if (error) {
-            Alert.alert('Error en registro', error.message);
+            if (error.message.includes("User already registered") || error.code === "user_already_exists") {
+                Alert.alert(
+                    '¡Ya tienes cuenta en nuestra red!', 
+                    'Este correo electrónico ya está registrado en nuestra plataforma (Ruralpop/Equipop). Puedes usar tu contraseña habitual para Iniciar Sesión en esta app.',
+                    [
+                        { text: 'Ir a Iniciar Sesión', onPress: () => router.replace('/(auth)/login') },
+                        { text: 'Cancelar', style: 'cancel' }
+                    ]
+                );
+            } else {
+                Alert.alert('Error en registro', error.message);
+            }
         } else {
             if (!session) {
                 Alert.alert('Revisa tu correo', 'Te hemos enviado un enlace para confirmar tu email.');
