@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Edit, Image as ImageIcon, Trash2, Globe, Plus } from "lucide-react";
 import Image from "next/image";
 import { getServerTenantSlug } from "@/utils/tenant/server";
+import { TENANTS_CONFIG } from "@/config/tenants";
 
 export const metadata = {
     title: "CMS | Admin Ruralpop"
@@ -26,8 +27,9 @@ export default async function MarketingCMSPage() {
         .select("*")
         .order("published_at", { ascending: false });
 
-    if (tenant) {
-        query = query.eq('tenant_id', tenant);
+    const tenantId = tenant ? TENANTS_CONFIG[tenant]?.id : null;
+    if (tenantId) {
+        query = query.eq('tenant_id', tenantId);
     }
 
     const { data: posts, error } = await query;
