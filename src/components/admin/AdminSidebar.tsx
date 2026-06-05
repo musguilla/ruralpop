@@ -15,8 +15,11 @@ import {
     LineChart
 } from "lucide-react";
 import { AdminLogoutButton } from "./AdminLogoutButton";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
-export function AdminSidebar() {
+export async function AdminSidebar() {
+    const tenant = await getServerTenantSlug();
+
     return (
         <aside className="w-64 bg-[var(--ag-sys-color-surface)] border-r border-[var(--ag-sys-color-border)] flex flex-col sticky top-0 h-screen overflow-y-auto">
             <nav className="flex-1 p-4 space-y-2">
@@ -32,10 +35,14 @@ export function AdminSidebar() {
                 <AdminNavLink href="/admin/marketing/email" icon={<Mail className="w-5 h-5" />} label="Email marketing" />
                 <AdminNavLink href="/admin/marketing/ghost" icon={<Package className="w-5 h-5" />} label="Empresas ghost" />
 
-                <div className="pt-4 pb-2">
-                    <p className="px-4 text-[10px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Sistema</p>
-                </div>
-                <AdminNavLink href="/admin/lonjas" icon={<DownloadCloud className="w-5 h-5" />} label="Lonjas ETL" />
+                {tenant !== 'equipop' && (
+                    <>
+                        <div className="pt-4 pb-2">
+                            <p className="px-4 text-[10px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Sistema</p>
+                        </div>
+                        <AdminNavLink href="/admin/lonjas" icon={<DownloadCloud className="w-5 h-5" />} label="Lonjas ETL" />
+                    </>
+                )}
             </nav>
         </aside>
     );
