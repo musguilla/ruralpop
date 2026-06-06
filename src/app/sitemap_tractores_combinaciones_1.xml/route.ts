@@ -14,7 +14,7 @@ export async function GET() {
 
         let sitemapEntries = '';
 
-        let allPages = [];
+        let allPages: any[] = [];
         let from = 0;
         const limit = 1000;
 

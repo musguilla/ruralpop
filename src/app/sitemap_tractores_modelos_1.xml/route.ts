@@ -12,7 +12,7 @@ export async function GET() {
     );
 
     try {
-        let allModels = [];
+        let allModels: any[] = [];
         let from = 0;
         const limit = 1000;
 
