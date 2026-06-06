@@ -37,38 +37,35 @@ export async function generateMetadata(props: {
     if (subLabel) parts.push(subLabel);
     else if (catLabel && !qLabel) parts.push(catLabel);
 
-    if (parts.length === 0 && locationName) {
-        // This is a location-only URL (e.g., /anuncios-asturias)
-        // We inject strong base keywords to make the title powerful
-        const charCodeSumLoc = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-        const locationPrefixes = [
-            "Ganadería",
-            "Ganado en venta",
-            "Mercado agrícola y ganadero",
-            "Compraventa del sector rural"
-        ];
-        const prefix = locationPrefixes[charCodeSumLoc % locationPrefixes.length];
-        parts.push(`${prefix} en ${locationName}`);
-    } else if (locationName) {
+    const isLocationOnly = parts.length === 0 && locationName;
+
+    if (!isLocationOnly && locationName) {
         parts.push(`en ${locationName}`);
     }
 
     const baseSubject = parts.join(" ");
 
-    const seoVariations = [
-        "Comprar y vender ganado",
-        "Compraventa de animales ganaderos",
-        "App gratis compraventa ganado",
-        "Anuncios gratis del campo",
-        "Mercado rural de segunda mano",
-        "Compra venta ganadería"
-    ];
-
-    const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    const suffix = seoVariations[charCodeSum % seoVariations.length];
-
     let pageTitle = "Mercado Agrícola y Ganadero | Ruralpop";
-    if (baseSubject.trim()) {
+
+    if (isLocationOnly) {
+        const charCodeSumLoc = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const variations = [
+            `Ganadería en ${locationName} - Comprar y vender ganado`,
+            `Ganado en venta en ${locationName} - Vender ganado ${locationName}`
+        ];
+        pageTitle = `${variations[charCodeSumLoc % 2]} | Ruralpop`;
+    } else if (baseSubject.trim()) {
+        const seoVariations = [
+            "Comprar y vender ganado",
+            "Compraventa de animales ganaderos",
+            "App gratis compraventa ganado",
+            "Anuncios gratis del campo",
+            "Mercado rural de segunda mano",
+            "Compra venta ganadería"
+        ];
+        const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const suffix = seoVariations[charCodeSum % seoVariations.length];
+
         const candidateTitle = `${baseSubject} - ${suffix} | Ruralpop`;
         if (candidateTitle.length > 72) {
             pageTitle = `${baseSubject} | Ruralpop`;
