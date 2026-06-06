@@ -53,7 +53,8 @@ export async function generateMetadata(props: {
             `Ganadería en ${locationName} - Comprar y vender ganado`,
             `Ganado en venta en ${locationName} - Vender ganado ${locationName}`
         ];
-        pageTitle = `${variations[charCodeSumLoc % 2]} | Ruralpop`;
+        // Omitimos " | Ruralpop" porque con provincias largas pasaría de 60 caracteres y Google lo cortaría (...)
+        pageTitle = variations[charCodeSumLoc % 2];
     } else if (baseSubject.trim()) {
         const seoVariations = [
             "Comprar y vender ganado",
