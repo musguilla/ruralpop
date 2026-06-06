@@ -37,7 +37,21 @@ export async function generateMetadata(props: {
     if (subLabel) parts.push(subLabel);
     else if (catLabel && !qLabel) parts.push(catLabel);
 
-    if (locationName) parts.push(`en ${locationName}`);
+    if (parts.length === 0 && locationName) {
+        // This is a location-only URL (e.g., /anuncios-asturias)
+        // We inject strong base keywords to make the title powerful
+        const charCodeSumLoc = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const locationPrefixes = [
+            "Ganadería",
+            "Ganado en venta",
+            "Mercado agrícola y ganadero",
+            "Compraventa del sector rural"
+        ];
+        const prefix = locationPrefixes[charCodeSumLoc % locationPrefixes.length];
+        parts.push(`${prefix} en ${locationName}`);
+    } else if (locationName) {
+        parts.push(`en ${locationName}`);
+    }
 
     const baseSubject = parts.join(" ");
 
