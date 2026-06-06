@@ -14,24 +14,34 @@ export async function GET() {
 
         let sitemapEntries = '';
 
-        // Fetch indexable combinations
-        const { data: pages, error } = await supabase
-            .from('tractor_combination_pages')
-            .select('url_path, updated_at, last_generated_at')
-            .eq('indexable', true)
-            .limit(40000); // Max 40k per sitemap
+        let allPages = [];
+        let from = 0;
+        const limit = 1000;
 
-        if (!error && pages) {
-            for (const page of pages) {
-                const date = page.last_generated_at || page.updated_at || new Date().toISOString();
-                sitemapEntries += `
-                    <url>
-                        <loc>${SITE_URL}${page.url_path}</loc>
-                        <lastmod>${new Date(date).toISOString()}</lastmod>
-                        <changefreq>weekly</changefreq>
-                        <priority>0.6</priority>
-                    </url>`;
-            }
+        while (true) {
+            const { data: pages, error } = await supabase
+                .from('tractor_combination_pages')
+                .select('url_path, updated_at, last_generated_at')
+                .eq('indexable', true)
+                .range(from, from + limit - 1);
+
+            if (error || !pages || pages.length === 0) break;
+            
+            allPages = allPages.concat(pages);
+            
+            if (pages.length < limit) break;
+            from += limit;
+        }
+
+        for (const page of allPages) {
+            const date = page.last_generated_at || page.updated_at || new Date().toISOString();
+            sitemapEntries += `
+                <url>
+                    <loc>${SITE_URL}${page.url_path}</loc>
+                    <lastmod>${new Date(date).toISOString()}</lastmod>
+                    <changefreq>weekly</changefreq>
+                    <priority>0.6</priority>
+                </url>`;
         }
 
         const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

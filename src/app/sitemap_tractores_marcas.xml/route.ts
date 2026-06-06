@@ -21,6 +21,9 @@ export async function GET() {
     );
 
     try {
+        // Add the root tractors page here
+        addEntry('/tractores', 1.0);
+
         const { data: brands, error: brandsError } = await supabase
             .from('tractor_brands')
             .select('slug, updated_at')
