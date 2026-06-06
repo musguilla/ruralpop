@@ -11,6 +11,7 @@ import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
+import { notFound } from "next/navigation";
 
 export async function ListingsGrid({ searchParams, isHome = false, disableInFeedAds = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean, disableInFeedAds?: boolean }) {
     let supabase = await createClient();
@@ -221,6 +222,10 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
     }
 
     if (!listings || listings.length === 0) {
+        if (currentPage > 1) {
+            notFound();
+        }
+
         return (
             <div className="flex flex-col items-center justify-center p-16 text-center bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl">
                 {isEquipop ? (
