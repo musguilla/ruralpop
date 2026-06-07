@@ -18,8 +18,18 @@ export async function getServerTenantFilterString(): Promise<string> {
  */
 export async function getServerTenantSlug(): Promise<string | null> {
     const headersList = await headers();
-    const headerTenant = headersList.get('x-tenant');
-    const envTenant = process.env.NEXT_PUBLIC_RURALPOP_TENANT_ID;
     
-    return headerTenant || envTenant || null;
+    // 1. Check explicitly set middleware header
+    const headerTenant = headersList.get('x-tenant');
+    if (headerTenant) return headerTenant;
+
+    // 2. Check host header directly (solves Next.js soft navigation /_next/data missing x-tenant)
+    const host = headersList.get('host') || headersList.get('x-forwarded-host') || '';
+    if (host.includes('equipop')) {
+        return 'equipop';
+    }
+
+    // 3. Fallback to env var (returns a UUID, not a slug, but config handles it)
+    const envTenant = process.env.NEXT_PUBLIC_RURALPOP_TENANT_ID;
+    return envTenant || null;
 }
