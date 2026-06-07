@@ -121,6 +121,17 @@ export async function getSitemapXmlById(id: number): Promise<string> {
 
     const slice = sitemapEntries.slice(start, end);
 
+    // Si el slice está completamente vacío (ej. sitemap_4), metemos la portada como fallback
+    // para evitar que Google Search Console nos lance un error de "Sitemap vacío" o XML inválido
+    if (slice.length === 0) {
+        slice.push({
+            url: baseUrl,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 1.0,
+        });
+    }
+
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
     slice.forEach(entry => {
