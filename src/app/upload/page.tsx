@@ -2,6 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import UploadForm from "./UploadForm";
 import stripe from "@/lib/stripe";
+import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getTenantConfig, getRuralpopDatabaseId } from "@/config/tenants";
 
 export const dynamic = "force-dynamic";
 
@@ -58,5 +60,8 @@ export default async function UploadPage() {
         zoo_register_number: profile?.zoo_register_number || ""
     };
 
-    return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} userEmail={user.email} hasWalletConfigured={isStripeReady} isProfesional={isProfesional} userProfile={userProfile} />;
+    const tenantSlug = await getServerTenantSlug();
+    const activeTenantId = tenantSlug ? getTenantConfig(tenantSlug).id : getRuralpopDatabaseId();
+
+    return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} userEmail={user.email} hasWalletConfigured={isStripeReady} isProfesional={isProfesional} userProfile={userProfile} activeTenantId={activeTenantId || undefined} />;
 }

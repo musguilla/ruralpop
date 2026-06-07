@@ -26,9 +26,10 @@ interface UploadFormProps {
         nif: string;
         zoo_register_number: string;
     };
+    activeTenantId?: string;
 }
 
-export default function UploadForm({ savedPhone, initialProvinces, userEmail, hasWalletConfigured = false, isProfesional = false, userProfile }: UploadFormProps) {
+export default function UploadForm({ savedPhone, initialProvinces, userEmail, hasWalletConfigured = false, isProfesional = false, userProfile, activeTenantId }: UploadFormProps) {
     const { t } = useTranslation();
     const CATEGORIES = useCategories();
     const router = useRouter();
@@ -136,6 +137,10 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
         const muniName = municipalities.find(m => m.id === Number(selectedMunicipality))?.name || "";
         const locationString = muniName ? `${muniName} (${provName})` : provName;
         formData.append("location", locationString);
+
+        if (activeTenantId) {
+            formData.append("tenant_id", activeTenantId);
+        }
 
         try {
             const res = await createListing(formData);

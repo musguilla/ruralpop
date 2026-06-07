@@ -2,7 +2,8 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-import { getRuralpopDatabaseId } from "@/config/tenants";
+import { getRuralpopDatabaseId, getTenantConfig } from "@/config/tenants";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export async function createListing(formData: FormData) {
     const supabase = await createClient();
@@ -70,6 +71,15 @@ export async function createListing(formData: FormData) {
             .eq("id", user.id);
     }
 
+    // Determine correct tenant
+    const formTenantId = formData.get("tenant_id") as string;
+    let activeTenantId = formTenantId;
+    
+    if (!activeTenantId) {
+        const tenantSlug = await getServerTenantSlug();
+        activeTenantId = tenantSlug ? getTenantConfig(tenantSlug).id || getRuralpopDatabaseId() || "" : getRuralpopDatabaseId() || "";
+    }
+
     const { data: insertedData, error } = await supabase.from("listings").insert({
         title,
         description,
@@ -87,7 +97,7 @@ export async function createListing(formData: FormData) {
         tags,
         user_id: user.id,
         status: isRestricted ? "draft" : "active",
-        tenant_id: getRuralpopDatabaseId() || undefined
+        tenant_id: activeTenantId || undefined
     }).select('id').single();
 
     if (error) {
