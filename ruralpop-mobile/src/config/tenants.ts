@@ -6,7 +6,7 @@
  * aislamiento de datos respecto a futuras verticales (ej. Equipop) que operen en la misma DB.
  */
 
-export const RURALPOP_TENANT_ID = process.env.EXPO_PUBLIC_RURALPOP_TENANT_ID;
+export const ACTIVE_TENANT_ID = process.env.EXPO_PUBLIC_TENANT_ID;
 
 /**
  * Devuelve el string de filtro para inyectar en llamadas Supabase .or()
@@ -16,7 +16,7 @@ export const RURALPOP_TENANT_ID = process.env.EXPO_PUBLIC_RURALPOP_TENANT_ID;
  * .from('listings').select('*').or(getDefaultTenantFilterString())
  */
 export function getDefaultTenantFilterString(): string {
-    const defaultId = RURALPOP_TENANT_ID || 'RURALPOP';
+    const defaultId = ACTIVE_TENANT_ID || 'RURALPOP';
     return `tenant_id.eq.${defaultId},tenant_id.is.null`;
 }
 
@@ -24,5 +24,5 @@ export function getDefaultTenantFilterString(): string {
  * Devuelve el ID de tenant actual para insertar en nuevas entidades (anuncios, chats, etc.)
  */
 export function getRuralpopDatabaseId(): string | undefined {
-    return RURALPOP_TENANT_ID;
+    return ACTIVE_TENANT_ID;
 }

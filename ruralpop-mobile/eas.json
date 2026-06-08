@@ -22,7 +22,22 @@
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_qRuIoHNLVeV3zaGW0Q7A-Q_aYdwNLtj",
         "EXPO_PUBLIC_R2_URL": "https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev",
         "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_live_51T4NUU6eGJa0K3pVIPTM2wlSBgUpxs2fx6vY3O5YpAxBMOSvK0ub3XseJAJ6gnMDTtejDQCPRnmuCNtf00nxSE4m00baYPDNMg",
-        "EXPO_PUBLIC_RURALPOP_TENANT_ID": "ea2490cc-dc33-48f3-bc7b-82b14aa70eb9"
+        "EXPO_PUBLIC_TENANT_ID": "ea2490cc-dc33-48f3-bc7b-82b14aa70eb9"
+      }
+    },
+    "production-equipop": {
+      "autoIncrement": true,
+      "ios": {
+        "image": "latest"
+      },
+      "env": {
+        "APP_VARIANT": "equipop",
+        "npm_config_legacy_peer_deps": "true",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://zrpucbuvojskcwrhwevv.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_qRuIoHNLVeV3zaGW0Q7A-Q_aYdwNLtj",
+        "EXPO_PUBLIC_R2_URL": "https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev",
+        "EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_live_51T4NUU6eGJa0K3pVIPTM2wlSBgUpxs2fx6vY3O5YpAxBMOSvK0ub3XseJAJ6gnMDTtejDQCPRnmuCNtf00nxSE4m00baYPDNMg",
+        "EXPO_PUBLIC_TENANT_ID": "69d55371-2f70-4e67-b55c-4502bce305bb"
       }
     }
   },
