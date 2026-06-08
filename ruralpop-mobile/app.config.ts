@@ -79,7 +79,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           enableGooglePay: false
         }
       ],
-      "expo-tracking-transparency"
+      "expo-tracking-transparency",
+      "./plugins/withFmtFix.js"
     ],
     extra: {
       router: {},
