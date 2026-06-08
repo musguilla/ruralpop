@@ -84,7 +84,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     extra: {
       router: {},
       eas: {
-        projectId: "0db84bcc-5fb6-4cf2-9e28-525900e9a799"
+        projectId: IS_EQUIPOP ? "5dcbb92f-75a1-4e54-aa8b-8757e29f5d9b" : "0db84bcc-5fb6-4cf2-9e28-525900e9a799"
       }
     },
     owner: "ruralpop",
@@ -92,7 +92,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       policy: "appVersion"
     },
     updates: {
-      url: "https://u.expo.dev/0db84bcc-5fb6-4cf2-9e28-525900e9a799"
+      url: IS_EQUIPOP ? "https://u.expo.dev/5dcbb92f-75a1-4e54-aa8b-8757e29f5d9b" : "https://u.expo.dev/0db84bcc-5fb6-4cf2-9e28-525900e9a799"
     }
   };
 };
