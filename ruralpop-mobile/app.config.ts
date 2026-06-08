@@ -6,7 +6,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   return {
     ...config,
     name: IS_EQUIPOP ? "Equipop" : "Ruralpop",
-    slug: IS_EQUIPOP ? "equipop-mobile" : "ruralpop-mobile",
+    slug: IS_EQUIPOP ? "equipop" : "ruralpop-mobile",
     scheme: IS_EQUIPOP ? "equipop" : "ruralpop",
     version: "1.0.30",
     orientation: "portrait",
