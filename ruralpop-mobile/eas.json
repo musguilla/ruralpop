@@ -46,6 +46,11 @@
       "ios": {
         "ascAppId": "6759678666"
       }
+    },
+    "production-equipop": {
+      "ios": {
+        "ascAppId": "6778118647"
+      }
     }
   }
 }
