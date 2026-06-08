@@ -9,7 +9,7 @@ import { Listing } from '../../src/types';
 import { Search } from 'lucide-react-native';
 import { TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
-import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenants';
 
 const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 2;
@@ -233,7 +233,9 @@ export default function Home() {
         >
             {/* Header that sticks to top */}
             <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row justify-center items-center h-14">
-                <Text className="text-2xl font-extrabold text-primary tracking-tight">ruralpop</Text>
+                <Text className="text-2xl font-extrabold tracking-tight" style={{ color: IS_EQUIPOP ? '#194152' : '#059669' }}>
+                    {IS_EQUIPOP ? 'equipop' : 'ruralpop'}
+                </Text>
             </View>
 
             {loading && !refreshing ? (

@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import { User, ChevronRight, Briefcase, Handshake, Tag, Wallet, Heart, Settings, MessageSquare, BadgeCheck } from "lucide-react-native";
 import { supabase } from "../../src/lib/supabase";
 import { useEffect, useState } from "react";
+import { IS_EQUIPOP } from "../../src/config/tenants";
 
 export default function ProfileScreen() {
     const { session, user, isLoading } = useAuth();
@@ -23,7 +24,7 @@ export default function ProfileScreen() {
         fetchProfile();
     }, [user?.id]);
 
-    const displayName = profile?.commercial_name || profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || 'Usuario Ruralpop';
+    const displayName = profile?.commercial_name || profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || (IS_EQUIPOP ? 'Usuario Equipop' : 'Usuario Ruralpop');
     const avatarUrl = profile?.company_logo_url || profile?.avatar_url || user?.user_metadata?.avatar_url;
     const joinedYear = profile?.created_at ? new Date(profile.created_at).getFullYear() : new Date().getFullYear();
 
@@ -37,7 +38,7 @@ export default function ProfileScreen() {
                 <View className="w-16 h-16 bg-primary-muted rounded-full items-center justify-center mb-6">
                     <User className="text-primary" size={32} />
                 </View>
-                <Text className="text-xl font-bold text-center text-text mb-2">Tu perfil en Ruralpop</Text>
+                <Text className="text-xl font-bold text-center text-text mb-2">Tu perfil en {IS_EQUIPOP ? 'Equipop' : 'Ruralpop'}</Text>
                 <Text className="text-center text-text-muted mb-8">
                     Inicia sesión para editar tu perfil, gestionar tus anuncios y revisar tus mensajes.
                 </Text>
@@ -104,7 +105,7 @@ export default function ProfileScreen() {
                         <Text className="text-xl font-extrabold text-text mb-1" numberOfLines={1}>
                             {displayName}
                         </Text>
-                        <Text className="text-text-muted text-[15px]">En Ruralpop desde {joinedYear}</Text>
+                        <Text className="text-text-muted text-[15px]">En {IS_EQUIPOP ? 'Equipop' : 'Ruralpop'} desde {joinedYear}</Text>
                         {user?.email && <Text className="text-gray-400 text-xs mt-1" numberOfLines={1}>{user.email}</Text>}
                     </View>
                     
@@ -200,7 +201,7 @@ export default function ProfileScreen() {
                             <View className="flex-row items-center flex-1 pr-4">
                                 <Briefcase color="#374151" size={24} strokeWidth={1.5} />
                                 <View className="flex-row items-center ml-4 flex-1">
-                                    <Text className="text-[17px] text-gray-700 mr-3 shrink-0">Ruralpop PRO</Text>
+                                    <Text className="text-[17px] text-gray-700 mr-3 shrink-0">{IS_EQUIPOP ? 'Equipop PRO' : 'Ruralpop PRO'}</Text>
                                 </View>
                             </View>
                             <ChevronRight color="#d1d5db" size={20} />
@@ -210,7 +211,7 @@ export default function ProfileScreen() {
                             <View className="flex-row items-center flex-1 pr-4">
                                 <Briefcase color="#374151" size={24} strokeWidth={1.5} />
                                 <View className="flex-row items-center ml-4 flex-1">
-                                    <Text className="text-[17px] text-gray-700 mr-3 shrink-0">Ruralpop PRO</Text>
+                                    <Text className="text-[17px] text-gray-700 mr-3 shrink-0">{IS_EQUIPOP ? 'Equipop PRO' : 'Ruralpop PRO'}</Text>
                                     <View className="bg-primary/10 px-2 py-0.5 rounded-md shrink-0">
                                         <Text className="text-[10px] uppercase font-bold text-primary tracking-wider">Próximamente</Text>
                                     </View>
