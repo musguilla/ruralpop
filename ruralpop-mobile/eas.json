@@ -50,6 +50,9 @@
     "production-equipop": {
       "ios": {
         "ascAppId": "6778118647"
+      },
+      "env": {
+        "APP_VARIANT": "equipop"
       }
     }
   }
