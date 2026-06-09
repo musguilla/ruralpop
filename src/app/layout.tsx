@@ -137,10 +137,10 @@ export default async function RootLayout({
             gtag('config', 'G-RTTVCPX0XQ');
           `}
         </Script>
-        {/* Google AdSense (script nativo en HTML pelado para evitar bloqueos del crawler de Adsense al verificar dominio) */}
+        {/* Google AdSense (script nativo para cargar la librería). Al quitar el ?client= forzamos a Google a NO inyectar anuncios automáticos ni popups viñeta */}
         <script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2042067618462129"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
           crossOrigin="anonymous"
         ></script>
         <LocaleProvider locale={locale} dictionary={dictionary}>
