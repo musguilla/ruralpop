@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { sendMilestoneReminderEmail } from "@/lib/email/milestone-reminder";
 
 export async function toggleFavorite(listingId: string) {
     const supabase = await createClient();
@@ -36,6 +37,55 @@ export async function toggleFavorite(listingId: string) {
                 .insert([{ user_id: user.id, listing_id: listingId }]);
 
             if (error) throw error;
+
+            // --- MILESTONE LOGIC ---
+            // After successfully adding, count the favorites for this listing
+            const { count: favCount } = await supabase
+                .from("favorites")
+                .select("id", { count: "exact", head: true })
+                .eq("listing_id", listingId);
+
+            if (favCount === 10 || favCount === 20) {
+                const milestoneTag = `_milestone_${favCount}_sent`;
+                
+                // Fetch the listing to check its tags and get seller's email
+                const { data: listingData } = await supabase
+                    .from("listings")
+                    .select(`
+                        id, 
+                        title, 
+                        image_urls, 
+                        tags,
+                        users ( email )
+                    `)
+                    .eq("id", listingId)
+                    .single();
+
+                if (listingData) {
+                    const currentTags = listingData.tags || [];
+                    const sellerEmail = (listingData.users as any)?.email;
+
+                    // If we haven't sent this milestone yet
+                    if (!currentTags.includes(milestoneTag) && sellerEmail) {
+                        const newTags = [...currentTags, milestoneTag];
+
+                        // Send the email asynchronously
+                        sendMilestoneReminderEmail(sellerEmail, {
+                            id: listingData.id,
+                            title: listingData.title,
+                            image_urls: listingData.image_urls
+                        }, favCount).catch(err => console.error("Milestone email error:", err));
+
+                        // Update the tags in the database to prevent resending
+                        await supabase
+                            .from("listings")
+                            .update({ tags: newTags })
+                            .eq("id", listingId);
+                    }
+                }
+            }
+            // -----------------------
+
             return { success: true, isFavorited: true };
         }
     } catch (error: any) {
