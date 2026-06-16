@@ -235,3 +235,87 @@ export async function activateListing(listingId: string) {
 
     return { success: true };
 }
+
+export async function deleteMultipleListings(listingIds: string[]) {
+    if (!await isAdmin()) {
+        return { success: false, error: "No estás autorizado para realizar esta acción." };
+    }
+
+    if (!listingIds || listingIds.length === 0) {
+        return { success: false, error: "No se proporcionaron anuncios para borrar." };
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+        console.error("Faltan variables de entorno para inicializar Supabase Admin.");
+        return { success: false, error: "Error de configuración de servidor." };
+    }
+
+    let supabaseAdmin;
+    try {
+        supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey);
+    } catch (err) {
+        console.error("Error creando cliente supabaseAdmin:", err);
+        return { success: false, error: "Hubo un error inicializando cliente backend." };
+    }
+
+    // 1. Obtener las imágenes de todos los anuncios a borrar
+    const { data: listings, error: fetchError } = await supabaseAdmin
+        .from("listings")
+        .select("id, image_urls")
+        .in("id", listingIds);
+
+    if (fetchError) {
+        console.error("Error al recuperar los anuncios para borrado masivo:", fetchError);
+        return { success: false, error: "Error al leer los anuncios seleccionados." };
+    }
+
+    if (!listings || listings.length === 0) {
+        return { success: true }; // Ya estaban borrados
+    }
+
+    // 2. Borrar de la base de datos
+    const { error: deleteError } = await supabaseAdmin
+        .from("listings")
+        .delete()
+        .in("id", listingIds);
+
+    if (deleteError) {
+        console.error("Error en borrado masivo DB:", deleteError);
+        return { success: false, error: deleteError.message };
+    }
+
+    // 3. Borrar imágenes del bucket
+    const filePaths: string[] = [];
+    for (const listing of listings) {
+        if (listing.image_urls && Array.isArray(listing.image_urls)) {
+            for (const url of listing.image_urls) {
+                const parts = url.split('/public/listings/');
+                if (parts.length > 1 && parts[1]) {
+                    filePaths.push(parts[1]);
+                }
+            }
+        }
+    }
+
+    if (filePaths.length > 0) {
+        // Supabase allows bulk removal but there might be a limit (e.g. 100).
+        // For our use case (bulk delete from a page of 40), it should be fine to do it in one go.
+        const { error: storageError } = await supabaseAdmin.storage
+            .from("listings")
+            .remove(filePaths);
+
+        if (storageError) {
+            console.error("Error en limpieza masiva de Storage:", storageError);
+        } else {
+            console.log(`🧹 Limpieza masiva de storage exitosa: ${filePaths.length} archivos eliminados.`);
+        }
+    }
+
+    revalidatePath("/admin/listings");
+    revalidatePath("/");
+    
+    return { success: true };
+}
