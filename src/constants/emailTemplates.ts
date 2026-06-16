@@ -232,6 +232,44 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
     </div>
 </body>
 </html>`
+    },
+    {
+        id: "recordatorio-bienestar-animal",
+        name: "Recordatorio: Validar Anuncio Pro",
+        description: "Email inmediato y recordatorio (3/7 días) para anuncios retenidos en borrador por Bienestar Animal.",
+        category: "Transaccional",
+        subject: "Tu anuncio está pendiente de publicar 🚜",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; background-color: #ffffff; border-radius: 12px; padding: 40px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+      <h2 style="color: #2F8A43; text-align: center; font-size: 24px; margin-top: 0;">¡Tu anuncio casi está listo!</h2>
+      <p style="text-align: center; font-size: 16px; line-height: 1.6; color: #4b5563;">
+        Hemos guardado tu anuncio, pero por la Ley de Bienestar Animal (Ley 7/2023) necesitamos que valides tu perfil como profesional introduciendo tu <strong>Nº de Reg. Zoológico / Explotación / Criadero</strong>.
+      </p>
+      
+      <div style="background-color: #f9f9f9; padding: 20px; border-radius: 12px; margin: 25px 0; text-align: center; border: 1px solid #eee;">
+        <img src="https://www.ruralpop.com/apple-icon.png" alt="Foto del anuncio" style="width: 150px; height: 150px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+        <h3 style="margin: 0; font-size: 18px; color: #111;">[Título de ejemplo del anuncio]</h3>
+        <p style="color: #666; font-size: 14px; margin-top: 5px;">Estado: <strong>Borrador (Pendiente de validar)</strong></p>
+        
+        <a href="https://www.ruralpop.com/dashboard/validar-perfil" style="display: inline-block; margin-top: 20px; padding: 14px 28px; background-color: #2F8A43; color: white; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px;">
+          Validar Perfil y Publicar Anuncio
+        </a>
+      </div>
+      
+      <p style="margin-top: 30px; font-size: 12px; color: #777; border-top: 1px solid #eee; padding-top: 15px; text-align: center;">
+        Si tienes dudas, responde a este correo y te ayudaremos.<br/>
+        El equipo de Ruralpop 🚜
+      </p>
+    </div>
+</body>
+</html>`
     }
 ];
 
