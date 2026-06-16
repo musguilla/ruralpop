@@ -163,8 +163,8 @@ export default async function ListingDetailPage(props: Props) {
     let dbClient: any = supabase;
     
     if (user) {
-        const { data: userProfile } = await supabase.from('users').select('is_admin').eq('id', user.id).single();
-        if (userProfile?.is_admin) {
+        const { data: userProfile } = await supabase.from('users').select('role').eq('id', user.id).single();
+        if (userProfile?.role === 'admin') {
             const { createClient: createAdminClient } = await import('@supabase/supabase-js');
             dbClient = createAdminClient(
                 process.env.NEXT_PUBLIC_SUPABASE_URL!,
