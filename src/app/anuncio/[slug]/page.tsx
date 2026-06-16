@@ -251,6 +251,7 @@ export default async function ListingDetailPage(props: Props) {
             "itemCondition": "https://schema.org/UsedCondition",
             "hasMerchantReturnPolicy": {
                 "@type": "MerchantReturnPolicy",
+                "applicableCountry": "ES",
                 "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"
             },
             "shippingDetails": {
