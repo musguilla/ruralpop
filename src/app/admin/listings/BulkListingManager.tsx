@@ -161,7 +161,7 @@ export function BulkListingManager({ listings }: BulkListingManagerProps) {
                             <div className="absolute left-3 top-3 sm:left-4 sm:top-4 z-10">
                                 <button 
                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleSelection(l.id); }}
-                                    className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all bg-white/90 backdrop-blur-sm shadow-sm ${isSelected ? 'bg-[var(--ag-sys-color-primary)] border-[var(--ag-sys-color-primary)] ring-2 ring-[var(--ag-sys-color-primary)]/20 text-white' : 'border-gray-300 hover:border-gray-400 text-transparent hover:text-gray-300'}`}
+                                    className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all backdrop-blur-sm shadow-sm ${isSelected ? 'bg-[var(--ag-sys-color-primary)] border-[var(--ag-sys-color-primary)] ring-2 ring-[var(--ag-sys-color-primary)]/20 text-white' : 'bg-white/90 border-gray-300 hover:border-gray-400 text-transparent hover:text-gray-300'}`}
                                 >
                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                                 </button>
