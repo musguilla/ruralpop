@@ -160,8 +160,21 @@ export default async function ListingDetailPage(props: Props) {
     const { error: visitErr } = await supabase.rpc('increment_listing_visits', { listing_id: id });
     if (visitErr) console.error(visitErr);
 
+    let dbClient: any = supabase;
+    
+    if (user) {
+        const { data: userProfile } = await supabase.from('users').select('is_admin').eq('id', user.id).single();
+        if (userProfile?.is_admin) {
+            const { createClient: createAdminClient } = await import('@supabase/supabase-js');
+            dbClient = createAdminClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.SUPABASE_SERVICE_ROLE_KEY!
+            );
+        }
+    }
+
     // Obtenemos el anuncio con los datos del vendedor (join con la tabla users)
-    const { data: listing, error } = await supabase
+    const { data: listing, error } = await dbClient
         .from("listings")
         .select(`
       *,
