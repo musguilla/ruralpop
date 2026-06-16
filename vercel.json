@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/release-escrow",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/welfare-draft-reminders",
+      "schedule": "0 10 * * *"
     }
   ]
 }

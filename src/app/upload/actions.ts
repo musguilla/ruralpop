@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { getRuralpopDatabaseId, getTenantConfig } from "@/config/tenants";
 import { getServerTenantSlug } from "@/utils/tenant/server";
+import { sendWelfareReminderEmail } from "@/lib/email/welfare-reminder";
 
 export async function createListing(formData: FormData) {
     const supabase = await createClient();
@@ -103,6 +104,15 @@ export async function createListing(formData: FormData) {
     if (error) {
         console.error("Error creating listing:", error);
         return { error: error.message };
+    }
+
+    if (isRestricted && user.email) {
+        // Send immediate reminder asynchronously
+        sendWelfareReminderEmail(user.email, {
+            id: insertedData.id,
+            title,
+            image_urls,
+        }).catch(err => console.error("Failed to send welfare reminder email:", err));
     }
 
     revalidatePath("/");
