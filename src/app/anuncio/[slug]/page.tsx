@@ -421,7 +421,7 @@ export default async function ListingDetailPage(props: Props) {
                                         </p>
                                     )}
 
-                                    {listing.seller?.zoo_register_number && (
+                                    {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
                                         <div className="mt-2 text-xs text-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/10 px-2.5 py-1.5 rounded-lg border border-[var(--ag-sys-color-primary)]/20 inline-block font-semibold flex items-center gap-1.5">
                                             <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" />
                                             <span>Reg. Zoológico: {listing.seller.zoo_register_number}</span>

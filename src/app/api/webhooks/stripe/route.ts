@@ -77,14 +77,19 @@ export async function POST(req: Request) {
                         featured_until: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
                     };
                 } else if (planId === "animal_welfare_validation") {
+                    const { data: currentListing } = await supabaseAdmin.from("listings").select("tags").eq("id", listingId).single();
+                    const existingTags = currentListing?.tags || [];
+                    const newTags = Array.from(new Set([...existingTags, 'welfare_validated']));
+
                     updateData = {
-                        status: 'active'
+                        status: 'active',
+                        tags: newTags
                     };
 
                     // Update the user's profile with legal data
                     const { userId, welfare_nif, welfare_zoo_register_number, welfare_phone, welfare_name, welfare_lastName } = paymentIntent.metadata;
                     if (userId) {
-                        const userUpdate: any = { role: 'profesional' };
+                        const userUpdate: any = {};
                         if (welfare_nif) userUpdate.nif = welfare_nif;
                         if (welfare_zoo_register_number) userUpdate.zoo_register_number = welfare_zoo_register_number;
                         if (welfare_phone) userUpdate.contact_phone = welfare_phone;
