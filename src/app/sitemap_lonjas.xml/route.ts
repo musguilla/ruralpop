@@ -43,7 +43,7 @@ export async function GET() {
             while (true) {
                 const { data: prices, error } = await supabase
                     .from('livestock_prices')
-                    .select('category_name, date')
+                    .select('normalized_category, date')
                     .eq('market_source_id', market.id)
                     .order('date', { ascending: false })
                     .range(from, from + limit - 1);
@@ -51,8 +51,10 @@ export async function GET() {
                 if (error || !prices || prices.length === 0) break;
 
                 for (const price of prices) {
-                    if (!categoryMap.has(price.category_name)) {
-                        categoryMap.set(price.category_name, price.date);
+                    if (price.normalized_category && !price.normalized_category.startsWith('sin_normalizar_')) {
+                        if (!categoryMap.has(price.normalized_category)) {
+                            categoryMap.set(price.normalized_category, price.date);
+                        }
                     }
                 }
 
@@ -60,8 +62,7 @@ export async function GET() {
                 from += limit;
             }
 
-            categoryMap.forEach((latestDate, categoryName) => {
-                const categorySlug = slugify(categoryName);
+            categoryMap.forEach((latestDate, categorySlug) => {
                 sitemapEntries.push({
                     url: `${baseUrl}/precios-ganado/vacuno/mercados/${marketSlug}/${categorySlug}`,
                     lastModified: new Date(latestDate),
