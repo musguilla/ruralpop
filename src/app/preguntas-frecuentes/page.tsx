@@ -1,15 +1,26 @@
 import React from 'react';
-import { Metadata } from 'next';
 import Link from 'next/link';
 import FAQClient from './FAQClient';
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
-export const metadata: Metadata = {
-    title: 'Preguntas Frecuentes - Ruralpop',
-    description: 'Encuentra respuestas a las preguntas más frecuentes sobre cómo usar Ruralpop: registrarse, subir anuncios, cuentas profesionales y seguridad en nuestra plataforma rural.',
-    alternates: { canonical: "/preguntas-frecuentes" }
-};
+export async function generateMetadata() {
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+    
+    return {
+        title: `Preguntas Frecuentes - ${brand}`,
+        description: `Encuentra respuestas a las preguntas más frecuentes sobre cómo usar ${brand}: registrarse, subir anuncios, cuentas profesionales y seguridad.`,
+        alternates: { canonical: isEquipop ? "/equipop/preguntas-frecuentes" : "/preguntas-frecuentes" }
+    };
+}
 
-export default function FAQPage() {
+export default async function FAQPage() {
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+    const domain = isEquipop ? 'equipop.app' : 'ruralpop.com';
+
     // FAQ Data definition for both rendering and Schema.org
     const faqs = [
         {
@@ -17,7 +28,7 @@ export default function FAQPage() {
             id: 'cuenta',
             questions: [
                 {
-                    q: '¿Cómo me registro en Ruralpop?',
+                    q: `¿Cómo me registro en ${brand}?`,
                     a: '1. Haz clic en el icono de usuario o "Entrar / Registro" en la parte superior derecha de la pantalla.\n2. Selecciona "Crear cuenta" o usa directamente tu cuenta de Google o Apple para acceder rápidamente.\n3. Rellena tus datos básicos y ¡listo! Ya eres parte de la comunidad.'
                 },
                 {
@@ -26,15 +37,15 @@ export default function FAQPage() {
                 },
                 {
                     q: '¿Cómo contacto con otro usuario por chat?',
-                    a: '1. Encuentra un anuncio que te interese.\n2. En la página del anuncio, haz clic en el botón "Contactar".\n3. Escribe tu mensaje y el usuario lo recibirá al instante en su buzón de Ruralpop y por correo electrónico.'
+                    a: `1. Encuentra un anuncio que te interese.\n2. En la página del anuncio, haz clic en el botón "Contactar".\n3. Escribe tu mensaje y el usuario lo recibirá al instante en su buzón de ${brand} y por correo electrónico.`
                 },
                 {
-                    q: '¿Es seguro usar Ruralpop?',
+                    q: `¿Es seguro usar ${brand}?`,
                     a: '1. Sí. Verificamos constantemente las cuentas profesionales.\n2. Contamos con un sistema de reportes en cada anuncio por si ves algo sospechoso.\n3. Mantenemos tu privacidad intacta: tus datos de contacto no son públicos a menos que tú decidas compartirlos.'
                 },
                 {
                     q: '¿Eres profesional o empresa del sector?',
-                    a: '1. Si tienes una explotación ganadera, eres un concesionario de maquinaria, o una tienda.\n2. Te recomendamos crear directamente una cuenta Profesional para disfrutar de tu propio escaparate digital y subir anuncios sin límite.'
+                    a: '1. Si tienes una empresa o negocio relacionado con el sector.\n2. Te recomendamos crear directamente una cuenta Profesional para disfrutar de tu propio escaparate digital y subir anuncios sin límite.'
                 }
             ]
         },
@@ -43,7 +54,7 @@ export default function FAQPage() {
             id: 'anuncios',
             questions: [
                 {
-                    q: '¿Cómo subo un anuncio a Ruralpop?',
+                    q: `¿Cómo subo un anuncio a ${brand}?`,
                     a: '1. Una vez logueado, haz clic en el botón verde "Vender" de la barra superior.\n2. Selecciona la categoría principal y subcategoría para tu producto o animal.\n3. Sube fotos claras, pon un título descriptivo y un precio.\n4. Revisa los datos y dale a publicar. Ya estará visible para miles de personas.'
                 },
                 {
@@ -70,7 +81,7 @@ export default function FAQPage() {
                 },
                 {
                     q: 'Beneficios cuentas profesionales',
-                    a: '1. Tu propia página web (landing page) con la URL ruralpop.com/empresa/tu-nombre.\n2. Publicación de anuncios ilimitados sin caducidad.\n3. Etiqueta destacada en tus anuncios que da mayor confianza a los compradores.\n4. Estadísticas detalladas de visualizaciones y contactos recibidos.'
+                    a: `1. Tu propia página web (landing page) con la URL ${domain}/empresa/tu-nombre.\n2. Publicación de anuncios ilimitados sin caducidad.\n3. Etiqueta destacada en tus anuncios que da mayor confianza a los compradores.\n4. Estadísticas detalladas de visualizaciones y contactos recibidos.`
                 }
             ]
         },
@@ -80,8 +91,8 @@ export default function FAQPage() {
             questions: [
                 {
                     id: 'proteccion',
-                    q: 'Comprar con Protección Ruralpop',
-                    a: 'Compra y vende con tranquilidad con Protección Ruralpop. Disfruta de transacciones fáciles y seguras y no te preocupes de nada más.\n\n¿Qué es Protección Ruralpop?\nProtección Ruralpop proporciona una experiencia de compra sencilla y sin preocupaciones mediante nuestro servicio de pago seguro.\n\nComprar con Protección Ruralpop\nAl realizar una compra, aplicamos un cargo obligatorio mediante el cual:\nTu dinero está seguro con nosotros mientras compruebas que lo que has recibido es correcto (Dispones de 7 días desde la confirmación de entrega del producto por parte de la compañia de transporte). Si todo está bien, pasado ese plazo pagaremos al vendedor.\nSi lo que has recibido no coincide con la descripción o está defectuoso tienes la posibilidad de solicitar un reembolso.\n\nVender con Protección Ruralpop\nRealizando tus ventas a través de Ruralpop:\nMantenemos el dinero seguro hasta que el producto llegue al comprador y confirme que es correcto o hayan transcurrido 7 días que tiene para comprobarlo.\nNuestro equipo de atención al cliente está siempre a tu disposición.\n\nCompra y vende sin preocupaciones, ¡nosotros nos encargamos del resto!'
+                    q: `Comprar con Protección ${brand}`,
+                    a: `Compra y vende con tranquilidad con Protección ${brand}. Disfruta de transacciones fáciles y seguras y no te preocupes de nada más.\n\n¿Qué es Protección ${brand}?\nProtección ${brand} proporciona una experiencia de compra sencilla y sin preocupaciones mediante nuestro servicio de pago seguro.\n\nComprar con Protección ${brand}\nAl realizar una compra, aplicamos un cargo obligatorio mediante el cual:\nTu dinero está seguro con nosotros mientras compruebas que lo que has recibido es correcto (Dispones de 7 días desde la confirmación de entrega del producto por parte de la compañia de transporte). Si todo está bien, pasado ese plazo pagaremos al vendedor.\nSi lo que has recibido no coincide con la descripción o está defectuoso tienes la posibilidad de solicitar un reembolso.\n\nVender con Protección ${brand}\nRealizando tus ventas a través de ${brand}:\nMantenemos el dinero seguro hasta que el producto llegue al comprador y confirme que es correcto o hayan transcurrido 7 días que tiene para comprobarlo.\nNuestro equipo de atención al cliente está siempre a tu disposición.\n\nCompra y vende sin preocupaciones, ¡nosotros nos encargamos del resto!`
                 }
             ]
         }
@@ -107,7 +118,7 @@ export default function FAQPage() {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            <FAQClient faqs={faqs} />
+            <FAQClient faqs={faqs} brand={brand} />
         </>
     );
 }

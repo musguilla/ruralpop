@@ -15,7 +15,7 @@ type FAQCategory = {
     questions: Question[];
 };
 
-export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
+export default function FAQClient({ faqs, brand }: { faqs: FAQCategory[], brand: string }) {
     // La categoría 1 se abre por defecto, pero ninguna pregunta está activa para mostrar el Empty State "premium".
     const [activeCategory, setActiveCategory] = useState<string | null>(faqs[0].id);
     const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
@@ -56,7 +56,7 @@ export default function FAQClient({ faqs }: { faqs: FAQCategory[] }) {
                         Preguntas <span className="text-[var(--ag-sys-color-primary)]">Frecuentes</span>
                     </h1>
                     <p className="text-lg md:text-xl text-[var(--ag-sys-color-text-muted)] leading-relaxed max-w-2xl mx-auto">
-                        Encuentra las respuestas más rápidas y sencillas sobre cómo utilizar la plataforma Ruralpop.
+                        Encuentra las respuestas más rápidas y sencillas sobre cómo utilizar la plataforma {brand}.
                     </p>
                 </div>
             </div>
