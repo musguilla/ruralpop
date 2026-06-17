@@ -23,7 +23,7 @@ import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
-import { getServerTenantFilterString } from "@/utils/tenant/server";
+import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -138,6 +138,9 @@ export default async function ListingDetailPage(props: Props) {
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
     const dict = await getDictionary(locale);
     const t = (key: keyof typeof dict.listing_detail) => dict.listing_detail[key] || key;
+
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
 
     // The slug format is [title]-[shortId]
     const slugParts = slug.split('-');
@@ -449,8 +452,8 @@ export default async function ListingDetailPage(props: Props) {
                         </div>
                         <ShareButtons title={listing.title} url={`https://www.ruralpop.com/anuncio/${slug}`} />
 
-                        {/* Garantía Ruralpop Simple (Solo si no hay venta online) */}
-                        {!isEscrowAvailable && (
+                        {/* Garantía Ruralpop Simple (Solo si no hay venta online, y solo en Ruralpop) */}
+                        {!isEscrowAvailable && !isEquipop && (
                             <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-2xl p-4 flex gap-3">
                                 <ShieldCheck className="w-6 h-6 text-green-600 flex-shrink-0" />
                                 <div>
