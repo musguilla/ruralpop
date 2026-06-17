@@ -42,7 +42,7 @@ export async function EquipopFooter() {
                     <LocalizedLink href="/preguntas-frecuentes" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         {t("faq")}
                     </LocalizedLink>
-                    <LocalizedLink href="/empresas-profesionales-sector-rural" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <LocalizedLink href="/empresas-profesionales-sector-ecuestre" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         Equipop PRO
                     </LocalizedLink>
                 </div>

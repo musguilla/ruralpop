@@ -12,7 +12,7 @@ export async function generateMetadata() {
     return {
         title: `Área Profesionales y Empresas | ${brand}`,
         description: `Destaca tu empresa donde están tus clientes. Activa tu perfil profesional en ${brand}.`,
-        alternates: { canonical: "/empresas-profesionales-sector-rural" }
+        alternates: { canonical: isEquipop ? "/empresas-profesionales-sector-ecuestre" : "/empresas-profesionales-sector-rural" }
     };
 }
 
