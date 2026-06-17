@@ -45,6 +45,8 @@ const nextConfig: NextConfig = {
       { source: '/tractores/fuel-tank/:slug*', destination: '/tractores/deposito/:slug*', permanent: true },
       { source: '/tractores/engine/:slug*', destination: '/tractores/motor/:slug*', permanent: true },
       { source: '/tractores/traction/:slug*', destination: '/tractores/traccion/:slug*', permanent: true },
+      { source: '/tractores/mc-cormick/:path*', destination: '/tractores/mccormick/:path*', permanent: true },
+      { source: '/tractores/case/:path*', destination: '/tractores/case-ih/:path*', permanent: true },
     ];
   },
 };
