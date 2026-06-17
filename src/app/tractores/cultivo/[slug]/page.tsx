@@ -3,10 +3,11 @@ import { Metadata } from 'next';
 import { createClient } from '@/utils/supabase/server';
 
 interface Props {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+    const params = await props.params;
     const supabase = await createClient();
     const { data } = await supabase
         .from('tractor_feature_pages')
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
 }
 
-export default function Page({ params }: Props) {
+export default async function Page(props: Props) {
+    const params = await props.params;
     return <TractorFeaturePage featureType="crop" slug={params.slug} />;
 }
