@@ -69,7 +69,12 @@ export async function generateMetadata(props: Props) {
                 };
             }
         }
-        return { title: `Tractor ${brand.name} - Catálogo PDF | Ruralpop` };
+        const fallbackModelName = modelSlug.replace(/-/g, ' ').toUpperCase();
+        return { 
+            title: `Tractor ${brand.name} ${fallbackModelName} - Catálogo PDF | Ruralpop`,
+            description: `Conoce todos los detalles del tractor ${brand.name} ${fallbackModelName}. Ficha técnica, descripciones y descarga del catálogo oficial en PDF.`,
+            alternates: { canonical: `/tractores/${brandSlug}/${modelSlug}` }
+        };
     }
 
     return {
@@ -119,10 +124,20 @@ export default async function BrandModelDetail(props: Props) {
             if (realModel) {
                 modelData = realModel;
             } else {
-                notFound();
+                modelData = { 
+                    name: modelSlugParam.replace(/-/g, ' ').toUpperCase(), 
+                    slug: modelSlugParam, 
+                    description: null,
+                    series: brandData.name
+                };
             }
         } else {
-            notFound();
+            modelData = { 
+                name: modelSlugParam.replace(/-/g, ' ').toUpperCase(), 
+                slug: modelSlugParam, 
+                description: null,
+                series: brandData.name
+            };
         }
     }
 
