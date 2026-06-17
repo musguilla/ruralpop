@@ -56,7 +56,7 @@ export async function sendMilestoneReminderEmail(
       </p>
       
       <div style="background-color: #f9f9f9; padding: 20px; border-radius: 12px; margin: 25px 0; text-align: center; border: 1px solid #eee;">
-        <img src="${imageUrl}" alt="Foto del anuncio" style="width: 150px; height: 150px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+        <img src="${imageUrl}" alt="Foto del anuncio" width="150" height="150" style="display: block; margin: 0 auto 15px auto; width: 150px; height: 150px; object-fit: cover; border-radius: 12px;" />
         <h3 style="margin: 0; font-size: 18px; color: #111;">${listing.title}</h3>
         
         <a href="${actionUrl}" style="display: inline-block; margin-top: 20px; padding: 14px 28px; background-color: #2F8A43; color: white; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px;">

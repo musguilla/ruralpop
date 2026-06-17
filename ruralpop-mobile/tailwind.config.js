@@ -1,4 +1,4 @@
-const isEquipop = process.env.APP_VARIANT === 'equipop';
+const isEquipop = true; // process.env.APP_VARIANT === 'equipop';
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

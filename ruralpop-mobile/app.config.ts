@@ -83,7 +83,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       "./plugins/withFmtFix.js"
     ],
     extra: {
-      router: {},
+      router: {
+        origin: false
+      },
       eas: {
         projectId: IS_EQUIPOP ? "5dcbb92f-75a1-4e54-aa8b-8757e29f5d9b" : "0db84bcc-5fb6-4cf2-9e28-525900e9a799"
       }

@@ -6,9 +6,8 @@ interface Props {
     params: Promise<{ slug: string, province: string }>;
 }
 
-export async function generateMetadata(props: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const resolvedParams = await params;
-    const params = await props.params;
     const supabase = await createClient();
     const urlPath = `/tractores/transmision/${resolvedParams.slug}/${resolvedParams.province}`;
     const { data } = await supabase.from('tractor_combination_pages').select('seo_title, seo_description, indexable, canonical_url').eq('url_path', urlPath).single();

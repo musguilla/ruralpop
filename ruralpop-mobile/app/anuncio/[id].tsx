@@ -470,7 +470,7 @@ export default function ListingDetailsScreen() {
                                 {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
                                     <View className="mt-1 flex-row items-center bg-[#059669]/10 self-start px-2 py-1 rounded border border-[#059669]/20">
                                         <ShieldCheck color="#059669" size={12} />
-                                        <Text className="text-[10px] text-[#059669] font-bold ml-1">Reg. Zoológico: {listing.seller.zoo_register_number}</Text>
+                                        <Text className="text-[10px] text-[#059669] font-bold ml-1">Nº de registro: {listing.seller.zoo_register_number}</Text>
                                     </View>
                                 )}
                             </View>
