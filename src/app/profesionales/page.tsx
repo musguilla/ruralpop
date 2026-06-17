@@ -2,14 +2,25 @@ import Link from "next/link";
 import { Check, ShieldCheck, Zap, CreditCard } from "lucide-react";
 import { ProPlanCard } from "@/components/profesionales/ProPlanCard";
 
-export const metadata = {
-    title: "Área Profesionales | Ruralpop",
-    description: "Destaca tu empresa donde están tus clientes. Activa tu perfil profesional en Ruralpop.",
-};
+import { getServerTenantSlug } from "@/utils/tenant/server";
+
+export async function generateMetadata() {
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+    
+    return {
+        title: `Área Profesionales | ${brand}`,
+        description: `Destaca tu empresa donde están tus clientes. Activa tu perfil profesional en ${brand}.`,
+    };
+}
 
 export default async function ProfesionalesPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const sp = await searchParams;
     const isGhostClaim = sp.ghost_claim === 'true';
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
 
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)]">
@@ -33,13 +44,13 @@ export default async function ProfesionalesPage({ searchParams }: { searchParams
                         <>
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] font-bold text-sm mb-4 border border-[var(--ag-sys-color-primary)]/20 shadow-sm backdrop-blur-sm">
                                 <ShieldCheck className="w-4 h-4" />
-                                Abre tu tienda en Ruralpop
+                                Abre tu tienda en {brand}
                             </div>
                             <h1 className="text-4xl lg:text-6xl font-black text-[var(--ag-sys-color-text)] tracking-tight leading-[1.1]">
                                 Destaca tu empresa donde están tus <span className="text-[var(--ag-sys-color-primary)]">clientes</span>
                             </h1>
                             <p className="text-lg lg:text-xl text-[var(--ag-sys-color-text-muted)] max-w-2xl mx-auto leading-relaxed">
-                                Activa tu perfil profesional para estar en el mismo lugar que se encuentran miles de compradores del sector rural cada día.
+                                Activa tu perfil profesional para estar en el mismo lugar que se encuentran miles de compradores del sector {isEquipop ? "ecuestre" : "rural"} cada día.
                             </p>
                         </>
                     )}

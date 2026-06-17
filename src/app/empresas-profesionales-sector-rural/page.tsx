@@ -2,21 +2,30 @@ import Link from "next/link";
 import Image from "next/image";
 import { Check, ShieldCheck, CreditCard } from "lucide-react";
 import { ProPlanCard } from "@/components/profesionales/ProPlanCard";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
-export const metadata = {
-    title: "Área Profesionales y Empresas | Ruralpop",
-    description: "Destaca tu empresa donde están tus clientes. Activa tu perfil profesional en Ruralpop.",
-    alternates: { canonical: "/empresas-profesionales-sector-rural" }
-};
+export async function generateMetadata() {
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+    
+    return {
+        title: `Área Profesionales y Empresas | ${brand}`,
+        description: `Destaca tu empresa donde están tus clientes. Activa tu perfil profesional en ${brand}.`,
+        alternates: { canonical: "/empresas-profesionales-sector-rural" }
+    };
+}
 
-export default function EmpresasProfesionalesPage() {
-    return (
+export default async function EmpresasProfesionalesPage() {
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
         <div className="min-h-screen w-full bg-[var(--ag-sys-color-background)]">
             {/* Full-width Hero Image pegada al menú */}
             <div className="relative w-full h-[30vh] sm:h-[40vh] md:h-[50vh] lg:h-[60vh] max-h-[600px] mb-12">
                 <Image
-                    src="/ruralpop-empresas-profesionales.jpg"
-                    alt="Ruralpop Empresas y Profesionales"
+                    src={isEquipop ? "/equipop-hero-web.jpg" : "/ruralpop-empresas-profesionales.jpg"}
+                    alt={`${brand} Empresas y Profesionales`}
                     fill
                     priority
                     className="object-cover"
@@ -30,13 +39,13 @@ export default function EmpresasProfesionalesPage() {
                 <div className="max-w-4xl mx-auto text-center space-y-6 w-full">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] font-bold text-sm mb-4 border border-[var(--ag-sys-color-primary)]/20 shadow-sm backdrop-blur-sm">
                         <ShieldCheck className="w-4 h-4" />
-                        Abre tu tienda en Ruralpop
+                        Abre tu tienda en {brand}
                     </div>
                     <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black text-[var(--ag-sys-color-text)] tracking-tight leading-[1.1]">
                         Destaca tu empresa donde están tus <span className="text-[var(--ag-sys-color-primary)]">clientes</span>
                     </h1>
                     <p className="text-lg lg:text-xl text-[var(--ag-sys-color-text-muted)] max-w-2xl mx-auto leading-relaxed">
-                        Activa tu perfil profesional para estar en el mismo lugar que se encuentran miles de compradores del sector rural cada día.
+                        Activa tu perfil profesional para estar en el mismo lugar que se encuentran miles de compradores del sector {isEquipop ? "ecuestre" : "rural"} cada día.
                     </p>
                 </div>
             </section>
@@ -45,10 +54,10 @@ export default function EmpresasProfesionalesPage() {
             <section className="px-6 pb-20 flex flex-col items-center justify-center">
                 <div className="max-w-3xl mx-auto text-center space-y-4 w-full">
                     <p className="text-lg md:text-xl text-[var(--ag-sys-color-text)] font-medium">
-                        Cada día, miles de usuarios del sector de la ganadería y agricultura utilizan gratuitamente la app de Ruralpop para conectar, cerrar acuerdos y generar negocio.
+                        Cada día, miles de usuarios del sector {isEquipop ? "del caballo y la equitación" : "de la ganadería y agricultura"} utilizan gratuitamente la app de {brand} para conectar, cerrar acuerdos y generar negocio.
                     </p>
                     <p className="text-lg md:text-xl text-[var(--ag-sys-color-text)] font-bold">
-                        Por eso, si eres una empresa del sector o profesional debes estar en Ruralpop.
+                        Por eso, si eres una empresa del sector o profesional debes estar en {brand}.
                     </p>
                     
                     <div className="pt-8">
@@ -57,7 +66,7 @@ export default function EmpresasProfesionalesPage() {
                         </h2>
                         
                         <p className="text-lg text-[var(--ag-sys-color-text-muted)] leading-relaxed">
-                            Ruralpop se convierte en el punto de encuentro ideal donde tu marca puede llegar a nuevos clientes potenciales.
+                            {brand} se convierte en el punto de encuentro ideal donde tu marca puede llegar a nuevos clientes potenciales.
                         </p>
                         <p className="text-lg text-[var(--ag-sys-color-text-muted)] leading-relaxed mt-2">
                             De forma directa, ágil y sin complicaciones. Para ellos y para ti.

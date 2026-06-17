@@ -59,8 +59,8 @@ export async function Header() {
                     <Image 
                         src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"} 
                         alt={isEquipop ? "Equipop" : "Ruralpop"} 
-                        width={140} height={40} 
-                        className="object-contain w-auto h-6 sm:h-8 md:h-[40px]" 
+                        width={isEquipop ? 180 : 140} height={isEquipop ? 50 : 40} 
+                        className={`object-contain w-auto ${isEquipop ? 'h-[50px]' : 'h-6 sm:h-8 md:h-[40px]'}`} 
                         priority 
                     />
                 </LocalizedLink>
