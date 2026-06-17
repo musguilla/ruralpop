@@ -60,8 +60,35 @@ export default async function MarketCategoryDetailPage({ params }: { params: Pro
         .limit(2000);
 
     if (!pricesDesc || pricesDesc.length === 0) {
-        // Fallback if the normalized category doesn't strictly match but exists
-        notFound();
+        // Render fallback UI when no data is found instead of returning 404
+        const categoryName = categoria.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        return (
+            <div className="min-h-screen bg-[var(--ag-sys-color-background)] w-full">
+                <div className="container mx-auto w-full px-4 md:px-6 lg:px-8 py-12">
+                    <Link href={`/precios-ganado/vacuno/mercados/${mercado}`} className="inline-flex items-center gap-2 text-sm font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors mb-8">
+                        <ArrowLeft className="w-4 h-4" />
+                        Volver a {market.name}
+                    </Link>
+                    
+                    <div className="mb-12">
+                        <h1 className="text-4xl md:text-5xl font-black text-[var(--ag-sys-color-text)] tracking-tight mb-4">
+                            {categoryName}
+                        </h1>
+                        <p className="text-xl text-[var(--ag-sys-color-text-muted)] font-medium">
+                            en {market.name}
+                        </p>
+                    </div>
+                    
+                    <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[300px]">
+                        <Info className="w-12 h-12 text-[var(--ag-sys-color-text-muted)] mb-4 opacity-50" />
+                        <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-2">No hay datos históricos disponibles</h3>
+                        <p className="text-[var(--ag-sys-color-text-muted)] max-w-md">
+                            Actualmente no tenemos registros de cotizaciones para esta categoría en el mercado de {market.name}. Los datos se actualizarán cuando la lonja publique nuevas sesiones.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     // Reverse to chronological order for the chart
