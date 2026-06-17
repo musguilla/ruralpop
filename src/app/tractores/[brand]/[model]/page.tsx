@@ -352,7 +352,7 @@ export default async function BrandModelDetail(props: Props) {
                         </p>
                     </div>
                     <Link 
-                        href={`/s/tractores-segunda-mano/${brandSlug}`}
+                        href={`/?category=maquinaria&q=${brandData.name}`}
                         className="px-8 py-4 bg-white border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)] font-bold rounded-2xl hover:bg-gray-50 flex items-center gap-2 transition-all shadow-sm whitespace-nowrap"
                     >
                         <span>Ver tractores {brandData.name} de Ocasión</span>
