@@ -19,9 +19,7 @@ export async function GET() {
     <sitemap>
         <loc>${baseUrl}/sitemap_4.xml</loc>
     </sitemap>
-    <sitemap>
-        <loc>${baseUrl}/sitemap_anuncios.xml</loc>
-    </sitemap>
+
     <sitemap>
         <loc>${baseUrl}/sitemap_tags.xml</loc>
     </sitemap>
