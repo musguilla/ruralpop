@@ -166,7 +166,7 @@ export function EquipopHomeSearchHero() {
                     {/* Left side: Text & Button */}
                     <div className="w-full md:w-5/12 p-10 md:p-16 flex flex-col justify-center items-start">
                         <h2 className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-8">
-                            Compra y vende<br />productos de<br />segunda mano.
+                            Compra y vende<br />material ecuestre de<br />segunda mano.
                         </h2>
                         <button 
                             onClick={() => router.push('/upload')}
