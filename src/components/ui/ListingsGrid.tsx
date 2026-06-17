@@ -194,6 +194,40 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         error = globalRes.error;
     }
 
+    // FASE 7: Rellenar la página con la misma categoría si hay pocos resultados (SEO UX Fill)
+    // Solo en la página 1, y nunca dentro de los perfiles de usuario.
+    if (!error && !userIdFilter && listings && listings.length > 0 && listings.length < PAGE_SIZE && currentPage === 1) {
+        const fillCategory = listings[0].category;
+        if (fillCategory) {
+            const existingIds = listings.map((l: any) => l.id);
+            const limit = PAGE_SIZE - listings.length;
+            
+            let fillQuery = supabase
+                .from("listings")
+                .select(`
+                    id, title, price, location, image_urls, created_at, category, price_type, is_featured,
+                    users!inner(is_ghost),
+                    favorites(count)
+                `)
+                .eq("status", "active")
+                .eq("users.is_ghost", false)
+                .eq("category", fillCategory)
+                .not("id", "in", `(${existingIds.join(',')})`)
+                .order("is_featured", { ascending: false, nullsFirst: false })
+                .order("created_at", { ascending: false })
+                .limit(limit);
+
+            fillQuery = fillQuery.or(tenantFilterString);
+            
+            const { data: fillData, error: fillError } = await fillQuery;
+            if (!fillError && fillData && fillData.length > 0) {
+                listings = [...listings, ...fillData];
+                // No incrementamos 'count' para que la paginación no se rompa (totalPages seguirá siendo 1).
+                // Esto es puramente un relleno visual para SEO y UX.
+            }
+        }
+    }
+
     if (error) {
         console.error("Supabase Error fetching listings:", error);
         return (
