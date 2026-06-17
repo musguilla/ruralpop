@@ -74,7 +74,7 @@ export async function EquipopFooter() {
                         <LocalizedLink href="/" className="hover:opacity-80 transition-opacity">
                             <Image src="/equipop-logo.png" alt="Equipop" width={140} height={40} className="object-contain dark:invert" />
                         </LocalizedLink>
-                        <a href="https://www.instagram.com/ruralpopapp" target="_blank" rel="noopener noreferrer" className="text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors" aria-label="Instagram">
+                        <a href="https://www.instagram.com/equipopapp" target="_blank" rel="noopener noreferrer" className="text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors" aria-label="Instagram">
                             <Instagram className="w-7 h-7" strokeWidth={2.25} />
                         </a>
                     </div>
