@@ -165,9 +165,6 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         listings = fbRes.data;
         count = fbRes.count;
         error = fbRes.error;
-        if (listings && listings.length > 0) {
-            fallbackMessage = t("fallback_global");
-        }
     }
 
     // Fallback 2: First word of multi-word search
@@ -177,9 +174,6 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         listings = wildcardRes.data;
         count = wildcardRes.count;
         error = wildcardRes.error;
-        if (listings && listings.length > 0) {
-            fallbackMessage = t("fallback_global");
-        }
     }
 
     // SEO Fallback 3: Keep only Category, drop subcategory, search and location
@@ -189,13 +183,6 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         listings = catRes.data;
         count = catRes.count;
         error = catRes.error;
-        
-        if (listings && listings.length > 0) {
-             const baseCatName = typeof searchParams.category === 'string' ? searchParams.category : 'esta categoría';
-             const catNameTranslated = typeof dict.category[baseCatName as keyof typeof dict.category] === 'string' ? dict.category[baseCatName as keyof typeof dict.category] : baseCatName;
-             const catName = catNameTranslated.charAt(0).toUpperCase() + catNameTranslated.slice(1);
-             fallbackMessage = t("fallback_cat", { catName });
-        }
     }
 
     // SEO Fallback 4: Drop absolutely everything to prevent 0 results (Soft 404 Google warning)
@@ -205,10 +192,6 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         listings = globalRes.data;
         count = globalRes.count;
         error = globalRes.error;
-        
-        if (listings && listings.length > 0) {
-             fallbackMessage = t("fallback_global");
-        }
     }
 
     if (error) {
