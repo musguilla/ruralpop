@@ -51,8 +51,11 @@ export async function generateMetadata(props: Props) {
     const { brand: brandSlug, model: modelSlug } = await props.params;
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
     
-    const { data: brand } = await supabase.from('tractor_brands').select('id, name').eq('slug', brandSlug).single();
-    if (!brand) return { title: "Modelo no encontrado | Ruralpop" };
+    const { data: dbBrand } = await supabase.from('tractor_brands').select('id, name').eq('slug', brandSlug).single();
+    let brand = dbBrand;
+    if (!brand) {
+        brand = { id: -1, name: brandSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') };
+    }
 
     const { data: model } = await supabase.from('tractor_models').select('name, seo_title, seo_description').eq('brand_id', brand.id).eq('slug', modelSlug).single();
 
@@ -88,15 +91,22 @@ export default async function BrandModelDetail(props: Props) {
     const { brand: brandSlug, model: modelSlugParam } = await props.params;
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
     
-    // Fetch brand
-    const { data: brandData } = await supabase
+    let brandData = null;
+    const { data: dbBrand } = await supabase
         .from('tractor_brands')
         .select('*')
         .eq('slug', brandSlug)
         .single();
 
-    if (!brandData) {
-        notFound();
+    if (dbBrand) {
+        brandData = dbBrand;
+    } else {
+        // Fallback for wrong brand slugs like mc-cormick instead of mccormick
+        brandData = {
+            id: -1,
+            name: brandSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+            slug: brandSlug
+        };
     }
     
     // Fetch model by slug or alias
