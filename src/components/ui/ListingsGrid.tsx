@@ -105,26 +105,20 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         const textQuery = searchParams.q as string;
         if (textQuery && fallbackLevel < 3) {
             let sanitizedQuery = textQuery.trim().toLowerCase();
-            
-            if (fallbackLevel === 2) {
-                sanitizedQuery = sanitizedQuery.replace(/[aeiouáéíóúü]/gi, '_');
-            }
-
             let queryTerms = sanitizedQuery.split(/[\s\-]+/).filter(t => t.length > 2);
             
+            // FASE 2: First word fallback
+            if (fallbackLevel === 2 && queryTerms.length > 1) {
+                queryTerms = [queryTerms[0]];
+            }
+            
             if (queryTerms.length <= 1) {
-                query = query.or(`title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%,location.ilike.%${sanitizedQuery}%,tags.cs.{"${sanitizedQuery}"}`);
+                const term = queryTerms[0] || sanitizedQuery;
+                query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%,tags.cs.{"${term}"}`);
             } else {
-                if (fallbackLevel === 0) {
-                    // AND Logic (default)
-                    // Nested AND inside OR so exact tag matches bypass the individual term checks
-                    const andConditions = queryTerms.map(term => `and(or(title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%))`).join(',');
-                    query = query.or(`and(${andConditions}),tags.cs.{"${sanitizedQuery}"}`);
-                } else {
-                    // OR Logic Fallback (fallbackLevel 1 and 2)
-                    const orConditions = queryTerms.map(term => `title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`).join(',');
-                    query = query.or(`${orConditions},tags.cs.{"${sanitizedQuery}"}`);
-                }
+                // AND Logic (default)
+                const andConditions = queryTerms.map(term => `and(or(title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%))`).join(',');
+                query = query.or(`and(${andConditions}),tags.cs.{"${sanitizedQuery}"}`);
             }
         }
 
@@ -139,7 +133,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         }
 
         const locationFilter = searchParams.province_id as string;
-        if (locationFilter && fallbackLevel < 3) {
+        if (locationFilter && fallbackLevel < 1) {
             if (locationFilter.startsWith('m')) {
                 const muni = LOCATIONS.find((l: { id: string }) => l.id === locationFilter);
                 if (muni) {
@@ -164,25 +158,31 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     let fallbackMessage = "";
 
-    // Retry with OR fallback if needed
-    if (!error && (!listings || listings.length === 0) && isMultiWordSearch) {
+    // Fallback 1: Drop Location restriction (if there was one)
+    if (!error && (!listings || listings.length === 0) && searchParams.province_id) {
         query = buildQuery(1);
-        const fallbackRes = await query.range(from, to);
-        listings = fallbackRes.data;
-        count = fallbackRes.count;
-        error = fallbackRes.error;
+        const fbRes = await query.range(from, to);
+        listings = fbRes.data;
+        count = fbRes.count;
+        error = fbRes.error;
+        if (listings && listings.length > 0) {
+            fallbackMessage = t("fallback_global");
+        }
     }
 
-    // Ultra fallback: Retry with Accent/Vowel wildcards if still no results
-    if (!error && (!listings || listings.length === 0) && typeof searchParams.q === 'string') {
+    // Fallback 2: First word of multi-word search
+    if (!error && (!listings || listings.length === 0) && isMultiWordSearch) {
         query = buildQuery(2);
         const wildcardRes = await query.range(from, to);
         listings = wildcardRes.data;
         count = wildcardRes.count;
         error = wildcardRes.error;
+        if (listings && listings.length > 0) {
+            fallbackMessage = t("fallback_global");
+        }
     }
 
-    // SEO Fallback 1: Keep only Category, drop subcategory, search and location
+    // SEO Fallback 3: Keep only Category, drop subcategory, search and location
     if (!error && (!listings || listings.length === 0) && searchParams.category) {
         query = buildQuery(3);
         const catRes = await query.range(from, to);
@@ -192,14 +192,13 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         
         if (listings && listings.length > 0) {
              const baseCatName = typeof searchParams.category === 'string' ? searchParams.category : 'esta categoría';
-             // Intenta traducir el nombre de la categoría si existe
              const catNameTranslated = typeof dict.category[baseCatName as keyof typeof dict.category] === 'string' ? dict.category[baseCatName as keyof typeof dict.category] : baseCatName;
              const catName = catNameTranslated.charAt(0).toUpperCase() + catNameTranslated.slice(1);
              fallbackMessage = t("fallback_cat", { catName });
         }
     }
 
-    // SEO Fallback 2: Drop absolutely everything to prevent 0 results (Soft 404 Google warning)
+    // SEO Fallback 4: Drop absolutely everything to prevent 0 results (Soft 404 Google warning)
     if (!error && (!listings || listings.length === 0)) {
         query = buildQuery(4);
         const globalRes = await query.range(from, to);
