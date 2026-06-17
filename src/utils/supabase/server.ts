@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { createClient as createPublicClient } from "@supabase/supabase-js";
 
 /**
  * Crea un mock ultra-robusto para las consultas (chains) de Supabase.
@@ -43,7 +44,7 @@ export async function createClient() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-    // Si falta configuración (fase de build), devolvemos el mock plano
+    // Si falta configuración, devolvemos el mock plano
     if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.length < 10) {
         return buildSafeClient as any;
     }
@@ -71,7 +72,9 @@ export async function createClient() {
             }
         );
     } catch (e) {
-        // Fallback para fallos en cookies() durante generación estática
-        return buildSafeClient as any;
+        // En generación estática (build) de Next.js, cookies() lanza error.
+        // En lugar de devolver un mock que causa 404s cacheados, 
+        // devolvemos un cliente público funcional para leer datos estáticos.
+        return createPublicClient(supabaseUrl, supabaseAnonKey);
     }
 }
