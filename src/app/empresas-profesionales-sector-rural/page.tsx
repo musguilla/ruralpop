@@ -26,7 +26,7 @@ export default async function EmpresasProfesionalesPage() {
             {/* Full-width Hero Image pegada al menú */}
             <div className="relative w-full h-[30vh] sm:h-[40vh] md:h-[50vh] lg:h-[60vh] max-h-[600px] mb-12">
                 <Image
-                    src={isEquipop ? "/equipop-hero-web.jpg" : "/ruralpop-empresas-profesionales.jpg"}
+                    src={isEquipop ? "/tiendas-equitacion-equipop.jpg" : "/ruralpop-empresas-profesionales.jpg"}
                     alt={`${brand} Empresas y Profesionales`}
                     fill
                     priority
