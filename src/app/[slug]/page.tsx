@@ -80,7 +80,9 @@ export async function generateMetadata(props: {
     const originalPathname = headersList.get('x-original-pathname') || `/${params.slug}`;
 
     let canonical = getCanonicalUrl(originalPathname, locale);
-    if (searchParams.page && typeof searchParams.page === 'string' && searchParams.page !== '1') {
+    const isPaginated = searchParams.page && typeof searchParams.page === 'string' && searchParams.page !== '1';
+    
+    if (isPaginated) {
         canonical += `?page=${searchParams.page}`;
     }
 
@@ -90,7 +92,8 @@ export async function generateMetadata(props: {
         alternates: {
             canonical,
             languages: getHreflangLinks(originalPathname)
-        }
+        },
+        robots: isPaginated ? { index: false, follow: true } : undefined
     };
 }
 
