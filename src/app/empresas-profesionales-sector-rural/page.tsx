@@ -20,6 +20,8 @@ export default async function EmpresasProfesionalesPage() {
     const tenant = await getServerTenantSlug();
     const isEquipop = tenant === 'equipop';
     const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+
+    return (
         <div className="min-h-screen w-full bg-[var(--ag-sys-color-background)]">
             {/* Full-width Hero Image pegada al menú */}
             <div className="relative w-full h-[30vh] sm:h-[40vh] md:h-[50vh] lg:h-[60vh] max-h-[600px] mb-12">
