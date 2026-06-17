@@ -56,7 +56,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         let query = supabase
             .from("listings")
             .select(`
-                id, title, price, location, image_urls, created_at, category, price_type, is_featured,
+                id, title, price, location, image_urls, created_at, category, subcategory, price_type, is_featured,
                 users!inner(is_ghost),
                 favorites(count)
             `, { count: "exact" })
@@ -198,6 +198,8 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
     // Solo en la página 1, y nunca dentro de los perfiles de usuario.
     if (!error && !userIdFilter && listings && listings.length > 0 && listings.length < PAGE_SIZE && currentPage === 1) {
         const fillCategory = listings[0].category;
+        const fillSubcategory = listings[0].subcategory;
+        
         if (fillCategory) {
             const existingIds = listings.map((l: any) => l.id);
             const limit = PAGE_SIZE - listings.length;
@@ -205,14 +207,19 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             let fillQuery = supabase
                 .from("listings")
                 .select(`
-                    id, title, price, location, image_urls, created_at, category, price_type, is_featured,
+                    id, title, price, location, image_urls, created_at, category, subcategory, price_type, is_featured,
                     users!inner(is_ghost),
                     favorites(count)
                 `)
                 .eq("status", "active")
                 .eq("users.is_ghost", false)
-                .eq("category", fillCategory)
-                .not("id", "in", `(${existingIds.join(',')})`)
+                .eq("category", fillCategory);
+                
+            if (fillSubcategory) {
+                fillQuery = fillQuery.eq("subcategory", fillSubcategory);
+            }
+                
+            fillQuery = fillQuery.not("id", "in", `(${existingIds.join(',')})`)
                 .order("is_featured", { ascending: false, nullsFirst: false })
                 .order("created_at", { ascending: false })
                 .limit(limit);
