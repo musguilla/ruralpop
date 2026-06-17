@@ -79,7 +79,7 @@ export async function EquipopFooter() {
                         </a>
                     </div>
                     <p className="text-[var(--ag-sys-color-text-muted)] text-sm leading-relaxed">
-                        App móvil gratis para buscar, vender y comprar caballos, accesorios, monturas y encontrar servicios ecuestres.
+                        App móvil gratis para buscar, vender y comprar material de segunda mano de equitación.
                     </p>
                 </div>
 
