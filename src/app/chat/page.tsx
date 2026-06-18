@@ -34,7 +34,6 @@ export default async function ChatInboxPage() {
       receiver:users!messages_receiver_id_fkey(name, avatar_url)
     `)
         .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
-        .or(await getServerTenantFilterString())
         .order("created_at", { ascending: false });
 
     if (error) {

@@ -19,7 +19,6 @@ export default async function ChatThreadPage(props: {
         .from("listings")
         .select("id, title, image_urls, user_id")
         .eq("id", listingId)
-        .or(await getServerTenantFilterString())
         .single();
 
     // Si no se encuentra (por ejemplo, porque está vendido y el RLS lo oculta a los no propietarios),
@@ -34,7 +33,6 @@ export default async function ChatThreadPage(props: {
             .from("listings")
             .select("id, title, image_urls, user_id")
             .eq("id", listingId)
-            .or(await getServerTenantFilterString())
             .single();
             
         if (adminListing) {

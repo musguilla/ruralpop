@@ -319,3 +319,38 @@ export async function deleteMultipleListings(listingIds: string[]) {
     
     return { success: true };
 }
+
+export async function toggleShareToEquipop(listingId: string, shared: boolean) {
+    if (!await isAdmin()) {
+        return { success: false, error: "No estás autorizado para realizar esta acción." };
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+        return { success: false, error: "Error de configuración de servidor." };
+    }
+
+    let supabaseAdmin;
+    try {
+        supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey);
+    } catch (err) {
+        return { success: false, error: "Hubo un error inicializando cliente backend." };
+    }
+
+    const { error } = await supabaseAdmin
+        .from("listings")
+        .update({ shared_to_equipop: shared })
+        .eq("id", listingId);
+
+    if (error) {
+        return { success: false, error: error.message };
+    }
+
+    revalidatePath("/admin/listings");
+    revalidatePath("/");
+    revalidatePath(`/anuncio/anuncio-${listingId.substring(0, 8)}`);
+
+    return { success: true };
+}

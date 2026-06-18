@@ -85,6 +85,11 @@ export const getTenantFilterString = (tenantSlugOrId: string): string => {
     return `tenant_id.eq.${uuid},tenant_id.is.null`;
   }
   
+  if (config.slug === EQUIPOP_TENANT_SLUG || tenantSlugOrId === EQUIPOP_TENANT_SLUG) {
+    const ruralpopId = TENANTS_CONFIG[RURALPOP_TENANT_SLUG].id;
+    return `tenant_id.eq.${uuid},and(tenant_id.eq.${ruralpopId},shared_to_equipop.eq.true)`;
+  }
+  
   return `tenant_id.eq.${uuid}`;
 };
 

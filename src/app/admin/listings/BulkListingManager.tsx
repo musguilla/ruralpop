@@ -11,7 +11,8 @@ import {
     Heart,
     Star,
     Trash2,
-    Loader2
+    Loader2,
+    Share2
 } from "lucide-react";
 import Image from "next/image";
 import SupabaseImage from "@/components/ui/SupabaseImage";
@@ -21,7 +22,7 @@ import Link from "next/link";
 import { DeleteButton } from "./DeleteButton";
 import { ActivateButton } from "./ActivateButton";
 import { useNotification } from "@/context/NotificationContext";
-import { deleteMultipleListings } from "./actions";
+import { deleteMultipleListings, toggleShareToEquipop } from "./actions";
 
 interface BulkListingManagerProps {
     listings: any[];
@@ -193,6 +194,11 @@ export function BulkListingManager({ listings }: BulkListingManagerProps) {
                                             <Star className="w-2 h-2 fill-white" /> DESTACADO
                                         </div>
                                     )}
+                                    {l.shared_to_equipop && (
+                                        <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider backdrop-blur-md bg-purple-500/90 text-white shadow-sm border border-purple-400/50">
+                                            EQUIPOP
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Info Wrapper */}
@@ -229,6 +235,17 @@ export function BulkListingManager({ listings }: BulkListingManagerProps) {
                                         </div>
                                         
                                         <div className="flex items-center gap-1.5">
+                                            <button
+                                                onClick={async (e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    await toggleShareToEquipop(l.id, !l.shared_to_equipop);
+                                                }}
+                                                title={l.shared_to_equipop ? "Quitar de Equipop" : "Compartir en Equipop"}
+                                                className={`flex items-center justify-center w-8 h-8 rounded-full border transition-all ${l.shared_to_equipop ? 'bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text-muted)] border-[var(--ag-sys-color-border)] hover:bg-purple-50 hover:text-purple-600'}`}
+                                            >
+                                                <Share2 className="w-4 h-4" />
+                                            </button>
                                             <Link href={`/admin/listings/edit/${encodeId(l.id)}`} title="Editar anuncio" className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-600 border border-blue-100 rounded-full hover:bg-blue-100 transition-all">
                                                 <Edit className="w-4 h-4" />
                                             </Link>
