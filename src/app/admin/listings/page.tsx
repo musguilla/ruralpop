@@ -25,6 +25,7 @@ import Link from "next/link";
 import { Pagination } from "@/components/ui/Pagination";
 import { getServerTenantFilterString } from "@/utils/tenant/server";
 import { BulkListingManager } from "./BulkListingManager";
+import { getCategories } from "@/utils/categoriesFetcher";
 
 export default async function AdminListingsPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -124,6 +125,8 @@ export default async function AdminListingsPage(props: {
 
     const totalPages = Math.ceil((count || 0) / PAGE_SIZE);
 
+    const equipopCategories = await getCategories("equipop");
+
     // Helper to preserve params in Links
     const buildLink = (status: string | null) => {
         const params = new URLSearchParams(searchParams as Record<string, string>);
@@ -199,7 +202,7 @@ export default async function AdminListingsPage(props: {
                 </div>
             </div>
 
-            <BulkListingManager listings={listings || []} />
+            <BulkListingManager listings={listings || []} equipopCategories={equipopCategories} />
 
             <Pagination currentPage={currentPage} totalPages={totalPages} />
         </div>

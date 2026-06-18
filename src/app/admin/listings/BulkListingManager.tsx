@@ -23,13 +23,13 @@ import { DeleteButton } from "./DeleteButton";
 import { ActivateButton } from "./ActivateButton";
 import { useNotification } from "@/context/NotificationContext";
 import { deleteMultipleListings, toggleShareToEquipop } from "./actions";
-import { CATEGORIES } from "@/constants/categories";
 
 interface BulkListingManagerProps {
     listings: any[];
+    equipopCategories: any[];
 }
 
-export function BulkListingManager({ listings }: BulkListingManagerProps) {
+export function BulkListingManager({ listings, equipopCategories }: BulkListingManagerProps) {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [isDeleting, setIsDeleting] = useState(false);
     const { showAlert, showConfirm } = useNotification();
@@ -127,13 +127,13 @@ export function BulkListingManager({ listings }: BulkListingManagerProps) {
                                     }}
                                 >
                                     <option value="">Selecciona una categoría</option>
-                                    {CATEGORIES.map(c => (
+                                    {equipopCategories.map(c => (
                                         <option key={c.id} value={c.id}>{c.label}</option>
                                     ))}
                                 </select>
                             </div>
 
-                            {selectedCategory && CATEGORIES.find(c => c.id === selectedCategory)?.subcategories.length ? (
+                            {selectedCategory && equipopCategories.find(c => c.id === selectedCategory)?.subcategories.length ? (
                                 <div>
                                     <label className="block text-sm font-bold mb-2">Subcategoría (Opcional)</label>
                                     <select 
@@ -142,7 +142,7 @@ export function BulkListingManager({ listings }: BulkListingManagerProps) {
                                         onChange={(e) => setSelectedSubcategory(e.target.value)}
                                     >
                                         <option value="">Ninguna</option>
-                                        {CATEGORIES.find(c => c.id === selectedCategory)?.subcategories.map(s => (
+                                        {equipopCategories.find(c => c.id === selectedCategory)?.subcategories.map((s: string) => (
                                             <option key={s} value={s}>{s}</option>
                                         ))}
                                     </select>
