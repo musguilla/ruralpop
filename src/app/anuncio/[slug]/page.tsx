@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
-import { MapPin, Calendar, Phone, User, ArrowLeft, ShieldCheck, Tractor, Building2 } from "lucide-react";
+import { MapPin, Calendar, Phone, User, ArrowLeft, ShieldCheck, Tractor, Building2, Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChatButton } from "@/components/chat/ChatButton";
@@ -344,12 +344,17 @@ export default async function ListingDetailPage(props: Props) {
                                         </span>
                                         <Link
                                             href={buildSeoUrl({
-                                                category: slugify(listing.category || ""),
-                                                subcategory: listing.subcategory || undefined
+                                                category: slugify((isEquipop && listing.equipop_category) ? listing.equipop_category : (listing.category || "")),
+                                                subcategory: (isEquipop && listing.equipop_category) ? (listing.equipop_subcategory || undefined) : (listing.subcategory || undefined)
                                             })}
                                             className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full hover:text-[var(--ag-sys-color-text)] transition-colors"
                                         >
-                                            <Tractor className="w-4 h-4" /> {dict.category[listing.subcategory as keyof typeof dict.category] || dict.category[listing.category as keyof typeof dict.category] || listing.subcategory || listing.category}
+                                            {isEquipop ? <Tag className="w-4 h-4" /> : <Tractor className="w-4 h-4" />} 
+                                            {
+                                                (isEquipop && listing.equipop_category) 
+                                                ? (listing.equipop_subcategory || listing.equipop_category)
+                                                : (dict.category[listing.subcategory as keyof typeof dict.category] || dict.category[listing.category as keyof typeof dict.category] || listing.subcategory || listing.category)
+                                            }
                                         </Link>
                                     </div>
                                 </div>
