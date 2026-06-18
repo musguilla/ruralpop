@@ -23,6 +23,7 @@ import { DeleteButton } from "./DeleteButton";
 import { ActivateButton } from "./ActivateButton";
 import { useNotification } from "@/context/NotificationContext";
 import { deleteMultipleListings, toggleShareToEquipop } from "./actions";
+import { CATEGORIES } from "@/constants/categories";
 
 interface BulkListingManagerProps {
     listings: any[];
@@ -32,6 +33,10 @@ export function BulkListingManager({ listings }: BulkListingManagerProps) {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [isDeleting, setIsDeleting] = useState(false);
     const { showAlert, showConfirm } = useNotification();
+
+    const [sharingListingId, setSharingListingId] = useState<string | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [selectedSubcategory, setSelectedSubcategory] = useState<string>('');
 
     const toggleSelection = (id: string) => {
         const newSet = new Set(selectedIds);
@@ -103,6 +108,81 @@ export function BulkListingManager({ listings }: BulkListingManagerProps) {
 
     return (
         <div className="space-y-4">
+            {/* Modal for Share */}
+            {sharingListingId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+                        <h2 className="text-xl font-bold mb-4">Compartir en Equipop</h2>
+                        <p className="text-sm text-[var(--ag-sys-color-text-muted)] mb-6">Selecciona la categoría bajo la cual se publicará este anuncio en Equipop.</p>
+                        
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold mb-2">Categoría <span className="text-red-500">*</span></label>
+                                <select 
+                                    className="w-full border border-[var(--ag-sys-color-border)] rounded-xl p-3 bg-[var(--ag-sys-color-background)] focus:border-[var(--ag-sys-color-primary)] outline-none"
+                                    value={selectedCategory}
+                                    onChange={(e) => {
+                                        setSelectedCategory(e.target.value);
+                                        setSelectedSubcategory('');
+                                    }}
+                                >
+                                    <option value="">Selecciona una categoría</option>
+                                    {CATEGORIES.map(c => (
+                                        <option key={c.id} value={c.id}>{c.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {selectedCategory && CATEGORIES.find(c => c.id === selectedCategory)?.subcategories.length ? (
+                                <div>
+                                    <label className="block text-sm font-bold mb-2">Subcategoría (Opcional)</label>
+                                    <select 
+                                        className="w-full border border-[var(--ag-sys-color-border)] rounded-xl p-3 bg-[var(--ag-sys-color-background)] focus:border-[var(--ag-sys-color-primary)] outline-none"
+                                        value={selectedSubcategory}
+                                        onChange={(e) => setSelectedSubcategory(e.target.value)}
+                                    >
+                                        <option value="">Ninguna</option>
+                                        {CATEGORIES.find(c => c.id === selectedCategory)?.subcategories.map(s => (
+                                            <option key={s} value={s}>{s}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            ) : null}
+                        </div>
+
+                        <div className="mt-8 flex justify-end gap-3">
+                            <button 
+                                onClick={() => {
+                                    setSharingListingId(null);
+                                    setSelectedCategory('');
+                                    setSelectedSubcategory('');
+                                }}
+                                className="px-5 py-2.5 text-sm font-bold text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-surface)] rounded-xl border border-[var(--ag-sys-color-border)] transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                            <button 
+                                onClick={async () => {
+                                    if (!selectedCategory) {
+                                        showAlert({ title: "Atención", message: "Debes seleccionar una categoría para Equipop", type: "error" });
+                                        return;
+                                    }
+                                    await toggleShareToEquipop(sharingListingId, true, selectedCategory, selectedSubcategory || null);
+                                    setSharingListingId(null);
+                                    setSelectedCategory('');
+                                    setSelectedSubcategory('');
+                                    showAlert({ title: "Compartido", message: "El anuncio ahora es visible en Equipop con la nueva categoría.", type: "success" });
+                                }}
+                                disabled={!selectedCategory}
+                                className="px-5 py-2.5 text-sm font-bold bg-purple-600 text-white rounded-xl hover:bg-purple-700 disabled:opacity-50 transition-colors"
+                            >
+                                Confirmar y Compartir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Bulk Actions Toolbar */}
             {selectedIds.size > 0 && (
                 <div className="sticky top-20 z-40 flex items-center justify-between bg-white border border-blue-200 shadow-md rounded-2xl p-4 animate-in fade-in slide-in-from-top-4">
@@ -239,7 +319,13 @@ export function BulkListingManager({ listings }: BulkListingManagerProps) {
                                                 onClick={async (e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
-                                                    await toggleShareToEquipop(l.id, !l.shared_to_equipop);
+                                                    if (l.shared_to_equipop) {
+                                                        await toggleShareToEquipop(l.id, false);
+                                                    } else {
+                                                        setSharingListingId(l.id);
+                                                        setSelectedCategory(l.equipop_category || '');
+                                                        setSelectedSubcategory(l.equipop_subcategory || '');
+                                                    }
                                                 }}
                                                 title={l.shared_to_equipop ? "Quitar de Equipop" : "Compartir en Equipop"}
                                                 className={`flex items-center justify-center w-8 h-8 rounded-full border transition-all ${l.shared_to_equipop ? 'bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text-muted)] border-[var(--ag-sys-color-border)] hover:bg-purple-50 hover:text-purple-600'}`}

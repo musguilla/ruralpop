@@ -320,7 +320,7 @@ export async function deleteMultipleListings(listingIds: string[]) {
     return { success: true };
 }
 
-export async function toggleShareToEquipop(listingId: string, shared: boolean) {
+export async function toggleShareToEquipop(listingId: string, shared: boolean, category?: string | null, subcategory?: string | null) {
     if (!await isAdmin()) {
         return { success: false, error: "No estás autorizado para realizar esta acción." };
     }
@@ -339,9 +339,19 @@ export async function toggleShareToEquipop(listingId: string, shared: boolean) {
         return { success: false, error: "Hubo un error inicializando cliente backend." };
     }
 
+    const updateData: any = { shared_to_equipop: shared };
+    
+    if (shared) {
+        updateData.equipop_category = category || null;
+        updateData.equipop_subcategory = subcategory || null;
+    } else {
+        updateData.equipop_category = null;
+        updateData.equipop_subcategory = null;
+    }
+
     const { error } = await supabaseAdmin
         .from("listings")
-        .update({ shared_to_equipop: shared })
+        .update(updateData)
         .eq("id", listingId);
 
     if (error) {

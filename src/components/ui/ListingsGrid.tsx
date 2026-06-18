@@ -94,12 +94,20 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         // Filter based on search params
         const categoryFilter = searchParams.category as string;
         if (categoryFilter && fallbackLevel < 4) {
-            query = query.eq("category", categoryFilter);
+            if (isEquipop) {
+                query = query.or(`category.eq."${categoryFilter}",equipop_category.eq."${categoryFilter}"`);
+            } else {
+                query = query.eq("category", categoryFilter);
+            }
         }
 
         const subcategoryFilter = searchParams.subcategory as string;
         if (subcategoryFilter && fallbackLevel < 3) {
-            query = query.ilike("subcategory", subcategoryFilter);
+            if (isEquipop) {
+                query = query.or(`subcategory.ilike."${subcategoryFilter}",equipop_subcategory.ilike."${subcategoryFilter}"`);
+            } else {
+                query = query.ilike("subcategory", subcategoryFilter);
+            }
         }
 
         const textQuery = searchParams.q as string;
@@ -212,11 +220,20 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
                     favorites(count)
                 `)
                 .eq("status", "active")
-                .eq("users.is_ghost", false)
-                .eq("category", fillCategory);
+                .eq("users.is_ghost", false);
+
+            if (isEquipop) {
+                fillQuery = fillQuery.or(`category.eq."${fillCategory}",equipop_category.eq."${fillCategory}"`);
+            } else {
+                fillQuery = fillQuery.eq("category", fillCategory);
+            }
                 
             if (fillSubcategory) {
-                fillQuery = fillQuery.eq("subcategory", fillSubcategory);
+                if (isEquipop) {
+                    fillQuery = fillQuery.or(`subcategory.eq."${fillSubcategory}",equipop_subcategory.eq."${fillSubcategory}"`);
+                } else {
+                    fillQuery = fillQuery.eq("subcategory", fillSubcategory);
+                }
             }
                 
             fillQuery = fillQuery.not("id", "in", `(${existingIds.join(',')})`)
