@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
-import { getTenantFilterString } from "@/config/tenants";
+import { getTenantConfig, RURALPOP_TENANT_SLUG } from "@/config/tenants";
 
 export interface CategoryData {
     id: string;
@@ -19,11 +19,17 @@ const supabaseAdmin = createClient(
  * Función interna que hace la llamada real a base de datos.
  */
 async function fetchCategoriesFromDB(tenantSlug: string): Promise<CategoryData[]> {
-    const tenantFilterString = getTenantFilterString(tenantSlug);
+    const config = getTenantConfig(tenantSlug);
+    const uuid = config.id || tenantSlug;
+    
+    let filterString = `tenant_id.eq.${uuid}`;
+    if (config.slug === RURALPOP_TENANT_SLUG || tenantSlug === RURALPOP_TENANT_SLUG) {
+        filterString = `tenant_id.eq.${uuid},tenant_id.is.null`;
+    }
     
     const [catRes, subcatRes] = await Promise.all([
-        supabaseAdmin.from("categories").select("id, name, order_index").or(tenantFilterString).order("order_index", { ascending: true }),
-        supabaseAdmin.from("subcategories").select("category_id, name, order_index").or(tenantFilterString).order("order_index", { ascending: true })
+        supabaseAdmin.from("categories").select("id, name, order_index").or(filterString).order("order_index", { ascending: true }),
+        supabaseAdmin.from("subcategories").select("category_id, name, order_index").or(filterString).order("order_index", { ascending: true })
     ]);
 
     if (!catRes.data) return [];
