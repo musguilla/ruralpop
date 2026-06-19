@@ -13,6 +13,7 @@ import { generateSeoH1 } from "@/utils/h1Generator";
 import { headers } from "next/headers";
 import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
 import { LocaleCode } from "@/i18n/config";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export async function generateMetadata(props: { 
     params: Promise<{ slug: string }>;
@@ -21,6 +22,8 @@ export async function generateMetadata(props: {
     const params = await props.params;
     const searchParams = await props.searchParams;
     const parsed = parseSeoUrl(params.slug);
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
 
     let locationName = "";
     if (parsed.province_id) {
@@ -45,31 +48,47 @@ export async function generateMetadata(props: {
 
     const baseSubject = parts.join(" ");
 
-    let pageTitle = "Mercado Agrícola y Ganadero | Ruralpop";
+    let pageTitle = isEquipop 
+        ? "Material de equitación de segunda mano | Equipop" 
+        : "Mercado Agrícola y Ganadero | Ruralpop";
 
     if (isLocationOnly) {
         const charCodeSumLoc = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-        const variations = [
-            `Ganadería en ${locationName} - Comprar y vender ganado`,
-            `Ganado en venta en ${locationName} - Vender ganado ${locationName}`
-        ];
-        // Omitimos " | Ruralpop" porque con provincias largas pasaría de 60 caracteres y Google lo cortaría (...)
+        const variations = isEquipop 
+            ? [
+                `Equitación en ${locationName} - Material ecuestre`,
+                `Caballos y monturas en ${locationName} - Equipop`
+            ]
+            : [
+                `Ganadería en ${locationName} - Comprar y vender ganado`,
+                `Ganado en venta en ${locationName} - Vender ganado ${locationName}`
+            ];
         pageTitle = variations[charCodeSumLoc % 2];
     } else if (baseSubject.trim()) {
-        const seoVariations = [
-            "Comprar y vender ganado",
-            "Compraventa de animales ganaderos",
-            "App gratis compraventa ganado",
-            "Anuncios gratis del campo",
-            "Mercado rural de segunda mano",
-            "Compra venta ganadería"
-        ];
+        const seoVariations = isEquipop
+            ? [
+                "Material ecuestre usado",
+                "App gratis equitación",
+                "Tienda hípica segunda mano",
+                "Artículos para el caballo",
+                "Todo para tu caballo",
+                "Equipamiento para jinetes"
+            ]
+            : [
+                "Comprar y vender ganado",
+                "Compraventa de animales ganaderos",
+                "App gratis compraventa ganado",
+                "Anuncios gratis del campo",
+                "Mercado rural de segunda mano",
+                "Compra venta ganadería"
+            ];
         const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
         const suffix = seoVariations[charCodeSum % seoVariations.length];
-
-        const candidateTitle = `${baseSubject} - ${suffix} | Ruralpop`;
+        
+        const brand = isEquipop ? "Equipop" : "Ruralpop";
+        const candidateTitle = `${baseSubject} - ${suffix} | ${brand}`;
         if (candidateTitle.length > 72) {
-            pageTitle = `${baseSubject} | Ruralpop`;
+            pageTitle = `${baseSubject} | ${brand}`;
         } else {
             pageTitle = candidateTitle;
         }
@@ -97,10 +116,14 @@ export async function generateMetadata(props: {
     } else if (isPaginated) {
         robotsRules = { index: false, follow: true };
     }
+    
+    const descText = isEquipop
+        ? `App gratis para ${parts.join(" ") || "buscar material ecuestre"}. Compra y vende monturas, botas, accesorios y todo lo necesario para tu caballo sin comisiones en Equipop.`
+        : `Aplicación gratis para ${parts.join(" ") || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`;
 
     return {
         title: pageTitle,
-        description: `Aplicación gratis para ${parts.join(" ") || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`,
+        description: descText,
         alternates: {
             canonical,
             languages: getHreflangLinks(originalPathname)

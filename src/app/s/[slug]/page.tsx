@@ -30,6 +30,9 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
     const headersList = await headers();
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const { getServerTenantSlug } = await import('@/utils/tenant/server');
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
 
     let baseTitle = landing.title;
     if (locale === 'pt') {
@@ -40,11 +43,17 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
         baseTitle = generateSeoH1(combinedParams, landing.province, locale);
     }
 
-    let pageTitle = `${baseTitle} | Ruralpop`;
+    const brand = isEquipop ? "Equipop" : "Ruralpop";
+    let pageTitle = `${baseTitle} | ${brand}`;
+    
     if (locale === 'es') {
         const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-        const suffix = seoVariations[charCodeSum % seoVariations.length];
-        const candidateTitle = `${baseTitle} - ${suffix} | Ruralpop`;
+        const seoVariationsLocal = isEquipop 
+            ? ["Material ecuestre usado", "Tienda hípica segunda mano", "Artículos ecuestres"]
+            : seoVariations;
+        
+        const suffix = seoVariationsLocal[charCodeSum % seoVariationsLocal.length];
+        const candidateTitle = `${baseTitle} - ${suffix} | ${brand}`;
 
         // Maximize title length for Google (usually up to ~65-70 chars)
         if (candidateTitle.length <= 72) {
@@ -53,8 +62,11 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     }
 
     // Making the description even more punchy and keyword rich
-    let optimizedDescription = `Descubre los mejores anuncios de ${baseTitle.toLowerCase()} en nuestra App gratis. El gran mercado agrícola de España para descargar y buscar, comprar y vender ganado, vacas, toros, caballos, maquinaria y más.`;
-    if (locale === 'pt') {
+    let optimizedDescription = isEquipop
+        ? `Descubre los mejores anuncios de ${baseTitle.toLowerCase()} en nuestra App gratis. El gran mercado para comprar y vender material de equitación, sillas de montar, ropa y más en Equipop.`
+        : `Descubre los mejores anuncios de ${baseTitle.toLowerCase()} en nuestra App gratis. El gran mercado agrícola de España para descargar y buscar, comprar y vender ganado, vacas, toros, caballos, maquinaria y más.`;
+    
+    if (locale === 'pt' && !isEquipop) {
         optimizedDescription = `Descubra os melhores anúncios de ${baseTitle.toLowerCase()} na nossa App grátis. O grande mercado agrícola para descarregar e pesquisar, comprar e vender gado, vacas, touros, cavalos, máquinas e muito mais.`;
     }
 
