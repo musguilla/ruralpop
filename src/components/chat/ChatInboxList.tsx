@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, startTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -42,7 +42,9 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
         setThreads(initialThreads);
         // Forzamos un refresco al montar para asegurar que el cache de Next.js no nos juegue una mala pasada
         // con los contadores de mensajes leídos en la navegación atrás/adelante.
-        router.refresh();
+        startTransition(() => {
+            router.refresh();
+        });
     }, [initialThreads, router]);
 
     useEffect(() => {
@@ -59,11 +61,15 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
                 (payload: any) => {
                     // Si es un INSERT y somos el destinatario, refrescamos
                     if (payload.eventType === 'INSERT' && payload.new.receiver_id === userId) {
-                        router.refresh();
+                        startTransition(() => {
+                            router.refresh();
+                        });
                     }
                     // Si es un UPDATE y ha cambiado el estado de lectura, refrescamos
                     if (payload.eventType === 'UPDATE') {
-                        router.refresh();
+                        startTransition(() => {
+                            router.refresh();
+                        });
                     }
                 }
             )
@@ -81,7 +87,9 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
                 ));
             }
             // Y avisamos al servidor por si acaso
-            router.refresh();
+            startTransition(() => {
+                router.refresh();
+            });
         };
 
         window.addEventListener("chat-read", handleManualRead);
