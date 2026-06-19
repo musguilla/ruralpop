@@ -44,7 +44,7 @@ const CATEGORY_ALIASES: Record<string, string> = {
     "mantillas-y-sudaderos": "mantillas",
     "cabezadas-y-riendas": "cabezadas",
     "protectores-y-vendas": "protectores",
-    "mantas-y-ropa-para-caballos": "ropa-caballos",
+    "mantas-y-ropa-para-caballos": "mantas-caballos",
     "cuidado-e-higiene-del-caballo": "cuidado-caballo",
     "alimentacin-y-suplementos": "alimentacion",
     "herrado-y-cascos": "herrado",
