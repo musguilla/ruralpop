@@ -16,8 +16,7 @@ async function run() {
     }
 
     const urls = [
-        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260603.pdf", date: new Date("2026-06-03T12:00:00Z") },
-        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260610.pdf", date: new Date("2026-06-10T12:00:00Z") }
+        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260617.pdf", date: new Date("2026-06-17T12:00:00Z") }
     ];
 
     const { TalaveraParser } = await import('../src/lib/services/etl/parsers/TalaveraParser');
