@@ -27,9 +27,10 @@ interface UploadFormProps {
         zoo_register_number: string;
     };
     activeTenantId?: string;
+    isEquipop?: boolean;
 }
 
-export default function UploadForm({ savedPhone, initialProvinces, userEmail, hasWalletConfigured = false, isProfesional = false, userProfile, activeTenantId }: UploadFormProps) {
+export default function UploadForm({ savedPhone, initialProvinces, userEmail, hasWalletConfigured = false, isProfesional = false, userProfile, activeTenantId, isEquipop = false }: UploadFormProps) {
     const { t } = useTranslation();
     const CATEGORIES = useCategories();
     const router = useRouter();
@@ -176,11 +177,17 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
         <div className="w-full max-w-4xl mx-auto py-12 px-4 sm:px-6">
             <div className="mb-8 border-b border-[var(--ag-sys-color-border)] pb-6">
                 <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] flex items-center gap-3">
-                    <Tractor className="text-[var(--ag-sys-color-primary)] w-8 h-8" />
+                    {isEquipop ? (
+                        <span className="text-3xl" role="img" aria-label="caballo">🐴</span>
+                    ) : (
+                        <Tractor className="text-[var(--ag-sys-color-primary)] w-8 h-8" />
+                    )}
                     {t('upload.title')}
                 </h1>
                 <p className="text-[var(--ag-sys-color-text-secondary)] text-sm sm:text-base mt-2">
-                    {t('upload.subtitle')}
+                    {isEquipop 
+                        ? 'Vende tu material ecuestre de forma segura en Equipop.' 
+                        : t('upload.subtitle')}
                 </p>
             </div>
 
@@ -207,7 +214,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                             <input
                                 name="title"
                                 required
-                                placeholder={t('upload.title_placeholder')}
+                                placeholder={isEquipop ? "Ej: Silla de salto CWD 17''" : t('upload.title_placeholder')}
                                 className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
                             />
                         </div>
@@ -249,7 +256,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                 name="description"
                                 required
                                 rows={5}
-                                placeholder={t('upload.desc_placeholder')}
+                                placeholder={isEquipop ? "Describe el producto en detalle, sus características, ..." : t('upload.desc_placeholder')}
                                 className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all resize-none"
                             />
                         </div>
@@ -279,21 +286,25 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                             />
                         </div>
 
-                        <div className="flex flex-col">
-                            <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">{t('upload.price_type_label')}</label>
-                            <div className="flex items-center gap-4">
-                                <div className="flex-1 min-w-0">
-                                    <SearchableSelect
-                                        name="price_type"
-                                        value={formDataState.priceType}
-                                        onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
-                                        options={PRICE_TYPES.map(p => ({ id: p.id, name: p.label }))}
-                                        placeholder={t('upload.price_type_placeholder')}
-                                        disabled={sellOnline}
-                                    />
+                        {isEquipop ? (
+                            <input type="hidden" name="price_type" value="fixed" />
+                        ) : (
+                            <div className="flex flex-col">
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">{t('upload.price_type_label')}</label>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1 min-w-0">
+                                        <SearchableSelect
+                                            name="price_type"
+                                            value={formDataState.priceType}
+                                            onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
+                                            options={PRICE_TYPES.map(p => ({ id: p.id, name: p.label }))}
+                                            placeholder={t('upload.price_type_placeholder')}
+                                            disabled={sellOnline}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
 
                         {isTestPro && (
                             <div className="col-span-1 md:col-span-2 flex flex-col gap-2">

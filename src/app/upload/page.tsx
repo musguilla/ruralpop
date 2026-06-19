@@ -63,5 +63,5 @@ export default async function UploadPage() {
     const tenantSlug = await getServerTenantSlug();
     const activeTenantId = tenantSlug ? getTenantConfig(tenantSlug).id : getRuralpopDatabaseId();
 
-    return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} userEmail={user.email} hasWalletConfigured={isStripeReady} isProfesional={isProfesional} userProfile={userProfile} activeTenantId={activeTenantId || undefined} />;
+    return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} userEmail={user.email} hasWalletConfigured={isStripeReady} isProfesional={isProfesional} userProfile={userProfile} activeTenantId={activeTenantId || undefined} isEquipop={tenantSlug === 'equipop'} />;
 }
