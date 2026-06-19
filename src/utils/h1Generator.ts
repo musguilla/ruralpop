@@ -1,6 +1,8 @@
 import { seoDictionaryES } from "./seo/i18n/es";
 import { seoDictionaryPT } from "./seo/i18n/pt";
 import { LocaleCode } from "@/i18n/config";
+import { CATEGORIES } from "@/constants/categories";
+
 export function generateSeoH1(
     parsedSlug: { q?: string, category?: string, subcategory?: string },
     locationName: string = "",
@@ -44,7 +46,10 @@ export function generateSeoH1(
         else if (cat === "alimentos") h1 = dict.categoryFood;
         else if (cat === "ganaderia") h1 = dict.categoryLivestock;
         else if (cat === "servicios") h1 = dict.categoryServices;
-        else h1 = dict.categoryAdsOf.replace('{category}', category);
+        else {
+            const catLabel = CATEGORIES.find(c => c.id === category)?.label || category;
+            h1 = dict.categoryAdsOf.replace('{category}', catLabel.toLowerCase());
+        }
     } else {
         h1 = dict.defaultGlobal;
     }
