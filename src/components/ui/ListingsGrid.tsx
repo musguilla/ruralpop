@@ -205,8 +205,8 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
     // FASE 7: Rellenar la página con la misma categoría si hay pocos resultados (SEO UX Fill)
     // Solo en la página 1, y nunca dentro de los perfiles de usuario.
     if (!error && !userIdFilter && listings && listings.length > 0 && listings.length < PAGE_SIZE && currentPage === 1) {
-        const fillCategory = listings[0].category;
-        const fillSubcategory = listings[0].subcategory;
+        const fillCategory = isEquipop ? (listings[0].equipop_category || listings[0].category) : listings[0].category;
+        const fillSubcategory = isEquipop ? (listings[0].equipop_subcategory || listings[0].subcategory) : listings[0].subcategory;
         
         if (fillCategory) {
             const existingIds = listings.map((l: any) => l.id);
