@@ -87,7 +87,7 @@ export function parseSeoUrl(slug: string): SeoUrlParams {
 
     // 1. Location check (search backwards)
     let matchedLocSize = 0;
-    for (let i = 1; i <= Math.min(parts.length, 5); i++) {
+    for (let i = 1; i <= parts.length; i++) {
         const potentialLoc = parts.slice(parts.length - i).join('-');
         if (locationSlugMap.has(potentialLoc)) {
             province_id = locationSlugMap.get(potentialLoc)!;
@@ -98,7 +98,7 @@ export function parseSeoUrl(slug: string): SeoUrlParams {
 
     // 2. Subcategory check (search backwards)
     let matchedSubSize = 0;
-    for (let i = 1; i <= Math.min(parts.length, 3); i++) {
+    for (let i = 1; i <= parts.length; i++) {
         const potentialSub = parts.slice(parts.length - i).join('-');
         if (subcategorySlugMap.has(potentialSub)) {
             subcategory = subcategorySlugMap.get(potentialSub)!;
@@ -109,7 +109,7 @@ export function parseSeoUrl(slug: string): SeoUrlParams {
 
     // 3. Category check (search backwards)
     let matchedCatSize = 0;
-    for (let i = 1; i <= Math.min(parts.length, 3); i++) {
+    for (let i = 1; i <= parts.length; i++) {
         const potentialCat = parts.slice(parts.length - i).join('-');
         if (validCategories.has(potentialCat)) {
             category = potentialCat;
