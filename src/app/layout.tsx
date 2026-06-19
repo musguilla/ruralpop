@@ -7,7 +7,7 @@ import { EquipopFooter } from "@/components/layout/EquipopFooter";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { CategoriesProvider } from "@/context/CategoriesContext";
-import { getCategories } from "@/utils/categoriesFetcher";
+import { getCategories, getActiveEquipopSubcategories } from "@/utils/categoriesFetcher";
 import { SeoFooterTabs } from "@/components/layout/SeoFooterTabs";
 import Script from "next/script";
 import { CookieBanner } from "@/components/layout/CookieBanner";
@@ -106,6 +106,12 @@ export default async function RootLayout({
   const dictionary = await getDictionary(locale);
   const tenant = await getServerTenantSlug();
   const categories = await getCategories(tenant || 'ruralpop');
+  
+  // Fetch active subcategories for Equipop SEO tabs
+  let activeEquipopData = { categories: [], subcategories: [] };
+  if (tenant === 'equipop') {
+      activeEquipopData = await getActiveEquipopSubcategories();
+  }
 
   return (
     <html lang={locale}>
@@ -150,7 +156,7 @@ export default async function RootLayout({
             <main className="flex-1 w-full flex flex-col items-center">
               {children}
             </main>
-            <SeoFooterTabs />
+            <SeoFooterTabs activeEquipopData={activeEquipopData} />
             {tenant === 'equipop' ? <EquipopFooter /> : <Footer />}
             <CookieBanner />
           </NotificationProvider>

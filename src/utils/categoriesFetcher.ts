@@ -54,8 +54,31 @@ async function fetchCategoriesFromDB(tenantSlug: string): Promise<CategoryData[]
 export const getCategories = async (tenantSlug: string) => {
     const cachedFn = unstable_cache(
         async () => fetchCategoriesFromDB(tenantSlug),
-        [`global-categories-${tenantSlug}`],
-        { revalidate: 3600, tags: ['categories', `categories-${tenantSlug}`] }
+        [`global-categories-v2-${tenantSlug}`],
+        { revalidate: 3600, tags: ['categories-v2', `categories-v2-${tenantSlug}`] }
+    );
+    return cachedFn();
+};
+
+export const getActiveEquipopSubcategories = async () => {
+    const cachedFn = unstable_cache(
+        async () => {
+            const { data } = await supabaseAdmin
+                .from('listings')
+                .select('equipop_category, equipop_subcategory')
+                .eq('status', 'active')
+                .not('equipop_category', 'is', null);
+
+            const activeCats = [...new Set((data || []).map(d => d.equipop_category))].filter(Boolean) as string[];
+            const activeSubcats = [...new Set((data || []).map(d => d.equipop_subcategory))].filter(Boolean) as string[];
+            
+            return {
+                categories: activeCats,
+                subcategories: activeSubcats
+            };
+        },
+        [`equipop-active-subcategories`],
+        { revalidate: 3600, tags: ['equipop-active-subcategories'] }
     );
     return cachedFn();
 };

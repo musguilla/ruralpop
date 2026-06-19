@@ -9,7 +9,7 @@ import { buildSeoUrl } from "@/utils/seoUtils";
 import { SEO_LANDINGS } from "@/constants/seoLandings";
 import { usePathname } from "next/navigation";
 
-export function SeoFooterTabs() {
+export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { categories: string[], subcategories: string[] } }) {
     const CATEGORIES = useCategories();
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<"provinces" | "categories" | "popular">("provinces");
@@ -28,6 +28,24 @@ export function SeoFooterTabs() {
 
     // Filtrar solo las provincias para la primera pestaña
     const provinces = LOCATIONS.filter(l => l.type === "province").sort((a, b) => a.province.localeCompare(b.province));
+
+    const ALWAYS_SHOW_CATEGORIES = new Set([
+        "sillas-de-montar-y-accesorios",
+        "mantillas-y-sudaderos",
+        "cabezadas-y-riendas",
+        "mantas-y-ropa-para-caballos",
+        "ropa-ecuestre-mujer",
+        "ropa-ecuestre-hombre",
+        "ropa-ecuestre-infantil",
+        "equipamiento-de-competicin"
+    ]);
+
+    const activeCatsSet = new Set(activeEquipopData?.categories || []);
+    const activeSubcatsSet = new Set(activeEquipopData?.subcategories || []);
+
+    const equipopCatsToRender = CATEGORIES.filter(cat => {
+        return ALWAYS_SHOW_CATEGORIES.has(cat.id) || activeCatsSet.has(cat.id);
+    });
 
     return (
         <div className="bg-[var(--ag-sys-color-surface)] border-t border-[var(--ag-sys-color-border)] py-12 pb-24">
@@ -87,18 +105,23 @@ export function SeoFooterTabs() {
 
                     {activeTab === "categories" && isEquipop && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-8 gap-x-6">
-                            {CATEGORIES.map(cat => (
-                                <div key={cat.id} className="flex flex-col gap-2">
-                                    <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
-                                        {cat.label}
-                                    </Link>
-                                    {cat.subcategories.map((sub) => (
-                                        <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
-                                            {sub}
+                            {equipopCatsToRender.map(cat => {
+                                const isAlwaysShow = ALWAYS_SHOW_CATEGORIES.has(cat.id);
+                                const subcategoriesToRender = cat.subcategories.filter(sub => isAlwaysShow || activeSubcatsSet.has(sub));
+
+                                return (
+                                    <div key={cat.id} className="flex flex-col gap-2">
+                                        <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                            {cat.label}
                                         </Link>
-                                    ))}
-                                </div>
-                            ))}
+                                        {subcategoriesToRender.map((sub) => (
+                                            <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                {sub}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
 
