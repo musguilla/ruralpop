@@ -108,7 +108,7 @@ export default async function RootLayout({
   const categories = await getCategories(tenant || 'ruralpop');
   
   // Fetch active subcategories for Equipop SEO tabs
-  let activeEquipopData = { categories: [], subcategories: [] };
+  let activeEquipopData: { categories: string[], subcategories: string[] } = { categories: [], subcategories: [] };
   if (tenant === 'equipop') {
       activeEquipopData = await getActiveEquipopSubcategories();
   }
