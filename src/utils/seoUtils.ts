@@ -39,9 +39,51 @@ interface SeoUrlParams {
     province_id?: string;
 }
 
-export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlParams): string {
-    // Mapeo especial eliminado para usar la URL larga estándar /anuncios-[categoria]-[subcategoria]
+const CATEGORY_ALIASES: Record<string, string> = {
+    "sillas-de-montar-y-accesorios": "sillas-de-montar",
+    "mantillas-y-sudaderos": "mantillas",
+    "cabezadas-y-riendas": "cabezadas",
+    "protectores-y-vendas": "protectores",
+    "mantas-y-ropa-para-caballos": "ropa-caballos",
+    "cuidado-e-higiene-del-caballo": "cuidado-caballo",
+    "alimentacin-y-suplementos": "alimentacion",
+    "herrado-y-cascos": "herrado",
+    "trabajo-pie-a-tierra-y-entrenamiento": "trabajo-pie-a-tierra",
+    "transporte-y-viaje": "transporte",
+    "seguridad-y-visibilidad": "seguridad",
+    "equipamiento-mdico-y-recuperacin": "equipamiento-medico",
+    "establo-y-cuadra": "establo",
+    "reproduccin-y-cra": "reproduccion",
+    "otros-productos-para-caballos": "otros-caballos",
+    "calzado-ecuestre": "calzado",
+    "cascos-y-seguridad": "cascos",
+    "ropa-ecuestre-mujer": "ropa-mujer",
+    "ropa-ecuestre-hombre": "ropa-hombre",
+    "ropa-ecuestre-infantil": "ropa-infantil",
+    "guantes-ecuestres": "guantes",
+    "ropa-reflectante-y-seguridad-vial": "ropa-reflectante",
+    "fustas-espuelas-y-ayudas": "fustas-espuelas",
+    "accesorios-para-riders": "accesorios-riders",
+    "equipamiento-de-competicin": "competicion",
+    "outdoor-y-lifestyle-ecuestre": "outdoor",
+    "bolsas-y-almacenamiento": "bolsas",
+    "otros-productos-para-riders": "otros-riders"
+};
 
+const SUBCATEGORY_ALIASES: Record<string, string> = {
+    "sillas-de-uso-general": "sillas-mixtas",
+    "sillas-mixtas-uso-general": "sillas-mixtas",
+};
+
+const INVERSE_CATEGORY_ALIASES = Object.fromEntries(
+    Object.entries(CATEGORY_ALIASES).map(([k, v]) => [v, k])
+);
+
+const INVERSE_SUBCATEGORY_ALIASES = Object.fromEntries(
+    Object.entries(SUBCATEGORY_ALIASES).map(([k, v]) => [v, k])
+);
+
+export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlParams): string {
     const parts: string[] = [];
 
     // Keyword or base
@@ -53,14 +95,13 @@ export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlPar
 
     // Category
     if (category && validCategories.has(category)) {
-        parts.push(category);
+        parts.push(CATEGORY_ALIASES[category] || category);
     }
 
     // Subcategory
     if (subcategory) {
-        const subSlug = subcategoryIdMap.get(subcategory);
-        if (subSlug) parts.push(subSlug);
-        else parts.push(slugify(subcategory)); // Default fallback
+        const subSlug = subcategoryIdMap.get(subcategory) || slugify(subcategory);
+        parts.push(SUBCATEGORY_ALIASES[subSlug] || subSlug);
     }
 
     // Location
@@ -100,8 +141,9 @@ export function parseSeoUrl(slug: string): SeoUrlParams {
     let matchedSubSize = 0;
     for (let i = 1; i <= parts.length; i++) {
         const potentialSub = parts.slice(parts.length - i).join('-');
-        if (subcategorySlugMap.has(potentialSub)) {
-            subcategory = subcategorySlugMap.get(potentialSub)!;
+        const realSubSlug = INVERSE_SUBCATEGORY_ALIASES[potentialSub] || potentialSub;
+        if (subcategorySlugMap.has(realSubSlug)) {
+            subcategory = subcategorySlugMap.get(realSubSlug)!;
             matchedSubSize = i;
         }
     }
@@ -111,8 +153,9 @@ export function parseSeoUrl(slug: string): SeoUrlParams {
     let matchedCatSize = 0;
     for (let i = 1; i <= parts.length; i++) {
         const potentialCat = parts.slice(parts.length - i).join('-');
-        if (validCategories.has(potentialCat)) {
-            category = potentialCat;
+        const realCatSlug = INVERSE_CATEGORY_ALIASES[potentialCat] || potentialCat;
+        if (validCategories.has(realCatSlug)) {
+            category = realCatSlug;
             matchedCatSize = i;
         }
     }
