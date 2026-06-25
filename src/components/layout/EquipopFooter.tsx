@@ -91,7 +91,7 @@ export async function EquipopFooter() {
                         </a>
                     </div>
                     <p className="text-[var(--ag-sys-color-text-muted)] text-sm leading-relaxed">
-                        App móvil gratis para buscar, vender y comprar material de segunda mano de equitación.
+                        App gratis para buscar, comprar y vender material y equipamientos hípicos.
                     </p>
                 </div>
 
