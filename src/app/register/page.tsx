@@ -24,11 +24,9 @@ export default async function RegisterPage(props: {
             <div className="w-full max-w-md space-y-8 bg-[var(--ag-sys-color-surface)] p-8 rounded-2xl shadow-sm border border-[var(--ag-sys-color-border)]">
 
                 <div className="text-center flex flex-col items-center">
-                    {!isEquipop && (
-                        <div className="mb-4">
-                            <Image src="/ruralpop-logo.png" alt="Ruralpop" width={160} height={40} className="object-contain" priority />
-                        </div>
-                    )}
+                    <div className="mb-4">
+                        <Image src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"} alt={isEquipop ? "Equipop" : "Ruralpop"} width={160} height={40} className="object-contain" priority />
+                    </div>
                     <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
                         Crea una Cuenta
                     </h2>

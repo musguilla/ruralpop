@@ -39,6 +39,18 @@ export async function EquipopFooter() {
                     <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         {t("informacion")}
                     </span>
+                    <LocalizedLink href="/como-comprar" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        ¿Cómo comprar?
+                    </LocalizedLink>
+                    <LocalizedLink href="/como-vender" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        ¿Cómo vender?
+                    </LocalizedLink>
+                    <LocalizedLink href="/pago-seguro" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        Cómo funciona Pago Seguro
+                    </LocalizedLink>
+                    <LocalizedLink href="/quienes-somos" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                        Quienes somos
+                    </LocalizedLink>
                     <LocalizedLink href="/preguntas-frecuentes" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         {t("faq")}
                     </LocalizedLink>
