@@ -50,6 +50,14 @@ export default function QuienesSomosPage() {
                     </section>
                 </div>
 
+                <div className="mt-12 bg-[var(--ag-sys-color-primary)]/5 dark:bg-[var(--ag-sys-color-primary)]/10 rounded-2xl p-8 text-center border border-[var(--ag-sys-color-primary)]/20">
+                    <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-4">Forma parte de Equipop</h3>
+                    <p className="text-[var(--ag-sys-color-text-muted)] mb-6 max-w-xl mx-auto">Tanto si buscas vender tu antigua montura como si necesitas equipamiento para empezar a competir, aquí tienes tu sitio.</p>
+                    <a href="/register" className="inline-flex items-center justify-center bg-[var(--ag-sys-color-primary)] hover:bg-[#194152] text-white font-bold py-3 px-8 rounded-full transition-colors">
+                        Unirse a la comunidad
+                    </a>
+                </div>
+
             </div>
             {/* 
               Documentación de Memoria:

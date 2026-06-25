@@ -83,6 +83,14 @@ export default function ComoVenderPage() {
                     </div>
                 </div>
 
+                <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-8 text-center border border-blue-100 dark:border-blue-900/30">
+                    <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-4">¿Listo para hacer hueco en tu guadarnés?</h3>
+                    <p className="text-[var(--ag-sys-color-text-muted)] mb-6 max-w-xl mx-auto">Publica tu primer anuncio en menos de 2 minutos y llega a miles de jinetes y amazonas en toda España.</p>
+                    <a href="/upload" className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-colors">
+                        Subir anuncio ahora
+                    </a>
+                </div>
+
             </div>
             {/* 
               Documentación de Memoria:

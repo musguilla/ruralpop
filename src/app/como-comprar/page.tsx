@@ -82,6 +82,14 @@ export default function ComoComprarPage() {
                         </div>
                     </div>
                 </div>
+                
+                <div className="mt-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-8 text-center border border-emerald-100 dark:border-emerald-900/30">
+                    <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-4">¿Todo listo para encontrar lo que buscas?</h3>
+                    <p className="text-[var(--ag-sys-color-text-muted)] mb-6 max-w-xl mx-auto">Únete a nuestra comunidad y encuentra el mejor equipamiento ecuestre de segunda mano con total seguridad.</p>
+                    <a href="/" className="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-full transition-colors">
+                        Explorar anuncios
+                    </a>
+                </div>
 
             </div>
             {/* 

@@ -53,6 +53,14 @@ export default function PagoSeguroPage() {
                     </div>
                 </div>
 
+                <div className="mt-12 bg-amber-50 dark:bg-amber-900/20 rounded-2xl p-8 text-center border border-amber-100 dark:border-amber-900/30">
+                    <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-4">Compra y vende sin preocupaciones</h3>
+                    <p className="text-[var(--ag-sys-color-text-muted)] mb-6 max-w-xl mx-auto">Descubre el mayor catálogo de material ecuestre con la tranquilidad de estar respaldado por nuestro sistema seguro.</p>
+                    <a href="/" className="inline-flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded-full transition-colors">
+                        Ir al catálogo
+                    </a>
+                </div>
+
             </div>
             {/* 
               Documentación de Memoria:
