@@ -32,9 +32,9 @@ export default function PagoSeguroPage() {
 
                     <div className="bg-slate-50 dark:bg-slate-900/40 p-6 sm:p-8 rounded-2xl border border-[var(--ag-sys-color-border)]">
                         <Truck className="w-10 h-10 text-amber-500 mb-4" />
-                        <h3 className="text-xl font-bold mb-3 text-[var(--ag-sys-color-text)]">Envío integrado</h3>
+                        <h3 className="text-xl font-bold mb-3 text-[var(--ag-sys-color-text)]">Envíos a medida</h3>
                         <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">
-                            Al usar Pago Seguro, el sistema de envíos está completamente integrado. Podrás seguir el trayecto de tu paquete en todo momento desde la aplicación, sin perder de vista tu pedido.
+                            El método y el coste del envío los define el vendedor en su anuncio o lo acordáis por el chat. Nuestro sistema de Pago Seguro protege el importe total de la operación sin importar qué mensajería utilicéis.
                         </p>
                     </div>
 
