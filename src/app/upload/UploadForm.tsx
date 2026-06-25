@@ -309,49 +309,58 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                         {isTestPro && (
                             <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
                                 <div className="bg-green-50/50 border border-green-100 p-3 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                                    <label className="flex items-center gap-3 cursor-pointer flex-shrink-0">
-                                        <div className="relative">
-                                            <input 
-                                                type="checkbox" 
-                                                name="vender_online" 
-                                                className="sr-only" 
-                                                checked={sellOnline} 
-                                                onChange={e => {
-                                                    const isChecked = e.target.checked;
-                                                    setSellOnline(isChecked);
-                                                    if (isChecked) {
-                                                        setFormDataState(prev => ({ ...prev, priceType: "fixed" }));
-                                                    }
-                                                }} 
-                                                value="true" 
-                                            />
-                                            <div className={`block w-12 h-7 rounded-full transition-colors ${sellOnline ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                                            <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform ${sellOnline ? 'transform translate-x-5' : ''}`}></div>
+                                    {isEquipop ? (
+                                        <div className="flex items-center gap-2 flex-shrink-0">
+                                            <input type="hidden" name="vender_online" value="true" />
+                                            <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
+                                            <span className="text-sm font-bold text-green-800">Venta online obligatoria</span>
                                         </div>
-                                        <span className="text-sm font-bold text-green-800">Vender online</span>
-                                    </label>
+                                    ) : (
+                                        <label className="flex items-center gap-3 cursor-pointer flex-shrink-0">
+                                            <div className="relative">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="vender_online" 
+                                                    className="sr-only" 
+                                                    checked={sellOnline} 
+                                                    onChange={e => {
+                                                        const isChecked = e.target.checked;
+                                                        setSellOnline(isChecked);
+                                                        if (isChecked) {
+                                                            setFormDataState(prev => ({ ...prev, priceType: "fixed" }));
+                                                        }
+                                                    }} 
+                                                    value="true" 
+                                                />
+                                                <div className={`block w-12 h-7 rounded-full transition-colors ${sellOnline ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                                                <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform ${sellOnline ? 'transform translate-x-5' : ''}`}></div>
+                                            </div>
+                                            <span className="text-sm font-bold text-green-800">Vender online</span>
+                                        </label>
+                                    )}
                                     
-                                    {sellOnline && (
-                                        <div className="flex items-center gap-3 w-full md:w-auto">
-                                            <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">Precio transporte (€)</span>
+                                    {(sellOnline || isEquipop) && (
+                                        <div className="flex items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
+                                            <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">Precio transporte (€){isEquipop ? ' *' : ''}</span>
                                             <input
                                                 name="shipping_price"
                                                 type="number"
                                                 step="0.01"
                                                 min="0"
                                                 defaultValue="0"
+                                                required={isEquipop}
                                                 className="w-full md:w-32 px-3 py-2 rounded-lg border border-[var(--ag-sys-color-border)] bg-white focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all text-sm"
                                             />
                                         </div>
                                     )}
                                 </div>
                                 
-                                {sellOnline && !hasWalletConfigured && (
+                                {(sellOnline || isEquipop) && !hasWalletConfigured && (
                                     <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
                                         <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                                         <div>
                                             <p className="text-sm font-medium text-amber-900">
-                                                Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
+                                                {isEquipop ? "Configura tu monedero para poder recibir tus pagos." : "Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos."}
                                             </p>
                                             <a href="/dashboard/monedero" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline mt-1 inline-block">
                                                 Configurar mi monedero →
