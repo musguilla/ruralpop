@@ -162,7 +162,7 @@ export function EquipopHomeSearchHero() {
 
             {/* Wallapop-style Hero Banner */}
             <div className="w-full max-w-7xl mx-auto px-4 mt-6">
-                <div className="flex flex-col md:flex-row w-full rounded-2xl overflow-hidden shadow-sm bg-[#194152]">
+                <div className="flex flex-col md:flex-row w-full rounded-2xl overflow-hidden shadow-sm bg-[#194152] min-h-[350px] md:min-h-[420px]">
                     {/* Left side: Text & Button */}
                     <div className="w-full md:w-1/3 p-8 md:p-12 flex flex-col justify-center items-start">
                         <h2 className="text-xl md:text-2xl text-white/90 leading-relaxed mb-8 font-light">
