@@ -54,8 +54,8 @@ async function fetchCategoriesFromDB(tenantSlug: string): Promise<CategoryData[]
 export const getCategories = async (tenantSlug: string) => {
     const cachedFn = unstable_cache(
         async () => fetchCategoriesFromDB(tenantSlug),
-        [`global-categories-v2-${tenantSlug}`],
-        { revalidate: 3600, tags: ['categories-v2', `categories-v2-${tenantSlug}`] }
+        [`global-categories-v3-${tenantSlug}`],
+        { revalidate: 3600, tags: ['categories-v3', `categories-v3-${tenantSlug}`] }
     );
     return cachedFn();
 };
