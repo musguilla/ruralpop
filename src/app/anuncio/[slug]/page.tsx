@@ -437,7 +437,7 @@ export default async function ListingDetailPage(props: Props) {
 
                                     {!isProfessional && (
                                         <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
-                                            {t("en_ruralpop_desde")} {sellerJoinedDate || t("recientemente")}
+                                            {isEquipop ? 'En Equipop desde' : t("en_ruralpop_desde")} {sellerJoinedDate || t("recientemente")}
                                         </p>
                                     )}
 
