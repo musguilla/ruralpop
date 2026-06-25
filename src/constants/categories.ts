@@ -160,37 +160,27 @@ export const CATEGORIES = [
     {
         id: "calzado-ecuestre",
         label: "Calzado ecuestre",
-        subcategories: ["Botas jodhpur", "Botas de montar", "Botines y paddock boots", "Polainas / half chaps", "Botas western", "Botas de doma", "Botas de salto", "Calcetines ecuestres", "Accesorios para calzado"]
+        subcategories: ["Botas de Doma", "Botas de Salto", "Botines", "Polainas y chaps", "Calcetines", "Accesorios para calzado"]
     },
     {
         id: "cascos-y-seguridad",
         label: "Cascos y seguridad",
-        subcategories: ["Cascos ecuestres", "Chalecos protectores", "Protectores de espalda", "Airbags ecuestres", "Accesorios de seguridad", "Fundas y bolsas para casco"]
+        subcategories: ["Cascos", "Fundas y accesorios para cascos", "Chalecos Airbag", "Espalderas y chalecos protectores", "Accesorios de seguridad"]
     },
     {
         id: "ropa-ecuestre-mujer",
         label: "Ropa ecuestre mujer",
-        subcategories: ["Pantalones ecuestres mujer", "Leggings ecuestres mujer", "Camisetas y tops mujer", "Polos ecuestres mujer", "Sudaderas mujer", "Chaquetas ecuestres mujer", "Chalecos mujer", "Ropa de competición mujer", "Impermeables mujer"]
+        subcategories: ["Pantalones y leggins", "Polos, Camisetas y tops", "Camisas y polos de competición", "Pantalones de competición", "Chaquetas y Fracs de competición", "Ropa de Abrigo", "Impermeables", "Sudaderas", "Corbatas y plastrones", "Guantes", "Calcetines"]
     },
     {
         id: "ropa-ecuestre-hombre",
         label: "Ropa ecuestre hombre",
-        subcategories: ["Pantalones ecuestres hombre", "Camisetas y polos hombre", "Sudaderas hombre", "Chaquetas ecuestres hombre", "Chalecos hombre", "Ropa de competición hombre", "Impermeables hombre"]
+        subcategories: ["Pantalones y leggins", "Polos, Camisetas y tops", "Camisas y polos de competición", "Pantalones de competición", "Chaquetas y Fracs de competición", "Ropa de Abrigo", "Impermeables", "Sudaderas", "Corbatas y plastrones", "Guantes", "Calcetines"]
     },
     {
         id: "ropa-ecuestre-infantil",
         label: "Ropa ecuestre infantil",
-        subcategories: ["Pantalones ecuestres infantil", "Camisetas infantiles", "Chaquetas infantiles", "Chalecos infantiles", "Ropa de competición infantil", "Cascos infantiles", "Botas infantiles"]
-    },
-    {
-        id: "guantes-ecuestres",
-        label: "Guantes ecuestres",
-        subcategories: ["Guantes de doma", "Guantes de salto", "Guantes térmicos", "Guantes impermeables", "Guantes de competición"]
-    },
-    {
-        id: "ropa-reflectante-y-seguridad-vial",
-        label: "Ropa reflectante y seguridad vial",
-        subcategories: ["Chalecos reflectantes", "Bandas reflectantes", "Equipamiento LED", "Accesorios de visibilidad"]
+        subcategories: ["Pantalones y leggins", "Polos, Camisetas y tops", "Camisas y polos de competición", "Pantalones de competición", "Chaquetas y Fracs de competición", "Ropa de Abrigo", "Impermeables", "Sudaderas", "Corbatas y plastrones", "Guantes", "Calcetines"]
     },
     {
         id: "fustas-espuelas-y-ayudas",
@@ -201,21 +191,6 @@ export const CATEGORIES = [
         id: "accesorios-para-riders",
         label: "Accesorios para riders",
         subcategories: ["Joyería ecuestre", "Bolsas y mochilas", "Riñoneras", "Gorros y gorras", "Cinturones", "Fundas y accesorios", "Botellas y termos", "Otros accesorios ecuestres"]
-    },
-    {
-        id: "equipamiento-de-competicin",
-        label: "Equipamiento de competición",
-        subcategories: ["Fracs y chaquetas de concurso", "Camisas de competición", "Corbatas y plastrones", "Pantalones blancos de concurso", "Guantes de concurso", "Accesorios FEI"]
-    },
-    {
-        id: "outdoor-y-lifestyle-ecuestre",
-        label: "Outdoor y lifestyle ecuestre",
-        subcategories: ["Abrigos técnicos", "Ropa térmica", "Ropa casual ecuestre", "Moda ecuestre premium", "Ropa waterproof", "Accesorios lifestyle"]
-    },
-    {
-        id: "bolsas-y-almacenamiento",
-        label: "Bolsas y almacenamiento",
-        subcategories: ["Bolsas para botas", "Bolsas para casco", "Maletas ecuestres", "Organizadores", "Mochilas técnicas"]
     },
     {
         id: "otros-productos-para-riders",

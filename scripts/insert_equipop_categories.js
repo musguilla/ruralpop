@@ -129,49 +129,31 @@ const dataToInsert = [
     {
         name: "Calzado ecuestre",
         subs: [
-            "Botas jodhpur", "Botas de montar", "Botines y paddock boots", "Polainas / half chaps",
-            "Botas western", "Botas de doma", "Botas de salto", "Calcetines ecuestres", "Accesorios para calzado"
+            "Botas de Doma", "Botas de Salto", "Botines", "Polainas y chaps", "Calcetines", "Accesorios para calzado"
         ]
     },
     {
         name: "Cascos y seguridad",
         subs: [
-            "Cascos ecuestres", "Chalecos protectores", "Protectores de espalda", "Airbags ecuestres",
-            "Accesorios de seguridad", "Fundas y bolsas para casco"
+            "Cascos", "Fundas y accesorios para cascos", "Chalecos Airbag", "Espalderas y chalecos protectores", "Accesorios de seguridad"
         ]
     },
     {
         name: "Ropa ecuestre mujer",
         subs: [
-            "Pantalones ecuestres mujer", "Leggings ecuestres mujer", "Camisetas y tops mujer",
-            "Polos ecuestres mujer", "Sudaderas mujer", "Chaquetas ecuestres mujer", "Chalecos mujer",
-            "Ropa de competición mujer", "Impermeables mujer"
+            "Pantalones y leggins", "Polos, Camisetas y tops", "Camisas y polos de competición", "Pantalones de competición", "Chaquetas y Fracs de competición", "Ropa de Abrigo", "Impermeables", "Sudaderas", "Corbatas y plastrones", "Guantes", "Calcetines"
         ]
     },
     {
         name: "Ropa ecuestre hombre",
         subs: [
-            "Pantalones ecuestres hombre", "Camisetas y polos hombre", "Sudaderas hombre",
-            "Chaquetas ecuestres hombre", "Chalecos hombre", "Ropa de competición hombre", "Impermeables hombre"
+            "Pantalones y leggins", "Polos, Camisetas y tops", "Camisas y polos de competición", "Pantalones de competición", "Chaquetas y Fracs de competición", "Ropa de Abrigo", "Impermeables", "Sudaderas", "Corbatas y plastrones", "Guantes", "Calcetines"
         ]
     },
     {
         name: "Ropa ecuestre infantil",
         subs: [
-            "Pantalones ecuestres infantil", "Camisetas infantiles", "Chaquetas infantiles",
-            "Chalecos infantiles", "Ropa de competición infantil", "Cascos infantiles", "Botas infantiles"
-        ]
-    },
-    {
-        name: "Guantes ecuestres",
-        subs: [
-            "Guantes de doma", "Guantes de salto", "Guantes térmicos", "Guantes impermeables", "Guantes de competición"
-        ]
-    },
-    {
-        name: "Ropa reflectante y seguridad vial",
-        subs: [
-            "Chalecos reflectantes", "Bandas reflectantes", "Equipamiento LED", "Accesorios de visibilidad"
+            "Pantalones y leggins", "Polos, Camisetas y tops", "Camisas y polos de competición", "Pantalones de competición", "Chaquetas y Fracs de competición", "Ropa de Abrigo", "Impermeables", "Sudaderas", "Corbatas y plastrones", "Guantes", "Calcetines"
         ]
     },
     {
@@ -186,26 +168,6 @@ const dataToInsert = [
         subs: [
             "Joyería ecuestre", "Bolsas y mochilas", "Riñoneras", "Gorros y gorras", "Cinturones",
             "Fundas y accesorios", "Botellas y termos", "Otros accesorios ecuestres"
-        ]
-    },
-    {
-        name: "Equipamiento de competición",
-        subs: [
-            "Fracs y chaquetas de concurso", "Camisas de competición", "Corbatas y plastrones",
-            "Pantalones blancos de concurso", "Guantes de concurso", "Accesorios FEI"
-        ]
-    },
-    {
-        name: "Outdoor y lifestyle ecuestre",
-        subs: [
-            "Abrigos técnicos", "Ropa térmica", "Ropa casual ecuestre", "Moda ecuestre premium",
-            "Ropa waterproof", "Accesorios lifestyle"
-        ]
-    },
-    {
-        name: "Bolsas y almacenamiento",
-        subs: [
-            "Bolsas para botas", "Bolsas para casco", "Maletas ecuestres", "Organizadores", "Mochilas técnicas"
         ]
     },
     {
