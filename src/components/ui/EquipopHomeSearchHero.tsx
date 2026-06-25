@@ -164,8 +164,8 @@ export function EquipopHomeSearchHero() {
             <div className="w-full max-w-7xl mx-auto px-4 mt-6">
                 <div className="flex flex-col md:flex-row w-full rounded-2xl overflow-hidden shadow-sm bg-[#194152]">
                     {/* Left side: Text & Button */}
-                    <div className="w-full md:w-5/12 p-10 md:p-16 flex flex-col justify-center items-start">
-                        <h2 className="text-2xl md:text-4xl text-white/90 leading-tight mb-8 font-light">
+                    <div className="w-full md:w-1/3 p-8 md:p-12 flex flex-col justify-center items-start">
+                        <h2 className="text-xl md:text-2xl text-white/90 leading-relaxed mb-8 font-light">
                             <strong className="font-extrabold text-white">Vende</strong> lo que ya no usas.<br />
                             <strong className="font-extrabold text-white">Compra</strong> al mejor precio.<br />
                             <strong className="font-extrabold text-white">Conecta</strong> y comparte con otros jinetes y amazonas.
@@ -179,7 +179,7 @@ export function EquipopHomeSearchHero() {
                         </button>
                     </div>
                     {/* Right side: Image */}
-                    <div className="w-full md:w-7/12 relative min-h-[300px] md:min-h-full">
+                    <div className="w-full md:w-2/3 relative min-h-[300px] md:min-h-full">
                         <img 
                             src="/equipop-hero-web.jpg" 
                             alt="Equipop compra y venta" 
