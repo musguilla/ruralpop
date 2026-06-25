@@ -165,11 +165,16 @@ export function EquipopHomeSearchHero() {
                 <div className="flex flex-col md:flex-row w-full rounded-2xl overflow-hidden shadow-sm bg-[#194152] min-h-[350px] md:min-h-[420px]">
                     {/* Left side: Text & Button */}
                     <div className="w-full md:w-1/3 p-8 md:p-12 flex flex-col justify-center items-start">
-                        <h2 className="text-xl md:text-2xl text-white/90 leading-relaxed mb-8 font-light">
-                            <strong className="font-extrabold text-white">Vende</strong> lo que ya no usas.<br />
-                            <strong className="font-extrabold text-white">Compra</strong> al mejor precio.<br />
-                            <strong className="font-extrabold text-white">Conecta</strong> y comparte con otros jinetes y amazonas.
-                        </h2>
+                        <div className="mb-8">
+                            <h2 className="text-xl md:text-2xl text-white/90 leading-relaxed font-light mb-1">
+                                <strong className="font-extrabold text-white">Vende</strong> lo que ya no usas<br />
+                                <strong className="font-extrabold text-white">Compra</strong> al mejor precio<br />
+                                <strong className="font-extrabold text-white">Conecta</strong> y comparte
+                            </h2>
+                            <p className="text-base md:text-lg text-white/75 font-light leading-snug">
+                                con otros jinetes y amazonas
+                            </p>
+                        </div>
                         <button 
                             onClick={() => router.push('/upload')}
                             className="bg-white hover:bg-gray-100 text-[#194152] px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-colors"
