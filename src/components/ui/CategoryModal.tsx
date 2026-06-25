@@ -196,12 +196,12 @@ export function CategoryModal({
                             {filteredCategories.map((cat) => (
                                 <React.Fragment key={cat.id}>
                                     {isEquipop && !searchTerm && cat.label === 'Sillas de montar y accesorios' && (
-                                        <div className="px-4 py-2 mt-2 text-xs font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wider">
+                                        <div className="px-4 py-2 mt-2 text-[14px] bg-[#f5f9ff] font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wider">
                                             Para Caballos
                                         </div>
                                     )}
                                     {isEquipop && !searchTerm && cat.label === 'Calzado ecuestre' && (
-                                        <div className="px-4 py-2 mt-4 text-xs font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wider">
+                                        <div className="px-4 py-2 mt-4 text-[14px] bg-[#f5f9ff] font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wider">
                                             Para Jinetes
                                         </div>
                                     )}
