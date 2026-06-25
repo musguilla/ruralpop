@@ -21,23 +21,27 @@ const dataToInsert = [
     {
         name: "Sillas de montar y accesorios",
         subs: [
-            "Sillas de doma", "Sillas de salto", "Sillas western", "Sillas mixtas / uso general",
-            "Sillas de raid / endurance", "Sillas treeless", "Sillas barrocas", "Cinchas y latiguillos",
+            "Sillas de doma", "Sillas de salto", "Sillas mixtas / uso general",
+            "Sillas de raid / endurance", "Cinchas y latiguillos",
             "Estribos", "Aciones", "Fundas y protectores de silla", "Accesorios para silla"
         ]
     },
     {
-        name: "Mantillas y sudaderos",
+        name: "Mantillas y salvacruces",
         subs: [
-            "Mantillas de doma", "Mantillas de salto", "Sudaderos western", "Mantillas técnicas",
-            "Mantillas personalizadas", "Otros sudaderos y pads"
+            "Mantillas de doma", "Mantillas de salto", "Salvacruces", "Otros salvacruces y pads"
         ]
     },
     {
         name: "Cabezadas y riendas",
         subs: [
-            "Cabezadas de doma", "Cabezadas de salto", "Cabezadas western", "Riendas",
-            "Hackamores", "Filetes y bocados", "Muserolas", "Frontaleras", "Accesorios para cabezadas"
+            "Cabezadas de trabajo", "Riendas, alemanas y tijerillas", "Muserolas y frontaleras", "Accesorios para cabezadas", "Cabezadas de cuadra y ramales"
+        ]
+    },
+    {
+        name: "Bocados y filetes",
+        subs: [
+            "Bocados", "Filetes", "Accesorios para bocados y filetes"
         ]
     },
     {
@@ -48,7 +52,7 @@ const dataToInsert = [
         ]
     },
     {
-        name: "Mantas y ropa para caballos",
+        name: "Mantas",
         subs: [
             "Mantas de invierno", "Mantas impermeables", "Mantas de cuadra", "Mantas de verano",
             "Mantas de transporte", "Mantas refrescantes", "Cubrenucas", "Cubrecuellos", "Otros textiles para caballo"
@@ -84,7 +88,7 @@ const dataToInsert = [
     {
         name: "Transporte y viaje",
         subs: [
-            "Protectores de transporte", "Bolsas y maletas ecuestres", "Redes para heno",
+            "Protectores de transporte", "Protectores de colas", "Bolsas y maletas ecuestres", "Redes para heno",
             "Accesorios de remolque", "Cámaras y vigilancia para transporte", "Equipamiento de viaje"
         ]
     },

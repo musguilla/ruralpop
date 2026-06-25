@@ -80,17 +80,22 @@ export const CATEGORIES = [
     {
         id: "sillas-de-montar-y-accesorios",
         label: "Sillas de montar y accesorios",
-        subcategories: ["Sillas de doma", "Sillas vaqueras", "Sillas de salto", "Sillas de uso general", "Sillas de raid", "Sillas western", "Sillas españolas", "Sillas portuguesas", "Sillas de poni", "Sillas barrocas", "Cinchas y latiguillos", "Estribos", "Aciones", "Fundas y protectores de silla", "Accesorios para silla"]
+        subcategories: ["Sillas de doma", "Sillas vaqueras", "Sillas de salto", "Sillas de uso general", "Sillas españolas", "Sillas portuguesas", "Sillas de poni", "Cinchas y latiguillos", "Estribos", "Aciones", "Fundas y protectores de silla", "Accesorios para silla"]
     },
     {
-        id: "mantillas-y-sudaderos",
-        label: "Mantillas y sudaderos",
-        subcategories: ["Mantillas de doma", "Mantillas de salto", "Sudaderos western", "Mantillas técnicas", "Mantillas personalizadas", "Otros sudaderos y pads"]
+        id: "mantillas-y-salvacruces",
+        label: "Mantillas y salvacruces",
+        subcategories: ["Mantillas de doma", "Mantillas de salto", "Salvacruces", "Otros salvacruces y pads"]
     },
     {
         id: "cabezadas-y-riendas",
         label: "Cabezadas y riendas",
-        subcategories: ["Cabezadas de doma", "Cabezadas de salto", "Cabezadas western", "Riendas", "Hackamores", "Filetes y bocados", "Muserolas", "Frontaleras", "Accesorios para cabezadas"]
+        subcategories: ["Cabezadas de trabajo", "Riendas, alemanas y tijerillas", "Muserolas y frontaleras", "Accesorios para cabezadas", "Cabezadas de cuadra y ramales"]
+    },
+    {
+        id: "bocados-y-filetes",
+        label: "Bocados y filetes",
+        subcategories: ["Bocados", "Filetes", "Accesorios para bocados y filetes"]
     },
     {
         id: "protectores-y-vendas",
@@ -98,8 +103,8 @@ export const CATEGORIES = [
         subcategories: ["Protectores delanteros", "Protectores traseros", "Campanas", "Vendas de trabajo", "Vendas de descanso", "Protectores de transporte", "Otros protectores"]
     },
     {
-        id: "mantas-y-ropa-para-caballos",
-        label: "Mantas y ropa para caballos",
+        id: "mantas",
+        label: "Mantas",
         subcategories: ["Mantas de invierno", "Mantas impermeables", "Mantas de cuadra", "Mantas de verano", "Mantas de transporte", "Mantas refrescantes", "Cubrenucas", "Cubrecuellos", "Otros textiles para caballo"]
     },
     {
@@ -125,7 +130,7 @@ export const CATEGORIES = [
     {
         id: "transporte-y-viaje",
         label: "Transporte y viaje",
-        subcategories: ["Protectores de transporte", "Bolsas y maletas ecuestres", "Redes para heno", "Accesorios de remolque", "Cámaras y vigilancia para transporte", "Equipamiento de viaje"]
+        subcategories: ["Protectores de transporte", "Protectores de colas", "Bolsas y maletas ecuestres", "Redes para heno", "Accesorios de remolque", "Cámaras y vigilancia para transporte", "Equipamiento de viaje"]
     },
     {
         id: "seguridad-y-visibilidad",
