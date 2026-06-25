@@ -176,7 +176,7 @@ export function CategoryModal({
                             {/* "All Categories" Option */}
                             <button
                                 onClick={() => { onSelect(""); onClose(); }}
-                                className={`flex items-center justify-between px-4 py-4 rounded-xl transition-all group ${!selectedCategory ? 'bg-emerald-50 text-emerald-700 font-semibold border-2 border-emerald-500' : 'hover:bg-gray-50 border-2 border-transparent'
+                                className={`flex items-center justify-between px-4 py-4 rounded-xl transition-all group ${!selectedCategory ? (isEquipop ? 'bg-[#eef4f9] text-[var(--ag-sys-color-primary)] font-semibold border-2 border-[var(--ag-sys-color-primary)]' : 'bg-emerald-50 text-emerald-700 font-semibold border-2 border-emerald-500') : 'hover:bg-gray-50 border-2 border-transparent'
                                     }`}
                             >
                                 <div className="flex items-center gap-4">
@@ -207,7 +207,7 @@ export function CategoryModal({
                                     )}
                                     <button
                                         onClick={() => handleCategoryClick(cat)}
-                                        className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedCategory === cat.id && !selectedSubcategory ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
+                                        className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedCategory === cat.id && !selectedSubcategory ? (isEquipop ? 'bg-[#eef4f9] text-[var(--ag-sys-color-primary)] font-semibold' : 'bg-emerald-50 text-emerald-700 font-semibold') : 'hover:bg-gray-50'
                                             }`}
                                     >
                                         <div className="flex items-center gap-4">
@@ -232,7 +232,7 @@ export function CategoryModal({
                                         <button
                                             key={`${cat.id}-${sub}`}
                                             onClick={() => handleSubcategoryClick(cat.id, sub)}
-                                            className={`flex items-center justify-between px-4 py-3 pl-14 rounded-xl transition-all group ${selectedSubcategory === sub ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
+                                            className={`flex items-center justify-between px-4 py-3 pl-14 rounded-xl transition-all group ${selectedSubcategory === sub ? (isEquipop ? 'bg-[#eef4f9] text-[var(--ag-sys-color-primary)] font-semibold' : 'bg-emerald-50 text-emerald-700 font-semibold') : 'hover:bg-gray-50'
                                                 }`}
                                         >
                                             <div className="flex items-center gap-3">
@@ -251,7 +251,7 @@ export function CategoryModal({
                             {/* "All in [Category]" option */}
                             <button
                                 onClick={() => { onSelect(activeParent); onClose(); }}
-                                className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedCategory === activeParent && !selectedSubcategory ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
+                                className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedCategory === activeParent && !selectedSubcategory ? (isEquipop ? 'bg-[#eef4f9] text-[var(--ag-sys-color-primary)] font-semibold' : 'bg-emerald-50 text-emerald-700 font-semibold') : 'hover:bg-gray-50'
                                     }`}
                             >
                                 <span>Todo en {currentParent?.label}</span>
@@ -262,7 +262,7 @@ export function CategoryModal({
                                 <button
                                     key={sub}
                                     onClick={() => handleSubcategoryClick(activeParent, sub)}
-                                    className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedSubcategory === sub ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
+                                    className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedSubcategory === sub ? (isEquipop ? 'bg-[#eef4f9] text-[var(--ag-sys-color-primary)] font-semibold' : 'bg-emerald-50 text-emerald-700 font-semibold') : 'hover:bg-gray-50'
                                         }`}
                                 >
                                     <span>{sub}</span>
