@@ -164,14 +164,14 @@ export function EquipopHomeSearchHero() {
             <div className="w-full max-w-7xl mx-auto px-4 mt-6">
                 <div className="flex flex-col md:flex-row w-full rounded-2xl overflow-hidden shadow-sm bg-[#194152] min-h-[350px] md:min-h-[420px]">
                     {/* Left side: Text & Button */}
-                    <div className="w-full md:w-1/3 p-8 md:p-12 flex flex-col justify-center items-start">
+                    <div className="w-full md:w-2/5 p-8 md:p-12 flex flex-col justify-center items-start">
                         <div className="mb-8">
-                            <h2 className="text-xl md:text-2xl text-white/90 leading-relaxed font-light mb-1">
+                            <h2 className="text-2xl md:text-3xl text-white/90 leading-relaxed font-light mb-1">
                                 <strong className="font-extrabold text-white">Vende</strong> lo que ya no usas<br />
                                 <strong className="font-extrabold text-white">Compra</strong> al mejor precio<br />
                                 <strong className="font-extrabold text-white">Conecta</strong> y comparte
                             </h2>
-                            <p className="text-base md:text-lg text-white/75 font-light leading-snug">
+                            <p className="text-lg md:text-xl text-white/75 font-light leading-snug">
                                 con otros jinetes y amazonas
                             </p>
                         </div>
@@ -184,7 +184,7 @@ export function EquipopHomeSearchHero() {
                         </button>
                     </div>
                     {/* Right side: Image */}
-                    <div className="w-full md:w-2/3 relative min-h-[300px] md:min-h-full">
+                    <div className="w-full md:w-3/5 relative min-h-[300px] md:min-h-full">
                         <img 
                             src="/equipop-hero-web.jpg" 
                             alt="Equipop compra y venta" 
