@@ -67,20 +67,7 @@ export default function ComoComprarPage() {
                         </div>
                     </div>
 
-                    <div className="flex gap-6 items-start">
-                        <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 flex items-center justify-center shrink-0 font-bold text-xl">
-                            4
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-bold flex items-center gap-2 mb-2 text-[var(--ag-sys-color-text)]">
-                                <PackageCheck className="w-5 h-5 text-emerald-600" />
-                                Recibe y disfruta
-                            </h3>
-                            <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">
-                                Recibe el paquete en tu casa o en un punto de recogida, inspecciona que todo está correcto, y prepárate para disfrutar de tu nueva compra en la próxima ruta o concurso.
-                            </p>
-                        </div>
-                    </div>
+
                 </div>
                 
                 <div className="mt-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-8 text-center border border-emerald-100 dark:border-emerald-900/30">
