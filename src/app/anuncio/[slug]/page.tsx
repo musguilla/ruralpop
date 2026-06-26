@@ -500,7 +500,7 @@ export default async function ListingDetailPage(props: Props) {
                                 )}
                             </div>
                         </div>
-                        <ShareButtons title={listing.title} url={`https://www.ruralpop.com/anuncio/${slug}`} />
+                        <ShareButtons title={listing.title} url={isEquipop ? `https://equipop.app/anuncio/${slug}` : `https://www.ruralpop.com/anuncio/${slug}`} />
 
                         {/* Garantía Ruralpop Simple (Solo si no hay venta online, y solo en Ruralpop) */}
                         {!isEscrowAvailable && !isEquipop && (
