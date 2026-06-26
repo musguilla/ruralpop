@@ -139,9 +139,16 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                     <div className="text-5xl font-extrabold text-[var(--ag-sys-color-primary)] mb-2 tracking-tight">
                         {formatCurrency(price)}
                     </div>
-                    <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
-                        Compra protegida por protección {isEquipop ? 'Equipop' : 'Ruralpop'}
-                    </p>
+                    {isEquipop ? (
+                        <p className="flex items-center justify-center gap-1.5 text-xs text-green-600 dark:text-green-500 mt-2 font-medium">
+                            <ShieldCheck className="w-4 h-4" />
+                            Compra segura con protección Equipop
+                        </p>
+                    ) : (
+                        <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
+                            Compra protegida por protección Ruralpop
+                        </p>
+                    )}
                 </div>
 
                 {error && (
@@ -202,17 +209,19 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                 </button>
             </div>
 
-            <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-200 dark:border-green-900/50 rounded-2xl p-5 mb-6 flex gap-3 items-start">
-                <ShieldCheck className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0" />
-                <div>
-                    <h4 className="font-bold text-green-900 dark:text-green-300 text-sm">
-                        Compra segura con {isEquipop ? 'Equipop' : 'Ruralpop'}
-                    </h4>
-                    <p className="text-xs text-green-700/80 dark:text-green-500/80 mt-1 leading-normal">
-                        Tu dinero queda protegido hasta que confirmes que has recibido el producto correctamente.
-                    </p>
+            {!isEquipop && (
+                <div className="bg-green-50/50 dark:bg-green-900/10 border border-green-200 dark:border-green-900/50 rounded-2xl p-5 mb-6 flex gap-3 items-start">
+                    <ShieldCheck className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0" />
+                    <div>
+                        <h4 className="font-bold text-green-900 dark:text-green-300 text-sm">
+                            Compra segura con Ruralpop
+                        </h4>
+                        <p className="text-xs text-green-700/80 dark:text-green-500/80 mt-1 leading-normal">
+                            Tu dinero queda protegido hasta que confirmes que has recibido el producto correctamente.
+                        </p>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }
