@@ -17,9 +17,10 @@ interface EscrowNativeCheckoutFlowProps {
     feeCents: number;
     shippingPrice?: number;
     isSeller?: boolean;
+    variant?: 'default' | 'button-only';
 }
 
-export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingPrice = 0, isSeller }: EscrowNativeCheckoutFlowProps) {
+export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingPrice = 0, isSeller, variant = 'default' }: EscrowNativeCheckoutFlowProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -94,6 +95,35 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                 <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
                     <EscrowCheckoutForm orderId={orderId} totalAmountCents={totalCents} />
                 </Elements>
+            </div>
+        );
+    }
+    if (variant === 'button-only') {
+        return (
+            <div className="w-full" id="escrow-checkout-flow-top">
+                {error && (
+                    <div className="mb-4 text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-100 flex flex-col gap-3">
+                        <p>{error}</p>
+                    </div>
+                )}
+                <button
+                    data-action="start-checkout"
+                    onClick={handleStartCheckout}
+                    disabled={loading}
+                    className={clsx(
+                        "flex items-center justify-center gap-2 py-2 px-6 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-lg shadow-[var(--ag-sys-color-primary)]/20 active:scale-95",
+                        loading && "opacity-70 cursor-not-allowed"
+                    )}
+                >
+                    {loading ? (
+                        <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Iniciando...
+                        </>
+                    ) : (
+                        "Comprar"
+                    )}
+                </button>
             </div>
         );
     }

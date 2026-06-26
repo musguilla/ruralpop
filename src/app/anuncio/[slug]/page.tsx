@@ -381,7 +381,28 @@ export default async function ListingDetailPage(props: Props) {
                                         )}
                                     </div>
                                     {isEscrowAvailable && (
-                                        <ScrollToCheckoutButton />
+                                        <>
+                                            {!isEquipop && (
+                                                <ScrollToCheckoutButton />
+                                            )}
+                                            {isEquipop && (
+                                                <div className="block lg:hidden mt-2 sm:mt-0">
+                                                    <EscrowNativeCheckoutFlow 
+                                                        listingId={listing.id} 
+                                                        price={listing.price} 
+                                                        feeCents={ruralpopFeeCents} 
+                                                        shippingPrice={listing.shipping_price || 0}
+                                                        isSeller={isOwner}
+                                                        variant="button-only"
+                                                    />
+                                                </div>
+                                            )}
+                                            {isEquipop && (
+                                                <div className="hidden lg:block">
+                                                    <ScrollToCheckoutButton />
+                                                </div>
+                                            )}
+                                        </>
                                     )}
                                 </div>
                             </div>
@@ -394,20 +415,22 @@ export default async function ListingDetailPage(props: Props) {
                             </div>
                         </div>
 
-                        {!isProfessional && <AdSenseGalleryBottom />}
+                        {!isProfessional && !isEquipop && <AdSenseGalleryBottom />}
                     </div>
 
                     {/* Columna Derecha: Vendedor y Acciones */}
                     <div className="w-full min-w-0 lg:max-w-[360px] flex-1 space-y-6">
 
                         {isEscrowAvailable && (
-                            <EscrowNativeCheckoutFlow 
-                                listingId={listing.id} 
-                                price={listing.price} 
-                                feeCents={ruralpopFeeCents} 
-                                shippingPrice={listing.shipping_price || 0}
-                                isSeller={isOwner}
-                            />
+                            <div className={isEquipop ? "hidden lg:block" : ""}>
+                                <EscrowNativeCheckoutFlow 
+                                    listingId={listing.id} 
+                                    price={listing.price} 
+                                    feeCents={ruralpopFeeCents} 
+                                    shippingPrice={listing.shipping_price || 0}
+                                    isSeller={isOwner}
+                                />
+                            </div>
                         )}
 
                         {/* Tarjeta Vendedor */}
