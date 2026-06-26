@@ -63,12 +63,23 @@ export async function createListing(formData: FormData) {
 
 
 
-    // Si el usuario puso un teléfono, lo guardamos en su perfil también
-    // (para no tener que volver a escribirlo en el siguiente anuncio)
+    const { data: currentUser } = await supabase.from('users').select('province_id, municipality_id').eq('id', user.id).single();
+
+    const profileUpdates: any = {};
     if (contact_phone && contact_phone.trim().length > 0) {
+        profileUpdates.contact_phone = contact_phone.trim();
+    }
+    if (province_id && !currentUser?.province_id) {
+        profileUpdates.province_id = province_id;
+    }
+    if (municipality_id && !currentUser?.municipality_id) {
+        profileUpdates.municipality_id = municipality_id;
+    }
+
+    if (Object.keys(profileUpdates).length > 0) {
         await supabase
             .from("users")
-            .update({ contact_phone: contact_phone.trim() })
+            .update(profileUpdates)
             .eq("id", user.id);
     }
 

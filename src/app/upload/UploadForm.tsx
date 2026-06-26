@@ -379,58 +379,67 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                             </div>
                         )}
 
-                        <div>
-                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
-                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> {t('upload.province_label')}
-                            </label>
-                            <SearchableSelect
-                                name="province_id"
-                                required
-                                value={selectedProvince}
-                                onChange={(val) => setSelectedProvince(val as number | "")}
-                                options={initialProvinces}
-                                placeholder={t('upload.province_placeholder')}
-                                searchPlaceholder="Ej: Salamanca, Asturias..."
-                            />
-                        </div>
+                        {isEquipop && userProfile?.province_id ? (
+                            <input type="hidden" name="province_id" value={userProfile.province_id} />
+                        ) : (
+                            <div>
+                                <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
+                                    <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> {t('upload.province_label')}
+                                </label>
+                                <SearchableSelect
+                                    name="province_id"
+                                    required
+                                    value={selectedProvince}
+                                    onChange={(val) => setSelectedProvince(val as number | "")}
+                                    options={initialProvinces}
+                                    placeholder={t('upload.province_placeholder')}
+                                    searchPlaceholder="Ej: Salamanca, Asturias..."
+                                />
+                            </div>
+                        )}
 
-                        <div>
-                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
-                                <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> {t('upload.municipality_label')}
-                            </label>
-                            <SearchableSelect
-                                name="municipality_id"
-                                required
-                                value={selectedMunicipality}
-                                onChange={(val) => setSelectedMunicipality(val as number | "")}
-                                options={municipalities}
-                                placeholder={selectedProvince === "" ? "Selecciona primero provincia" : t('upload.municipality_placeholder')}
-                                searchPlaceholder="Ej: Suances, Tineo..."
-                                disabled={selectedProvince === ""}
-                                isLoading={isLoadingMunicipalities}
-                            />
-                        </div>
+                        {isEquipop && userProfile?.municipality_id ? (
+                            <input type="hidden" name="municipality_id" value={userProfile.municipality_id} />
+                        ) : (
+                            <div>
+                                <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
+                                    <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> {t('upload.municipality_label')}
+                                </label>
+                                <SearchableSelect
+                                    name="municipality_id"
+                                    required
+                                    value={selectedMunicipality}
+                                    onChange={(val) => setSelectedMunicipality(val as number | "")}
+                                    options={municipalities}
+                                    placeholder={selectedProvince === "" ? "Selecciona primero provincia" : t('upload.municipality_placeholder')}
+                                    searchPlaceholder="Ej: Suances, Tineo..."
+                                    disabled={selectedProvince === ""}
+                                    isLoading={isLoadingMunicipalities}
+                                />
+                            </div>
+                        )}
 
-                        <div className="col-span-1 md:col-span-2">
-                            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
-                                <Phone className="w-4 h-4" />
-                                {t('upload.phone_label')}
-                                {savedPhone && (
-                                    <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] font-semibold">
-                                        {t('upload.phone_autofill')}
-                                    </span>
-                                )}
-                            </label>
-                            <input
-                                name="contact_phone"
-                                type="tel"
-                                // El valor guardado en el perfil se precarga automáticamente
-                                defaultValue={savedPhone ?? ""}
-                                placeholder="600 000 000"
-                                className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
-                            />
-                            {/* El texto descriptivo ha sido eliminado a petición del usuario */}
-                        </div>
+                        {!isEquipop && (
+                            <div className="col-span-1 md:col-span-2">
+                                <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
+                                    <Phone className="w-4 h-4" />
+                                    {t('upload.phone_label')}
+                                    {savedPhone && (
+                                        <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] font-semibold">
+                                            {t('upload.phone_autofill')}
+                                        </span>
+                                    )}
+                                </label>
+                                <input
+                                    name="contact_phone"
+                                    type="tel"
+                                    // El valor guardado en el perfil se precarga automáticamente
+                                    defaultValue={savedPhone ?? ""}
+                                    placeholder="600 000 000"
+                                    className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
+                                />
+                            </div>
+                        )}
                     </div>
                 </section>
 

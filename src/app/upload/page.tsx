@@ -18,7 +18,7 @@ export default async function UploadPage() {
     // Fetch user profile to get saved phone
     const { data: profile } = await supabase
         .from("users")
-        .select("phone, is_ghost, role, nif, zoo_register_number, name")
+        .select("phone, is_ghost, role, nif, zoo_register_number, name, province_id, municipality_id")
         .eq("id", user.id)
         .single();
 
@@ -57,7 +57,9 @@ export default async function UploadPage() {
     const userProfile = {
         name: profile?.name || "",
         nif: profile?.nif || "",
-        zoo_register_number: profile?.zoo_register_number || ""
+        zoo_register_number: profile?.zoo_register_number || "",
+        province_id: profile?.province_id || null,
+        municipality_id: profile?.municipality_id || null
     };
 
     const tenantSlug = await getServerTenantSlug();
