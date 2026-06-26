@@ -25,6 +25,8 @@ interface UploadFormProps {
         name: string;
         nif: string;
         zoo_register_number: string;
+        province_id?: number | null;
+        municipality_id?: number | null;
     };
     activeTenantId?: string;
     isEquipop?: boolean;
