@@ -151,16 +151,16 @@ export function ImageGallery({ images, title, likesCount, listingId, initialIsFa
 
                 {images.length > 1 && (
                     <>
-                        {/* Botones Flotantes (Escritorio) */}
+                        {/* Botones Flotantes */}
                         <button
                             onClick={(e) => { e.preventDefault(); prev(); }}
-                            className="absolute z-10 left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white text-[var(--ag-sys-color-text)] shadow-md transition-all opacity-0 md:group-hover:opacity-100"
+                            className="absolute z-10 left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white text-[var(--ag-sys-color-text)] shadow-md transition-all opacity-80 md:opacity-0 md:group-hover:opacity-100"
                         >
                             <ChevronLeft className="w-6 h-6" />
                         </button>
                         <button
                             onClick={(e) => { e.preventDefault(); next(); }}
-                            className="absolute z-10 right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white text-[var(--ag-sys-color-text)] shadow-md transition-all opacity-0 md:group-hover:opacity-100"
+                            className="absolute z-10 right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 hover:bg-white text-[var(--ag-sys-color-text)] shadow-md transition-all opacity-80 md:opacity-0 md:group-hover:opacity-100"
                         >
                             <ChevronRight className="w-6 h-6" />
                         </button>
