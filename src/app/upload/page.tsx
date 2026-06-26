@@ -18,7 +18,7 @@ export default async function UploadPage() {
     // Fetch user profile to get saved phone
     const { data: profile } = await supabase
         .from("users")
-        .select("phone, is_ghost, role, nif, zoo_register_number, name, province_id, municipality_id")
+        .select("contact_phone, is_ghost, role, nif, zoo_register_number, name, province_id, municipality_id")
         .eq("id", user.id)
         .single();
 
@@ -26,7 +26,7 @@ export default async function UploadPage() {
         redirect("/profesionales?ghost_claim=true");
     }
 
-    const savedPhone = profile?.phone ?? null;
+    const savedPhone = profile?.contact_phone ?? null;
 
     // Fetch provinces to feed the first selector
     const { data: provinces } = await supabase
