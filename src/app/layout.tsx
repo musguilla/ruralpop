@@ -65,6 +65,24 @@ export async function generateMetadata(): Promise<Metadata> {
         },
       ],
     },
+    openGraph: {
+      title: isEquipop 
+        ? "Equipop - Material equitación segunda mano" 
+        : "Ruralpop - App gratis para comprar y vender ganado",
+      description: isEquipop
+        ? "App móvil gratis para buscar, vender y comprar caballos, accesorios, monturas y encontrar servicios ecuestres."
+        : "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales.",
+      siteName: isEquipop ? "Equipop" : "Ruralpop",
+      images: [
+        {
+          url: isEquipop ? '/equipop-favicon.png' : '/opengraph-image.png',
+          width: 512,
+          height: 512,
+        }
+      ],
+      locale: locale,
+      type: 'website',
+    },
     appleWebApp: {
       title: isEquipop ? "Equipop" : "Ruralpop",
       statusBarStyle: "default",
