@@ -18,9 +18,10 @@ interface EscrowNativeCheckoutFlowProps {
     shippingPrice?: number;
     isSeller?: boolean;
     variant?: 'default' | 'button-only';
+    isEquipop?: boolean;
 }
 
-export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingPrice = 0, isSeller, variant = 'default' }: EscrowNativeCheckoutFlowProps) {
+export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingPrice = 0, isSeller, variant = 'default', isEquipop = false }: EscrowNativeCheckoutFlowProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -139,7 +140,7 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                         {formatCurrency(price)}
                     </div>
                     <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
-                        Compra protegida por protección Ruralpop
+                        Compra protegida por protección {isEquipop ? 'Equipop' : 'Ruralpop'}
                     </p>
                 </div>
 
@@ -205,7 +206,7 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                 <ShieldCheck className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0" />
                 <div>
                     <h4 className="font-bold text-green-900 dark:text-green-300 text-sm">
-                        Compra segura con Ruralpop
+                        Compra segura con {isEquipop ? 'Equipop' : 'Ruralpop'}
                     </h4>
                     <p className="text-xs text-green-700/80 dark:text-green-500/80 mt-1 leading-normal">
                         Tu dinero queda protegido hasta que confirmes que has recibido el producto correctamente.

@@ -412,6 +412,7 @@ export default async function ListingDetailPage(props: Props) {
                                         shippingPrice={listing.shipping_price || 0}
                                         isSeller={isOwner}
                                         variant="button-only"
+                                        isEquipop={isEquipop}
                                     />
                                 </div>
                             )}
@@ -438,6 +439,7 @@ export default async function ListingDetailPage(props: Props) {
                                     feeCents={ruralpopFeeCents} 
                                     shippingPrice={listing.shipping_price || 0}
                                     isSeller={isOwner}
+                                    isEquipop={isEquipop}
                                 />
                             </div>
                         )}
