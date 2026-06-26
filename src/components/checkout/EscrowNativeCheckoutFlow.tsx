@@ -111,17 +111,20 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                     onClick={handleStartCheckout}
                     disabled={loading}
                     className={clsx(
-                        "flex items-center justify-center gap-2 py-2 px-6 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-lg shadow-[var(--ag-sys-color-primary)]/20 active:scale-95",
+                        "flex items-center justify-center gap-2 py-3 px-4 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-lg shadow-[var(--ag-sys-color-primary)]/20 active:scale-95 w-full",
                         loading && "opacity-70 cursor-not-allowed"
                     )}
                 >
                     {loading ? (
                         <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <Loader2 className="w-5 h-5 animate-spin" />
                             Iniciando...
                         </>
                     ) : (
-                        "Comprar"
+                        <>
+                            <ShieldCheck className="w-5 h-5" />
+                            Comprar
+                        </>
                     )}
                 </button>
             </div>

@@ -343,6 +343,18 @@ export default async function ListingDetailPage(props: Props) {
                                     <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] uppercase mb-2">
                                         {listing.title}
                                     </h1>
+                                    {isEquipop && (
+                                        <div className="mb-4">
+                                            <div className="text-3xl font-extrabold text-[var(--ag-sys-color-primary)] leading-none">
+                                                {formatCurrency(listing.price)}
+                                            </div>
+                                            {listing.price_type !== 'fixed' && (
+                                                <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)] mt-1 block">
+                                                    {listing.price_type === 'negotiable' ? dict.negociable : dict.a_convenir}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--ag-sys-color-text-muted)]">
                                         <Link
                                             href={buildSeoUrl({ category: slugify(listing.category || ""), province_id: listing.province_id ? String(listing.province_id) : undefined })}
@@ -350,9 +362,11 @@ export default async function ListingDetailPage(props: Props) {
                                         >
                                             <MapPin className="w-4 h-4" /> {listing.location}
                                         </Link>
-                                        <span className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full">
-                                            <Calendar className="w-4 h-4" /> {formatRelativeTime(listing.created_at)}
-                                        </span>
+                                        {!isEquipop && (
+                                            <span className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full">
+                                                <Calendar className="w-4 h-4" /> {formatRelativeTime(listing.created_at)}
+                                            </span>
+                                        )}
                                         <Link
                                             href={buildSeoUrl({
                                                 category: slugify((isEquipop && listing.equipop_category) ? listing.equipop_category : (listing.category || "")),
@@ -369,43 +383,38 @@ export default async function ListingDetailPage(props: Props) {
                                         </Link>
                                     </div>
                                 </div>
-                                <div className="flex flex-row items-center justify-end gap-4 mt-4 sm:mt-0">
-                                    <div className="flex flex-col items-end">
-                                        <div className="text-4xl font-extrabold text-[var(--ag-sys-color-primary)] leading-none">
-                                            {formatCurrency(listing.price)}
+                                {!isEquipop && (
+                                    <div className="flex flex-row items-center justify-end gap-4 mt-4 sm:mt-0">
+                                        <div className="flex flex-col items-end">
+                                            <div className="text-4xl font-extrabold text-[var(--ag-sys-color-primary)] leading-none">
+                                                {formatCurrency(listing.price)}
+                                            </div>
+                                            {listing.price_type !== 'fixed' && (
+                                                <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)] mt-1">
+                                                    {listing.price_type === 'negotiable' ? dict.negociable : dict.a_convenir}
+                                                </span>
+                                            )}
                                         </div>
-                                        {listing.price_type !== 'fixed' && (
-                                            <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)] mt-1">
-                                                {listing.price_type === 'negotiable' ? dict.negociable : dict.a_convenir}
-                                            </span>
+                                        {isEscrowAvailable && (
+                                            <ScrollToCheckoutButton />
                                         )}
                                     </div>
-                                    {isEscrowAvailable && (
-                                        <>
-                                            {!isEquipop && (
-                                                <ScrollToCheckoutButton />
-                                            )}
-                                            {isEquipop && (
-                                                <div className="block lg:hidden mt-2 sm:mt-0">
-                                                    <EscrowNativeCheckoutFlow 
-                                                        listingId={listing.id} 
-                                                        price={listing.price} 
-                                                        feeCents={ruralpopFeeCents} 
-                                                        shippingPrice={listing.shipping_price || 0}
-                                                        isSeller={isOwner}
-                                                        variant="button-only"
-                                                    />
-                                                </div>
-                                            )}
-                                            {isEquipop && (
-                                                <div className="hidden lg:block">
-                                                    <ScrollToCheckoutButton />
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
+                                )}
                             </div>
+
+                            {/* Full width checkout button for Equipop */}
+                            {isEquipop && isEscrowAvailable && (
+                                <div className="mt-6 w-full">
+                                    <EscrowNativeCheckoutFlow 
+                                        listingId={listing.id} 
+                                        price={listing.price} 
+                                        feeCents={ruralpopFeeCents} 
+                                        shippingPrice={listing.shipping_price || 0}
+                                        isSeller={isOwner}
+                                        variant="button-only"
+                                    />
+                                </div>
+                            )}
 
                             <div className="border-t border-[var(--ag-sys-color-border)] pt-6">
                                 <h3 className="text-lg font-bold text-[var(--ag-sys-color-text)] mb-4">{t("descripcion")}</h3>
