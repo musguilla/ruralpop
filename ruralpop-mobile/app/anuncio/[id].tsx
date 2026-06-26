@@ -14,7 +14,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useStripe } from '@stripe/stripe-react-native';
 import { calculateRuralpopFee } from '../../src/lib/escrow';
 import { buildWebListingUrl } from '../../src/lib/urls';
-import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenants';
 import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
 import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';
 
@@ -654,7 +654,7 @@ export default function ListingDetailsScreen() {
                             </View>
 
                             <Text className="text-[13px] text-gray-500 mb-6 mt-2">
-                                Las compras están cubiertas por la Protección Ruralpop
+                                Las compras están cubiertas por la Protección {IS_EQUIPOP ? 'Equipop' : 'Ruralpop'}
                             </Text>
 
                             <View className="border-t border-gray-100 pt-4 flex-row justify-between items-center">
