@@ -34,18 +34,19 @@ export async function generateMetadata(): Promise<Metadata> {
   const tenant = await getServerTenantSlug();
 
   const isEquipop = tenant === 'equipop';
+  const currentDomain = isEquipop ? 'https://www.equipop.app' : 'https://www.ruralpop.com';
 
   const metadataObj: Metadata = {
-    metadataBase: new URL("https://www.ruralpop.com"),
+    metadataBase: new URL(currentDomain),
     alternates: {
-      canonical: getCanonicalUrl(originalPathname, locale),
-      languages: getHreflangLinks(originalPathname),
+      canonical: getCanonicalUrl(originalPathname, locale, currentDomain),
+      languages: getHreflangLinks(originalPathname, currentDomain),
     },
     title: isEquipop 
-      ? "Equipop - Material equitación segunda mano" 
+      ? "Equipop - Vende y compra material hípico segunda mano" 
       : "Ruralpop - App gratis para comprar y vender ganado",
     description: isEquipop
-      ? "App móvil gratis para buscar, vender y comprar caballos, accesorios, monturas y encontrar servicios ecuestres."
+      ? "App gratis para vender, comprar y buscar material y equipamientos hípicos."
       : "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
     applicationName: isEquipop ? "Equipop" : "Ruralpop",
     icons: {
@@ -67,10 +68,10 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     openGraph: {
       title: isEquipop 
-        ? "Equipop - Material equitación segunda mano" 
+        ? "Equipop - Vende y compra material hípico segunda mano" 
         : "Ruralpop - App gratis para comprar y vender ganado",
       description: isEquipop
-        ? "App móvil gratis para buscar, vender y comprar caballos, accesorios, monturas y encontrar servicios ecuestres."
+        ? "App gratis para vender, comprar y buscar material y equipamientos hípicos."
         : "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales.",
       siteName: isEquipop ? "Equipop" : "Ruralpop",
       images: [
