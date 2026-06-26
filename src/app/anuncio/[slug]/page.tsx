@@ -481,7 +481,7 @@ export default async function ListingDetailPage(props: Props) {
                                     variant={isEscrowAvailable ? 'secondary' : 'primary'}
                                 />
 
-                                {listing.contact_phone && (
+                                {!isEquipop && listing.contact_phone && (
                                     <PhoneRevealButton
                                         phone={listing.contact_phone}
                                         isLoggedIn={!!user}
