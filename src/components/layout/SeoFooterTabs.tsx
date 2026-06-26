@@ -31,9 +31,10 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
 
     const ALWAYS_SHOW_CATEGORIES = new Set([
         "sillas-de-montar-y-accesorios",
-        "mantillas-y-sudaderos",
+        "mantillas-y-salvacruces",
         "cabezadas-y-riendas",
-        "mantas-y-ropa-para-caballos",
+        "bocados-y-filetes",
+        "mantas",
         "ropa-ecuestre-mujer",
         "ropa-ecuestre-hombre",
         "ropa-ecuestre-infantil",
