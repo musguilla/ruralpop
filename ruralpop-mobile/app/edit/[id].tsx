@@ -16,7 +16,7 @@ import { TagSelector } from '../../src/components/ui/TagSelector';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
-import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenants';
 
 export default function EditListingScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -39,8 +39,9 @@ export default function EditListingScreen() {
     
     // Escrow / Venta Online
     const [isStripeReady, setIsStripeReady] = useState(false);
-    const [allowOnlineSale, setAllowOnlineSale] = useState(false);
+    const [allowOnlineSale, setAllowOnlineSale] = useState(IS_EQUIPOP ? true : false);
     const [shippingPrice, setShippingPrice] = useState('');
+    const [hasProfileLocation, setHasProfileLocation] = useState(false);
 
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
@@ -129,9 +130,13 @@ export default function EditListingScreen() {
 
         async function fetchUserRole() {
             try {
-                const { data } = await supabase.from('users').select('role').eq('id', user?.id).single();
-                if (data) {
-                    setIsProfesional(data.role === 'profesional');
+                const { data: userData } = await supabase.from('users').select('role, contact_phone, location').eq('id', user?.id).single();
+                if (userData) {
+                    if (userData.contact_phone) setPhone(userData.contact_phone);
+                    setIsProfesional(userData.role === 'profesional');
+                    if (userData.location) {
+                        setHasProfileLocation(true);
+                    }
                 }
             } catch (e) {
                 // Ignore
@@ -398,7 +403,7 @@ export default function EditListingScreen() {
                         <TextInput
                             value={title}
                             onChangeText={setTitle}
-                            placeholder="Ej. Tractor John Deere 5090M"
+                            placeholder={IS_EQUIPOP ? "Ej: Silla de salto CWD 17\"" : "Ej. Tractor John Deere 5090M"}
                             className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text"
                         />
                     </View>
@@ -421,7 +426,7 @@ export default function EditListingScreen() {
                         <TextInput
                             value={description}
                             onChangeText={setDescription}
-                            placeholder="Describe el estado, año, raza, mantenimiento..."
+                            placeholder={IS_EQUIPOP ? "Describe el producto en detalle, sus características, ..." : "Describe el estado, año, raza, mantenimiento..."}
                             multiline
                             numberOfLines={4}
                             textAlignVertical="top"
@@ -438,8 +443,8 @@ export default function EditListingScreen() {
                         />
                     </View>
 
-                    <View className="flex-row space-x-3">
-                        <View className="flex-[0.8]">
+                    <View className="flex-row mb-6">
+                        <View className={IS_EQUIPOP ? "flex-1 mr-3" : "flex-[0.8] mr-3"}>
                             <Text className="text-sm font-bold text-text mb-2">Precio (€) *</Text>
                             <TextInput
                                 value={price}
@@ -449,107 +454,152 @@ export default function EditListingScreen() {
                                 className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text font-bold text-lg"
                             />
                         </View>
-                        <View className="flex-[1.2]">
-                            <Text className="text-sm font-bold text-text mb-2">Tipo de precio</Text>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    const idx = PRICE_TYPES.findIndex(p => p.id === priceType);
-                                    const next = PRICE_TYPES[(idx + 1) % PRICE_TYPES.length];
-                                    setPriceType(next.id);
-                                }}
-                                className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-4 flex-row justify-between items-center"
-                            >
-                                <Text className="text-base text-text" numberOfLines={1}>
-                                    {PRICE_TYPES.find(p => p.id === priceType)?.label}
-                                </Text>
-                                <ChevronDown color="#9ca3af" size={20} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    <View className="mb-6">
-                        <View className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                            <View className="flex-row items-center justify-between">
-                                <View className="flex-1 pr-4">
-                                    <Text className="text-sm font-bold text-text mb-1">Activar Venta Online Segura</Text>
-                                    <Text className="text-xs text-text-muted">Permite a los usuarios comprar tu producto con pago seguro. Recibirás el dinero en tu monedero.</Text>
-                                </View>
-                                <TouchableOpacity 
-                                    onPress={() => setAllowOnlineSale(!allowOnlineSale)}
-                                    className={`w-12 h-6 rounded-full justify-center px-1 ${allowOnlineSale ? 'bg-primary' : 'bg-gray-300'}`}
-                                >
-                                    <View className={`w-4 h-4 rounded-full bg-white transition-all ${allowOnlineSale ? 'ml-auto' : ''}`} />
-                                </TouchableOpacity>
+                        {IS_EQUIPOP ? (
+                            <View className="flex-1">
+                                <Text className="text-sm font-bold text-text mb-2">Precio de envío (€) *</Text>
+                                <TextInput
+                                    value={shippingPrice}
+                                    onChangeText={setShippingPrice}
+                                    placeholder="Ej: 4.99"
+                                    keyboardType="numeric"
+                                    className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text font-bold text-lg"
+                                />
                             </View>
-
-                            {allowOnlineSale && (
-                                <View className="mt-4 pt-4 border-t border-emerald-200">
-                                    <Text className="text-sm font-bold text-text mb-2">Gastos de envío (€) *</Text>
-                                    <TextInput
-                                        value={shippingPrice}
-                                        onChangeText={setShippingPrice}
-                                        placeholder="Ej: 4.99"
-                                        keyboardType="numeric"
-                                        className="w-full bg-white border border-emerald-200 rounded-xl px-4 py-3 text-text"
-                                    />
-                                    <Text className="text-xs text-text-muted mt-2">
-                                        Este importe se sumará al precio final que pagará el comprador.
+                        ) : (
+                            <View className="flex-[1.2]">
+                                <Text className="text-sm font-bold text-text mb-2">Tipo de precio</Text>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        if (allowOnlineSale) {
+                                            Alert.alert('Venta online', 'Al activar la venta online, el precio debe ser fijo.');
+                                            return;
+                                        }
+                                        const idx = PRICE_TYPES.findIndex(p => p.id === priceType);
+                                        const next = PRICE_TYPES[(idx + 1) % PRICE_TYPES.length];
+                                        setPriceType(next.id);
+                                    }}
+                                    className={`w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-4 flex-row justify-between items-center ${allowOnlineSale ? 'opacity-50' : ''}`}
+                                >
+                                    <Text className="text-base text-text" numberOfLines={1}>
+                                        {PRICE_TYPES.find(p => p.id === priceType)?.label || 'Precio Fijo'}
                                     </Text>
-                                </View>
-                            )}
-                        </View>
-                        
-                        {allowOnlineSale && !isStripeReady && (
-                            <View className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl flex-row items-start space-x-3">
-                                <Info className="text-amber-600 mt-0.5" size={20} />
-                                <View className="flex-1">
-                                    <Text className="text-sm font-medium text-amber-900 mb-2">
-                                        Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
-                                    </Text>
-                                    <TouchableOpacity onPress={() => router.push('/monedero')}>
-                                        <Text className="text-sm font-bold text-primary">Configurar mi monedero →</Text>
-                                    </TouchableOpacity>
-                                </View>
+                                    <ChevronDown color="#9ca3af" size={20} />
+                                </TouchableOpacity>
                             </View>
                         )}
                     </View>
 
-                    <View>
-                        <Text className="text-sm font-bold text-text mb-2">Provincia *</Text>
-                        <TouchableOpacity
-                            onPress={() => setIsLocationModalOpen(true)}
-                            className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 flex-row justify-between items-center"
-                        >
-                            <Text className={`text-base ${locationId ? 'text-text' : 'text-gray-400'}`}>
-                                {locationId || 'Selecciona provincia...'}
-                            </Text>
-                            <ChevronDown color="#9ca3af" size={20} />
-                        </TouchableOpacity>
-                    </View>
+                    {!IS_EQUIPOP && (
+                        <View className="mb-6">
+                            <View className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                                <View className="flex-row items-center justify-between">
+                                    <View className="flex-1 pr-4">
+                                        <Text className="text-sm font-bold text-text mb-1">Activar Venta Online Segura</Text>
+                                        <Text className="text-xs text-text-muted">Permite a los usuarios comprar tu producto con pago seguro. Recibirás el dinero en tu monedero.</Text>
+                                    </View>
+                                    <TouchableOpacity 
+                                        onPress={() => {
+                                            const nextVal = !allowOnlineSale;
+                                            setAllowOnlineSale(nextVal);
+                                            if (nextVal) {
+                                                setPriceType('fixed');
+                                            }
+                                        }}
+                                        className={`w-12 h-6 rounded-full justify-center px-1 ${allowOnlineSale ? 'bg-primary' : 'bg-gray-300'}`}
+                                    >
+                                        <View className={`w-4 h-4 rounded-full bg-white transition-all ${allowOnlineSale ? 'ml-auto' : ''}`} />
+                                    </TouchableOpacity>
+                                </View>
 
-                    <View>
-                        <Text className="text-sm font-bold text-text mb-2">Localidad</Text>
-                        <TouchableOpacity
-                            onPress={() => locationId ? setIsMunicipalityModalOpen(true) : Alert.alert('Aviso', 'Selecciona primero una provincia')}
-                            className={`w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 flex-row justify-between items-center ${!locationId ? 'opacity-50' : ''}`}
-                        >
-                            <Text className={`text-base ${municipality ? 'text-text' : 'text-gray-400'}`}>
-                                {municipality ? municipality.name : 'Selecciona localidad...'}
-                            </Text>
-                            <ChevronDown color="#9ca3af" size={20} />
-                        </TouchableOpacity>
-                    </View>
+                                {allowOnlineSale && (
+                                    <View className="mt-4 pt-4 border-t border-emerald-200">
+                                        <Text className="text-sm font-bold text-text mb-2">Gastos de envío (€) *</Text>
+                                        <TextInput
+                                            value={shippingPrice}
+                                            onChangeText={setShippingPrice}
+                                            placeholder="Ej: 4.99"
+                                            keyboardType="numeric"
+                                            className="w-full bg-white border border-emerald-200 rounded-xl px-4 py-3 text-text"
+                                        />
+                                        <Text className="text-xs text-text-muted mt-2">
+                                            Este importe se sumará al precio final que pagará el comprador.
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
+                            
+                            {allowOnlineSale && !isStripeReady && (
+                                <View className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl flex-row items-start space-x-3">
+                                    <Info className="text-amber-600 mt-0.5" size={20} />
+                                    <View className="flex-1">
+                                        <Text className="text-sm font-medium text-amber-900 mb-2">
+                                            Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
+                                        </Text>
+                                        <TouchableOpacity onPress={() => router.push('/monedero')}>
+                                            <Text className="text-sm font-bold text-primary">Configurar mi monedero →</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                        </View>
+                    )}
 
-                    <View>
-                        <Text className="text-sm font-bold text-text mb-2">Teléfono de contacto</Text>
-                        <TextInput
-                            value={phone}
-                            onChangeText={setPhone}
-                            placeholder="Ej: 600 000 000"
-                            keyboardType="phone-pad"
-                            className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text"
-                        />
-                    </View>
+                    {IS_EQUIPOP && allowOnlineSale && !isStripeReady && (
+                        <View className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex-row items-start space-x-3">
+                            <Info className="text-amber-600 mt-0.5" size={20} />
+                            <View className="flex-1">
+                                <Text className="text-sm font-medium text-amber-900 mb-2">
+                                    Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
+                                </Text>
+                                <TouchableOpacity onPress={() => router.push('/monedero')}>
+                                    <Text className="text-sm font-bold text-primary">Configurar mi monedero →</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    )}
+
+                    {!hasProfileLocation && (
+                        <>
+                            <View className="mb-6">
+                                <Text className="text-sm font-bold text-text mb-2">Provincia *</Text>
+                                <TouchableOpacity
+                                    onPress={() => setIsLocationModalOpen(true)}
+                                    className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 flex-row justify-between items-center"
+                                >
+                                    <Text className={`text-base ${locationId ? 'text-text' : 'text-gray-400'}`}>
+                                        {locationId || 'Selecciona provincia...'}
+                                    </Text>
+                                    <ChevronDown color="#9ca3af" size={20} />
+                                </TouchableOpacity>
+                            </View>
+
+                            <View className="mb-6">
+                                <Text className="text-sm font-bold text-text mb-2">Localidad</Text>
+                                <TouchableOpacity
+                                    onPress={() => locationId ? setIsMunicipalityModalOpen(true) : Alert.alert('Aviso', 'Selecciona primero una provincia')}
+                                    className={`w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 flex-row justify-between items-center ${!locationId ? 'opacity-50' : ''}`}
+                                >
+                                    <Text className={`text-base ${municipality ? 'text-text' : 'text-gray-400'}`}>
+                                        {municipality ? municipality.name : 'Selecciona localidad...'}
+                                    </Text>
+                                    <ChevronDown color="#9ca3af" size={20} />
+                                </TouchableOpacity>
+                            </View>
+                        </>
+                    )}
+
+                    {!IS_EQUIPOP && (
+                        <View className="mb-6">
+                            <Text className="text-sm font-bold text-text mb-2">Teléfono de contacto</Text>
+                            <TextInput
+                                value={phone}
+                                onChangeText={setPhone}
+                                placeholder="Ej: 600 000 000"
+                                keyboardType="phone-pad"
+                                className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text"
+                            />
+                        </View>
+                    )}
 
                 </View>
 
