@@ -26,8 +26,10 @@ const RURALPOP_CATEGORIES = [
 
 const EQUIPOP_CATEGORIES = [
     { id: 'sillas-de-montar-y-accesorios', type: 'category', label: 'Sillas de montar', Icon: Briefcase },
-    { id: 'mantillas-y-sudaderos', type: 'category', label: 'Mantillas', Icon: Leaf },
+    { id: 'mantillas-y-salvacruces', type: 'category', label: 'Mantillas', Icon: Leaf },
     { id: 'cabezadas-y-riendas', type: 'category', label: 'Cabezadas', Icon: Anvil },
+    { id: 'bocados-y-filetes', type: 'category', label: 'Bocados', Icon: Hammer },
+    { id: 'mantas', type: 'category', label: 'Mantas', Icon: Briefcase },
     { id: 'ropa-ecuestre-mujer', type: 'category', label: 'Ropa Mujer', Icon: Briefcase },
     { id: 'ropa-ecuestre-hombre', type: 'category', label: 'Ropa Hombre', Icon: Briefcase },
     { id: 'ropa-ecuestre-infantil', type: 'category', label: 'Ropa Infantil', Icon: Briefcase },
