@@ -287,7 +287,22 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                         </div>
 
                         {isEquipop ? (
-                            <input type="hidden" name="price_type" value="fixed" />
+                            <div className="flex flex-col">
+                                <input type="hidden" name="price_type" value="fixed" />
+                                <input type="hidden" name="vender_online" value="true" />
+                                <label className="flex items-center gap-1.5 text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">
+                                    Precio transporte (€) *
+                                </label>
+                                <input
+                                    name="shipping_price"
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    defaultValue="0"
+                                    required
+                                    className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
+                                />
+                            </div>
                         ) : (
                             <div className="flex flex-col">
                                 <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">{t('upload.price_type_label')}</label>
@@ -308,14 +323,8 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
 
                         {isTestPro && (
                             <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
-                                <div className="bg-green-50/50 border border-green-100 p-3 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                                    {isEquipop ? (
-                                        <div className="flex items-center gap-2 flex-shrink-0">
-                                            <input type="hidden" name="vender_online" value="true" />
-                                            <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
-                                            <span className="text-sm font-bold text-green-800">Venta online obligatoria</span>
-                                        </div>
-                                    ) : (
+                                {!isEquipop && (
+                                    <div className="bg-green-50/50 border border-green-100 p-3 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
                                         <label className="flex items-center gap-3 cursor-pointer flex-shrink-0">
                                             <div className="relative">
                                                 <input 
@@ -337,23 +346,22 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                             </div>
                                             <span className="text-sm font-bold text-green-800">Vender online</span>
                                         </label>
-                                    )}
-                                    
-                                    {(sellOnline || isEquipop) && (
-                                        <div className="flex items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
-                                            <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">Precio transporte (€){isEquipop ? ' *' : ''}</span>
-                                            <input
-                                                name="shipping_price"
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                defaultValue="0"
-                                                required={isEquipop}
-                                                className="w-full md:w-32 px-3 py-2 rounded-lg border border-[var(--ag-sys-color-border)] bg-white focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all text-sm"
-                                            />
-                                        </div>
-                                    )}
-                                </div>
+                                        
+                                        {sellOnline && (
+                                            <div className="flex items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
+                                                <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">Precio transporte (€)</span>
+                                                <input
+                                                    name="shipping_price"
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    defaultValue="0"
+                                                    className="w-full md:w-32 px-3 py-2 rounded-lg border border-[var(--ag-sys-color-border)] bg-white focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all text-sm"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                                 
                                 {(sellOnline || isEquipop) && !hasWalletConfigured && (
                                     <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
