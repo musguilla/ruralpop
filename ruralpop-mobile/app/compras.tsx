@@ -7,6 +7,7 @@ import { ChevronLeft, Package, Clock, CheckCircle } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../src/lib/image-optimization';
 import { formatPrice } from '../src/lib/formatters';
+import { IS_EQUIPOP } from '../src/config/tenants';
 
 export default function ComprasScreen() {
     const { user } = useAuth();
@@ -180,12 +181,12 @@ export default function ComprasScreen() {
                             <Text className="text-xl font-bold text-text mb-2">
                                 No tienes ninguna compra
                             </Text>
-                            <Text className="text-gray-500 text-center px-6 mb-8">
-                                Las compras seguras que realices en Ruralpop aparecerán aquí.
+                            <Text className="text-gray-500 text-center mt-2 px-8">
+                                Las compras seguras que realices en {IS_EQUIPOP ? 'Equipop' : 'Ruralpop'} aparecerán aquí.
                             </Text>
                             <TouchableOpacity
                                 onPress={() => router.push('/(tabs)/')}
-                                className="bg-primary px-8 py-3 rounded-full"
+                                className="bg-primary px-8 py-3 rounded-full mt-8"
                             >
                                 <Text className="text-white font-bold text-base">Descubrir anuncios</Text>
                             </TouchableOpacity>
