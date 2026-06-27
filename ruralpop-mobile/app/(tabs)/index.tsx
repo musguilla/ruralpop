@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, FlatList, ActivityIndicator, RefreshControl, Dimensions, Platform, ScrollView } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, RefreshControl, Dimensions, Platform, ScrollView, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CategoriesSlider } from '../../src/components/ui/CategoriesSlider';
 import { ListingCard } from '../../src/components/ui/ListingCard';
@@ -233,9 +233,10 @@ export default function Home() {
         >
             {/* Header that sticks to top */}
             <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row justify-center items-center h-14">
-                <Text className="text-2xl font-extrabold tracking-tight" style={{ color: IS_EQUIPOP ? '#194152' : '#059669' }}>
-                    {IS_EQUIPOP ? 'equipop' : 'ruralpop'}
-                </Text>
+                <Image 
+                    source={IS_EQUIPOP ? require('../../assets/equipop-logo.png') : require('../../assets/ruralpop-logo.png')} 
+                    style={{ width: 120, height: 28, resizeMode: 'contain' }} 
+                />
             </View>
 
             {loading && !refreshing ? (
