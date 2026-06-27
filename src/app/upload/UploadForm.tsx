@@ -48,9 +48,13 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
     const [showWelfareModal, setShowWelfareModal] = useState(false);
 
     // Location state
-    const [selectedProvince, setSelectedProvince] = useState<number | "">("");
+    const [selectedProvince, setSelectedProvince] = useState<number | "">(
+        (isEquipop && userProfile?.province_id) ? userProfile.province_id : ""
+    );
     const [municipalities, setMunicipalities] = useState<{ id: number; name: string }[]>([]);
-    const [selectedMunicipality, setSelectedMunicipality] = useState<number | "">("");
+    const [selectedMunicipality, setSelectedMunicipality] = useState<number | "">(
+        (isEquipop && userProfile?.municipality_id) ? userProfile.municipality_id : ""
+    );
     const [isLoadingMunicipalities, setIsLoadingMunicipalities] = useState(false);
 
     // Form data state for non-native inputs
@@ -77,7 +81,12 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                 const data = await getMunicipalities(selectedProvince as number);
                 if (isMounted) {
                     setMunicipalities(data);
-                    setSelectedMunicipality("");
+                    setSelectedMunicipality(prev => {
+                        if (prev && data.some((m: {id: number}) => m.id === prev)) {
+                            return prev;
+                        }
+                        return "";
+                    });
                 }
             } catch (error) {
                 console.error(error);
