@@ -6,32 +6,42 @@ import { ListingCard } from '../../src/components/ui/ListingCard';
 import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
-import { Search } from 'lucide-react-native';
-import { TextInput } from 'react-native';
+import { Search, LayoutGrid } from 'lucide-react-native';
+import { TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenants';
 
 const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 2;
 
-const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit, featuredListings }: { searchQuery: string, setSearchQuery: (s: string) => void, onSearchSubmit: () => void, featuredListings: Listing[] }) => (
+const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit, onCategoryPress, featuredListings }: { searchQuery: string, setSearchQuery: (s: string) => void, onSearchSubmit: () => void, onCategoryPress: () => void, featuredListings: Listing[] }) => (
     <View>
         <View className="px-4 mt-6">
-            <View className="flex-row items-center bg-[#f8f9fa] border border-[#9ca3af] rounded-full h-[46px] px-4">
-                <Search color="#9ca3af" size={24} />
-                <TextInput
-                    className="flex-1 ml-3 text-base text-text h-full"
-                    placeholder="Estoy buscando..."
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    onSubmitEditing={onSearchSubmit}
-                    returnKeyType="search"
-                    clearButtonMode="while-editing"
-                />
+            <View className="flex-row items-center">
+                <View className="flex-1 flex-row items-center bg-[#f8f9fa] border border-[#475569] rounded-full h-[46px] px-4">
+                    <Search color="#475569" size={24} />
+                    <TextInput
+                        className="flex-1 ml-3 text-base text-text h-full"
+                        placeholder="Estoy buscando..."
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                        onSubmitEditing={onSearchSubmit}
+                        returnKeyType="search"
+                        clearButtonMode="while-editing"
+                    />
+                </View>
+                {IS_EQUIPOP && (
+                    <TouchableOpacity 
+                        onPress={onCategoryPress}
+                        className="ml-3 h-[46px] w-[46px] items-center justify-center bg-[#f8f9fa] border border-[#64748b] rounded-xl"
+                    >
+                        <LayoutGrid color="#64748b" size={24} />
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
 
-        <CategoriesSlider />
+        {!IS_EQUIPOP && <CategoriesSlider />}
 
         {featuredListings.length > 0 && (
             <View className="mb-2 mt-4 bg-white py-2">
@@ -278,6 +288,7 @@ export default function Home() {
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
                             onSearchSubmit={handleSearchSubmit}
+                            onCategoryPress={() => router.push('/categories')}
                             featuredListings={featuredListings}
                         />
                     }
