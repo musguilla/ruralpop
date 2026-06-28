@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ListingCard } from '../../src/components/ui/ListingCard';
 import { Listing } from '../../src/types';
 import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';
-import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenants';
 import ImageViewing from "react-native-image-viewing";
 
 export default function UserProfileScreen() {
@@ -134,7 +134,7 @@ export default function UserProfileScreen() {
                                 <Text className="text-[26px] font-extrabold text-text mb-1" numberOfLines={2}>
                                     {displayName}
                                 </Text>
-                                <Text className="text-text-muted text-[15px]">En Ruralpop desde {joinedYear}</Text>
+                                <Text className="text-text-muted text-[15px]">En {IS_EQUIPOP ? 'Equipop' : 'Ruralpop'} desde {joinedYear}</Text>
                             </View>
                             
                             <View className="relative">
