@@ -1,5 +1,6 @@
 const BASE62_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const BASE62_BIGINT = BigInt(62);
+import { IS_EQUIPOP } from '../config/tenants';
 
 export function encodeId(uuid: string): string {
     if (!uuid || typeof uuid !== 'string') return '';
@@ -35,5 +36,6 @@ export function slugify(text: string): string {
 export function buildWebListingUrl(id: string, title: string): string {
     const slug = slugify(title);
     const shortId = encodeId(id);
-    return `https://www.ruralpop.com/anuncio/${slug}-${shortId}`;
+    const domain = IS_EQUIPOP ? 'https://equipop.app' : 'https://www.ruralpop.com';
+    return `${domain}/anuncio/${slug}-${shortId}`;
 }

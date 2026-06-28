@@ -144,8 +144,8 @@ export default function ListingDetailsScreen() {
         if (!listing) return;
         const url = buildWebListingUrl(listing.id, listing.title);
         const message = Platform.OS === 'ios'
-            ? `Mira este anuncio en Ruralpop: ${listing.title}`
-            : `Mira este anuncio en Ruralpop: ${listing.title}\n${url}`;
+            ? `Mira este anuncio en ${IS_EQUIPOP ? 'Equipop' : 'Ruralpop'}: ${listing.title}`
+            : `Mira este anuncio en ${IS_EQUIPOP ? 'Equipop' : 'Ruralpop'}: ${listing.title}\n${url}`;
 
         setTimeout(() => {
             RNShare.share({
