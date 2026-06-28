@@ -13,7 +13,7 @@ import { FiltersModal } from '../../src/components/ui/modals/FiltersModal';
 import { CATEGORIES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenants';
 
 const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 2;
@@ -278,7 +278,7 @@ export default function SearchScreen() {
                         <TextInput
                             className="flex-1 ml-2 text-base text-gray-900 font-medium"
                             style={{ paddingVertical: 0, height: '100%' }}
-                            placeholder="Buscar tractores, vacas, aperos..."
+                            placeholder={IS_EQUIPOP ? "Buscar en Equipop..." : "Buscar tractores, vacas, aperos..."}
                             placeholderTextColor="#9ca3af"
                             value={query}
                             onChangeText={setQuery}
