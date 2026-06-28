@@ -16,30 +16,24 @@ const numColumns = width > 768 ? 3 : 2;
 
 const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit, onCategoryPress, featuredListings }: { searchQuery: string, setSearchQuery: (s: string) => void, onSearchSubmit: () => void, onCategoryPress: () => void, featuredListings: Listing[] }) => (
     <View>
-        <View className="px-4 mt-6">
-            <View className="flex-row items-center">
-                <View className="flex-1 flex-row items-center bg-[#f8f9fa] border border-[#475569] rounded-full h-[46px] px-4">
-                    <Search color="#475569" size={24} />
-                    <TextInput
-                        className="flex-1 ml-3 text-base text-text h-full"
-                        placeholder="Estoy buscando..."
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                        onSubmitEditing={onSearchSubmit}
-                        returnKeyType="search"
-                        clearButtonMode="while-editing"
-                    />
+        {!IS_EQUIPOP && (
+            <View className="px-4 mt-6">
+                <View className="flex-row items-center">
+                    <View className="flex-1 flex-row items-center bg-[#f8f9fa] border border-[#475569] rounded-full h-[46px] px-4">
+                        <Search color="#475569" size={24} />
+                        <TextInput
+                            className="flex-1 ml-3 text-base text-text h-full"
+                            placeholder="Estoy buscando..."
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                            onSubmitEditing={onSearchSubmit}
+                            returnKeyType="search"
+                            clearButtonMode="while-editing"
+                        />
+                    </View>
                 </View>
-                {IS_EQUIPOP && (
-                    <TouchableOpacity 
-                        onPress={onCategoryPress}
-                        className="ml-3 h-[46px] w-[46px] items-center justify-center bg-[#f8f9fa] border border-[#64748b] rounded-xl"
-                    >
-                        <LayoutGrid color="#64748b" size={24} />
-                    </TouchableOpacity>
-                )}
             </View>
-        </View>
+        )}
 
         {!IS_EQUIPOP && <CategoriesSlider />}
 
@@ -242,12 +236,35 @@ export default function Home() {
             style={{ paddingTop: Platform.OS === 'android' ? insets.top : 48 }}
         >
             {/* Header that sticks to top */}
-            <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row justify-center items-center h-14">
-                <Image 
-                    source={IS_EQUIPOP ? require('../../assets/equipop-logo.png') : require('../../assets/ruralpop-logo.png')} 
-                    style={{ width: 120, height: 28, resizeMode: 'contain' }} 
-                />
-            </View>
+            {!IS_EQUIPOP ? (
+                <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row justify-center items-center h-14">
+                    <Image 
+                        source={require('../../assets/ruralpop-logo.png')} 
+                        style={{ width: 120, height: 28, resizeMode: 'contain' }} 
+                    />
+                </View>
+            ) : (
+                <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row items-center h-16">
+                    <View className="flex-1 flex-row items-center bg-[#f8f9fa] border border-[#475569] rounded-full h-[46px] px-4">
+                        <Search color="#475569" size={24} />
+                        <TextInput
+                            className="flex-1 ml-3 text-base text-text h-full"
+                            placeholder="Buscar en Equipop..."
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                            onSubmitEditing={handleSearchSubmit}
+                            returnKeyType="search"
+                            clearButtonMode="while-editing"
+                        />
+                    </View>
+                    <TouchableOpacity 
+                        onPress={() => router.push('/categories')}
+                        className="ml-3 h-[46px] w-[40px] items-center justify-center"
+                    >
+                        <Image source={require('../../assets/equipop/categories-icon.png')} style={{ width: 28, height: 28, resizeMode: 'contain' }} />
+                    </TouchableOpacity>
+                </View>
+            )}
 
             {loading && !refreshing ? (
                 <View className="flex-1 justify-center items-center">
