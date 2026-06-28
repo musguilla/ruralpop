@@ -131,8 +131,7 @@ export function FiltersModal({
                             Keyboard.dismiss();
                             onApply();
                         }}
-                        style={{ backgroundColor: '#059669' }}
-                        className="w-full py-4 rounded-full flex-row justify-center items-center shadow-lg"
+                        className="w-full py-4 bg-primary rounded-full flex-row justify-center items-center shadow-lg"
                         activeOpacity={0.8}
                     >
                         <Text className="text-white font-bold text-lg">Mostrar resultados</Text>

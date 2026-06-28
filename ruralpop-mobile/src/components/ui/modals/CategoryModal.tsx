@@ -3,6 +3,7 @@ import { Modal, View, Text, TouchableOpacity, ScrollView, SafeAreaView, TextInpu
 import { X, Check, ChevronRight, ChevronLeft, Search, List, PawPrint, Tractor, Leaf, Briefcase, Apple } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { CATEGORIES } from '../../../constants/categories';
+import { IS_EQUIPOP } from '../../../config/tenants';
 
 interface CategoryModalProps {
     visible: boolean;
@@ -125,19 +126,32 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                         const IconComponent = !item.isSub ? ICONS[item.id] || List : null;
                         const isLast = index === activeList.length - 1;
 
+                        const isFirstHorse = item.id === 'sillas-de-montar-y-accesorios' && !item.isSub && !searchQuery;
+                        const isFirstRider = item.id === 'calzado-ecuestre' && !item.isSub && !searchQuery;
+
                         return (
-                            <TouchableOpacity
-                                key={item.id}
-                                onPress={() => {
-                                    if (!item.isSub && item.hasSub) {
-                                        setActiveParentId(item.id);
-                                        setSearchQuery('');
-                                    } else {
-                                        handleSelect(item.id);
-                                    }
-                                }}
-                                className={`flex-row items-center justify-between py-4 ${!isLast ? 'border-b border-gray-100' : ''}`}
-                            >
+                            <React.Fragment key={item.id}>
+                                {IS_EQUIPOP && isFirstHorse && (
+                                    <View className="bg-primary-muted py-2 px-4 -mx-2 rounded-lg mb-2 mt-2">
+                                        <Text className="text-primary font-bold text-[13px]">PARA CABALLOS</Text>
+                                    </View>
+                                )}
+                                {IS_EQUIPOP && isFirstRider && (
+                                    <View className="bg-primary-muted py-2 px-4 -mx-2 rounded-lg mb-2 mt-4">
+                                        <Text className="text-primary font-bold text-[13px]">PARA JINETES</Text>
+                                    </View>
+                                )}
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        if (!item.isSub && item.hasSub) {
+                                            setActiveParentId(item.id);
+                                            setSearchQuery('');
+                                        } else {
+                                            handleSelect(item.id);
+                                        }
+                                    }}
+                                    className={`flex-row items-center justify-between py-4 ${!isLast ? 'border-b border-gray-100' : ''}`}
+                                >
                                 <View className="flex-row items-center">
                                     <Text className={`text-[17px] ${isSelected ? 'font-bold text-primary' : 'text-gray-800'}`}>
                                         {item.label}
@@ -149,9 +163,10 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                                 )}
 
                                 {isSelected && (!item.hasSub || item.isSub) && (
-                                    <Check color="#059669" size={24} />
+                                    <Check color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={24} />
                                 )}
                             </TouchableOpacity>
+                        </React.Fragment>
                         );
                     })}
                 </ScrollView>
