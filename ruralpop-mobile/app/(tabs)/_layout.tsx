@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Platform, View } from "react-native";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { supabase } from "../../src/lib/supabase";
+import { IS_EQUIPOP } from '../../src/config/tenants';
 
 export default function TabLayout() {
     const insets = useSafeAreaInsets();
@@ -56,7 +57,7 @@ export default function TabLayout() {
             initialRouteName="index"
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: "#059669",
+                tabBarActiveTintColor: IS_EQUIPOP ? "#1E3A8A" : "#059669",
                 tabBarInactiveTintColor: "#6b7280",
                 tabBarStyle: {
                     borderTopWidth: 1,

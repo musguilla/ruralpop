@@ -462,15 +462,15 @@ export default function ListingDetailsScreen() {
                                 <Text className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Vendedor</Text>
                                 <View className="flex-row items-center flex-wrap">
                                     <Text className="text-lg font-bold text-text mr-1" numberOfLines={1}>{rawSellerName}</Text>
-                                    {isProfessional && <ShieldCheck color="#059669" size={16} />}
+                                    {isProfessional && <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={16} />}
                                 </View>
                                 {isProfessional && (
                                     <Text className="text-[10px] text-primary font-bold uppercase tracking-wider mt-0.5">Ver más anuncios</Text>
                                 )}
                                 {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
-                                    <View className="mt-1 flex-row items-center bg-[#059669]/10 self-start px-2 py-1 rounded border border-[#059669]/20">
-                                        <ShieldCheck color="#059669" size={12} />
-                                        <Text className="text-[10px] text-[#059669] font-bold ml-1">Nº de registro: {listing.seller.zoo_register_number}</Text>
+                                    <View style={{ backgroundColor: IS_EQUIPOP ? '#1e3a8a1a' : '#0596691a', borderColor: IS_EQUIPOP ? '#1e3a8a33' : '#05966933' }} className="mt-1 flex-row items-center self-start px-2 py-1 rounded border">
+                                        <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={12} />
+                                        <Text style={{ color: IS_EQUIPOP ? '#1e3a8a' : '#059669' }} className="text-[10px] font-bold ml-1">Nº de registro: {listing.seller.zoo_register_number}</Text>
                                     </View>
                                 )}
                             </View>
@@ -581,7 +581,7 @@ export default function ListingDetailsScreen() {
                                 className="flex-1 flex-row justify-center items-center py-4 rounded-full bg-white border-2 border-primary"
                                 activeOpacity={0.8}
                             >
-                                <Phone color="#059669" size={20} />
+                                <Phone color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={20} />
                                 <Text className="text-primary font-bold text-lg ml-2">Llamar</Text>
                             </TouchableOpacity>
                         )}
@@ -627,7 +627,7 @@ export default function ListingDetailsScreen() {
                 <SafeAreaView className="flex-1 bg-surface-muted">
                     <View className="px-5 py-4 bg-white border-b border-gray-100 flex-row items-center justify-between z-10">
                         <View className="flex-row items-center">
-                            <ShieldCheck color="#059669" size={26} />
+                            <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={26} />
                             <Text className="text-xl font-bold text-text ml-2">Pago seguro</Text>
                         </View>
                         <TouchableOpacity 
@@ -646,21 +646,23 @@ export default function ListingDetailsScreen() {
                                 <Text className="text-[17px] text-text">{formatPrice((listing.price || 0))}</Text>
                             </View>
 
-                            <View className="flex-row justify-between items-center mb-4">
-                                <Text className="text-[17px] text-gray-500">Envío</Text>
-                                <Text className="text-[17px] text-text">
-                                    {formatPrice(listing.shipping_price || 0)}
-                                </Text>
-                            </View>
+                            {!IS_EQUIPOP && (
+                                <View className="flex-row justify-between items-center mb-4">
+                                    <Text className="text-[17px] text-gray-500">Envío</Text>
+                                    <Text className="text-[17px] text-text">
+                                        {formatPrice(listing.shipping_price || 0)}
+                                    </Text>
+                                </View>
+                            )}
 
                             <Text className="text-[13px] text-gray-500 mb-6 mt-2">
-                                Las compras están cubiertas por la Protección {IS_EQUIPOP ? 'Equipop' : 'Ruralpop'}
+                                La compra está cubierta por la Protección {IS_EQUIPOP ? 'Equipop' : 'Ruralpop'} al comprador.
                             </Text>
 
                             <View className="border-t border-gray-100 pt-4 flex-row justify-between items-center">
                                 <Text className="text-xl font-extrabold text-text">Total a pagar</Text>
                                 <Text className="text-2xl font-extrabold text-text">
-                                    {formatPrice((listing.price || 0) + (listing.shipping_price || 0) + (calculateRuralpopFee(Math.round((listing.price || 0) * 100)) / 100))}
+                                    {formatPrice((listing.price || 0) + (!IS_EQUIPOP ? (listing.shipping_price || 0) : 0) + (calculateRuralpopFee(Math.round((listing.price || 0) * 100)) / 100))}
                                 </Text>
                             </View>
                         </View>

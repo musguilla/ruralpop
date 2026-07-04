@@ -1,8 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+import { IS_EQUIPOP } from '../../config/tenants';
 
 export function NativeAdCard() {
+    if (IS_EQUIPOP) return null;
     // Usamos tu ID de "Anuncio Nativo" (aunque estemos usando el componente Banner, 
     // en algunas cuentas AdMob permite que un bloque nativo se sirva como banner MREC si se configura).
     // Si falla, tendrías que crear un bloque "Banner" de AdMob para estas posiciones en la consola de AdMob.

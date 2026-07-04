@@ -233,7 +233,7 @@ export default function Home() {
     return (
         <View 
             className="flex-1 bg-surface-muted"
-            style={{ paddingTop: Platform.OS === 'android' ? insets.top : 48 }}
+            style={{ paddingTop: Platform.OS === 'android' ? insets.top : Math.max(insets.top, 48) + 8 }}
         >
             {/* Header that sticks to top */}
             {!IS_EQUIPOP ? (

@@ -3,7 +3,7 @@ import { View, Text, ActivityIndicator, TouchableOpacity, SafeAreaView, ScrollVi
 import { useAuth } from '../src/contexts/AuthContext';
 import { supabase } from '../src/lib/supabase';
 import { useRouter } from 'expo-router';
-import { ChevronLeft, Wallet, AlertCircle, ExternalLink, ShieldCheck } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Wallet, AlertCircle, ExternalLink, ShieldCheck } from 'lucide-react-native';
 import * as WebBrowser from 'expo-web-browser';
 import { formatPrice } from '../src/lib/formatters';
 
@@ -101,6 +101,62 @@ export default function MonederoScreen() {
         }
     };
 
+    const handleStripeLogin = async () => {
+        if (!isStripeReady && !wallet?.stripe_connected_account_id) {
+            alert("Aún no tienes tu cuenta bancaria configurada. Por favor, completa la verificación primero usando el botón de arriba.");
+            return;
+        }
+
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) return;
+
+            const apiUrl = `${process.env.EXPO_PUBLIC_SITE_URL || 'https://www.ruralpop.com'}/api/checkout/escrow/login-link`;
+            
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error("not_found");
+                }
+                throw new Error("No se pudo obtener el link de Stripe");
+            }
+
+            const { url } = await response.json();
+            await WebBrowser.openBrowserAsync(url);
+            
+            fetchWallet();
+        } catch (error: any) {
+            console.error(error);
+            if (error.message === "not_found") {
+                alert("Aún no tienes tu cuenta bancaria configurada. Por favor, completa la verificación primero.");
+            } else {
+                alert("Hubo un error al conectar con Stripe. Inténtalo de nuevo más tarde.");
+            }
+        }
+    };
+
+    if (loading) {
+        return (
+            <SafeAreaView className="flex-1 bg-surface-muted">
+                <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row items-center z-10">
+                    <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2 rounded-full active:bg-gray-100">
+                        <ChevronLeft color="#111827" size={28} />
+                    </TouchableOpacity>
+                    <Text className="text-xl font-bold text-text ml-2">Monedero</Text>
+                </View>
+                <View className="flex-1 justify-center items-center">
+                    <ActivityIndicator size="large" color="#059669" />
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView className="flex-1 bg-surface-muted">
             <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row items-center z-10">
@@ -182,60 +238,23 @@ export default function MonederoScreen() {
                                 </View>
                             </View>
 
-                            <View className="flex-row justify-between items-end mb-4 mt-2">
-                                <Text className="text-xl font-bold text-text">Últimas operaciones</Text>
-                                <TouchableOpacity onPress={() => router.push('/ventas')}>
-                                    <Text className="text-primary font-bold text-sm">Ver todas las ventas</Text>
+                            <View className="mt-2 border-t border-gray-100">
+                                <TouchableOpacity 
+                                    onPress={() => router.push('/ventas?tab=finalizadas')}
+                                    className="flex-row items-center justify-between py-4 border-b border-gray-100"
+                                >
+                                    <Text className="text-[17px] text-text font-medium">Historial de movimientos</Text>
+                                    <ChevronRight color="#4b5563" size={20} />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity 
+                                    onPress={handleStripeLogin}
+                                    className="flex-row items-center justify-between py-4 border-b border-gray-100"
+                                >
+                                    <Text className="text-[17px] text-text font-medium">Datos bancarios</Text>
+                                    <ChevronRight color="#4b5563" size={20} />
                                 </TouchableOpacity>
                             </View>
-                            
-                            {transactions.length === 0 ? (
-                                <Text className="text-gray-500 text-center py-4">No hay operaciones recientes.</Text>
-                            ) : (
-                                <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-                                    {transactions.map((tx, index) => {
-                                        const isLast = index === transactions.length - 1;
-                                        // Support both an array or a direct object if it's one-to-one
-                                        const listingData = Array.isArray(tx.listings) ? tx.listings[0] : tx.listings;
-                                        const listingTitle = listingData?.title || 'Pedido seguro';
-                                        
-                                        // Formato fecha simple
-                                        const date = new Date(tx.created_at);
-                                        const dateStr = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
-
-                                        return (
-                                            <View key={tx.id} className={`p-4 flex-row items-center justify-between ${!isLast ? 'border-b border-gray-50' : ''}`}>
-                                                <View className="flex-1 pr-4">
-                                                    <Text className="text-gray-800 font-medium mb-1" numberOfLines={1}>{listingTitle}</Text>
-                                                    <Text className="text-gray-400 text-xs">{dateStr}</Text>
-                                                </View>
-                                                <View className="items-end">
-                                                    <Text className="text-text font-bold text-base mb-1">
-                                                        {formatPrice(tx.seller_net_amount_cents / 100)}
-                                                    </Text>
-                                                    {tx.status === 'paid_out' || tx.status === 'buyer_confirmed' ? (
-                                                        <View className="bg-green-100 px-2 py-0.5 rounded-md">
-                                                            <Text className="text-[10px] font-bold text-green-700">Liberado</Text>
-                                                        </View>
-                                                    ) : tx.status === 'paid_held' ? (
-                                                        <View className="bg-orange-100 px-2 py-0.5 rounded-md">
-                                                            <Text className="text-[10px] font-bold text-orange-700">Retenido</Text>
-                                                        </View>
-                                                    ) : tx.status === 'return_initiated' ? (
-                                                        <View className="bg-red-100 px-2 py-0.5 rounded-md">
-                                                            <Text className="text-[10px] font-bold text-red-700">Devolución</Text>
-                                                        </View>
-                                                    ) : (
-                                                        <View className="bg-gray-100 px-2 py-0.5 rounded-md">
-                                                            <Text className="text-[10px] text-gray-500 uppercase">{tx.status.replace('_', ' ')}</Text>
-                                                        </View>
-                                                    )}
-                                                </View>
-                                            </View>
-                                        );
-                                    })}
-                                </View>
-                            )}
                         </>
                     ) : (
                         // If there is no wallet AT ALL, show the original welcome banner

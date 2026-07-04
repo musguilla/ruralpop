@@ -278,7 +278,7 @@ export default function SearchScreen() {
                         <TextInput
                             className="flex-1 ml-2 text-base text-gray-900 font-medium"
                             style={{ paddingVertical: 0, height: '100%' }}
-                            placeholder={IS_EQUIPOP ? "Buscar en Equipop..." : "Buscar tractores, vacas, aperos..."}
+                            placeholder={IS_EQUIPOP ? "Buscar sillas, botas, mantillas..." : "Buscar tractores, vacas, aperos..."}
                             placeholderTextColor="#9ca3af"
                             value={query}
                             onChangeText={setQuery}

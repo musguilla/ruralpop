@@ -54,6 +54,7 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
 
     const handleSelect = (id: string | null) => {
         onSelect(id);
+        onClose();
         // Reset state after a short delay to allow closing animation
         setTimeout(() => {
             setSearchQuery('');
@@ -138,7 +139,7 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                                 )}
                                 {IS_EQUIPOP && isFirstRider && (
                                     <View className="bg-primary-muted py-2 px-4 -mx-2 rounded-lg mb-2 mt-4">
-                                        <Text className="text-primary font-bold text-[13px]">PARA JINETES</Text>
+                                        <Text className="text-primary font-bold text-[13px]">PARA RIDERS</Text>
                                     </View>
                                 )}
                                 <TouchableOpacity

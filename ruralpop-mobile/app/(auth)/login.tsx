@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { User, Eye, EyeOff } from 'lucide-react-native';
@@ -27,7 +27,15 @@ export default function LoginScreen() {
     }
 
     return (
-        <View className="flex-1 bg-surface justify-center px-6">
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
+            className="bg-surface"
+        >
+            <ScrollView 
+                contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 }}
+                keyboardShouldPersistTaps="handled"
+            >
             <View className="items-center mb-8">
                 <View className="w-16 h-16 bg-primary-muted rounded-full items-center justify-center mb-4">
                     <User className="text-primary w-8 h-8" size={32} />
@@ -60,7 +68,7 @@ export default function LoginScreen() {
                             secureTextEntry={!showPassword}
                             placeholder="••••••••"
                             autoCapitalize="none"
-                            className="flex-1 text-text h-full"
+                            className="flex-1 text-text"
                         />
                         <TouchableOpacity
                             onPress={() => setShowPassword(!showPassword)}
@@ -84,7 +92,7 @@ export default function LoginScreen() {
                     {loading ? (
                         <ActivityIndicator color="white" />
                     ) : (
-                        <Text className="text-white font-bold text-lg">Inciar Sesión</Text>
+                        <Text className="text-white font-bold text-lg">Iniciar Sesión</Text>
                     )}
                 </TouchableOpacity>
 
@@ -95,6 +103,7 @@ export default function LoginScreen() {
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }

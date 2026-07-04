@@ -99,7 +99,7 @@ export default function UserProfileScreen() {
         );
     }
 
-    const displayName = profile.commercial_name || profile.name || 'Usuario Ruralpop';
+    const displayName = profile.commercial_name || profile.name || (IS_EQUIPOP ? 'Usuario Equipop' : 'Usuario Ruralpop');
     const avatarUrl = profile.company_logo_url || profile.avatar_url;
     const joinedYear = profile.created_at ? new Date(profile.created_at).getFullYear() : new Date().getFullYear();
 

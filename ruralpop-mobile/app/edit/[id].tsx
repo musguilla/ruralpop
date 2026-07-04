@@ -371,7 +371,10 @@ export default function EditListingScreen() {
             <ScrollView className="flex-1 p-6" keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 }}>
 
                 <View className="mb-6">
-                    <Text className="text-sm font-bold text-text mb-2">Fotos del producto *</Text>
+                    <View className="flex-row items-center mb-2 flex-wrap">
+                        <Text className="text-base font-bold text-text">Fotos del producto *</Text>
+                        <Text className="text-xs text-gray-400 ml-2">Sube hasta 10 fotos. La primera será la principal.</Text>
+                    </View>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
                         {images.map((uri, index) => (
                             <View key={index} className="relative w-24 h-24 rounded-xl overflow-hidden mr-3 border border-gray-200">
@@ -385,7 +388,7 @@ export default function EditListingScreen() {
                             </View>
                         ))}
 
-                        {images.length < 5 && (
+                        {images.length < 10 && (
                             <TouchableOpacity
                                 onPress={pickImage}
                                 className="w-24 h-24 rounded-xl border-2 border-dashed border-gray-300 items-center justify-center bg-gray-50 mr-3"
@@ -399,7 +402,7 @@ export default function EditListingScreen() {
 
                 <View className="space-y-6">
                     <View>
-                        <Text className="text-sm font-bold text-text mb-2">Título del anuncio *</Text>
+                        <Text className="text-base font-bold text-text mb-2">Título del anuncio *</Text>
                         <TextInput
                             value={title}
                             onChangeText={setTitle}
@@ -409,20 +412,20 @@ export default function EditListingScreen() {
                     </View>
 
                     <View>
-                        <Text className="text-sm font-bold text-text mb-2">Categoría y Subcategoría *</Text>
+                        <Text className="text-base font-bold text-text mb-2">Categoría y Subcategoría *</Text>
                         <TouchableOpacity
                             onPress={() => setIsCategoryModalOpen(true)}
                             className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 flex-row justify-between items-center"
                         >
                             <Text className={`text-base ${categoryId ? 'text-text' : 'text-gray-400'}`}>
-                                {categoryId ? (categoryId.charAt(0).toUpperCase() + categoryId.slice(1)) : 'Selecciona categoría...'}
+                                {categoryId ? (categoryId.charAt(0).toUpperCase() + categoryId.slice(1)).replace(/-/g, ' ') : 'Selecciona categoría...'}
                             </Text>
                             <ChevronDown color="#9ca3af" size={20} />
                         </TouchableOpacity>
                     </View>
 
                     <View>
-                        <Text className="text-sm font-bold text-text mb-2">Descripción detallada *</Text>
+                        <Text className="text-base font-bold text-text mb-2">Descripción detallada *</Text>
                         <TextInput
                             value={description}
                             onChangeText={setDescription}
@@ -444,30 +447,19 @@ export default function EditListingScreen() {
                     </View>
 
                     <View className="flex-row mb-6">
-                        <View className={IS_EQUIPOP ? "flex-1 mr-3" : "flex-[0.8] mr-3"}>
-                            <Text className="text-sm font-bold text-text mb-2">Precio (€) *</Text>
+                        <View className={IS_EQUIPOP ? "flex-1" : "flex-[0.8] mr-3"}>
+                            <Text className="text-base font-bold text-text mb-2">Precio (€) *</Text>
                             <TextInput
                                 value={price}
                                 onChangeText={setPrice}
                                 placeholder="0"
                                 keyboardType="numeric"
-                                className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text font-bold text-lg"
+                                className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text text-lg"
                             />
                         </View>
-                        {IS_EQUIPOP ? (
-                            <View className="flex-1">
-                                <Text className="text-sm font-bold text-text mb-2">Precio de envío (€) *</Text>
-                                <TextInput
-                                    value={shippingPrice}
-                                    onChangeText={setShippingPrice}
-                                    placeholder="Ej: 4.99"
-                                    keyboardType="numeric"
-                                    className="w-full bg-surface-muted border border-gray-200 rounded-xl px-4 py-3 text-text font-bold text-lg"
-                                />
-                            </View>
-                        ) : (
+                        {!IS_EQUIPOP && (
                             <View className="flex-[1.2]">
-                                <Text className="text-sm font-bold text-text mb-2">Tipo de precio</Text>
+                                <Text className="text-base font-bold text-text mb-2">Tipo de precio</Text>
                                 <TouchableOpacity
                                     onPress={() => {
                                         if (allowOnlineSale) {
@@ -530,7 +522,7 @@ export default function EditListingScreen() {
                             
                             {allowOnlineSale && !isStripeReady && (
                                 <View className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-xl flex-row items-start space-x-3">
-                                    <Info className="text-amber-600 mt-0.5" size={20} />
+                                    <View className="mr-3 mt-0.5"><Info className="text-amber-600" size={20} /></View>
                                     <View className="flex-1">
                                         <Text className="text-sm font-medium text-amber-900 mb-2">
                                             Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
@@ -546,7 +538,7 @@ export default function EditListingScreen() {
 
                     {IS_EQUIPOP && allowOnlineSale && !isStripeReady && (
                         <View className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex-row items-start space-x-3">
-                            <Info className="text-amber-600 mt-0.5" size={20} />
+                            <View className="mr-3 mt-0.5"><Info className="text-amber-600" size={20} /></View>
                             <View className="flex-1">
                                 <Text className="text-sm font-medium text-amber-900 mb-2">
                                     Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.

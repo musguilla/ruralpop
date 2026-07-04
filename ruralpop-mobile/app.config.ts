@@ -8,7 +8,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     name: IS_EQUIPOP ? "Equipop" : "Ruralpop",
     slug: IS_EQUIPOP ? "equipop" : "ruralpop-mobile",
     scheme: IS_EQUIPOP ? "equipop" : "ruralpop",
-    version: "1.0.30",
+    version: "1.0.33",
     orientation: "portrait",
     icon: IS_EQUIPOP ? "./assets/equipop/icon.png" : "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -21,7 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       supportsTablet: true,
       bundleIdentifier: IS_EQUIPOP ? "com.equipop.app" : "com.ruralpop.ruralpopapp",
-      buildNumber: "80",
+      buildNumber: "82",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         CFBundleDevelopmentRegion: "es",
@@ -34,7 +34,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         backgroundColor: IS_EQUIPOP ? "#1E3A8A" : "#059669"
       },
       package: IS_EQUIPOP ? "com.equipop.app" : "com.ruralpop.app",
-      versionCode: 80,
+      versionCode: 82,
       permissions: [
         "com.google.android.gms.permission.AD_ID",
         "android.permission.INTERNET",

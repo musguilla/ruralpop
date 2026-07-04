@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { Tag, X, Search, Check } from 'lucide-react-native';
 import { PREDEFINED_TAGS } from '../../constants/predefinedTags';
+import { CATEGORIES } from '../../constants/categories';
+import { IS_EQUIPOP } from '../../config/tenants';
 
 interface TagSelectorProps {
     category: string | null;
@@ -31,8 +33,17 @@ export function TagSelector({ category, subcategory, initialTags = [], onTagsCha
         
         const normalize = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         
-        const subKeyNormalized = subcategory ? normalize(subcategory) : '';
-        const catKeyNormalized = normalize(category);
+        const subKeyNormalized = subcategory ? normalize(subcategory).replace(/-/g, ' ') : '';
+        
+        let effectiveCategory = category;
+        if (IS_EQUIPOP && category) {
+            const parent = CATEGORIES.find(c => c.subcategories?.includes(category));
+            if (parent) {
+                effectiveCategory = parent.id;
+            }
+        }
+
+        const catKeyNormalized = normalize(effectiveCategory).replace(/-/g, ' ');
 
         let list: string[] = [];
 
@@ -44,8 +55,12 @@ export function TagSelector({ category, subcategory, initialTags = [], onTagsCha
             }
         }
         
-        if (list.length === 0 && PREDEFINED_TAGS["otros"]) {
-            list = PREDEFINED_TAGS["otros"];
+        if (list.length === 0) {
+            if (IS_EQUIPOP) {
+                list = [];
+            } else if (PREDEFINED_TAGS["otros"]) {
+                list = PREDEFINED_TAGS["otros"];
+            }
         }
         
         return list;

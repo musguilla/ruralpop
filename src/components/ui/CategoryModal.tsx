@@ -202,7 +202,7 @@ export function CategoryModal({
                                     )}
                                     {isEquipop && !searchTerm && cat.label === 'Calzado ecuestre' && (
                                         <div className="px-4 py-2 mt-4 text-[14px] bg-[#f5f9ff] font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wider">
-                                            Para Jinetes
+                                            Para Riders
                                         </div>
                                     )}
                                     <button

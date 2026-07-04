@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, SafeAreaView, Modal, TextInput, Alert } from 'react-native';
 import { useAuth } from '../src/contexts/AuthContext';
 import { supabase } from '../src/lib/supabase';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, Package, Clock, CheckCircle, Tag, Edit3, Trash2, PackageOpen, Sparkles } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../src/lib/image-optimization';
@@ -15,8 +15,16 @@ import { FeaturedCheckoutMobile } from '../src/components/upload/FeaturedCheckou
 export default function VentasScreen() {
     const { user } = useAuth();
     const router = useRouter();
+    const { tab } = useLocalSearchParams<{ tab: string }>();
     
     const [activeTab, setActiveTab] = useState<'en_venta' | 'en_curso' | 'finalizadas'>('en_venta');
+    
+    useEffect(() => {
+        if (tab && ['en_venta', 'en_curso', 'finalizadas'].includes(tab)) {
+            setActiveTab(tab as any);
+        }
+    }, [tab]);
+
     
     // Data states
     const [displayItems, setDisplayItems] = useState<any[]>([]);

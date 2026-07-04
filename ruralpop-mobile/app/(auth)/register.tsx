@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { UserPlus } from 'lucide-react-native';
@@ -59,7 +59,15 @@ export default function RegisterScreen() {
     }
 
     return (
-        <ScrollView className="flex-1 bg-surface" contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 }}>
+        <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
+            className="bg-surface"
+        >
+            <ScrollView 
+                contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 }}
+                keyboardShouldPersistTaps="handled"
+            >
             <View className="items-center mb-8">
                 <View className="w-16 h-16 bg-primary-muted rounded-full items-center justify-center mb-4">
                     <UserPlus className="text-primary" size={32} />
@@ -126,6 +134,7 @@ export default function RegisterScreen() {
                     </TouchableOpacity>
                 </View>
             </View>
-        </ScrollView>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
