@@ -282,6 +282,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                         />
                                     </div>
                                 </div>
+                                </div>
                             )}
 
                             {isEquipop && (
