@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Eye, CheckCircle, Loader2, Sparkles, X } from "lucide-react";
+import { Eye, CheckCircle, Loader2, Sparkles, X, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { deleteListing, toggleListingStatus } from "@/app/dashboard/actions";
 import { useNotification } from "@/context/NotificationContext";
@@ -150,7 +150,7 @@ export function DashboardListingActions({
                     className="flex items-center justify-center w-[40px] h-[40px] bg-gray-50 text-gray-400 font-extrabold hover:text-red-500 hover:bg-red-50 rounded-xl transition-all disabled:opacity-50 border border-transparent"
                     title="Eliminar anuncio"
                 >
-                    <X className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4" />
                 </button>
 
                 {/* Modificar anuncio */}
