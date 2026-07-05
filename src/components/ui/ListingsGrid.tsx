@@ -122,10 +122,10 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             
             if (queryTerms.length <= 1) {
                 const term = queryTerms[0] || sanitizedQuery;
-                query = query.or(`title.ilike.*${term}*,description.ilike.*${term}*,location.ilike.*${term}*,tags.cs.{"${term}"}`);
+                query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%,tags.cs.{"${term}"}`);
             } else {
                 // AND Logic (default)
-                const andConditions = queryTerms.map(term => `or(title.ilike.*${term}*,description.ilike.*${term}*,location.ilike.*${term}*)`).join(',');
+                const andConditions = queryTerms.map(term => `or(title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%)`).join(',');
                 query = query.or(`and(${andConditions}),tags.cs.{"${sanitizedQuery}"}`);
             }
         }

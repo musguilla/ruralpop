@@ -87,9 +87,9 @@ export default function SearchScreen() {
                 if (searchTerms.length > 0) {
                     if (searchTerms.length <= 1) {
                         const term = searchTerms[0];
-                        supabaseQuery = supabaseQuery.or(`title.ilike.*${term}*,description.ilike.*${term}*,location.ilike.*${term}*,category.ilike.*${term}*,subcategory.ilike.*${term}*`);
+                        supabaseQuery = supabaseQuery.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%,category.ilike.%${term}%,subcategory.ilike.%${term}%`);
                     } else {
-                        const andConditions = searchTerms.map(term => `or(title.ilike.*${term}*,description.ilike.*${term}*,location.ilike.*${term}*,category.ilike.*${term}*,subcategory.ilike.*${term}*)`).join(',');
+                        const andConditions = searchTerms.map(term => `or(title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%,category.ilike.%${term}%,subcategory.ilike.%${term}%)`).join(',');
                         supabaseQuery = supabaseQuery.or(`and(${andConditions})`);
                     }
                 }
