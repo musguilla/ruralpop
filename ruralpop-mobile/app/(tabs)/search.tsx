@@ -85,13 +85,18 @@ export default function SearchScreen() {
                 const searchTerms = safeQuery.split(/\s+/).filter(Boolean);
                 
                 if (searchTerms.length > 0) {
-                    if (searchTerms.length <= 1) {
-                        const term = searchTerms[0];
-                        supabaseQuery = supabaseQuery.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%,tags.cs.{"${term}"}`);
-                    } else {
-                        const andConditions = searchTerms.map(term => `or(title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%)`).join(',');
-                        supabaseQuery = supabaseQuery.or(`and(${andConditions}),tags.cs.{"${safeQuery}"}`);
-                    }
+                    // Create a flat array of OR conditions for all terms to avoid React Native URL double-encoding bugs
+                    // and nested and(or()) syntax which might be rejected by older fetch polyfills.
+                    const orConditions: string[] = [];
+                    searchTerms.forEach(term => {
+                        orConditions.push(`title.ilike.%${term}%`);
+                        orConditions.push(`description.ilike.%${term}%`);
+                        orConditions.push(`location.ilike.%${term}%`);
+                        orConditions.push(`category.ilike.%${term}%`);
+                        orConditions.push(`subcategory.ilike.%${term}%`);
+                    });
+                    
+                    supabaseQuery = supabaseQuery.or(orConditions.join(','));
                 }
             }
 
