@@ -160,7 +160,11 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
 
                 <div className="mb-8 border-b border-[var(--ag-sys-color-border)] pb-6">
                     <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] flex items-center gap-3">
-                        <Tractor className="text-[var(--ag-sys-color-primary)] w-8 h-8" />
+                        {isEquipop ? (
+                            <span className="text-3xl">🐴</span>
+                        ) : (
+                            <Tractor className="text-[var(--ag-sys-color-primary)] w-8 h-8" />
+                        )}
                         Modificar anuncio
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-secondary)] text-sm sm:text-base mt-2">
