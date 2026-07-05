@@ -81,23 +81,8 @@ export default function SearchScreen() {
                 .or(getDefaultTenantFilterString());
 
             if (activeQuery) {
-                const safeQuery = activeQuery.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '').trim();
-                const searchTerms = safeQuery.split(/\s+/).filter(Boolean);
-                
-                if (searchTerms.length > 0) {
-                    // Create a flat array of OR conditions for all terms to avoid React Native URL double-encoding bugs
-                    // and nested and(or()) syntax which might be rejected by older fetch polyfills.
-                    const orConditions: string[] = [];
-                    searchTerms.forEach(term => {
-                        orConditions.push(`title.ilike.%${term}%`);
-                        orConditions.push(`description.ilike.%${term}%`);
-                        orConditions.push(`location.ilike.%${term}%`);
-                        orConditions.push(`category.ilike.%${term}%`);
-                        orConditions.push(`subcategory.ilike.%${term}%`);
-                    });
-                    
-                    supabaseQuery = supabaseQuery.or(orConditions.join(','));
-                }
+                // Use .or() to search across multiple columns like the web app
+                supabaseQuery = supabaseQuery.or(`title.ilike.%${activeQuery}%,description.ilike.%${activeQuery}%,location.ilike.%${activeQuery}%`);
             }
 
             if (categoryId) {
