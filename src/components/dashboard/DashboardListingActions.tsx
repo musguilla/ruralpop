@@ -143,7 +143,7 @@ export function DashboardListingActions({
                     {status === 'active' ? 'Marcar Vendido' : 'Reactivar'}
                 </button>
 
-                {/* Eliminar (X) */}
+                {/* Eliminar (Trash2) */}
                 <button
                     onClick={handleDelete}
                     disabled={isPending}
