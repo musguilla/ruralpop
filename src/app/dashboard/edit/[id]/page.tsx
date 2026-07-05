@@ -3,6 +3,7 @@ import { redirect, notFound } from "next/navigation";
 import EditListingForm from "@/components/dashboard/EditListingForm";
 import { decodeId } from "@/utils/idUtils";
 import stripe from "@/lib/stripe";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export const dynamic = "force-dynamic";
 
@@ -84,6 +85,9 @@ export default async function EditListingPage(props: Props) {
         }
     }
 
+    const tenantSlug = await getServerTenantSlug();
+    const isEquipop = tenantSlug === 'equipop';
+
     return (
         <EditListingForm
             listing={listing}
@@ -92,6 +96,7 @@ export default async function EditListingPage(props: Props) {
             initialMunicipalities={initialMunicipalities}
             userEmail={user.email}
             hasWalletConfigured={isStripeReady}
+            isEquipop={isEquipop}
         />
     );
 }

@@ -241,7 +241,7 @@ export const EQUIPOP_CATEGORIES = [
     },
     {
         "id": "establo-y-cuadra",
-        "label": "Establo y cuadra",
+        "label": "Establo",
         "subcategories": [
             "Bebederos automáticos",
             "Comederos",

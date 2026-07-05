@@ -21,9 +21,10 @@ interface EditListingFormProps {
     initialMunicipalities: { id: number; name: string }[];
     userEmail?: string;
     hasWalletConfigured?: boolean;
+    isEquipop?: boolean;
 }
 
-export default function EditListingForm({ listing, savedPhone, initialProvinces, initialMunicipalities, userEmail, hasWalletConfigured = false }: EditListingFormProps) {
+export default function EditListingForm({ listing, savedPhone, initialProvinces, initialMunicipalities, userEmail, hasWalletConfigured = false, isEquipop = false }: EditListingFormProps) {
     const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();
@@ -251,7 +252,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
 
                     {/* Precio y Localización */}
                     <section className="bg-[var(--ag-sys-color-surface)] p-6 rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className={isEquipop ? "flex flex-col gap-6" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
                             <div>
                                 <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
                                     <Euro className="w-4 h-4" /> Precio (€) *
@@ -266,7 +267,8 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                 />
                             </div>
 
-                            <div>
+                            {!isEquipop && (
+                                <div>
                                 <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Tipo de precio</label>
                                 <div className="flex items-center gap-4">
                                     <div className="flex-1 min-w-0">
@@ -280,7 +282,13 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                         />
                                     </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {isEquipop && (
+                                <div className="hidden">
+                                    <input type="hidden" name="price_type" value="fixed" />
+                                </div>
+                            )}
 
                             {isTestPro && (
                                 <div className="col-span-1 md:col-span-2 flex flex-col gap-2">
@@ -307,7 +315,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                             <span className="text-sm font-bold text-green-800">Vender online</span>
                                         </label>
                                         
-                                        {sellOnline && (
+                                        {sellOnline && !isEquipop && (
                                             <div className="flex items-center gap-3 w-full md:w-auto">
                                                 <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">Precio transporte (€)</span>
                                                 <input
@@ -319,6 +327,9 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                                     className="w-full md:w-32 px-3 py-2 rounded-lg border border-[var(--ag-sys-color-border)] bg-white focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all text-sm"
                                                 />
                                             </div>
+                                        )}
+                                        {sellOnline && isEquipop && (
+                                            <input type="hidden" name="shipping_price" value="0" />
                                         )}
                                     </div>
                                     

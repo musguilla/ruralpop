@@ -111,7 +111,7 @@ export default async function ProfesionalesPage({ searchParams }: { searchParams
                         )}
 
                         {/* PLAN PRO */}
-                        <ProPlanCard isGhostClaim={isGhostClaim} />
+                        <ProPlanCard isGhostClaim={isGhostClaim} isEquipop={isEquipop} />
 
                     </div>
                     

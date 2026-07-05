@@ -13,7 +13,7 @@ const CABALLOS_CATEGORIES = [
     { id: 'protectores-y-vendas', type: 'category', label: 'Protectores y vendas', image: require('../assets/equipop/categories/protectores-y-vendas.jpg') },
     { id: 'mantas', type: 'category', label: 'Mantas', image: require('../assets/equipop/categories/mantas.jpg') },
     { id: 'cuidado-e-higiene-del-caballo', type: 'category', label: 'Cuidado e higiene', image: require('../assets/equipop/categories/cuidado-e-higiene-del-caballo.jpg') },
-    { id: 'establo-y-cuadra', type: 'category', label: 'Establo y cuadra', image: require('../assets/equipop/categories/establo-y-cuadra.jpg') },
+    { id: 'establo-y-cuadra', type: 'category', label: 'Establo', image: require('../assets/equipop/categories/establo-y-cuadra.jpg') },
 ];
 
 const JINETES_CATEGORIES = [

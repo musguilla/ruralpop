@@ -144,7 +144,7 @@ export const CATEGORIES = [
     },
     {
         id: "establo-y-cuadra",
-        label: "Establo y cuadra",
+        label: "Establo",
         subcategories: ["Bebederos automáticos", "Comederos", "Alfombrillas y suelos", "Organización de cuadra", "Material de limpieza", "Accesorios de establo"]
     },
     {

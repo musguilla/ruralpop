@@ -81,8 +81,18 @@ export default function SearchScreen() {
                 .or(getDefaultTenantFilterString());
 
             if (activeQuery) {
-                // Use .or() to search across multiple columns like the web app
-                supabaseQuery = supabaseQuery.or(`title.ilike.%${activeQuery}%,description.ilike.%${activeQuery}%,location.ilike.%${activeQuery}%`);
+                const safeQuery = activeQuery.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '').trim();
+                const searchTerms = safeQuery.split(/\s+/).filter(Boolean);
+                
+                if (searchTerms.length > 0) {
+                    if (searchTerms.length <= 1) {
+                        const term = searchTerms[0];
+                        supabaseQuery = supabaseQuery.or(`title.ilike.*${term}*,description.ilike.*${term}*,location.ilike.*${term}*,category.ilike.*${term}*,subcategory.ilike.*${term}*`);
+                    } else {
+                        const andConditions = searchTerms.map(term => `or(title.ilike.*${term}*,description.ilike.*${term}*,location.ilike.*${term}*,category.ilike.*${term}*,subcategory.ilike.*${term}*)`).join(',');
+                        supabaseQuery = supabaseQuery.or(`and(${andConditions})`);
+                    }
+                }
             }
 
             if (categoryId) {

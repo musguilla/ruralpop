@@ -49,14 +49,16 @@ export default function LoginScreen() {
             <View className="space-y-4">
                 <View>
                     <Text className="text-sm font-medium text-text mb-1">Correo electrónico</Text>
-                    <TextInput
-                        onChangeText={(text) => setEmail(text)}
-                        value={email}
-                        placeholder="tu@email.com"
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                        className="w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl text-text"
-                    />
+                    <View className="w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl justify-center">
+                        <TextInput
+                            onChangeText={(text) => setEmail(text)}
+                            value={email}
+                            placeholder="tu@email.com"
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            style={{ flex: 1, color: '#111827' }}
+                        />
+                    </View>
                 </View>
 
                 <View className="mb-6">
@@ -68,7 +70,7 @@ export default function LoginScreen() {
                             secureTextEntry={!showPassword}
                             placeholder="••••••••"
                             autoCapitalize="none"
-                            className="flex-1 text-text"
+                            style={{ flex: 1, color: '#111827' }}
                         />
                         <TouchableOpacity
                             onPress={() => setShowPassword(!showPassword)}

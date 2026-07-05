@@ -81,37 +81,43 @@ export default function RegisterScreen() {
             <View className="space-y-4">
                 <View className="mb-4">
                     <Text className="text-sm font-medium text-text mb-1">Nombre completo</Text>
-                    <TextInput
-                        onChangeText={(text) => setFullName(text)}
-                        value={fullName}
-                        placeholder="Ej: Juan Pérez"
-                        autoCapitalize="words"
-                        className="w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl text-text"
-                    />
+                    <View className="w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl justify-center">
+                        <TextInput
+                            onChangeText={(text) => setFullName(text)}
+                            value={fullName}
+                            placeholder="Ej: Juan Pérez"
+                            autoCapitalize="words"
+                            style={{ flex: 1, color: '#111827' }}
+                        />
+                    </View>
                 </View>
 
                 <View className="mb-4">
                     <Text className="text-sm font-medium text-text mb-1">Correo electrónico</Text>
-                    <TextInput
-                        onChangeText={(text) => setEmail(text)}
-                        value={email}
-                        placeholder="tu@email.com"
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                        className="w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl text-text"
-                    />
+                    <View className="w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl justify-center">
+                        <TextInput
+                            onChangeText={(text) => setEmail(text)}
+                            value={email}
+                            placeholder="tu@email.com"
+                            autoCapitalize="none"
+                            keyboardType="email-address"
+                            style={{ flex: 1, color: '#111827' }}
+                        />
+                    </View>
                 </View>
 
                 <View className="mb-8">
                     <Text className="text-sm font-medium text-text mb-1">Contraseña</Text>
-                    <TextInput
-                        onChangeText={(text) => setPassword(text)}
-                        value={password}
-                        secureTextEntry={true}
-                        placeholder="Mínimo 6 caracteres"
-                        autoCapitalize="none"
-                        className="w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl text-text"
-                    />
+                    <View className="w-full h-12 px-4 bg-surface-muted border border-gray-200 rounded-xl justify-center">
+                        <TextInput
+                            onChangeText={(text) => setPassword(text)}
+                            value={password}
+                            secureTextEntry={true}
+                            placeholder="Mínimo 6 caracteres"
+                            autoCapitalize="none"
+                            style={{ flex: 1, color: '#111827' }}
+                        />
+                    </View>
                 </View>
 
                 <TouchableOpacity

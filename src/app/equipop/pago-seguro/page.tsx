@@ -46,7 +46,7 @@ export default function PagoSeguroPage() {
                             <div>
                                 <h3 className="text-2xl font-bold mb-3 text-[var(--ag-sys-color-text)]">Garantía de satisfacción</h3>
                                 <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed text-lg">
-                                    Tienes 48 horas tras recibir el paquete para comprobar que el material está tal y como se describía en el anuncio. Si hay algún problema (el artículo está dañado, no es el acordado), el dinero no se liberará al vendedor y se mediará para buscar una solución o una devolución. ¡Cero riesgos!
+                                    Tienes 48 horas tras recibir el paquete para comprobar que el material está tal y como se describía en el anuncio. Si hay algún problema (el artículo está dañado, no es el acordado) podrás devolver el artículo y tu dinero se liberará cuando el vendedor recepcione el artículo. ¡Cero riesgos!
                                 </p>
                             </div>
                         </div>

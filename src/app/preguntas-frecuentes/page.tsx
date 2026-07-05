@@ -33,7 +33,7 @@ export default async function FAQPage() {
                 },
                 {
                     q: '¿Cómo elimino mi cuenta?',
-                    a: '1. Inicia sesión y ve a tu "Perfil" en la esquina superior derecha.\n2. Haz clic en "Configuración".\n3. En la parte inferior, verás la opción "Eliminar cuenta". Pulsa ahí y sigue los pasos de seguridad para confirmar tu solicitud.'
+                    a: '1. Inicia sesión y ve a tu "Perfil" en la esquina superior derecha.\n2. Haz clic en "Ajustes".\n3. En la parte inferior, verás la opción "Eliminar cuenta". Pulsa ahí y sigue los pasos de seguridad para confirmar tu solicitud.'
                 },
                 {
                     q: '¿Cómo contacto con otro usuario por chat?',

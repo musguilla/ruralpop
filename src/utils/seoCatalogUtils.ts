@@ -35,7 +35,7 @@ export async function getCatalogSeoData(parsedSlug: any): Promise<CatalogSeoData
         let sanitizedQuery = parsedSlug.q.trim().toLowerCase();
         let queryTerms = sanitizedQuery.split(/[\s\-]+/).filter((t: string) => t.length > 2);
         queryTerms.forEach((term: string) => {
-            query = query.or(`title.ilike.%${term}%,description.ilike.%${term}%,location.ilike.%${term}%`);
+            query = query.or(`title.ilike.*${term}*,description.ilike.*${term}*,location.ilike.*${term}*`);
         });
     }
 

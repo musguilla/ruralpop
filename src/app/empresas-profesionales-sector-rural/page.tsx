@@ -84,7 +84,7 @@ export default async function EmpresasProfesionalesPage() {
                         </div>
                         <div className="bg-[var(--ag-sys-color-primary)]/5 p-8 rounded-3xl border border-[var(--ag-sys-color-primary)]/10 text-left">
                             <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] mb-3">Credibilidad profesional</h3>
-                            <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">Todos tus anuncios llevan un sello que transmite confianza y profesionalismo a tus compradores.</p>
+                            <p className="text-[var(--ag-sys-color-text-muted)] leading-relaxed">Todos tus anuncios llevan un sello de perfil verificado que transmite confianza a tus compradores.</p>
                         </div>
                         <div className="bg-[var(--ag-sys-color-primary)]/5 p-8 rounded-3xl border border-[var(--ag-sys-color-primary)]/10 text-left">
                             <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] mb-3">Gestión simplificada</h3>
@@ -146,7 +146,7 @@ export default async function EmpresasProfesionalesPage() {
                         </div>
 
                         {/* PLAN PRO */}
-                        <ProPlanCard isGhostClaim={false} />
+                        <ProPlanCard isGhostClaim={false} isEquipop={isEquipop} />
 
                     </div>
                     

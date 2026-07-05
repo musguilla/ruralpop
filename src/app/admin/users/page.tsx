@@ -30,7 +30,7 @@ export default async function AdminUsersPage(props: Props) {
     }
 
     if (search) {
-        query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%,contact_phone.ilike.%${search}%`);
+        query = query.or(`name.ilike.*${search}*,email.ilike.*${search}*,contact_phone.ilike.*${search}*`);
     }
 
     const { data: users, count, error } = await query

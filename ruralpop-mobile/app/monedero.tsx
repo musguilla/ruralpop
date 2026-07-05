@@ -248,8 +248,9 @@ export default function MonederoScreen() {
                                 </TouchableOpacity>
 
                                 <TouchableOpacity 
-                                    onPress={handleStripeLogin}
-                                    className="flex-row items-center justify-between py-4 border-b border-gray-100"
+                                    onPress={isStripeReady ? handleStripeLogin : undefined}
+                                    disabled={!isStripeReady}
+                                    className={`flex-row items-center justify-between py-4 border-b border-gray-100 ${!isStripeReady ? 'opacity-50' : ''}`}
                                 >
                                     <Text className="text-[17px] text-text font-medium">Datos bancarios</Text>
                                     <ChevronRight color="#4b5563" size={20} />

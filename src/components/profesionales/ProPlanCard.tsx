@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Check, Zap } from "lucide-react";
 
-export function ProPlanCard({ isGhostClaim }: { isGhostClaim: boolean }) {
+export function ProPlanCard({ isGhostClaim, isEquipop = false }: { isGhostClaim: boolean; isEquipop?: boolean }) {
     // Estado para controlar el tipo de pago: mensual (por defecto) o anual
     const [isAnnual, setIsAnnual] = useState(false);
 
@@ -24,7 +24,10 @@ export function ProPlanCard({ isGhostClaim }: { isGhostClaim: boolean }) {
                     Plan Pro <Zap className="w-5 h-5 text-amber-300 fill-amber-300" />
                 </h3>
                 <p className="text-white/80 text-sm">
-                    El arma definitiva para vender más si eres empresa del sector, ganadería, concesionario de maquinaria, criadores, ...
+                    {isEquipop 
+                        ? "El arma definitiva para vender más si eres empresa del sector, fabricante, tienda, distribuidor, ..."
+                        : "El arma definitiva para vender más si eres empresa del sector, ganadería, concesionario de maquinaria, criadores, ..."
+                    }
                 </p>
             </div>
 

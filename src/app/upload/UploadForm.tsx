@@ -283,7 +283,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
 
                 {/* Precio y Localización */}
                 <section className="bg-[var(--ag-sys-color-surface)] p-6 rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className={isEquipop ? "flex flex-col gap-6" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
                         <div>
                             <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
                                 <Euro className="w-4 h-4" /> {t('upload.price_label')}
@@ -298,21 +298,10 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                         </div>
 
                         {isEquipop ? (
-                            <div className="flex flex-col">
+                            <div className="hidden">
                                 <input type="hidden" name="price_type" value="fixed" />
                                 <input type="hidden" name="vender_online" value="true" />
-                                <label className="flex items-center gap-1.5 text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">
-                                    Precio transporte (€) *
-                                </label>
-                                <input
-                                    name="shipping_price"
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    defaultValue="0"
-                                    required
-                                    className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
-                                />
+                                <input type="hidden" name="shipping_price" value="0" />
                             </div>
                         ) : (
                             <div className="flex flex-col">
