@@ -1,6 +1,8 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
 const IS_EQUIPOP = process.env.APP_VARIANT === 'equipop';
+const VERSION = '1.0.36';
+const BUILD_NUMBER = 85;
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
@@ -8,7 +10,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     name: IS_EQUIPOP ? "Equipop" : "Ruralpop",
     slug: IS_EQUIPOP ? "equipop" : "ruralpop-mobile",
     scheme: IS_EQUIPOP ? "equipop" : "ruralpop",
-    version: "1.0.35",
+    version: VERSION,
     orientation: "portrait",
     icon: IS_EQUIPOP ? "./assets/equipop/icon.png" : "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -21,7 +23,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ios: {
       supportsTablet: true,
       bundleIdentifier: IS_EQUIPOP ? "com.equipop.app" : "com.ruralpop.ruralpopapp",
-      buildNumber: "84",
+      buildNumber: BUILD_NUMBER.toString(),
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         CFBundleDevelopmentRegion: "es",
@@ -34,7 +36,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         backgroundColor: IS_EQUIPOP ? "#1E3A8A" : "#059669"
       },
       package: IS_EQUIPOP ? "com.equipop.app" : "com.ruralpop.app",
-      versionCode: 84,
+      versionCode: BUILD_NUMBER,
       permissions: [
         "com.google.android.gms.permission.AD_ID",
         "android.permission.INTERNET",
