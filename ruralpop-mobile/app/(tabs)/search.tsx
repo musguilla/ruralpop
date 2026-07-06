@@ -81,8 +81,8 @@ export default function SearchScreen() {
                 .or(getDefaultTenantFilterString());
 
             if (activeQuery) {
-                // Use .or() to search across multiple columns like the web app
-                supabaseQuery = supabaseQuery.or(`title.ilike.%${activeQuery}%,description.ilike.%${activeQuery}%,location.ilike.%${activeQuery}%`);
+                // Workaround for React Native URLSearchParams bugs with multiple .or() clauses
+                supabaseQuery = supabaseQuery.ilike('title', `%${activeQuery}%`);
             }
 
             if (categoryId) {
