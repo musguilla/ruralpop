@@ -81,8 +81,20 @@ export default function SearchScreen() {
                 .or(getDefaultTenantFilterString());
 
             if (activeQuery) {
-                // Workaround for React Native URLSearchParams bugs with multiple .or() clauses
-                supabaseQuery = supabaseQuery.ilike('title', `%${activeQuery}%`);
+                const safeQuery = activeQuery.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '').trim();
+                const searchTerms = safeQuery.split(/\s+/).filter(Boolean);
+                
+                if (searchTerms.length > 0) {
+                    const orConditions: string[] = [];
+                    searchTerms.forEach(term => {
+                        orConditions.push(`title.ilike.%${term}%`);
+                        orConditions.push(`description.ilike.%${term}%`);
+                        orConditions.push(`category.ilike.%${term}%`);
+                        orConditions.push(`subcategory.ilike.%${term}%`);
+                    });
+                    
+                    supabaseQuery = supabaseQuery.or(orConditions.join(','));
+                }
             }
 
             if (categoryId) {
