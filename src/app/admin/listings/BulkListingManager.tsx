@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import {
     Package,
     MapPin,
@@ -37,6 +37,9 @@ export function BulkListingManager({ listings, equipopCategories }: BulkListingM
     const [sharingListingId, setSharingListingId] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [selectedSubcategory, setSelectedSubcategory] = useState<string>('');
+    
+    const [isPending, startTransition] = useTransition();
+    const [togglingId, setTogglingId] = useState<string | null>(null);
 
     const toggleSelection = (id: string) => {
         const newSet = new Set(selectedIds);
@@ -162,21 +165,31 @@ export function BulkListingManager({ listings, equipopCategories }: BulkListingM
                                 Cancelar
                             </button>
                             <button 
-                                onClick={async () => {
+                                onClick={async (e) => {
+                                    e.preventDefault();
                                     if (!selectedCategory) {
                                         showAlert({ title: "Atención", message: "Debes seleccionar una categoría para Equipop", type: "error" });
                                         return;
                                     }
-                                    await toggleShareToEquipop(sharingListingId, true, selectedCategory, selectedSubcategory || null);
-                                    setSharingListingId(null);
-                                    setSelectedCategory('');
-                                    setSelectedSubcategory('');
-                                    showAlert({ title: "Compartido", message: "El anuncio ahora es visible en Equipop con la nueva categoría.", type: "success" });
+                                    
+                                    setTogglingId(sharingListingId);
+                                    startTransition(async () => {
+                                        await toggleShareToEquipop(sharingListingId, true, selectedCategory, selectedSubcategory || null);
+                                        setSharingListingId(null);
+                                        setSelectedCategory('');
+                                        setSelectedSubcategory('');
+                                        setTogglingId(null);
+                                        showAlert({ title: "Compartido", message: "El anuncio ahora es visible en Equipop con la nueva categoría.", type: "success" });
+                                    });
                                 }}
-                                disabled={!selectedCategory}
+                                disabled={!selectedCategory || isPending}
                                 className="px-5 py-2.5 text-sm font-bold bg-purple-600 text-white rounded-xl hover:bg-purple-700 disabled:opacity-50 transition-colors"
                             >
-                                Confirmar y Compartir
+                                {isPending && togglingId === sharingListingId ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    "Confirmar y Compartir"
+                                )}
                             </button>
                         </div>
                     </div>
@@ -316,21 +329,30 @@ export function BulkListingManager({ listings, equipopCategories }: BulkListingM
                                         
                                         <div className="flex items-center gap-1.5">
                                             <button
-                                                onClick={async (e) => {
+                                                onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
                                                     if (l.shared_to_equipop) {
-                                                        await toggleShareToEquipop(l.id, false);
+                                                        setTogglingId(l.id);
+                                                        startTransition(async () => {
+                                                            await toggleShareToEquipop(l.id, false);
+                                                            setTogglingId(null);
+                                                        });
                                                     } else {
                                                         setSharingListingId(l.id);
                                                         setSelectedCategory(l.equipop_category || '');
                                                         setSelectedSubcategory(l.equipop_subcategory || '');
                                                     }
                                                 }}
+                                                disabled={isPending && togglingId === l.id}
                                                 title={l.shared_to_equipop ? "Quitar de Equipop" : "Compartir en Equipop"}
-                                                className={`flex items-center justify-center w-8 h-8 rounded-full border transition-all ${l.shared_to_equipop ? 'bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text-muted)] border-[var(--ag-sys-color-border)] hover:bg-purple-50 hover:text-purple-600'}`}
+                                                className={`flex items-center justify-center w-8 h-8 rounded-full border transition-all ${l.shared_to_equipop ? 'bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text-muted)] border-[var(--ag-sys-color-border)] hover:bg-purple-50 hover:text-purple-600'} disabled:opacity-50`}
                                             >
-                                                <Share2 className="w-4 h-4" />
+                                                {isPending && togglingId === l.id ? (
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                ) : (
+                                                    <Share2 className="w-4 h-4" />
+                                                )}
                                             </button>
                                             <Link href={`/admin/listings/edit/${encodeId(l.id)}`} title="Editar anuncio" className="flex items-center justify-center w-8 h-8 bg-blue-50 text-blue-600 border border-blue-100 rounded-full hover:bg-blue-100 transition-all">
                                                 <Edit className="w-4 h-4" />
