@@ -131,35 +131,90 @@ export function parseSeoUrl(slug: string): SeoUrlParams {
     }
     if (matchedLocSize > 0) parts = parts.slice(0, parts.length - matchedLocSize);
 
-    // 2. Category check (search backwards)
-    let matchedCatSize = 0;
-    for (let i = 1; i <= parts.length; i++) {
-        const potentialCat = parts.slice(parts.length - i).join('-');
-        const realCatSlug = INVERSE_CATEGORY_ALIASES[potentialCat] || potentialCat;
-        if (validCategories.has(realCatSlug)) {
-            category = realCatSlug;
-            matchedCatSize = i;
-        }
-    }
-    if (matchedCatSize > 0) parts = parts.slice(0, parts.length - matchedCatSize);
+    // 2. Exact Category parsing
+    const remainingStr = parts.join('-');
+    const allCatSlugs = [...validCategories, ...Object.values(CATEGORY_ALIASES)]
+        .sort((a, b) => b.length - a.length); // longest first
+        
+    let foundCatSlug = "";
+    let matchIdx = -1;
+    let catSlugParts: string[] = [];
 
-    // 3. Subcategory check (search backwards)
-    let matchedSubSize = 0;
-    for (let i = 1; i <= parts.length; i++) {
-        const potentialSub = parts.slice(parts.length - i).join('-');
-        const realSubSlug = INVERSE_SUBCATEGORY_ALIASES[potentialSub] || potentialSub;
-        if (subcategorySlugMap.has(realSubSlug)) {
-            subcategory = subcategorySlugMap.get(realSubSlug)!;
-            matchedSubSize = i;
+    for (const catSlug of allCatSlugs) {
+        if (
+            remainingStr === catSlug ||
+            remainingStr.includes(`-${catSlug}-`) ||
+            remainingStr.endsWith(`-${catSlug}`) ||
+            remainingStr.startsWith(`${catSlug}-`)
+        ) {
+            foundCatSlug = catSlug;
+            catSlugParts = catSlug.split('-');
+            
+            // Find EXACT index in parts array
+            for (let i = 0; i <= parts.length - catSlugParts.length; i++) {
+                let match = true;
+                for (let j = 0; j < catSlugParts.length; j++) {
+                    if (parts[i + j] !== catSlugParts[j]) {
+                        match = false; break;
+                    }
+                }
+                if (match) {
+                    matchIdx = i; break;
+                }
+            }
+            if (matchIdx !== -1) break; // Found exact array match
         }
     }
-    if (matchedSubSize > 0) parts = parts.slice(0, parts.length - matchedSubSize);
+
+    let qParts: string[] = [];
+    let subParts: string[] = [];
+
+    if (matchIdx !== -1) {
+        category = INVERSE_CATEGORY_ALIASES[foundCatSlug] || foundCatSlug;
+        qParts = parts.slice(0, matchIdx);
+        subParts = parts.slice(matchIdx + catSlugParts.length);
+    } else {
+        qParts = parts;
+    }
+
+    // 3. Subcategory parsing (always backwards, prefer subParts but fallback to qParts)
+    const checkSub = (arr: string[]) => {
+        for (let i = 1; i <= arr.length; i++) {
+            const potentialSub = arr.slice(arr.length - i).join('-');
+            const realSubSlug = INVERSE_SUBCATEGORY_ALIASES[potentialSub] || potentialSub;
+            if (subcategorySlugMap.has(realSubSlug)) {
+                return { sub: subcategorySlugMap.get(realSubSlug)!, size: i };
+            }
+        }
+        return null;
+    };
+
+    if (subParts.length > 0) {
+        const subMatch = checkSub(subParts);
+        if (subMatch) {
+            subcategory = subMatch.sub;
+            subParts = subParts.slice(0, subParts.length - subMatch.size);
+            qParts = [...qParts, ...subParts]; 
+        } else {
+            qParts = [...qParts, ...subParts];
+        }
+    } else {
+        const subMatch = checkSub(qParts);
+        if (subMatch) {
+            subcategory = subMatch.sub;
+            qParts = qParts.slice(0, qParts.length - subMatch.size);
+        }
+    }
 
     // 4. Query is whatever is left
-    if (parts.length > 0) {
-        const queryText = parts.join('-');
+    if (qParts.length > 0) {
+        const queryText = qParts.join('-');
         if (queryText !== 'anuncios') {
-            q = parts.join(' '); // Reconstruct search space with spaces
+            if (qParts[0] === 'anuncios') {
+                q = qParts.slice(1).join(' ');
+            } else {
+                q = qParts.join(' ');
+            }
         }
     }
 
