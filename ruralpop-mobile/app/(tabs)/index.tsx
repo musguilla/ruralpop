@@ -6,7 +6,7 @@ import { ListingCard } from '../../src/components/ui/ListingCard';
 import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
-import { Search, LayoutGrid } from 'lucide-react-native';
+import { Search, LayoutGrid, X } from 'lucide-react-native';
 import { TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenants';
@@ -254,8 +254,15 @@ export default function Home() {
                             onChangeText={setSearchQuery}
                             onSubmitEditing={handleSearchSubmit}
                             returnKeyType="search"
-                            clearButtonMode="while-editing"
                         />
+                        {searchQuery.length > 0 && (
+                            <TouchableOpacity
+                                onPress={() => setSearchQuery('')}
+                                className="ml-2 bg-[#4b5563] rounded-full w-[22px] h-[22px] items-center justify-center"
+                            >
+                                <X color="white" size={14} strokeWidth={3} />
+                            </TouchableOpacity>
+                        )}
                     </View>
                     <TouchableOpacity 
                         onPress={() => router.push('/categories')}
