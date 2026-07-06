@@ -340,13 +340,6 @@ export default function SearchScreen() {
                 </View>
             </View>
 
-            {/* DEBUG INFO */}
-            <View style={{ backgroundColor: 'red', padding: 10, marginHorizontal: 10, marginTop: 5, borderRadius: 8 }}>
-                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 12 }}>
-                    DEBUG: Q="{activeQuery}" | L:{listings.length} | R:{dataWithAds.length} | LD:{loading ? 'Y' : 'N'}
-                </Text>
-            </View>
-
             {/* Results Grid */}
             {loading && !refreshing ? (
                 <View className="flex-1 justify-center items-center">
@@ -391,12 +384,12 @@ export default function SearchScreen() {
                             return (
                                 <View className="flex-row" style={{ width: '100%' }}>
                                     {item.items.map((listing: Listing) => (
-                                        <View key={listing.id} className="p-1" style={{ flex: 1, maxWidth: `${100 / numColumns}%` }}>
+                                        <View key={listing.id} className="p-1" style={{ width: `${100 / numColumns}%` }}>
                                             <ListingCard listing={listing} isSingleColumn={false} />
                                         </View>
                                     ))}
                                     {Array.from({ length: numColumns - item.items.length }).map((_, i) => (
-                                        <View key={`empty-${i}`} style={{ flex: 1, maxWidth: `${100 / numColumns}%` }} />
+                                        <View key={`empty-${i}`} style={{ width: `${100 / numColumns}%` }} />
                                     ))}
                                 </View>
                             );

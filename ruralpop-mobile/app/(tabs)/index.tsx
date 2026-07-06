@@ -287,13 +287,13 @@ export default function Home() {
                             return (
                                 <View className="flex-row w-full px-1">
                                     {item.items.map((listing: Listing) => (
-                                        <View key={listing.id} className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }}>
+                                        <View key={listing.id} className="p-1" style={{ width: `${100 / numColumns}%` }}>
                                             <ListingCard listing={listing} />
                                         </View>
                                     ))}
                                     {/* Rellenar espacios vacíos si la fila está incompleta */}
                                     {Array.from({ length: numColumns - item.items.length }).map((_, i) => (
-                                        <View key={`empty-${i}`} className="flex-1 p-1" style={{ maxWidth: `${100 / numColumns}%` }} />
+                                        <View key={`empty-${i}`} className="p-1" style={{ width: `${100 / numColumns}%` }} />
                                     ))}
                                 </View>
                             );
