@@ -183,6 +183,7 @@ export default function SearchScreen() {
     }, [params.category, params.q]);
 
     const handleSearchSubmit = () => {
+        setCategoryId(''); // Clear category context when user explicitly searches a term
         setActiveQuery(query.trim());
     };
 

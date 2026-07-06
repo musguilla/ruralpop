@@ -13,19 +13,5 @@ export const supabase = createClient(supabaseUrl || 'https://placeholder.supabas
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: false,
-    },
-    global: {
-        fetch: (url, options) => {
-            if (typeof url === 'string') {
-                // Fix for React Native / URLSearchParams double encoding bugs
-                const fixedUrl = url
-                    .replace(/%252C/g, '%2C')
-                    .replace(/%2525/g, '%25')
-                    .replace(/%257B/g, '%7B')
-                    .replace(/%257D/g, '%7D');
-                return fetch(fixedUrl, options);
-            }
-            return fetch(url, options);
-        }
     }
 });
