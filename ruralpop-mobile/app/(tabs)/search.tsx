@@ -340,6 +340,13 @@ export default function SearchScreen() {
                 </View>
             </View>
 
+            {/* DEBUG INFO */}
+            <View style={{ backgroundColor: 'red', padding: 10, marginHorizontal: 10, marginTop: 5, borderRadius: 8 }}>
+                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 12 }}>
+                    DEBUG: Q="{activeQuery}" | L:{listings.length} | R:{dataWithAds.length} | LD:{loading ? 'Y' : 'N'}
+                </Text>
+            </View>
+
             {/* Results Grid */}
             {loading && !refreshing ? (
                 <View className="flex-1 justify-center items-center">
