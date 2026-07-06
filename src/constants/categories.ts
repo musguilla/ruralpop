@@ -80,7 +80,7 @@ export const CATEGORIES = [
     {
         id: "sillas-de-montar-y-accesorios",
         label: "Sillas de montar y accesorios",
-        subcategories: ["Sillas de doma", "Sillas vaqueras", "Sillas de salto", "Sillas de uso general", "Sillas españolas", "Sillas portuguesas", "Sillas de poni", "Cinchas y latiguillos", "Estribos", "Aciones", "Fundas y protectores de silla", "Accesorios para silla"]
+        subcategories: ["Sillas de doma", "Sillas de salto", "Sillas mixtas / uso general", "Sillas de raid / endurance", "Cinchas y latiguillos", "Estribos", "Aciones", "Fundas y protectores de silla", "Accesorios para silla"]
     },
     {
         id: "mantillas-y-salvacruces",

@@ -66,7 +66,7 @@ const CATEGORY_ALIASES: Record<string, string> = {
 };
 
 const SUBCATEGORY_ALIASES: Record<string, string> = {
-    "sillas-de-uso-general": "sillas-mixtas",
+    "sillas-mixtas-uso-general": "sillas-mixtas",
 };
 
 const INVERSE_CATEGORY_ALIASES = Object.fromEntries(
