@@ -41,10 +41,10 @@ interface SeoUrlParams {
 
 const CATEGORY_ALIASES: Record<string, string> = {
     "sillas-de-montar-y-accesorios": "sillas-de-montar",
-    "mantillas-y-sudaderos": "mantillas",
+    "mantillas-y-salvacruces": "mantillas",
     "cabezadas-y-riendas": "cabezadas",
     "protectores-y-vendas": "protectores",
-    "mantas-y-ropa-para-caballos": "mantas-caballos",
+    "mantas": "mantas-caballos",
     "cuidado-e-higiene-del-caballo": "cuidado-caballo",
     "alimentacin-y-suplementos": "alimentacion",
     "herrado-y-cascos": "herrado",
@@ -60,13 +60,8 @@ const CATEGORY_ALIASES: Record<string, string> = {
     "ropa-ecuestre-mujer": "ropa-mujer",
     "ropa-ecuestre-hombre": "ropa-hombre",
     "ropa-ecuestre-infantil": "ropa-infantil",
-    "guantes-ecuestres": "guantes",
-    "ropa-reflectante-y-seguridad-vial": "ropa-reflectante",
     "fustas-espuelas-y-ayudas": "fustas-espuelas",
     "accesorios-para-riders": "accesorios-riders",
-    "equipamiento-de-competicin": "competicion",
-    "outdoor-y-lifestyle-ecuestre": "outdoor",
-    "bolsas-y-almacenamiento": "bolsas",
     "otros-productos-para-riders": "otros-riders"
 };
 
@@ -136,19 +131,7 @@ export function parseSeoUrl(slug: string): SeoUrlParams {
     }
     if (matchedLocSize > 0) parts = parts.slice(0, parts.length - matchedLocSize);
 
-    // 2. Subcategory check (search backwards)
-    let matchedSubSize = 0;
-    for (let i = 1; i <= parts.length; i++) {
-        const potentialSub = parts.slice(parts.length - i).join('-');
-        const realSubSlug = INVERSE_SUBCATEGORY_ALIASES[potentialSub] || potentialSub;
-        if (subcategorySlugMap.has(realSubSlug)) {
-            subcategory = subcategorySlugMap.get(realSubSlug)!;
-            matchedSubSize = i;
-        }
-    }
-    if (matchedSubSize > 0) parts = parts.slice(0, parts.length - matchedSubSize);
-
-    // 3. Category check (search backwards)
+    // 2. Category check (search backwards)
     let matchedCatSize = 0;
     for (let i = 1; i <= parts.length; i++) {
         const potentialCat = parts.slice(parts.length - i).join('-');
@@ -159,6 +142,18 @@ export function parseSeoUrl(slug: string): SeoUrlParams {
         }
     }
     if (matchedCatSize > 0) parts = parts.slice(0, parts.length - matchedCatSize);
+
+    // 3. Subcategory check (search backwards)
+    let matchedSubSize = 0;
+    for (let i = 1; i <= parts.length; i++) {
+        const potentialSub = parts.slice(parts.length - i).join('-');
+        const realSubSlug = INVERSE_SUBCATEGORY_ALIASES[potentialSub] || potentialSub;
+        if (subcategorySlugMap.has(realSubSlug)) {
+            subcategory = subcategorySlugMap.get(realSubSlug)!;
+            matchedSubSize = i;
+        }
+    }
+    if (matchedSubSize > 0) parts = parts.slice(0, parts.length - matchedSubSize);
 
     // 4. Query is whatever is left
     if (parts.length > 0) {
