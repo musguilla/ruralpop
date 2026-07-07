@@ -6,6 +6,9 @@ import { Metadata } from "next";
 import { AdSenseArticle } from "@/components/ads/AdSenseArticle";
 import { AdSenseDisplaySidebar } from "@/components/ads/AdSenseDisplaySidebar";
 
+import { Facebook, Twitter, Link as LinkIcon, ChevronRight, Home, Calendar, Clock, Tag } from "lucide-react";
+import { getServerTenantSlug } from "@/utils/tenant/server";
+
 import { createClient } from "@/utils/supabase/server";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -46,6 +49,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function MagazineArticlePage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
 
     // Server fetch
     const supabase = await createClient();
@@ -170,17 +175,17 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                 
                 {/* Left Sidebar (Solo PC) */}
                 <aside className="hidden lg:block w-[200px] xl:w-[300px] flex-shrink-0 sticky top-24">
-                    <AdSenseDisplaySidebar />
+                    {!isEquipop && <AdSenseDisplaySidebar />}
                 </aside>
 
                 {/* Content Body Central */}
                 <div className="flex-1 max-w-4xl w-full mx-auto pb-12">
                     {post.content ? (
                         <div className="prose prose-lg dark:prose-invert prose-headings:font-bold prose-headings:text-[var(--ag-sys-color-text)] prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-a:underline max-w-none text-[var(--ag-sys-color-text)] leading-relaxed">
-                            <div dangerouslySetInnerHTML={{ __html: contentPart1 }} />
-                            {contentPart2 && <AdSenseArticle />}
+                            {contentPart1 && <div dangerouslySetInnerHTML={{ __html: contentPart1 }} />}
+                            {contentPart2 && !isEquipop && <AdSenseArticle />}
                             {contentPart2 && <div dangerouslySetInnerHTML={{ __html: contentPart2 }} />}
-                            {contentPart3 && <AdSenseArticle />}
+                            {contentPart3 && !isEquipop && <AdSenseArticle />}
                             {contentPart3 && <div dangerouslySetInnerHTML={{ __html: contentPart3 }} />}
                         </div>
                     ) : (
@@ -220,7 +225,7 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
 
                 {/* Right Sidebar (Solo PC) */}
                 <aside className="hidden lg:block w-[200px] xl:w-[300px] flex-shrink-0 sticky top-24">
-                    <AdSenseDisplaySidebar />
+                    {!isEquipop && <AdSenseDisplaySidebar />}
                 </aside>
             </div>
 

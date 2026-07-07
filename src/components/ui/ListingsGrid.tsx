@@ -17,6 +17,8 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
     let supabase = await createClient();
     const headersList = await headers();
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
     const dict = await getDictionary(locale);
     
     const t = (key: keyof typeof dict.search, params?: Record<string, string>): string => {
@@ -338,7 +340,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     const gridItems: React.ReactNode[] = [];
     listings.forEach((listing: Listing, index: number) => {
-        if (!disableInFeedAds && adPositions.has(index)) {
+        if (!isEquipop && !disableInFeedAds && adPositions.has(index)) {
             gridItems.push(<AdSenseInFeed key={`ad-${listing.id}-${index}`} />);
         }
         gridItems.push(
@@ -375,7 +377,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             </div>
 
             <aside className="hidden xl:block w-[300px] flex-shrink-0 sticky top-24">
-                <AdSenseDisplaySidebar />
+                {!isEquipop && <AdSenseDisplaySidebar />}
             </aside>
         </div>
     );

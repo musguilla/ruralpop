@@ -103,7 +103,7 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     other: {
-      "google-adsense-account": "ca-pub-2042067618462129"
+      ...(isEquipop ? {} : { "google-adsense-account": "ca-pub-2042067618462129" })
     }
   };
 
@@ -163,11 +163,13 @@ export default async function RootLayout({
           `}
         </Script>
         {/* Google AdSense */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2042067618462129"
-          crossOrigin="anonymous"
-        ></script>
+        {tenant !== 'equipop' && (
+          <script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2042067618462129"
+            crossOrigin="anonymous"
+          ></script>
+        )}
         <LocaleProvider locale={locale} dictionary={dictionary}>
           <CategoriesProvider categories={categories}>
           <NotificationProvider>

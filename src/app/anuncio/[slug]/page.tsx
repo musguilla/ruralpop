@@ -516,7 +516,7 @@ export default async function ListingDetailPage(props: Props) {
                         )}
 
                         {/* Publicidad Google AdSense */}
-                        <AdSenseSidebar />
+                        {!isEquipop && <AdSenseSidebar />}
 
                     </div>
                 </div>
