@@ -55,7 +55,7 @@ export default async function FAQPage() {
             questions: [
                 {
                     q: `¿Cómo subo un anuncio a ${brand}?`,
-                    a: '1. Una vez logueado, haz clic en el botón verde "Vender" de la barra superior.\n2. Selecciona la categoría principal y subcategoría para tu producto o animal.\n3. Sube fotos claras, pon un título descriptivo y un precio.\n4. Revisa los datos y dale a publicar. Ya estará visible para miles de personas.'
+                    a: `1. Una vez logueado, haz clic en el botón verde "Vender" de la barra superior.\n2. Selecciona la categoría principal y subcategoría para tu producto${isEquipop ? '' : ' o animal'}.\n3. Sube fotos claras, pon un título descriptivo y un precio.\n4. Revisa los datos y dale a publicar. Ya estará visible para miles de personas.`
                 },
                 {
                     q: '¿Cuántos anuncios puedo subir?',
