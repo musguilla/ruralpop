@@ -51,8 +51,6 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
     // Obtenemos el filtro de tenant ANTES de construir el builder para no hacer async la función
     // y evitar que JavaScript resuelva prematuramente el Builder Thenable.
     const tenantFilterString = await getServerTenantFilterString();
-    const tenantSlug = await getServerTenantSlug();
-    const isEquipop = tenantSlug === 'equipop';
 
     const buildQuery = (fallbackLevel = 0) => {
         let query = supabase
