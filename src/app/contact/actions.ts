@@ -7,6 +7,7 @@ export async function submitContact(formData: FormData) {
     const email = formData.get("email") as string;
     const subject = formData.get("subject") as string;
     const message = formData.get("message") as string;
+    const isEquipop = formData.get("isEquipop") === "true";
 
     if (!name || !email || !message) {
         return { success: false, error: "El nombre, email y mensaje son obligatorios" };
@@ -25,8 +26,8 @@ export async function submitContact(formData: FormData) {
         `;
 
         const { error } = await resend.emails.send({
-            from: "Contactos Ruralpop <onboarding@resend.dev>",
-            to: "ruralpopapp@gmail.com",
+            from: isEquipop ? "Contactos Equipop <onboarding@resend.dev>" : "Contactos Ruralpop <onboarding@resend.dev>",
+            to: isEquipop ? "equipoprider@gmail.com" : "ruralpopapp@gmail.com",
             subject: `Contacto Web: ${subject || name}`,
             html: emailHtml,
             replyTo: email,
