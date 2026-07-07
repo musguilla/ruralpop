@@ -49,7 +49,7 @@ export async function EquipopFooter() {
                         Cómo funciona Pago Seguro
                     </LocalizedLink>
                     <LocalizedLink href="/quienes-somos" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Quienes somos
+                        Quiénes somos
                     </LocalizedLink>
                     <LocalizedLink href="/preguntas-frecuentes" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
                         {t("faq")}
