@@ -110,9 +110,9 @@ export async function EquipopFooter() {
                         <LocalizedLink href="/terms" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
                             {t("condiciones")}
                         </LocalizedLink>
-                        <LocalizedLink href="/contact" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
+                        <a href="https://www.ruralpop.com/contact" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
                             {t("contacto")}
-                        </LocalizedLink>
+                        </a>
                     </div>
                     <div className="text-sm text-[var(--ag-sys-color-text-muted)]">
                         &copy; {currentYear} Equipop. {t("derechos")}
