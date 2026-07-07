@@ -4,6 +4,7 @@ import { NEIGHBORING_PROVINCES } from '@/constants/neighboringProvinces';
 import { getCatalogSeoData } from '@/utils/seoCatalogUtils';
 import { LOCATIONS } from '@/constants/locations';
 import { buildSeoUrl } from '@/utils/seoUtils';
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 interface SeoBlockProps {
     parsedSlug: any;
@@ -13,6 +14,10 @@ interface SeoBlockProps {
 
 export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery }: SeoBlockProps) {
     const { count, tags } = await getCatalogSeoData(parsedSlug);
+    
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const displayCategory = categoryQuery.replace(/-/g, ' ');
 
     // Si no hay apenas anuncios, mostramos un bloque muy recortado.
     if (count === 0) {
@@ -20,7 +25,7 @@ export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery 
             <div className="w-full mt-16 bg-[var(--ag-sys-color-surface)] p-6 sm:p-10 rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm text-center">
                 <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">Encuentra más resultados</h2>
                 <p className="text-[var(--ag-sys-color-text-muted)] text-lg mb-6">
-                    También puedes encontrar anuncios de {categoryQuery} {locationName ? `en ${locationName}` : ''} en ...
+                    También puedes encontrar anuncios de {displayCategory} {locationName ? `en ${locationName}` : ''} en ...
                 </p>
                 {locationName && NEIGHBORING_PROVINCES[locationName] && (
                     <div>
@@ -56,14 +61,17 @@ export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery 
     const locText = locationName ? ` en ${locationName}` : ' online';
     const tagText = tags.length > 0 ? `Entre los anuncios más destacados, frecuentemente encontraras opciones relacionadas con ${tags.slice(0, 4).join(', ')}.` : '';
 
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+    const sellersText = isEquipop ? 'jinetes y tiendas especializadas' : 'vendedores, agricultores y ganaderos';
+
     return (
         <div className="w-full mt-24 bg-[var(--ag-sys-color-surface)] p-6 sm:p-10 rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm">
             <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">
-                Comprar y Vender {categoryQuery}{locText}
+                Comprar y Vender {displayCategory}{locText}
             </h2>
             
             <p className="text-[var(--ag-sys-color-text-muted)] text-lg mb-4 leading-relaxed">
-                Encuentra las mejores oportunidades de <strong className="font-bold text-[var(--ag-sys-color-text)]">{categoryQuery.toLowerCase()}</strong> gracias a nuestros clasificados actualizados diariamente. Ruralpop es el punto de encuentro ideal para contactar directamente con vendedores, agricultores y ganaderos de confianza sin intermediarios.
+                Encuentra las mejores oportunidades de <strong className="font-bold text-[var(--ag-sys-color-text)]">{displayCategory.toLowerCase()}</strong> gracias a nuestros clasificados actualizados diariamente. {brand} es el punto de encuentro ideal para contactar directamente con {sellersText} de confianza sin intermediarios.
             </p>
             
             <p className="text-[var(--ag-sys-color-text-muted)] text-lg mb-4 leading-relaxed">
@@ -89,7 +97,7 @@ export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery 
                                     href={neighborUrl}
                                     className="text-[var(--ag-sys-color-primary)] font-semibold hover:underline mr-3"
                                 >
-                                    {categoryQuery} en {neighbor}
+                                    {displayCategory} en {neighbor}
                                 </Link>
                             );
                         })}

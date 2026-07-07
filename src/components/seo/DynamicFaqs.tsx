@@ -1,25 +1,33 @@
 import React from 'react';
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 interface FaqProps {
     categoryQuery: string;
     provinceName?: string;
 }
 
-export function DynamicFaqs({ categoryQuery, provinceName }: FaqProps) {
+export async function DynamicFaqs({ categoryQuery, provinceName }: FaqProps) {
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    
     const locText = provinceName ? ` en ${provinceName}` : '';
-    const category = categoryQuery.toLowerCase();
+    const category = categoryQuery.replace(/-/g, ' ').toLowerCase();
     
     // Capitalize category safely
     const cTitle = category.charAt(0).toUpperCase() + category.slice(1);
 
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+    const sellersText = isEquipop ? 'jinetes y tiendas hípicas' : 'vendedores y ganaderos';
+    const sellersText2 = isEquipop ? 'particulares que renuevan material hasta guarnicionerías' : 'particulares que liquidan maquinaria hasta criadores profesionales';
+
     const generatedFaqs = [
         {
             question: `¿Dónde puedo comprar ${category}${locText}?`,
-            answer: `En Ruralpop disponemos de listados actualizados directamente por vendedores y ganaderos. Puedes comprar ${category}${locText} filtrando nuestra base de datos donde encontrarás desde particulares que liquidan maquinaria hasta criadores profesionales con los mejores precios directos.`
+            answer: `En ${brand} disponemos de listados actualizados directamente por ${sellersText}. Puedes comprar ${category}${locText} filtrando nuestra base de datos donde encontrarás desde ${sellersText2} con los mejores precios directos.`
         },
         {
             question: `¿Cuál es el precio medio de ${category}${locText}?`,
-            answer: `El precio de ${category} es totalmente libre y varía según el estado, la edad o los portes${locText}. Al negociar sin intermediarios en nuestra plataforma, habitualmente puedes encontrar un ahorro significativo comparado con tratantes comerciales estándar.`
+            answer: `El precio de ${category} es totalmente libre y varía según el estado o los portes${locText}. Al negociar sin intermediarios en nuestra plataforma, habitualmente puedes encontrar un ahorro significativo comparado con el mercado tradicional.`
         },
         {
             question: `¿Cómo contacto con los vendedores de ${category}?`,
