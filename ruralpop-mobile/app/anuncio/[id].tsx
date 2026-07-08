@@ -5,7 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { Listing, User } from '../../src/types';
-import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon, X, ShieldCheck, Layers, MoreVertical, Edit3 } from 'lucide-react-native';
+import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon, X, ShieldCheck, Layers, MoreVertical, Edit3, Info, Truck } from 'lucide-react-native';
 import ImageViewing from "react-native-image-viewing";
 import { formatPrice } from '../../src/lib/formatters';
 import { useAuth } from '../../src/contexts/AuthContext';
@@ -640,26 +640,65 @@ export default function ListingDetailsScreen() {
                     </View>
 
                     <ScrollView className="flex-1 px-4 py-6">
-                        <View className="bg-white rounded-2xl border border-gray-300 p-6 mb-6">
-                            <View className="flex-row justify-between items-center mb-4">
-                                <Text className="text-[17px] text-gray-500">Producto</Text>
-                                <Text className="text-[17px] text-text">{formatPrice((listing.price || 0))}</Text>
+                        <View className="bg-white rounded-2xl border border-gray-300 p-4 mb-6">
+                            <Text className="text-lg font-bold text-text mb-4">Desglose del precio</Text>
+                            
+                            {/* Product Row */}
+                            <View className="flex-row items-center mb-4">
+                                {hasImages ? (
+                                    <Image 
+                                        source={{ uri: getOptimizedImageUrl(listing.image_urls![0], { width: 100 }) || undefined }} 
+                                        style={{ width: 48, height: 48, borderRadius: 8 }} 
+                                        contentFit="cover" 
+                                    />
+                                ) : (
+                                    <View className="w-12 h-12 rounded-lg bg-gray-100 items-center justify-center">
+                                        <ImageIcon size={24} color="#d1d5db" />
+                                    </View>
+                                )}
+                                <View className="flex-1 ml-3">
+                                    <Text className="text-[15px] text-text" numberOfLines={1}>{listing.title}</Text>
+                                    <Text className="text-[15px] font-bold text-text mt-0.5">{formatPrice(listing.price || 0)}</Text>
+                                </View>
                             </View>
 
+                            {/* Shipping Row */}
                             {!IS_EQUIPOP && (
-                                <View className="flex-row justify-between items-center mb-4">
-                                    <Text className="text-[17px] text-gray-500">Envío</Text>
-                                    <Text className="text-[17px] text-text">
-                                        {formatPrice(listing.shipping_price || 0)}
-                                    </Text>
+                                <View className="flex-row items-center mb-4">
+                                    <View className="w-12 h-12 rounded-full bg-gray-100 items-center justify-center">
+                                        <Truck color="#6b7280" size={20} />
+                                    </View>
+                                    <View className="flex-1 ml-3">
+                                        <Text className="text-[15px] text-text">Envío</Text>
+                                        <Text className="text-[15px] font-bold text-text mt-0.5">{formatPrice(listing.shipping_price || 0)}</Text>
+                                    </View>
                                 </View>
                             )}
 
-                            <Text className="text-[13px] text-gray-500 mb-6 mt-2">
-                                La compra está cubierta por la Protección {IS_EQUIPOP ? 'Equipop' : 'Ruralpop'} al comprador.
-                            </Text>
+                            {/* Protection Row */}
+                            <View className="flex-row items-center mb-2">
+                                <View style={{ backgroundColor: IS_EQUIPOP ? '#1e3a8a1a' : '#0596691a' }} className="w-12 h-12 rounded-full items-center justify-center">
+                                    <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={20} />
+                                </View>
+                                <View className="flex-1 ml-3 flex-row items-start justify-between">
+                                    <View className="flex-1 mr-2">
+                                        <View className="flex-row items-center flex-wrap">
+                                            <Text className="text-[15px] text-text mr-1">Tasa de protección al comprador</Text>
+                                            <TouchableOpacity 
+                                                onPress={() => Alert.alert("Protección al comprador", "Cubre los costes necesarios para garantizar una experiencia segura y sin contratiempos a nuestra comunidad.")}
+                                                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                            >
+                                                <Info color="#6b7280" size={16} />
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Text className="text-[15px] font-bold text-text mt-0.5">
+                                            {formatPrice(calculateRuralpopFee(Math.round((listing.price || 0) * 100)) / 100)}
+                                        </Text>
+                                    </View>
+                                </View>
+                            </View>
 
-                            <View className="border-t border-gray-100 pt-4 flex-row justify-between items-center">
+                            <View className="border-t border-gray-100 pt-4 flex-row justify-between items-center mt-2">
                                 <Text className="text-xl font-extrabold text-text">Total a pagar</Text>
                                 <Text className="text-2xl font-extrabold text-text">
                                     {formatPrice((listing.price || 0) + (!IS_EQUIPOP ? (listing.shipping_price || 0) : 0) + (calculateRuralpopFee(Math.round((listing.price || 0) * 100)) / 100))}
