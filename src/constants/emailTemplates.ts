@@ -366,12 +366,12 @@ export const EQUIPOP_EMAIL_TEMPLATES: EmailTemplate[] = [
 <body>
     <div class="container">
         <img src="https://www.equipop.app/equipop-logo.png" alt="Equipop" class="logo" />
-        <h1 class="title">¡Hola, Jinete!</h1>
+        <h1 class="title">¡Hola!</h1>
         <p class="text text-center">
-            Te damos la bienvenida a <strong>Equipop</strong>.<br/><br/>
-            Estamos encantados de tenerte con nosotros en el mercado ecuestre líder. ¡Empieza a vender y comprar ya! Descubre los mejores caballos y equipamiento, gestiona tus favoritos y conecta con miles de aficionados al mundo del caballo.
+            Te damos la bienvenida a <strong>Equipop</strong><br/><br/>
+            Ya formas parte de la comunidad ecuestre donde podrás conectar con miles de aficionados como tú. Empieza ya a vender lo que ya no usas y a comprar productos premium al mejor precio. 
         </p>
-        <a href="https://www.equipop.app/account" class="button" style="color: #ffffff; text-decoration: none;">Entrar a Equipop</a>
+        <a href="https://www.equipop.app/account" class="button" style="color: #ffffff; text-decoration: none; background-color: #194152;">Entrar a Equipop</a>
         <p class="footer">
             Estás recibiendo este correo porque tienes una cuenta en Equipop.<br/><br/>
             © ${new Date().getFullYear()} Equipop
