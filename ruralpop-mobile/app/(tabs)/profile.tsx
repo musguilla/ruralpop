@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import { getOptimizedImageUrl } from "../../src/lib/image-optimization";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
-import { User, ChevronRight, Briefcase, Handshake, Tag, Wallet, Heart, Settings, MessageSquare, BadgeCheck } from "lucide-react-native";
+import { User, ChevronRight, Briefcase, Handshake, Tag, Wallet, Heart, Settings, MessageSquare, BadgeCheck, HelpCircle, Mail } from "lucide-react-native";
 import { supabase } from "../../src/lib/supabase";
 import { useEffect, useState } from "react";
 import { IS_EQUIPOP } from "../../src/config/tenants";
@@ -196,7 +196,7 @@ export default function ProfileScreen() {
                     {profile?.role === 'profesional' ? (
                         <TouchableOpacity
                             onPress={() => router.push('/pro-dashboard')}
-                            className="flex-row justify-between items-center px-6 py-5"
+                            className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
                         >
                             <View className="flex-row items-center flex-1 pr-4">
                                 <Briefcase color="#374151" size={24} strokeWidth={1.5} />
@@ -209,7 +209,7 @@ export default function ProfileScreen() {
                     ) : (
                         <TouchableOpacity 
                             onPress={() => Linking.openURL('https://www.equipop.app/empresas-profesionales-sector-ecuestre')}
-                            className="flex-row justify-between items-center px-6 py-5"
+                            className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
                         >
                             <View className="flex-row items-center flex-1 pr-4">
                                 <Briefcase color="#374151" size={24} strokeWidth={1.5} />
@@ -223,6 +223,28 @@ export default function ProfileScreen() {
                             <ChevronRight color="#d1d5db" size={20} />
                         </TouchableOpacity>
                     )}
+
+                    <TouchableOpacity
+                        onPress={() => router.push('/ayuda')}
+                        className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
+                    >
+                        <View className="flex-row items-center">
+                            <HelpCircle color="#374151" size={24} strokeWidth={1.5} />
+                            <Text className="text-[17px] text-gray-700 ml-4">Ayuda</Text>
+                        </View>
+                        <ChevronRight color="#d1d5db" size={20} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => Linking.openURL('https://www.equipop.app/contact')}
+                        className="flex-row justify-between items-center px-6 py-5"
+                    >
+                        <View className="flex-row items-center">
+                            <Mail color="#374151" size={24} strokeWidth={1.5} />
+                            <Text className="text-[17px] text-gray-700 ml-4">Contacto</Text>
+                        </View>
+                        <ChevronRight color="#d1d5db" size={20} />
+                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </SafeAreaView>
