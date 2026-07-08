@@ -196,7 +196,7 @@ export default function ProfileScreen() {
                     {profile?.role === 'profesional' ? (
                         <TouchableOpacity
                             onPress={() => router.push('/pro-dashboard')}
-                            className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
+                            className="flex-row justify-between items-center px-6 py-5"
                         >
                             <View className="flex-row items-center flex-1 pr-4">
                                 <Briefcase color="#374151" size={24} strokeWidth={1.5} />
@@ -209,7 +209,7 @@ export default function ProfileScreen() {
                     ) : (
                         <TouchableOpacity 
                             onPress={() => Linking.openURL('https://www.equipop.app/empresas-profesionales-sector-ecuestre')}
-                            className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
+                            className="flex-row justify-between items-center px-6 py-5"
                         >
                             <View className="flex-row items-center flex-1 pr-4">
                                 <Briefcase color="#374151" size={24} strokeWidth={1.5} />
@@ -223,7 +223,14 @@ export default function ProfileScreen() {
                             <ChevronRight color="#d1d5db" size={20} />
                         </TouchableOpacity>
                     )}
+                </View>
 
+                {/* Sección Ayuda */}
+                <View className="px-6 mb-2 mt-4">
+                    <Text className="text-[15px] font-bold text-gray-800">{IS_EQUIPOP ? 'Equipop' : 'Ruralpop'} te ayuda</Text>
+                </View>
+
+                <View className="bg-white border-y border-gray-100 mb-6">
                     <TouchableOpacity
                         onPress={() => router.push('/ayuda')}
                         className="flex-row justify-between items-center px-6 py-5 border-b border-gray-50"
