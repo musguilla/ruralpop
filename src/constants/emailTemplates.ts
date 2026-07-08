@@ -445,5 +445,36 @@ export const EQUIPOP_EMAIL_TEMPLATES: EmailTemplate[] = [
     </div>
 </body>
 </html>`
+    },
+    {
+        id: "completar-monedero-equipop",
+        name: "Recordatorio: Completar Monedero",
+        description: "Email automático enviado a las 24h, 3 y 7 días si el usuario no ha completado la verificación de su monedero.",
+        category: "Transaccional",
+        subject: "¡Completa tu monedero para empezar a vender en Equipop!",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.equipop.app/equipop-logo.png" alt="Equipop" class="logo" />
+        <h1 class="title">¡Hola, {{name}}!</h1>
+        <p class="text text-center">
+            Te has dado de alta con éxito pero te falta un paso para poder comprar y vender en Equipop.<br/><br/>
+            Completa la información de tus datos bancarios en <strong>MONEDERO</strong> y así podrás beneficiarte de las ventajas de Pago y Cobro totalmente seguro y recibir el importe de tus ventas en la cuenta que tú elijas. 100% seguro.<br/><br/>
+            Si tienes alguna duda, contacta con nosotros.
+        </p>
+        <a href="https://www.equipop.app/equipop/dashboard/monedero" class="button" style="color: #ffffff; text-decoration: none; background-color: #194152;">Completar Monedero</a>
+        <p class="footer">
+            Equipop - El mercado ecuestre<br/>
+            © ${new Date().getFullYear()} Equipop
+        </p>
+    </div>
+</body>
+</html>`
     }
 ];
