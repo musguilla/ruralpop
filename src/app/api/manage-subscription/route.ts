@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(req: Request) {
     try {
@@ -16,9 +16,11 @@ export async function POST(req: Request) {
 
         const { data: profile } = await supabase
             .from("users")
-            .select("stripe_subscription_id, plan_type")
+            .select("stripe_subscription_id, plan_type, tenant_id")
             .eq("id", user.id)
             .single();
+
+        const stripe = getStripe(profile?.tenant_id);
 
         if (!profile?.stripe_subscription_id) {
             return new NextResponse(JSON.stringify({ error: "Suscripción no encontrada en el perfil" }), { status: 404 });

@@ -2,13 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useCartStore } from '@/stores/cartStore';
-import { loadStripe } from '@stripe/stripe-js';
+import { getStripeClient } from '@/lib/stripe-client';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { ShieldCheck, Truck, CreditCard } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-// Load Stripe (ensure env var exists)
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
 function PaymentForm({ clientSecret, totalAmount, customerEmail, shippingDetails }: any) {
   const stripe = useStripe();
@@ -73,6 +70,7 @@ function PaymentForm({ clientSecret, totalAmount, customerEmail, shippingDetails
 }
 
 export function CheckoutFormClient() {
+  const stripePromise = getStripeClient();
   const { items, getCartTotal } = useCartStore();
   const router = useRouter();
   

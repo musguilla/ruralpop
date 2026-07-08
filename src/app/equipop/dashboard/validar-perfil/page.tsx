@@ -2,16 +2,15 @@
 
 import React, { useState } from "react";
 import { ShieldCheck, Loader2, ArrowLeft } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
+import { getStripeClient } from "@/lib/stripe-client";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder");
-
 function ValidarPerfilContent() {
+    const stripePromise = getStripeClient('equipop');
     const searchParams = useSearchParams();
     const listingId = searchParams.get('listingId');
     const [step, setStep] = useState<'info' | 'form' | 'payment'>('info');

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { calculateRuralpopFee } from "@/lib/services/escrow";
 
 export async function POST(req: Request) {
@@ -34,8 +34,8 @@ export async function POST(req: Request) {
         const { data: listing, error: listingError } = await supabaseAdmin
             .from("listings")
             .select(`
-              id, title, price, shipping_price, image_urls, user_id, 
-              users:user_id ( id, email, name, stripe_customer_id )
+              id, title, price, shipping_price, image_urls, user_id, tenant_id,
+              users:user_id ( id, email, name, stripe_customer_id, tenant_id )
             `)
             .eq("id", listingId)
             .single();
@@ -63,6 +63,8 @@ export async function POST(req: Request) {
         if (walletError || !wallet?.stripe_connected_account_id) {
             return new NextResponse("El vendedor aún no ha configurado sus pagos de forma segura.", { status: 400 });
         }
+
+        const stripe = getStripe(listing.tenant_id);
 
         // Check if charges are enabled
         const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);

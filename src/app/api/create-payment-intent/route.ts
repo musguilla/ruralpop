@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/utils/supabase/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 
@@ -57,9 +57,11 @@ export async function POST(req: Request) {
         
         const { data: userProfile } = await supabase
             .from("users")
-            .select("stripe_customer_id, email")
+            .select("stripe_customer_id, email, tenant_id")
             .eq("id", user.id)
             .single();
+
+        const stripe = getStripe(userProfile?.tenant_id);
 
         if (userProfile?.stripe_customer_id) {
             customerId = userProfile.stripe_customer_id;

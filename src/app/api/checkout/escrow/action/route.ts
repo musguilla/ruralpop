@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { releaseEscrowPayout } from "@/lib/services/escrow";
 
 export async function POST(req: Request) {
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
         // Fetch the order
         const { data: order, error: orderError } = await supabaseAdmin
             .from("escrow_orders")
-            .select("*")
+            .select("*, listings(tenant_id)")
             .eq("id", orderId)
             .single();
 
@@ -87,6 +87,7 @@ export async function POST(req: Request) {
                 }
 
                 // Stripe Refund
+                const stripe = getStripe(order.listings?.tenant_id);
                 await stripe.refunds.create({
                     payment_intent: order.stripe_payment_intent_id,
                     metadata: { escrow_order_id: order.id }

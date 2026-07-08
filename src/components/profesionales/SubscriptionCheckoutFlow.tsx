@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { loadStripe } from "@stripe/stripe-js";
+import { getStripeClient } from "@/lib/stripe-client";
 import { Elements } from "@stripe/react-stripe-js";
 import { SubscriptionCheckoutForm } from "./SubscriptionCheckoutForm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder");
-
 export function SubscriptionCheckoutFlow({ planId, priceId, isAnnual }: { planId: string, priceId: string, isAnnual?: boolean }) {
+    const stripePromise = getStripeClient();
     const [clientSecret, setClientSecret] = useState<string | null>(null);
     const [isCreatingIntent, setIsCreatingIntent] = useState(true);
     const [error, setError] = useState<string | null>(null);

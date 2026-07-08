@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(req: Request) {
     try {
         const body = await req.json();
         const { items, shippingDetails } = body;
+
+        const referer = req.headers.get("referer") || "";
+        const stripe = getStripe(referer.includes("equipop") ? "equipop" : "ruralpop");
 
         if (!items || items.length === 0) {
             return new NextResponse("Invalid request: No items", { status: 400 });

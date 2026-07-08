@@ -4,12 +4,10 @@ import React, { useState } from "react";
 import { Loader2, ShieldCheck, ArrowLeft } from "lucide-react";
 import { formatCurrency } from "@/utils/format";
 import { handleEscrowPaymentIntentNative } from "@/app/checkout/escrowActions";
-import { loadStripe } from "@stripe/stripe-js";
+import { getStripeClient } from "@/lib/stripe-client";
 import { Elements } from "@stripe/react-stripe-js";
 import { EscrowCheckoutForm } from "./EscrowCheckoutForm";
 import clsx from "clsx";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder");
 
 interface EscrowNativeCheckoutFlowProps {
     listingId: string;
@@ -22,6 +20,7 @@ interface EscrowNativeCheckoutFlowProps {
 }
 
 export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingPrice = 0, isSeller, variant = 'default', isEquipop = false }: EscrowNativeCheckoutFlowProps) {
+    const stripePromise = getStripeClient(isEquipop ? 'equipop' : 'ruralpop');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [clientSecret, setClientSecret] = useState<string | null>(null);

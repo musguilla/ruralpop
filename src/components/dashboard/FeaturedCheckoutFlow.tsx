@@ -2,11 +2,9 @@
 
 import React, { useState } from "react";
 import { ArrowUpCircle, Sparkles, Crown, ArrowLeft, ShieldCheck } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
+import { getStripeClient } from "@/lib/stripe-client";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder");
 
 export const STRIPE_PLANS = [
     {
@@ -58,6 +56,7 @@ export function FeaturedCheckoutFlow({
     availableBumps = 0,
     isNewlyPublished = false
 }: FeaturedCheckoutFlowProps) {
+    const stripePromise = getStripeClient();
     const router = useRouter();
     const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
     const [clientSecret, setClientSecret] = useState<string | null>(null);

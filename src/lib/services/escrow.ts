@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { slugify } from "@/utils/seoUtils";
 import { encodeId } from "@/utils/idUtils";
 
@@ -36,8 +36,8 @@ export async function createEscrowCheckout(listingId: string) {
   const { data: listing, error: listingError } = await supabase
     .from("listings")
     .select(`
-      id, title, price, shipping_price, image_urls, user_id, 
-      users:user_id ( id, email, name, stripe_customer_id )
+      id, title, price, shipping_price, image_urls, user_id, tenant_id,
+      users:user_id ( id, email, name, stripe_customer_id, tenant_id )
     `)
     .eq("id", listingId)
     .single();
@@ -73,6 +73,8 @@ export async function createEscrowCheckout(listingId: string) {
   if (walletError || !wallet?.stripe_connected_account_id) {
     throw new Error("El vendedor aún no ha configurado sus pagos de forma segura.");
   }
+
+  const stripe = getStripe(listing.tenant_id);
 
   // Check if charges are enabled
   const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
@@ -180,8 +182,8 @@ export async function createEscrowPaymentIntentNative(listingId: string) {
   const { data: listing, error: listingError } = await supabase
     .from("listings")
     .select(`
-      id, title, price, shipping_price, image_urls, user_id, 
-      users:user_id ( id, email, name, stripe_customer_id )
+      id, title, price, shipping_price, image_urls, user_id, tenant_id,
+      users:user_id ( id, email, name, stripe_customer_id, tenant_id )
     `)
     .eq("id", listingId)
     .single();
@@ -215,6 +217,7 @@ export async function createEscrowPaymentIntentNative(listingId: string) {
   if (walletError || !wallet?.stripe_connected_account_id) {
     throw new Error("El vendedor aún no ha configurado sus pagos de forma segura.");
   }
+  const stripe = getStripe(listing.tenant_id);
 
   const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
   if (!account.charges_enabled) {
@@ -319,13 +322,15 @@ export async function releaseEscrowPayout(orderId: string) {
   
   const { data: order } = await supabaseAdmin
     .from("escrow_orders")
-    .select("*")
+    .select("*, listings(tenant_id)")
     .eq("id", orderId)
     .single();
 
   if (!order || order.status !== "buyer_confirmed") return;
 
   try {
+    const stripe = getStripe(order.listings?.tenant_id);
+
     // Perform Stripe Transfer
     const transfer = await stripe.transfers.create({
       amount: order.seller_net_amount_cents,
@@ -426,9 +431,9 @@ export async function confirmEscrowReturn(orderId: string) {
 
   if (authError || !user) throw new Error("Unauthenticated");
 
-  const { data: order, error: orderError } = await supabase
+    const { data: order, error: orderError } = await supabase
     .from("escrow_orders")
-    .select("*")
+    .select("*, listings(tenant_id)")
     .eq("id", orderId)
     .single();
 
@@ -443,6 +448,8 @@ export async function confirmEscrowReturn(orderId: string) {
   }
 
   try {
+    const stripe = getStripe(order.listings?.tenant_id);
+
     // Perform Stripe Refund
     await stripe.refunds.create({
       payment_intent: order.stripe_payment_intent_id,

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(req: Request) {
     try {
@@ -22,12 +22,20 @@ export async function POST(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
+        const { data: userProfile } = await supabaseAdmin
+            .from("users")
+            .select("tenant_id")
+            .eq("id", user.id)
+            .single();
+
         // Check if wallet exists
         let { data: wallet } = await supabaseAdmin
             .from("professional_wallets")
             .select("*")
             .eq("user_id", user.id)
             .maybeSingle();
+
+        const stripe = getStripe(userProfile?.tenant_id);
 
         let accountId = wallet?.stripe_connected_account_id;
 

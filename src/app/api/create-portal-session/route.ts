@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import stripe from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 
 export async function POST(req: Request) {
     try {
@@ -13,9 +13,11 @@ export async function POST(req: Request) {
 
         const { data: publicUser } = await supabase
             .from('users')
-            .select('stripe_customer_id')
+            .select('stripe_customer_id, tenant_id')
             .eq('id', user.id)
             .single();
+
+        const stripe = getStripe(publicUser?.tenant_id);
 
         if (!publicUser?.stripe_customer_id) {
             return new NextResponse('No Stripe Customer found for this user', { status: 400 });

@@ -2,11 +2,9 @@
 
 import React, { useState } from "react";
 import { ShieldCheck, Loader2 } from "lucide-react";
-import { loadStripe } from "@stripe/stripe-js";
+import { getStripeClient } from "@/lib/stripe-client";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_placeholder");
 
 interface AnimalWelfareModalProps {
     isOpen: boolean;
@@ -22,6 +20,7 @@ interface AnimalWelfareModalProps {
 }
 
 export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, initialData }: AnimalWelfareModalProps) {
+    const stripePromise = getStripeClient();
     const [step, setStep] = useState<'info' | 'form' | 'payment'>('info');
     
     // Form fields

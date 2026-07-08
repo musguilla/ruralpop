@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import Stripe from "stripe";
 
 export async function POST(req: Request) {
@@ -22,9 +22,11 @@ export async function POST(req: Request) {
         // Validate plan vs existing
         const { data: profile } = await supabase
             .from("users")
-            .select("stripe_customer_id, plan_type")
+            .select("stripe_customer_id, plan_type, tenant_id")
             .eq("id", user.id)
             .single();
+
+        const stripe = getStripe(profile?.tenant_id);
 
         if (profile?.plan_type !== "free" && profile?.plan_type !== null) {
             return new NextResponse("Already subscribed", { status: 400 });

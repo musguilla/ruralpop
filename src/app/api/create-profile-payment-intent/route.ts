@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/utils/supabase/server";
 
 const PLAN_PRICE = 199; // 1.99€
@@ -15,6 +15,14 @@ export async function POST(req: Request) {
 
         const body = await req.json();
         const { welfareDetails, listingId } = body;
+
+        const { data: userProfile } = await supabase
+            .from("users")
+            .select("tenant_id")
+            .eq("id", user.id)
+            .single();
+
+        const stripe = getStripe(userProfile?.tenant_id);
 
         if (!listingId) {
             return new NextResponse("Missing listingId", { status: 400 });
