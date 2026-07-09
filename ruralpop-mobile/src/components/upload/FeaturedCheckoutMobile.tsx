@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ActivityIndicator, Alert } from 'react-na
 import { Sparkles, Crown, CheckCircle2 } from 'lucide-react-native';
 import { useStripe } from '@stripe/stripe-react-native';
 import { supabase } from '../../lib/supabase';
+import { IS_EQUIPOP } from '../../config/tenants';
 
 interface FeaturedCheckoutMobileProps {
     listingId: string;
@@ -61,7 +62,7 @@ export function FeaturedCheckoutMobile({ listingId, onSkip, isFromVentas = false
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) throw new Error("No estás autenticado.");
 
-            const siteUrl = __DEV__ && process.env.EXPO_PUBLIC_SITE_URL ? process.env.EXPO_PUBLIC_SITE_URL : 'https://www.ruralpop.com';
+            const siteUrl = __DEV__ && process.env.EXPO_PUBLIC_SITE_URL ? process.env.EXPO_PUBLIC_SITE_URL : (IS_EQUIPOP ? 'https://www.equipop.app' : 'https://www.ruralpop.com');
 
             const res = await fetch(`${siteUrl}/api/create-payment-intent`, {
                 method: "POST",
@@ -71,7 +72,8 @@ export function FeaturedCheckoutMobile({ listingId, onSkip, isFromVentas = false
                 },
                 body: JSON.stringify({ 
                     listingId, 
-                    planId: selectedPlanId 
+                    planId: selectedPlanId,
+                    tenantId: IS_EQUIPOP ? 'equipop' : 'ruralpop'
                 }),
             });
 
@@ -84,7 +86,7 @@ export function FeaturedCheckoutMobile({ listingId, onSkip, isFromVentas = false
 
             // Initialize Stripe Payment Sheet
             const { error: initError } = await initPaymentSheet({
-                merchantDisplayName: 'Ruralpop',
+                merchantDisplayName: IS_EQUIPOP ? 'Equipop' : 'Ruralpop',
                 paymentIntentClientSecret: clientSecret,
                 customerId: customer,
                 customerEphemeralKeySecret: ephemeralKey,

@@ -33,7 +33,7 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { listingId, planId, welfareDetails } = body;
+        const { listingId, planId, welfareDetails, tenantId } = body;
 
         if (!listingId || !planId || !(planId in STRIPE_PLANS)) {
             return new NextResponse("Invalid request", { status: 400 });
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
             .eq("id", user.id)
             .single();
 
-        const stripe = getStripe(userProfile?.tenant_id);
+        const stripe = getStripe(tenantId || userProfile?.tenant_id);
 
         if (userProfile?.stripe_customer_id) {
             customerId = userProfile.stripe_customer_id;
