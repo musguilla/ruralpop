@@ -53,19 +53,32 @@ export async function POST(req: Request) {
         const plan = STRIPE_PLANS[planId as keyof typeof STRIPE_PLANS];
 
         // 1. Get or create Stripe Customer
-        let customerId = null;
-        
         const { data: userProfile } = await supabase
             .from("users")
             .select("stripe_customer_id, email, tenant_id")
             .eq("id", user.id)
             .single();
 
+        let customerId = userProfile?.stripe_customer_id || null;
+        
         const stripe = getStripe(tenantId || userProfile?.tenant_id);
 
-        if (userProfile?.stripe_customer_id) {
-            customerId = userProfile.stripe_customer_id;
-        } else {
+        if (customerId) {
+            try {
+                const customer = await stripe.customers.retrieve(customerId);
+                if (customer.deleted) {
+                    customerId = null;
+                }
+            } catch (err: any) {
+                if (err.statusCode === 404 || err.code === 'resource_missing') {
+                    customerId = null;
+                } else {
+                    throw err;
+                }
+            }
+        }
+
+        if (!customerId) {
             // Create Stripe customer
             const newCustomer = await stripe.customers.create({
                 email: user.email || userProfile?.email || undefined,

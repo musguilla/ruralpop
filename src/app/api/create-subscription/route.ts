@@ -32,7 +32,22 @@ export async function POST(req: Request) {
             return new NextResponse("Already subscribed", { status: 400 });
         }
 
-        let customerId = profile?.stripe_customer_id;
+        let customerId = profile?.stripe_customer_id || null;
+
+        if (customerId) {
+            try {
+                const customer = await stripe.customers.retrieve(customerId);
+                if (customer.deleted) {
+                    customerId = null;
+                }
+            } catch (err: any) {
+                if (err.statusCode === 404 || err.code === 'resource_missing') {
+                    customerId = null;
+                } else {
+                    throw err;
+                }
+            }
+        }
 
         // Si no tiene Customer ID de Stripe, se lo creamos
         if (!customerId) {
