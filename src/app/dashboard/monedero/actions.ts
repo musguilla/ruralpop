@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 export async function createStripeOnboardingLink() {
     const supabase = await createClient();
@@ -17,7 +17,14 @@ export async function createStripeOnboardingLink() {
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
 
-        // Check if wallet exists
+        const { data: userProfile } = await supabaseAdmin
+            .from("users")
+            .select("tenant_id")
+            .eq("id", user.id)
+            .single();
+
+        const stripe = getStripe(userProfile?.tenant_id);
+
         let { data: wallet } = await supabaseAdmin
             .from("professional_wallets")
             .select("*")
@@ -105,6 +112,14 @@ export async function createStripeAccountSession() {
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
+
+        const { data: userProfile } = await supabaseAdmin
+            .from("users")
+            .select("tenant_id")
+            .eq("id", user.id)
+            .single();
+
+        const stripe = getStripe(userProfile?.tenant_id);
 
         let { data: wallet } = await supabaseAdmin
             .from("professional_wallets")
