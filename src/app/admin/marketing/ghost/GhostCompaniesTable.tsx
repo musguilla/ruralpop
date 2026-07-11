@@ -22,6 +22,12 @@ interface GhostCompaniesTableProps {
 export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [emailsMap, setEmailsMap] = useState<Record<string, string>>({});
+    const [isSending, setIsSending] = useState(false);
+    const [originUrl, setOriginUrl] = useState('https://www.ruralpop.com');
+
+    useEffect(() => {
+        setOriginUrl(window.location.origin);
+    }, []);
 
     const getEmailForCompany = (id: string) => {
         if (emailsMap[id] !== undefined) {
@@ -159,8 +165,7 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
                             const magicUrlPath = `/empresa/${safeCommercialNameSlug}?token=${company.ghost_token}`;
                             
                             // Client-side origin building
-                            const urlObj = typeof window !== 'undefined' ? new URL(window.location.href) : null;
-                            const baseUrl = urlObj ? `${urlObj.protocol}//${urlObj.host}` : 'https://www.ruralpop.com';
+                            const baseUrl = originUrl;
                             const absoluteMagicUrl = `${baseUrl}${magicUrlPath}`;
 
                             const safeCommercialName = company.commercial_name || 'Empresa sin nombre';
