@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Copy, Mail, ExternalLink, Loader2, CheckCircle2 } from "lucide-react";
 import { slugify } from "@/utils/seoUtils";
 import { sendGhostInvites, saveCompanyEmails } from "./actions";
