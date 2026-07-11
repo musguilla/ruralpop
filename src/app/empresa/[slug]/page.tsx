@@ -7,6 +7,7 @@ import { CompanySearchInput } from "./CompanySearchInput";
 import { getImageUrl } from "@/utils/mediaUtils";
 import { CompanyCategoriesSidebar, type CategoryWithSubcategories } from "./CompanyCategoriesSidebar";
 import { getServerTenantSlug, getServerTenantFilterString } from "@/utils/tenant/server";
+import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -76,7 +77,11 @@ export default async function CompanyProfilePage({ params, searchParams }: {
     const isEquipop = tenantSlug === 'equipop';
     const tenantFilterString = await getServerTenantFilterString();
 
-    const { data: userListings } = await supabase
+    const fetchClient = company.is_ghost 
+        ? createSupabaseAdmin(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+        : supabase;
+
+    const { data: userListings } = await fetchClient
         .from('listings')
         .select('category, subcategory, equipop_category, equipop_subcategory')
         .eq('user_id', company.id)
@@ -230,11 +235,11 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                                 Explora todos los productos de este vendedor
                             </p>
                         </div>
-                        <ListingsGrid searchParams={gridSearchParams} disableInFeedAds={true} />
+                        <ListingsGrid searchParams={gridSearchParams} disableInFeedAds={true} hideAdsSidebar={true} />
                     </div>
 
                     {/* Sidebar (Right on Desktop, Top on Mobile) */}
-                    <aside className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-24 flex flex-col gap-6 lg:order-2 order-1 z-10">
+                    <aside className="w-full lg:w-64 flex-shrink-0 lg:sticky lg:top-24 flex flex-col gap-6 lg:order-2 order-1 z-10">
                         <CompanySearchInput initialSearchTerm={searchTerm} />
                         <CompanyCategoriesSidebar categories={availableCategories} />
                     </aside>

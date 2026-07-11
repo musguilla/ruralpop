@@ -13,7 +13,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
 import { notFound } from "next/navigation";
 
-export async function ListingsGrid({ searchParams, isHome = false, disableInFeedAds = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean, disableInFeedAds?: boolean }) {
+export async function ListingsGrid({ searchParams, isHome = false, disableInFeedAds = false, hideAdsSidebar = false }: { searchParams: { [key: string]: string | string[] | undefined }, isHome?: boolean, disableInFeedAds?: boolean, hideAdsSidebar?: boolean }) {
     let supabase = await createClient();
     const headersList = await headers();
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
@@ -374,9 +374,11 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
                 <Pagination currentPage={currentPage} totalPages={totalPages} />
             </div>
 
-            <aside className="hidden xl:block w-[300px] flex-shrink-0 sticky top-24">
-                {!isEquipop && <AdSenseDisplaySidebar />}
-            </aside>
+            {!hideAdsSidebar && (
+                <aside className="hidden xl:block w-[300px] flex-shrink-0 sticky top-24">
+                    {!isEquipop && <AdSenseDisplaySidebar />}
+                </aside>
+            )}
         </div>
     );
 }
