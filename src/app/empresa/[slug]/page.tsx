@@ -5,6 +5,8 @@ import { Building2, MapPin, ShieldCheck, BadgeCheck, Sparkles, ArrowRight, Globe
 import Link from "next/link";
 import { CompanySearchInput } from "./CompanySearchInput";
 import { getImageUrl } from "@/utils/mediaUtils";
+import { CompanyCategoriesSidebar, type CategoryWithSubcategories } from "./CompanyCategoriesSidebar";
+import { getServerTenantSlug, getServerTenantFilterString } from "@/utils/tenant/server";
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -68,6 +70,49 @@ export default async function CompanyProfilePage({ params, searchParams }: {
         user_id: company.id, // Force the grid to filter by this specific professional
         is_ghost_profile: company.is_ghost ? "true" : undefined
     };
+
+    // Sidebar Category Logic
+    const tenantSlug = await getServerTenantSlug();
+    const isEquipop = tenantSlug === 'equipop';
+    const tenantFilterString = await getServerTenantFilterString();
+
+    const { data: userListings } = await supabase
+        .from('listings')
+        .select('category, subcategory, equipop_category, equipop_subcategory')
+        .eq('user_id', company.id)
+        .in('status', ['active', 'sold']);
+
+    const [{ data: categoriesData }, { data: subcategoriesData }] = await Promise.all([
+        supabase.from('categories').select('id, name').or(tenantFilterString),
+        supabase.from('subcategories').select('id, name, category_id').or(tenantFilterString)
+    ]);
+
+    const categoryMap = new Map<string, CategoryWithSubcategories>();
+    
+    if (userListings && categoriesData && subcategoriesData) {
+        userListings.forEach((listing: any) => {
+            const catId = isEquipop ? listing.equipop_category : listing.category;
+            const subId = isEquipop ? listing.equipop_subcategory : listing.subcategory;
+
+            if (catId) {
+                if (!categoryMap.has(catId)) {
+                    const catName = categoriesData.find((c: any) => c.id === catId)?.name || catId;
+                    categoryMap.set(catId, { id: catId, name: catName, subcategories: [] });
+                }
+
+                if (subId) {
+                    const cat = categoryMap.get(catId)!;
+                    if (!cat.subcategories.find(s => s.id === subId)) {
+                        const subName = subcategoriesData.find((s: any) => s.id === subId)?.name || subId;
+                        cat.subcategories.push({ id: subId, name: subName });
+                    }
+                }
+            }
+        });
+    }
+
+    const availableCategories = Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+    availableCategories.forEach(c => c.subcategories.sort((a, b) => a.name.localeCompare(b.name)));
 
     return (
         <main className="min-h-screen bg-[var(--ag-sys-color-background)] pb-20">
@@ -173,20 +218,27 @@ export default async function CompanyProfilePage({ params, searchParams }: {
 
             {/* Inventory / Listings */}
             <div className="container mx-auto px-4 max-w-7xl mt-12">
-                <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)]">
-                            Catálogo de Anuncios
-                        </h2>
-                        <p className="text-[var(--ag-sys-color-text-muted)] font-medium mt-1">
-                            Explora todos los productos de este vendedor
-                        </p>
+                <div className="flex flex-col lg:flex-row gap-8 items-start">
+                    
+                    {/* Main Content (Left on Desktop, Bottom on Mobile) */}
+                    <div className="w-full lg:flex-1 lg:order-1 order-2 min-w-0">
+                        <div className="mb-8">
+                            <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)]">
+                                Catálogo de Anuncios
+                            </h2>
+                            <p className="text-[var(--ag-sys-color-text-muted)] font-medium mt-1">
+                                Explora todos los productos de este vendedor
+                            </p>
+                        </div>
+                        <ListingsGrid searchParams={gridSearchParams} disableInFeedAds={true} />
                     </div>
 
-                    <CompanySearchInput initialSearchTerm={searchTerm} />
+                    {/* Sidebar (Right on Desktop, Top on Mobile) */}
+                    <aside className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-24 flex flex-col gap-6 lg:order-2 order-1 z-10">
+                        <CompanySearchInput initialSearchTerm={searchTerm} />
+                        <CompanyCategoriesSidebar categories={availableCategories} />
+                    </aside>
                 </div>
-
-                <ListingsGrid searchParams={gridSearchParams} disableInFeedAds={true} />
             </div>
         </main>
     );

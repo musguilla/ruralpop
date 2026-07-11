@@ -30,7 +30,7 @@ export function CompanySearchInput({ initialSearchTerm = "" }: CompanySearchInpu
     }, 300);
 
     return (
-        <div className="relative w-full sm:w-auto">
+        <div className="relative w-full">
             <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input 
                 ref={inputRef}
@@ -39,7 +39,7 @@ export function CompanySearchInput({ initialSearchTerm = "" }: CompanySearchInpu
                 defaultValue={initialSearchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Buscar en esta tienda..." 
-                className="w-full sm:w-72 pl-10 pr-4 py-2.5 bg-white border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] shadow-sm"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] shadow-sm"
                 aria-label="Caja de búsqueda de tienda"
             />
         </div>
