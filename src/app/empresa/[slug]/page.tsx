@@ -87,9 +87,9 @@ export default async function CompanyProfilePage({ params, searchParams }: {
         .eq('user_id', company.id)
         .in('status', ['active', 'sold']);
 
-    const [{ data: categoriesData }, { data: subcategoriesData }] = await Promise.all([
-        supabase.from('categories').select('id, name').or(tenantFilterString),
-        supabase.from('subcategories').select('id, name, category_id').or(tenantFilterString)
+    const [{ data: categoriesData, error: catsErr }, { data: subcategoriesData }] = await Promise.all([
+        fetchClient.from('categories').select('id, name').or(tenantFilterString),
+        fetchClient.from('subcategories').select('id, name, category_id').or(tenantFilterString)
     ]);
 
     const categoryMap = new Map<string, CategoryWithSubcategories>();
@@ -241,7 +241,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                     {/* Sidebar (Right on Desktop, Top on Mobile) */}
                     <aside className="w-full lg:w-64 flex-shrink-0 lg:sticky lg:top-24 flex flex-col gap-6 lg:order-2 order-1 z-10">
                         <CompanySearchInput initialSearchTerm={searchTerm} />
-                        <div className="hidden">DEBUG_CATS: {JSON.stringify({ listingsCount: userListings?.length, catsCount: categoriesData?.length, subsCount: subcategoriesData?.length, isEquipop })}</div>
+                        <div className="hidden">DEBUG_CATS: {JSON.stringify({ listingsCount: userListings?.length, catsCount: categoriesData?.length, subsCount: subcategoriesData?.length, isEquipop, catsErr })}</div>
                         <CompanyCategoriesSidebar categories={availableCategories} />
                     </aside>
                 </div>
