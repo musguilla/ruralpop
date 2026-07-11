@@ -54,15 +54,13 @@ export default async function CompanyProfilePage({ params, searchParams }: {
     });
 
     if (companyError || !company) {
-        // If no professional user found with that name
-        notFound();
+        return <div className="p-8"><pre>DEBUG ERROR OR NOT FOUND: {JSON.stringify({ error: companyError, slug, numCompanies: companies?.length, found: !!company }, null, 2)}</pre></div>;
     }
 
     const isValidGhostToken = token && company.is_ghost && company.ghost_token === token;
 
     if (company.is_ghost && !isValidGhostToken) {
-        // Ghost profiles without the correct token are functionally invisible
-        notFound();
+        return <div className="p-8"><pre>DEBUG GHOST: {JSON.stringify({ token, ghostToken: company.ghost_token, isGhost: company.is_ghost, match: company.ghost_token === token, isValidGhostToken }, null, 2)}</pre></div>;
     }
 
     const gridSearchParams = {
