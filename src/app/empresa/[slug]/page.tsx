@@ -88,8 +88,8 @@ export default async function CompanyProfilePage({ params, searchParams }: {
         .in('status', ['active', 'sold']);
 
     const [{ data: categoriesData, error: catsErr }, { data: subcategoriesData }] = await Promise.all([
-        fetchClient.from('categories').select('id, name').or(tenantFilterString),
-        fetchClient.from('subcategories').select('id, name, category_id').or(tenantFilterString)
+        fetchClient.from('categories').select('id, name'),
+        fetchClient.from('subcategories').select('id, name, category_id')
     ]);
 
     const categoryMap = new Map<string, CategoryWithSubcategories>();
