@@ -241,6 +241,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                     {/* Sidebar (Right on Desktop, Top on Mobile) */}
                     <aside className="w-full lg:w-64 flex-shrink-0 lg:sticky lg:top-24 flex flex-col gap-6 lg:order-2 order-1 z-10">
                         <CompanySearchInput initialSearchTerm={searchTerm} />
+                        <div className="hidden">DEBUG_CATS: {JSON.stringify({ listingsCount: userListings?.length, catsCount: categoriesData?.length, subsCount: subcategoriesData?.length, isEquipop })}</div>
                         <CompanyCategoriesSidebar categories={availableCategories} />
                     </aside>
                 </div>
