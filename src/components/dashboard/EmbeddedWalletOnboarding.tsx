@@ -26,9 +26,14 @@ export function EmbeddedWalletOnboarding() {
         setLoading(true);
         setError(null);
         try {
+            let pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
+            if (typeof window !== 'undefined' && window.location.hostname.includes('equipop')) {
+                pk = process.env.NEXT_PUBLIC_EQUIPOP_STRIPE_PUBLISHABLE_KEY || pk;
+            }
+
             // Pre-fetch the instance so it renders immediately
             const instance = await loadConnectAndInitialize({
-                publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
+                publishableKey: pk,
                 fetchClientSecret,
                 appearance: {
                     overlays: 'dialog',
