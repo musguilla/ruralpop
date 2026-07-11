@@ -6,12 +6,33 @@ export const dynamic = "force-dynamic";
 export default async function AdminGhostCompaniesPage() {
     const supabase = await createClient();
 
-    // Fetch all ghost companies
-    const { data: ghosts, error } = await supabase
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // Get admin's tenant_id to isolate the view
+    let tenantId = null;
+    if (user) {
+        const { data: adminProfile } = await supabase
+            .from('users')
+            .select('tenant_id')
+            .eq('id', user.id)
+            .single();
+        tenantId = adminProfile?.tenant_id || null;
+    }
+
+    // Fetch ghost companies for the current tenant
+    let query = supabase
         .from('users')
         .select('id, commercial_name, ghost_token, company_logo_url, created_at, avatar_url, email')
         .or('is_ghost.eq.true,and(ghost_token.not.is.null,email.ilike.%ghost%)')
         .order('created_at', { ascending: false });
+
+    if (tenantId) {
+        query = query.eq('tenant_id', tenantId);
+    } else {
+        query = query.is('tenant_id', null);
+    }
+
+    const { data: ghosts, error } = await query;
 
     if (error) {
         console.error("Error fetching ghost companies:", error);
