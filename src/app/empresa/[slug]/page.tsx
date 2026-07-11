@@ -6,7 +6,6 @@ import Link from "next/link";
 import { CompanySearchInput } from "./CompanySearchInput";
 import { getImageUrl } from "@/utils/mediaUtils";
 
-export const revalidate = 60; // Revalidate every minute
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const slug = (await params).slug;
