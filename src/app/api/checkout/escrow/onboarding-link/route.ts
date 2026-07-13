@@ -39,11 +39,19 @@ export async function POST(req: Request) {
 
         let accountId = wallet?.stripe_connected_account_id;
 
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
+
         if (!accountId) {
             // Create Express account
             const account = await stripe.accounts.create({
                 type: 'express',
                 email: user.email,
+                business_type: 'individual',
+                business_profile: {
+                    url: baseUrl,
+                    mcc: '5931',
+                    product_description: 'Venta de artículos de segunda mano.'
+                },
                 capabilities: {
                     card_payments: { requested: true },
                     transfers: { requested: true },
@@ -64,8 +72,6 @@ export async function POST(req: Request) {
         }
 
         // Create Account Link
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
-        
         let accountLink;
         try {
             accountLink = await stripe.accountLinks.create({
@@ -81,6 +87,12 @@ export async function POST(req: Request) {
                 const newAccount = await stripe.accounts.create({
                     type: 'express',
                     email: user.email,
+                    business_type: 'individual',
+                    business_profile: {
+                        url: baseUrl,
+                        mcc: '5931',
+                        product_description: 'Venta de artículos de segunda mano.'
+                    },
                     capabilities: {
                         card_payments: { requested: true },
                         transfers: { requested: true },

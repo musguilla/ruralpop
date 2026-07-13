@@ -33,11 +33,19 @@ export async function createStripeOnboardingLink() {
 
         let accountId = wallet?.stripe_connected_account_id;
 
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
+
         if (!accountId) {
             // Create Express account
             const account = await stripe.accounts.create({
                 type: 'express',
                 email: user.email,
+                business_type: 'individual',
+                business_profile: {
+                    url: baseUrl,
+                    mcc: '5931',
+                    product_description: 'Venta de artículos de segunda mano.'
+                },
                 capabilities: {
                     card_payments: { requested: true },
                     transfers: { requested: true },
@@ -58,7 +66,6 @@ export async function createStripeOnboardingLink() {
         }
 
         // Create Account Link
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
         let accountLink;
         try {
             accountLink = await stripe.accountLinks.create({
@@ -73,6 +80,12 @@ export async function createStripeOnboardingLink() {
                 const newAccount = await stripe.accounts.create({
                     type: 'express',
                     email: user.email,
+                    business_type: 'individual',
+                    business_profile: {
+                        url: baseUrl,
+                        mcc: '5931',
+                        product_description: 'Venta de artículos de segunda mano.'
+                    },
                     capabilities: {
                         card_payments: { requested: true },
                         transfers: { requested: true },
@@ -129,10 +142,18 @@ export async function createStripeAccountSession() {
 
         let accountId = wallet?.stripe_connected_account_id;
 
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.ruralpop.com";
+
         if (!accountId) {
             const account = await stripe.accounts.create({
                 type: 'express',
                 email: user.email,
+                business_type: 'individual',
+                business_profile: {
+                    url: baseUrl,
+                    mcc: '5931',
+                    product_description: 'Venta de artículos de segunda mano.'
+                },
                 capabilities: {
                     card_payments: { requested: true },
                     transfers: { requested: true },
@@ -167,6 +188,12 @@ export async function createStripeAccountSession() {
                 const newAccount = await stripe.accounts.create({
                     type: 'express',
                     email: user.email,
+                    business_type: 'individual',
+                    business_profile: {
+                        url: baseUrl,
+                        mcc: '5931',
+                        product_description: 'Venta de artículos de segunda mano.'
+                    },
                     capabilities: {
                         card_payments: { requested: true },
                         transfers: { requested: true },
