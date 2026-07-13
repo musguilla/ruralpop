@@ -41,8 +41,10 @@ export class SalamancaParser {
             
             const fullCategoryName = `${productoStr} - ${categoriaStr}`;
             
-            // The CSV JSON returns '6,77', we need to replace comma with dot
-            const valor1 = parseFloat(valor1Str.replace(',', '.'));
+            // The CSV JSON might return '6,77' as a string, or 6.77 as a number.
+            const valor1 = typeof valor1Str === 'number' 
+                ? valor1Str 
+                : parseFloat(String(valor1Str).replace(',', '.'));
             
             if (isNaN(valor1) || valor1 === 0) continue; // Skip empty prices
             
