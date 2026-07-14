@@ -306,7 +306,8 @@ export default function PublishScreen() {
                     status: isRestricted ? 'draft' : 'active',
                     shipping_price: allowOnlineSale && shippingPrice ? parseFloat(shippingPrice.replace(',', '.')) : 0,
                     tags: tags,
-                    tenant_id: getRuralpopDatabaseId() || undefined
+                    vender_online: allowOnlineSale,
+                    tenant_id: IS_EQUIPOP ? getEquipopDatabaseId() : getRuralpopDatabaseId()
                 })
                 .select()
                 .single();
