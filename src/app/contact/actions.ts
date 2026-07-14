@@ -26,10 +26,8 @@ export async function submitContact(formData: FormData) {
         `;
 
         const { error } = await resend.emails.send({
-            from: isEquipop ? "Contactos Equipop <onboarding@resend.dev>" : "Contactos Ruralpop <onboarding@resend.dev>",
-            // Resend Sandbox ONLY allows sending to the registered account email (ruralpopapp@gmail.com).
-            // To send directly to equipoprider@gmail.com, you must verify a domain in Resend.com.
-            to: "ruralpopapp@gmail.com",
+            from: isEquipop ? "Contactos Equipop <contacto@ruralpop.com>" : "Contactos Ruralpop <contacto@ruralpop.com>",
+            to: isEquipop ? "equipoprider@gmail.com" : "ruralpopapp@gmail.com",
             subject: isEquipop ? `[EQUIPOP] Contacto Web: ${subject || name}` : `[RURALPOP] Contacto Web: ${subject || name}`,
             html: emailHtml,
             replyTo: email,
