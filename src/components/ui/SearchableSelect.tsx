@@ -118,14 +118,14 @@ export function SearchableSelect({
 
             {/* Dropdown menu */}
             {isOpen && (
-                <div className="absolute z-50 w-full mt-2 bg-white border border-[var(--ag-sys-color-border)] rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 origin-top">
-                    <div className="p-3 border-b border-[var(--ag-sys-color-border)] sticky top-0 bg-white">
+                <div className="absolute z-50 w-full mt-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 origin-top">
+                    <div className="p-3 border-b border-[var(--ag-sys-color-border)] sticky top-0 bg-[var(--ag-sys-color-surface)]">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
                                 ref={inputRef}
                                 type="text"
-                                className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-[var(--ag-sys-color-border)] rounded-lg text-sm outline-none focus:ring-1 focus:ring-[var(--ag-sys-color-primary)] transition-all"
+                                className="w-full pl-9 pr-4 py-2 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-lg text-sm text-[var(--ag-sys-color-text)] outline-none focus:ring-1 focus:ring-[var(--ag-sys-color-primary)] transition-all"
                                 placeholder={searchPlaceholder}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -146,7 +146,7 @@ export function SearchableSelect({
                                     key={opt.id}
                                     className={`
                                         px-4 py-2.5 text-sm cursor-pointer flex items-center justify-between transition-colors
-                                        ${opt.id === value ? 'bg-[var(--ag-sys-color-primary)]/5 text-[var(--ag-sys-color-primary)] font-medium' : 'text-[var(--ag-sys-color-text)] hover:bg-gray-50'}
+                                        ${opt.id === value ? 'bg-[var(--ag-sys-color-primary)]/5 text-[var(--ag-sys-color-primary)] font-medium' : 'text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-background)]'}
                                     `}
                                     onClick={() => handleSelect(opt)}
                                 >
