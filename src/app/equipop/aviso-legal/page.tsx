@@ -27,7 +27,7 @@ export default function AvisoLegalPage() {
                     <p>El presente sitio web y, en su caso, la aplicación móvil de Equipop son titularidad de:</p>
                     <ul className="list-none space-y-1">
                         <li><strong>Identidad:</strong> Luis Sánchez Fernández (“Equipop”)</li>
-                        <li><strong>Actividad:</strong> Plataforma digital de anuncios clasificados del sector rural</li>
+                        <li><strong>Actividad:</strong> Plataforma digital de anuncios clasificados del sector ecuestre</li>
                         <li><strong>Domicilio social:</strong> Lugar Navaliega, Asturias</li>
                         <li><strong>NIF:</strong> 09440100A</li>
                         <li><strong>Correo electrónico de contacto Protección de Datos:</strong> privacidad@equipop.com</li>
