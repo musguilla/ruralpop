@@ -84,9 +84,11 @@ export default async function Home(props: {
                   <HomeLatestListings />
               </Suspense>
 
-              <Suspense fallback={null}>
-                  <HomeDirectBuySlider />
-              </Suspense>
+              {tenant !== 'equipop' && (
+                  <Suspense fallback={null}>
+                      <HomeDirectBuySlider />
+                  </Suspense>
+              )}
 
               <Suspense fallback={null}>
                   <HomeFeaturedSlider />
