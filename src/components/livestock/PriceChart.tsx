@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 interface ChartDataPoint {
@@ -29,6 +29,11 @@ function getWeekKey(d: Date) {
 export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
     const [mode, setMode] = useState<AggregationMode>('semanas');
     const [timeRange, setTimeRange] = useState<TimeRange>('1 año');
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     if (!data || data.length === 0) {
         return (
@@ -125,49 +130,51 @@ export function PriceChart({ data, title, unit = '€' }: PriceChartProps) {
             </div>
 
             <div className="h-72 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={formattedData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--ag-sys-color-border)" opacity={0.5} />
-                        <XAxis 
-                            dataKey="displayDate" 
-                            axisLine={false} 
-                            tickLine={false} 
-                            tick={{ fill: 'var(--ag-sys-color-text-muted)', fontSize: 12, fontWeight: 500 }}
-                            dy={10}
-                            minTickGap={30}
-                        />
-                        <YAxis 
-                            domain={['auto', 'auto']}
-                            axisLine={false} 
-                            tickLine={false} 
-                            tick={{ fill: 'var(--ag-sys-color-text-muted)', fontSize: 12, fontWeight: 500 }}
-                            tickFormatter={(value) => `${value}${unit}`}
-                            dx={-10}
-                        />
-                        <Tooltip 
-                            contentStyle={{ 
-                                backgroundColor: 'var(--ag-sys-color-background)',
-                                border: '1px solid var(--ag-sys-color-border)',
-                                borderRadius: '12px',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                color: 'var(--ag-sys-color-text)',
-                                fontWeight: 'bold'
-                            }}
-                            itemStyle={{ color: 'var(--ag-sys-color-primary)' }}
-                            formatter={(value: any) => [`${Number(value).toFixed(2)} ${unit}`, 'Precio']}
-                        />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                        <Line 
-                            type="monotone" 
-                            dataKey="price" 
-                            name="Precio Medio"
-                            stroke="var(--ag-sys-color-primary)" 
-                            strokeWidth={3}
-                            dot={false}
-                            activeDot={{ r: 6, fill: 'var(--ag-sys-color-primary)', stroke: 'var(--ag-sys-color-background)', strokeWidth: 2 }}
-                        />
-                    </LineChart>
-                </ResponsiveContainer>
+                {isMounted ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={formattedData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--ag-sys-color-border)" opacity={0.5} />
+                            <XAxis 
+                                dataKey="displayDate" 
+                                axisLine={false} 
+                                tickLine={false} 
+                                tick={{ fill: 'var(--ag-sys-color-text-muted)', fontSize: 12, fontWeight: 500 }}
+                                dy={10}
+                                minTickGap={30}
+                            />
+                            <YAxis 
+                                domain={['auto', 'auto']}
+                                axisLine={false} 
+                                tickLine={false} 
+                                tick={{ fill: 'var(--ag-sys-color-text-muted)', fontSize: 12, fontWeight: 500 }}
+                                tickFormatter={(value) => `${value}${unit}`}
+                                dx={-10}
+                            />
+                            <Tooltip 
+                                contentStyle={{ 
+                                    backgroundColor: 'var(--ag-sys-color-background)',
+                                    border: '1px solid var(--ag-sys-color-border)',
+                                    borderRadius: '12px',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                    color: 'var(--ag-sys-color-text)',
+                                    fontWeight: 'bold'
+                                }}
+                                itemStyle={{ color: 'var(--ag-sys-color-primary)' }}
+                                formatter={(value: any) => [`${Number(value).toFixed(2)} ${unit}`, 'Precio']}
+                            />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                            <Line 
+                                type="monotone" 
+                                dataKey="price" 
+                                name="Precio Medio"
+                                stroke="var(--ag-sys-color-primary)" 
+                                strokeWidth={3}
+                                dot={false}
+                                activeDot={{ r: 6, fill: 'var(--ag-sys-color-primary)', stroke: 'var(--ag-sys-color-background)', strokeWidth: 2 }}
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                ) : null}
             </div>
         </div>
     );
