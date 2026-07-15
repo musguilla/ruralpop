@@ -92,7 +92,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         }
 
         // Filter based on search params
-        const categoryFilter = searchParams.category as string;
+        const categoryFilter = searchParams.category ? (searchParams.category as string).replace(/["{}\\\\,]/g, '') : "";
         if (categoryFilter && fallbackLevel < 4) {
             if (isEquipop) {
                 query = query.or(`category.eq."${categoryFilter}",equipop_category.eq."${categoryFilter}"`);
@@ -101,7 +101,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             }
         }
 
-        const subcategoryFilter = searchParams.subcategory as string;
+        const subcategoryFilter = searchParams.subcategory ? (searchParams.subcategory as string).replace(/["{}\\\\,]/g, '') : "";
         if (subcategoryFilter && fallbackLevel < 3) {
             if (isEquipop) {
                 query = query.or(`subcategory.ilike."${subcategoryFilter}",equipop_subcategory.ilike."${subcategoryFilter}"`);
@@ -112,7 +112,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
         const textQuery = searchParams.q as string;
         if (textQuery && fallbackLevel < 3) {
-            let sanitizedQuery = textQuery.trim().toLowerCase();
+            let sanitizedQuery = textQuery.replace(/["{}\\\\,]/g, '').trim().toLowerCase();
             let queryTerms = sanitizedQuery.split(/[\s\-]+/).filter(t => t.length > 2);
             
             // FASE 2: First word fallback
