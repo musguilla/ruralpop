@@ -252,6 +252,15 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         }
     }
 
+    // Supabase has a known bug in PostgREST where an out-of-bounds range request (HTTP 416) 
+    // with Prefer: count=exact returns a malformed JSON body of just '{"'.
+    // We suppress this specific error from polluting Vercel logs and treat it as 0 results.
+    if (error && error.message?.trim() === '{"') {
+        error = null;
+        listings = [];
+        count = 0;
+    }
+
     if (error) {
         console.error("Supabase Error fetching listings:", error);
         return (
