@@ -18,32 +18,10 @@ export function ClaimProfileFlow({ ghostToken }: { ghostToken: string }) {
         setError(null);
 
         try {
-            const supabase = createClient();
-            
-            // 1. Sign up the user (Soft registration)
-            // We use standard signup. They will need to verify email later, but we log them in automatically
-            const { data: authData, error: authError } = await supabase.auth.signUp({
-                email,
-                password,
-            });
+            // Check if we are in Equipop or Ruralpop to pass tenant info
+            const isEquipop = window.location.hostname.includes("equipop");
+            const tenant = isEquipop ? 'equipop' : 'ruralpop';
 
-            if (authError) {
-                if (authError.message.includes("User already registered")) {
-                    // Si ya existe, deberían hacer login normal y reclamar la cuenta, 
-                    // o le mostramos un error de que este email ya existe.
-                    throw new Error("Este email ya está registrado. Por favor, inicia sesión primero si deseas usar este email, o utiliza otro.");
-                }
-                throw authError;
-            }
-
-            if (!authData.user) {
-                throw new Error("No se pudo crear el usuario");
-            }
-
-            // 2. We need an API endpoint to safely transfer the ghost profile 
-            // to this new authData.user.id because from the client we can't easily 
-            // overwrite another user's row (the ghost profile row).
-            
             const response = await fetch('/api/claim-ghost-profile', {
                 method: 'POST',
                 headers: {
@@ -51,7 +29,9 @@ export function ClaimProfileFlow({ ghostToken }: { ghostToken: string }) {
                 },
                 body: JSON.stringify({
                     ghostToken,
-                    newUserId: authData.user.id,
+                    email,
+                    password,
+                    tenant
                 }),
             });
 
@@ -60,9 +40,8 @@ export function ClaimProfileFlow({ ghostToken }: { ghostToken: string }) {
                 throw new Error(err.error || 'Error al reclamar el perfil');
             }
 
-            // 3. Redirigir a la vista de planes, pero especificando que viene de un ghost profile
-            // para que solo se le ofrezca el plan Pro.
-            router.push('/profesionales?ghost_claim=true');
+            // Redirigir a la vista de login con mensaje de verificación
+            router.push(`/login?message=${encodeURIComponent("Revisa tu correo electrónico para validar tu cuenta antes de acceder a tu escaparate.")}`);
             
         } catch (err) {
             console.error("Claim error:", err);

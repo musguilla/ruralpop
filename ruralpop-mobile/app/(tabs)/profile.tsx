@@ -193,35 +193,37 @@ export default function ProfileScreen() {
                         <ChevronRight color="#d1d5db" size={20} />
                     </TouchableOpacity>
 
-                    {profile?.role === 'profesional' ? (
-                        <TouchableOpacity
-                            onPress={() => router.push('/pro-dashboard')}
-                            className="flex-row justify-between items-center px-6 py-5"
-                        >
-                            <View className="flex-row items-center flex-1 pr-4">
-                                <Briefcase color="#374151" size={24} strokeWidth={1.5} />
-                                <View className="flex-row items-center ml-4 flex-1">
-                                    <Text className="text-[17px] text-gray-700 mr-3 shrink-0">{IS_EQUIPOP ? 'Equipop PRO' : 'Ruralpop PRO'}</Text>
-                                </View>
-                            </View>
-                            <ChevronRight color="#d1d5db" size={20} />
-                        </TouchableOpacity>
-                    ) : (
-                        <TouchableOpacity 
-                            onPress={() => Linking.openURL('https://www.equipop.app/empresas-profesionales-sector-ecuestre')}
-                            className="flex-row justify-between items-center px-6 py-5"
-                        >
-                            <View className="flex-row items-center flex-1 pr-4">
-                                <Briefcase color="#374151" size={24} strokeWidth={1.5} />
-                                <View className="flex-row items-center ml-4 flex-1">
-                                    <Text className="text-[17px] text-gray-700 mr-3 shrink-0">{IS_EQUIPOP ? 'Equipop PRO' : 'Ruralpop PRO'}</Text>
-                                    <View className="bg-primary/10 px-2 py-0.5 rounded-md shrink-0">
-                                        <Text className="text-[10px] uppercase font-bold text-primary tracking-wider">Descúbrelo</Text>
+                    {Platform.OS !== 'ios' && (
+                        profile?.role === 'profesional' ? (
+                            <TouchableOpacity
+                                onPress={() => router.push('/pro-dashboard')}
+                                className="flex-row justify-between items-center px-6 py-5"
+                            >
+                                <View className="flex-row items-center flex-1 pr-4">
+                                    <Briefcase color="#374151" size={24} strokeWidth={1.5} />
+                                    <View className="flex-row items-center ml-4 flex-1">
+                                        <Text className="text-[17px] text-gray-700 mr-3 shrink-0">{IS_EQUIPOP ? 'Equipop PRO' : 'Ruralpop PRO'}</Text>
                                     </View>
                                 </View>
-                            </View>
-                            <ChevronRight color="#d1d5db" size={20} />
-                        </TouchableOpacity>
+                                <ChevronRight color="#d1d5db" size={20} />
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity 
+                                onPress={() => Linking.openURL('https://www.equipop.app/empresas-profesionales-sector-ecuestre')}
+                                className="flex-row justify-between items-center px-6 py-5"
+                            >
+                                <View className="flex-row items-center flex-1 pr-4">
+                                    <Briefcase color="#374151" size={24} strokeWidth={1.5} />
+                                    <View className="flex-row items-center ml-4 flex-1">
+                                        <Text className="text-[17px] text-gray-700 mr-3 shrink-0">{IS_EQUIPOP ? 'Equipop PRO' : 'Ruralpop PRO'}</Text>
+                                        <View className="bg-primary/10 px-2 py-0.5 rounded-md shrink-0">
+                                            <Text className="text-[10px] uppercase font-bold text-primary tracking-wider">Descúbrelo</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                                <ChevronRight color="#d1d5db" size={20} />
+                            </TouchableOpacity>
+                        )
                     )}
                 </View>
 

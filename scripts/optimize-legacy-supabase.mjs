@@ -23,25 +23,45 @@ const s3Client = new S3Client({
 });
 
 async function run() {
-    console.log("🔍 Fetching the latest 1000 listings for R2 optimization...");
-    const { data: listings, error } = await supabase
-        .from('listings')
-        .select('id, image_urls, title')
-        .order('created_at', { ascending: false })
-        .limit(1000);
+    console.log("🔍 Fetching ALL listings with legacy Supabase URLs...");
+    
+    let allLegacyListings = [];
+    let hasMore = true;
+    let page = 0;
+    
+    while (hasMore) {
+        const { data: listings, error } = await supabase
+            .from('listings')
+            .select('id, image_urls, title')
+            .not('image_urls', 'is', null)
+            .range(page * 1000, (page + 1) * 1000 - 1);
 
-    if (error) {
-        console.error("❌ Error fetching listings:", error);
-        return;
+        if (error) {
+            console.error("❌ Error fetching listings:", error);
+            return;
+        }
+        
+        if (listings.length === 0) {
+            hasMore = false;
+            break;
+        }
+        
+        const legacyListings = listings.filter(l => 
+            l.image_urls && l.image_urls.some(url => url.includes('supabase.co'))
+        );
+        allLegacyListings = allLegacyListings.concat(legacyListings);
+        page++;
     }
+
+    console.log(`Found ${allLegacyListings.length} listings to migrate.`);
 
     let optimizedCount = 0;
     let savedBytesTotal = 0;
 
-    for (const listing of listings) {
+    for (const listing of allLegacyListings) {
         if (!listing.image_urls || listing.image_urls.length === 0) continue;
 
-        console.log(`\n📦 Checking listing: ${listing.title} (${listing.id})`);
+        console.log(`\n📦 Migrating listing: ${listing.title} (${listing.id})`);
         
         let listingUrlsUpdated = false;
         let newImageUrls = [...listing.image_urls];
@@ -49,19 +69,12 @@ async function run() {
         for (let i = 0; i < listing.image_urls.length; i++) {
             let url = listing.image_urls[i];
             
-            // Rewrite old R2 dev URL to custom domain for fetching
-            if (url.includes('pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev')) {
-                url = url.replace('https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev', 'https://media.ruralpop.com');
-                newImageUrls[i] = url;
-                listingUrlsUpdated = true;
-            }
+            if (!url.includes('supabase.co')) continue;
             
             let r2Key = null;
-            let isSupabaseUrl = url.includes('supabase.co');
             try {
                 const urlObj = new URL(url);
                 r2Key = decodeURIComponent(urlObj.pathname.substring(1));
-                // Fix the deeply nested path issue for old Supabase URLs
                 if (r2Key.startsWith('storage/v1/object/public/')) {
                     r2Key = r2Key.replace('storage/v1/object/public/', '');
                 }
@@ -94,8 +107,6 @@ async function run() {
                 let wasOptimized = false;
 
                 if (originalSize >= 80 * 1024) {
-                    console.log(`  └ 🛠  Image ${i+1} is heavy (${Math.round(originalSize/1024)} KB). Optimizing...`);
-                    console.log(`  └ [DEBUG] Starting sharp processing...`);
                     const optimizedBuffer = await sharp(buffer)
                         .resize(600, 600, {
                             fit: 'inside',
@@ -103,42 +114,34 @@ async function run() {
                         })
                         .webp({ quality: 70 })
                         .toBuffer();
-                    console.log(`  └ [DEBUG] Sharp processing complete.`);
 
                     if (optimizedBuffer.length < originalSize) {
                         bufferToUpload = optimizedBuffer;
                         wasOptimized = true;
-                    } else {
-                        console.log(`  └ 🤷 Optimization didn't reduce size.`);
                     }
-                } else {
-                    console.log(`  └ ✅ Image ${i+1} is already light (${Math.round(originalSize/1024)} KB).`);
                 }
 
-                if (wasOptimized || isSupabaseUrl) {
-                    console.log(`  └ [DEBUG] Uploading to R2: ${r2Key}...`);
-                    await s3Client.send(new PutObjectCommand({
-                        Bucket: R2_BUCKET_NAME,
-                        Key: r2Key,
-                        Body: bufferToUpload,
-                        ContentType: wasOptimized ? 'image/webp' : (response.headers.get('content-type') || 'image/jpeg'),
-                    }));
-                    console.log(`  └ [DEBUG] Upload complete.`);
+                await s3Client.send(new PutObjectCommand({
+                    Bucket: R2_BUCKET_NAME,
+                    Key: r2Key,
+                    Body: bufferToUpload,
+                    ContentType: wasOptimized ? 'image/webp' : (response.headers.get('content-type') || 'image/jpeg'),
+                }));
 
-                    const newR2Url = `https://media.ruralpop.com/${r2Key}`;
-                    if (newImageUrls[i] !== newR2Url) {
-                        newImageUrls[i] = newR2Url;
-                        listingUrlsUpdated = true;
-                    }
+                const newR2Url = `https://media.ruralpop.com/${r2Key}`;
+                if (newImageUrls[i] !== newR2Url) {
+                    newImageUrls[i] = newR2Url;
+                    listingUrlsUpdated = true;
+                }
 
-                    if (wasOptimized) {
-                        const savedKB = Math.round((originalSize - bufferToUpload.length) / 1024);
-                        console.log(`  └ 🚀 Success! Optimized to ${Math.round(bufferToUpload.length/1024)} KB (Saved ${savedKB} KB) on R2.`);
-                        optimizedCount++;
-                        savedBytesTotal += (originalSize - bufferToUpload.length);
-                    } else if (isSupabaseUrl) {
-                        console.log(`  └ 🚚 Migrated to R2 without optimization.`);
-                    }
+                if (wasOptimized) {
+                    const savedKB = Math.round((originalSize - bufferToUpload.length) / 1024);
+                    console.log(`  └ 🚀 Success! Optimized to ${Math.round(bufferToUpload.length/1024)} KB (Saved ${savedKB} KB) on R2.`);
+                    optimizedCount++;
+                    savedBytesTotal += (originalSize - bufferToUpload.length);
+                } else {
+                    console.log(`  └ 🚚 Migrated to R2 without optimization.`);
+                    optimizedCount++;
                 }
 
             } catch (err) {
@@ -147,7 +150,6 @@ async function run() {
         }
         
         if (listingUrlsUpdated) {
-            console.log(`  └ 📝 Updating database URLs for listing...`);
             const { error: updateError } = await supabase
                 .from('listings')
                 .update({ image_urls: newImageUrls })
@@ -161,7 +163,7 @@ async function run() {
     }
 
     console.log(`\n🎉 FINISHED!`);
-    console.log(`Total images optimized on R2: ${optimizedCount}`);
+    console.log(`Total images migrated/optimized on R2: ${optimizedCount}`);
     console.log(`Total bandwidth saved per view: ${Math.round(savedBytesTotal / 1024 / 1024 * 100) / 100} MB`);
 }
 

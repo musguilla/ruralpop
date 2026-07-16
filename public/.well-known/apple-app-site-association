@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "N9FCAJ4KQ9.com.ruralpop.ruralpopapp",
+        "paths": ["*"]
+      },
+      {
+        "appID": "N9FCAJ4KQ9.com.equipop.app",
+        "paths": ["*"]
+      }
+    ]
+  }
+}

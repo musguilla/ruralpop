@@ -1,0 +1,22 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ruralpop.app",
+      "sha256_cert_fingerprints": [
+        "29:41:54:16:E0:6F:06:34:CF:67:0A:31:F7:98:EC:D7:01:07:01:67:18:15:6E:C7:A3:5B:B3:FE:9E:DC:14:AB"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.equipop.app",
+      "sha256_cert_fingerprints": [
+        "29:41:54:16:E0:6F:06:34:CF:67:0A:31:F7:98:EC:D7:01:07:01:67:18:15:6E:C7:A3:5B:B3:FE:9E:DC:14:AB"
+      ]
+    }
+  }
+]

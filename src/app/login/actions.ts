@@ -22,7 +22,13 @@ export async function login(formData: FormData) {
 
     if (error) {
         console.error("Login error:", error);
-        redirect(`/login?error=${encodeURIComponent(error.message)}`);
+        let errorMsg = error.message;
+        
+        if (error.message === "Email not confirmed") {
+            errorMsg = "Debes validar tu correo electrónico antes de entrar. Revisa tu bandeja de entrada o carpeta de spam.";
+        }
+        
+        redirect(`/login?error=${encodeURIComponent(errorMsg)}`);
     }
 
     revalidatePath("/", "layout");

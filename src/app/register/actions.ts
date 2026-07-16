@@ -7,8 +7,18 @@ import { Resend } from "resend";
 import { getRuralpopDatabaseId, getTenantConfig } from "@/config/tenants";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+
+function getAdminClient() {
+    return createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+}
+
 export async function signup(formData: FormData) {
     const supabase = await createClient();
+    const supabaseAdmin = getAdminClient();
 
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
@@ -21,13 +31,13 @@ export async function signup(formData: FormData) {
     const activeTenantId = tenantConfig.id || getRuralpopDatabaseId() || undefined;
     const tenantName = isEquipop ? "Equipop" : "Ruralpop";
 
-    let redirectPath = "/login?message=Cuenta creada correctamente.";
+    let redirectPath = "/login?message=Revisa tu correo electrónico para validar tu cuenta. Te hemos enviado un enlace de verificación.";
 
     if (!email || !password || !name) {
         redirectPath = "/register?error=Todos los campos son obligatorios";
     }
 
-    if (redirectPath === "/login?message=Cuenta creada correctamente.") {
+    if (redirectPath.includes("Revisa tu correo")) {
         const cleanName = name.trim().toLowerCase();
         // Regex to catch variants of generic names, handling accents
         const isGenericName = /^(sin\s*nombre|an[oó]nimo|usuario|user|desconocido|null|undefined|admin|administrador|root)$/i.test(cleanName);
@@ -37,23 +47,23 @@ export async function signup(formData: FormData) {
         }
     }
 
-    if (password !== passwordConfirm && redirectPath === "/login?message=Cuenta creada correctamente.") {
+    if (password !== passwordConfirm && redirectPath.includes("Revisa tu correo")) {
         redirectPath = "/register?error=Las contraseñas no coinciden, por favor verifica.";
     }
 
-    if (redirectPath !== "/login?message=Cuenta creada correctamente.") {
+    if (!redirectPath.includes("Revisa tu correo")) {
         redirect(redirectPath);
     }
 
-    const { error } = await supabase.auth.signUp({
+    // 1. Create the user unconfirmed (avoids auto-confirming if Supabase's toggle is off)
+    const { data: userResp, error } = await supabaseAdmin.auth.admin.createUser({
         email,
         password,
-        options: {
-            data: {
-                name: name,
-                full_name: name,
-                tenant_id: activeTenantId,
-            },
+        email_confirm: false,
+        user_metadata: {
+            name: name,
+            full_name: name,
+            tenant_id: activeTenantId,
         }
     });
 
@@ -67,12 +77,24 @@ export async function signup(formData: FormData) {
 
         redirectPath = `/register?error=${encodeURIComponent(errorMsg)}`;
     } else {
-        // If no error on signup, try to send welcome email
+        // 2. Generate the verification link manually
+        const siteUrl = isEquipop ? "https://www.equipop.app" : "https://www.ruralpop.com";
+        const { data: linkResp, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
+            type: 'signup',
+            email,
+            password,
+            options: {
+                redirectTo: `${siteUrl}/login?verified=true`
+            }
+        });
+
+        // 3. Send the custom verification email via Resend
         try {
-            if (process.env.RESEND_API_KEY) {
+            if (process.env.RESEND_API_KEY && linkResp?.properties?.action_link) {
                 const resend = new Resend(process.env.RESEND_API_KEY);
-                const siteUrl = isEquipop ? "https://www.equipop.app" : "https://www.ruralpop.com";
                 const logoUrl = isEquipop ? "https://www.equipop.app/equipop-logo.png" : "https://www.ruralpop.com/ruralpop-logo.png";
+                const validationLink = linkResp.properties.action_link;
+                const fromEmail = isEquipop ? "Equipop <no-reply@equipop.app>" : "Ruralpop <no-reply@ruralpop.com>";
 
                 const emailHtml = `
             <!DOCTYPE html>
@@ -86,6 +108,7 @@ export async function signup(formData: FormData) {
                     .title { font-size: 24px; font-weight: bold; margin-bottom: 16px; color: #111827; }
                     .text { font-size: 16px; line-height: 1.5; color: #4b5563; margin-bottom: 32px; }
                     .button { display: inline-block; padding: 14px 28px; background-color: #10b981; color: #ffffff !important; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px; }
+                    .fallback { margin-top: 24px; font-size: 14px; color: #6b7280; word-break: break-all; }
                     .footer { margin-top: 32px; font-size: 12px; color: #9ca3af; }
                 </style>
             </head>
@@ -95,31 +118,39 @@ export async function signup(formData: FormData) {
                     <h1 class="title">¡Hola, ${name}!</h1>
                     <p class="text">
                         Te damos la bienvenida a <strong>${tenantName}</strong>.<br/><br/>
-                        Estamos encantados de tenerte con nosotros en el gran mercado que es ${tenantName}. Empieza a vender y comprar ya! Descubre los mejores anuncios, gestiona tus favoritos y conecta con miles de usuarios al instante.
+                        Para empezar a usar tu cuenta y conectar con miles de usuarios, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente botón:
                     </p>
-                    <a href="${siteUrl}/account" class="button" style="color: #ffffff; text-decoration: none;">Entrar a ${tenantName}</a>
+                    <a href="${validationLink}" class="button" style="color: #ffffff; text-decoration: none;">Validar Cuenta</a>
+                    
+                    <p class="fallback">
+                        ¿No puedes ver o pulsar el botón? Copia y pega esta dirección en tu navegador:<br/>
+                        <a href="${validationLink}" style="color: #10b981;">${validationLink}</a>
+                    </p>
+
                     <p class="footer">
-                        Estás recibiendo este correo porque acabas de crear una cuenta en ${tenantName}.<br/><br/>
+                        Estás recibiendo este correo porque acabas de crear una cuenta en ${tenantName}. Si no has sido tú, ignora este correo.<br/><br/>
                         © ${new Date().getFullYear()} ${tenantName}
                     </p>
                 </div>
             </body>
-                </html>
+            </html>
             `;
 
                 const { error: resendError } = await resend.emails.send({
-                    from: `${tenantName} <no-reply@ruralpop.com>`,
+                    from: fromEmail,
                     to: [email],
-                    subject: `¡Bienvenido/a a ${tenantName}!`,
+                    subject: `Verifica tu cuenta de ${tenantName}`,
                     html: emailHtml,
                 });
 
                 if (resendError) {
-                    console.error("Welcome email resend error:", resendError);
+                    console.error("Validation email resend error:", resendError);
                 }
+            } else {
+                console.error("Could not generate link or missing RESEND_API_KEY", linkErr);
             }
         } catch (e: any) {
-            console.error("Unexpected error sending welcome email:", e);
+            console.error("Unexpected error sending validation email:", e);
         }
 
         try {
@@ -128,7 +159,7 @@ export async function signup(formData: FormData) {
             console.error("revalidatePath error:", e);
         }
 
-        redirectPath = `/login?message=${encodeURIComponent(`Cuenta creada correctamente. ¡Bienvenido/a a ${tenantName}!`)}`;
+        redirectPath = `/login?message=${encodeURIComponent(`Revisa tu correo electrónico para validar tu cuenta. Te hemos enviado un enlace de verificación.`)}`;
     }
 
     redirect(redirectPath);
