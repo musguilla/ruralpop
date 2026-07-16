@@ -24,6 +24,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       supportsTablet: true,
       bundleIdentifier: IS_EQUIPOP ? "com.equipop.app" : "com.ruralpop.ruralpopapp",
       buildNumber: BUILD_NUMBER.toString(),
+      associatedDomains: IS_EQUIPOP 
+        ? ["applinks:equipop.app", "applinks:www.equipop.app"] 
+        : ["applinks:ruralpop.com", "applinks:www.ruralpop.com"],
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         CFBundleDevelopmentRegion: "es",
@@ -41,6 +44,17 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         "com.google.android.gms.permission.AD_ID",
         "android.permission.INTERNET",
         "android.permission.ACCESS_NETWORK_STATE"
+      ],
+      intentFilters: [
+        {
+          action: "VIEW",
+          autoVerify: true,
+          data: [
+            { scheme: "https", host: IS_EQUIPOP ? "equipop.app" : "ruralpop.com" },
+            { scheme: "https", host: IS_EQUIPOP ? "www.equipop.app" : "www.ruralpop.com" }
+          ],
+          category: ["BROWSABLE", "DEFAULT"]
+        }
       ]
     },
     web: {
