@@ -14,7 +14,7 @@ import { MunicipalityModal } from '../../src/components/ui/modals/MunicipalityMo
 import { AnimalWelfareModal } from '../../src/components/ui/modals/AnimalWelfareModal';
 import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';
 import { TagSelector } from '../../src/components/ui/TagSelector';
-import { getRuralpopDatabaseId, IS_EQUIPOP } from '../../src/config/tenants';
+import { getRuralpopDatabaseId, getEquipopDatabaseId, IS_EQUIPOP } from '../../src/config/tenants';
 import { CATEGORIES, PRICE_TYPES } from '../../src/constants/categories';
 import { LOCATIONS } from '../../src/constants/locations';
 
@@ -36,6 +36,7 @@ export default function PublishScreen() {
     
     // Escrow / Venta Online
     const [isStripeReady, setIsStripeReady] = useState(false);
+    const [isStripeLoading, setIsStripeLoading] = useState(true);
     const [allowOnlineSale, setAllowOnlineSale] = useState(IS_EQUIPOP ? true : false);
     const [shippingPrice, setShippingPrice] = useState('');
     const [hasProfileLocation, setHasProfileLocation] = useState(false);
@@ -94,6 +95,8 @@ export default function PublishScreen() {
                         }
                     } catch (e) {
                         console.error("Error fetching wallet status", e);
+                    } finally {
+                        setIsStripeLoading(false);
                     }
                 }
                 fetchData();
@@ -348,6 +351,31 @@ export default function PublishScreen() {
         );
     }
 
+    if (IS_EQUIPOP && !isStripeLoading && !isStripeReady) {
+        return (
+            <SafeAreaView className="flex-1 bg-surface">
+                <View className="px-6 py-4 border-b border-gray-100 bg-white">
+                    <Text className="text-2xl font-extrabold text-text">Publicar Anuncio</Text>
+                </View>
+                <View className="flex-1 items-center justify-center p-6">
+                    <View className="w-16 h-16 bg-blue-100 rounded-full items-center justify-center mb-6">
+                        <Info className="text-primary" size={32} />
+                    </View>
+                    <Text className="text-xl font-bold text-center text-text mb-2">Activa tu monedero</Text>
+                    <Text className="text-center text-text-muted mb-8">
+                        Activa tu monedero para poder empezar a vender en Equipop y recibir tus pagos.
+                    </Text>
+                    <TouchableOpacity
+                        onPress={() => router.push('/monedero')}
+                        className="bg-primary px-8 py-3 rounded-full mb-2 w-full items-center"
+                    >
+                        <Text className="text-white font-bold text-base">Configurar mi monedero</Text>
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView className="flex-1 bg-surface">
             <View className="px-6 py-4 border-b border-gray-100 bg-white">
@@ -522,19 +550,7 @@ export default function PublishScreen() {
                         </View>
                     )}
 
-                    {IS_EQUIPOP && allowOnlineSale && !isStripeReady && (
-                        <View className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex-row items-start space-x-3">
-                            <View className="mr-3 mt-0.5"><Info className="text-amber-600" size={20} /></View>
-                            <View className="flex-1">
-                                <Text className="text-sm font-medium text-amber-900 mb-2">
-                                    Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
-                                </Text>
-                                <TouchableOpacity onPress={() => router.push('/monedero')}>
-                                    <Text className="text-sm font-bold text-primary">Configurar mi monedero →</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    )}
+
 
                     {!hasProfileLocation && (
                         <>
