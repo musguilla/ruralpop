@@ -304,7 +304,7 @@ export default async function ListingDetailPage(props: Props) {
 
     // Escrow logic
     const isOwner = user?.id === listing.seller?.id;
-    const isEscrowAvailable = listing.vender_online;
+    const isEscrowAvailable = isEquipop || listing.vender_online;
     const ruralpopFeeCents = calculateRuralpopFee(Math.round(listing.price * 100));
 
     return (

@@ -28,7 +28,9 @@ export async function HomeDirectBuySlider() {
 
     const validUserIds = wallets.map(w => w.user_id);
 
-    // 2. Traer los anuncios activos, no ghost, con venta_online = true de estos vendedores
+    const tenant = await getServerTenantSlug();
+
+    // 2. Traer los anuncios activos, no ghost, con venta_online = true de estos vendedores (o todos si es Equipop)
     let query = supabase
         .from("listings")
         .select(`
@@ -36,11 +38,14 @@ export async function HomeDirectBuySlider() {
             users!inner(is_ghost)
         `)
         .eq("status", "active")
-        .eq("vender_online", true)
         .eq("users.is_ghost", false)
         .in("user_id", validUserIds)
         .order("created_at", { ascending: false })
         .limit(10); // Traemos 10 para hacer un buen slider
+
+    if (tenant !== 'equipop') {
+        query = query.eq("vender_online", true);
+    }
 
     query = query.or(tenantFilterString);
 

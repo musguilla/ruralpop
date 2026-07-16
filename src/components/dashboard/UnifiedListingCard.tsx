@@ -158,6 +158,12 @@ export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
                                 <Tag className="w-3.5 h-3.5" />
                                 {listing.category}
                             </div>
+                            {(listing.vender_online || isEquipop) && (
+                                <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
+                                    <ShieldCheck className="w-3.5 h-3.5" />
+                                    {listing.shipping_price ? `Envío: ${formatCurrency(listing.shipping_price)}` : 'Venta Segura'}
+                                </div>
+                            )}
                             <div className="flex items-center gap-1 bg-[var(--ag-sys-color-background)] px-2 py-1 rounded-md border border-[var(--ag-sys-color-border)]">
                                 <Clock className="w-3.5 h-3.5" />
                                 {formatRelativeTime(item.date ? new Date(item.date).toISOString() : listing.created_at)}
