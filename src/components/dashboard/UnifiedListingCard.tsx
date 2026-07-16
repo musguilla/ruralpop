@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Tractor, MapPin, Tag, Clock, CheckCircle2, Heart } from 'lucide-react';
+import { Tractor, MapPin, Tag, Clock, CheckCircle2, Heart, ShieldCheck } from 'lucide-react';
 import { formatCurrency, formatRelativeTime } from '@/utils/format';
 import { DashboardListingActions } from './DashboardListingActions';
 import { ConfirmReturnButton } from './ConfirmReturnButton';
