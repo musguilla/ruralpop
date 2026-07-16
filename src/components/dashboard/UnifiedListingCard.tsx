@@ -49,9 +49,10 @@ type Props = {
     item: UnifiedItem;
     publicUser: PublicUser | null;
     currentTab: 'active' | 'sold' | 'reserved';
+    isEquipop?: boolean;
 };
 
-export function UnifiedListingCard({ item, publicUser, currentTab }: Props) {
+export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = false }: Props) {
     const isEscrow = item.type === 'escrow';
     const order = isEscrow ? (item.data as EscrowOrder) : null;
     const listing = isEscrow ? (order?.listings) : (item.data as Listing);

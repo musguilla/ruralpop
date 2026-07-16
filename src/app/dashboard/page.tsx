@@ -9,7 +9,7 @@ import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Tractor, MapPin, Tag, Clock } from "lucide-react";
 import { DashboardListingActions } from "@/components/dashboard/DashboardListingActions";
 import { UnifiedListingCard, UnifiedItem } from "@/components/dashboard/UnifiedListingCard";
-import { getServerTenantFilterString } from "@/utils/tenant/server";
+import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +24,8 @@ export default async function DashboardPage(props: Props) {
     const searchParams = await props.searchParams;
     const currentTabRaw = searchParams?.tab;
     const currentTab = currentTabRaw === "vendidos" ? "sold" : currentTabRaw === "en_curso" ? "reserved" : "active";
+    const tenantSlug = await getServerTenantSlug();
+    const isEquipop = tenantSlug === 'equipop';
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -281,8 +283,9 @@ export default async function DashboardPage(props: Props) {
                                     <UnifiedListingCard 
                                         key={item.type === 'escrow' ? `escrow-${item.data.id}` : `listing-${item.data.id}`}
                                         item={item} 
-                                        publicUser={publicUser} 
+                                        publicUser={publicUser as any} 
                                         currentTab={currentTab} 
+                                        isEquipop={isEquipop}
                                     />
                                 ))}
                             </div>
