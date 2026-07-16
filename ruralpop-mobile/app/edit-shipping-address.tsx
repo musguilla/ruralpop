@@ -4,6 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { supabase } from '../src/lib/supabase';
 import { useAuth } from '../src/contexts/AuthContext';
 import { ChevronLeft, ChevronDown } from 'lucide-react-native';
+import { IS_EQUIPOP } from '../src/config/tenants';
 
 export default function EditShippingAddressScreen() {
     const { user, session } = useAuth();
@@ -164,7 +165,7 @@ export default function EditShippingAddressScreen() {
                     </View>
 
                     <Text className="text-[14px] text-gray-500 leading-5">
-                        Compartiremos tus datos con la empresa de transporte para gestionar tus envíos. Para saber más, consulta las <Text className="text-[#059669] underline">Condiciones de uso</Text> y la <Text className="text-[#059669] underline">Política de privacidad</Text> de Ruralpop.
+                        Compartiremos tus datos de envío con el vendedor para que pueda gestionar el envío de tus compras realizadas. Para saber más, consulta las <Text className={`underline ${IS_EQUIPOP ? 'text-[#0284c7]' : 'text-[#059669]'}`}>Condiciones de uso</Text> y la <Text className={`underline ${IS_EQUIPOP ? 'text-[#0284c7]' : 'text-[#059669]'}`}>Política de privacidad</Text> de {IS_EQUIPOP ? 'Equipop' : 'Ruralpop'}.
                     </Text>
 
                     <View className="h-24" />
@@ -175,7 +176,7 @@ export default function EditShippingAddressScreen() {
                 <TouchableOpacity
                     onPress={handleSave}
                     disabled={loading}
-                    className={`w-full py-4 rounded-full items-center shadow-sm ${loading ? 'bg-[#059669]/70' : 'bg-[#059669]'}`}
+                    className={`w-full py-4 rounded-full items-center shadow-sm ${IS_EQUIPOP ? (loading ? 'bg-[#0284c7]/70' : 'bg-[#0284c7]') : (loading ? 'bg-[#059669]/70' : 'bg-[#059669]')}`}
                 >
                     {loading ? (
                         <ActivityIndicator color="white" />
