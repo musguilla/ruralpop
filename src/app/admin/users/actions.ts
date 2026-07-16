@@ -62,6 +62,18 @@ export async function deleteUser(userId: string) {
         return { success: false, error: "No puedes borrar tu propia cuenta de administrador" };
     }
 
+    // Limpieza en cascada manual: Supabase auth.users no tiene ON DELETE CASCADE configurado 
+    // por defecto para nuestras tablas públicas, lo que bloquea el borrado con un error 500 de Postgres.
+    // Borramos explícitamente los registros relacionados del usuario para evitar conflictos de Foreign Key.
+    await Promise.all([
+        supabaseAdmin.from("favorites").delete().eq("user_id", userId),
+        supabaseAdmin.from("messages").delete().eq("sender_id", userId),
+        supabaseAdmin.from("messages").delete().eq("receiver_id", userId),
+        supabaseAdmin.from("listings").delete().eq("user_id", userId),
+        supabaseAdmin.from("professional_wallets").delete().eq("user_id", userId),
+        supabaseAdmin.from("users").delete().eq("id", userId) // Eliminamos primero de la tabla pública
+    ]);
+
     const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
     if (authError) {
