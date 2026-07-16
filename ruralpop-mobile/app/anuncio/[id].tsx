@@ -475,7 +475,7 @@ export default function ListingDetailsScreen() {
                                 )}
                             </View>
                         </TouchableOpacity>
-                        {listing.vender_online && (
+                        {(listing.vender_online || IS_EQUIPOP) && (
                             <TouchableOpacity
                                 onPress={() => {
                                     if (!user) {
@@ -540,7 +540,7 @@ export default function ListingDetailsScreen() {
                     <View className="w-full bg-amber-50 border border-amber-200 py-4 rounded-full flex-row justify-center items-center">
                         <Text className="text-amber-700 font-bold text-lg">Tu anuncio está destacado</Text>
                     </View>
-                ) : listing.vender_online ? (
+                ) : (listing.vender_online || IS_EQUIPOP) ? (
                     <TouchableOpacity
                         onPress={() => {
                             if (!user) {
