@@ -88,8 +88,6 @@ export default async function EditListingPage(props: Props) {
         }
     }
 
-    const tenantSlug = await getServerTenantSlug();
-    const isEquipop = tenantSlug === 'equipop';
 
     return (
         <EditListingForm
