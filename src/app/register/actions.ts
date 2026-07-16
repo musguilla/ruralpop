@@ -153,13 +153,13 @@ export async function signup(formData: FormData) {
             console.error("Unexpected error sending validation email:", e);
         }
 
-        try {
-            revalidatePath("/", "layout");
-        } catch (e) {
-            console.error("revalidatePath error:", e);
-        }
-
         redirectPath = `/login?message=${encodeURIComponent(`Revisa tu correo electrónico para validar tu cuenta. Te hemos enviado un enlace de verificación.`)}`;
+    }
+
+    try {
+        revalidatePath("/", "layout");
+    } catch (e) {
+        console.error("revalidatePath error:", e);
     }
 
     redirect(redirectPath);
