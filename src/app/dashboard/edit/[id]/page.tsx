@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import EditListingForm from "@/components/dashboard/EditListingForm";
 import { decodeId } from "@/utils/idUtils";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +12,8 @@ type Props = {
 };
 
 export default async function EditListingPage(props: Props) {
+    const tenantSlug = await getServerTenantSlug();
+    const isEquipop = tenantSlug === 'equipop';
     const { id: shortId } = await props.params;
     const id = decodeId(shortId);
 
@@ -78,6 +80,7 @@ export default async function EditListingPage(props: Props) {
     let isStripeReady = false;
     if (wallet?.stripe_connected_account_id) {
         try {
+            const stripe = getStripe(tenantSlug);
             const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
             isStripeReady = account.charges_enabled && account.details_submitted;
         } catch (e) {

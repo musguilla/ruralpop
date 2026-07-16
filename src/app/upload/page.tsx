@@ -1,13 +1,14 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import UploadForm from "./UploadForm";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 import { getTenantConfig, getRuralpopDatabaseId } from "@/config/tenants";
 
 export const dynamic = "force-dynamic";
 
 export default async function UploadPage() {
+    const tenant = await getServerTenantSlug();
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -46,6 +47,7 @@ export default async function UploadPage() {
     let isStripeReady = false;
     if (wallet?.stripe_connected_account_id) {
         try {
+            const stripe = getStripe(tenant);
             const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
             isStripeReady = account.charges_enabled && account.details_submitted;
         } catch (e) {

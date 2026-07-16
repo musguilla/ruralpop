@@ -3,13 +3,15 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { Wallet, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
-import stripe from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { EmbeddedWalletOnboarding } from "@/components/dashboard/EmbeddedWalletOnboarding";
 import { ConfirmReturnButton } from "@/components/dashboard/ConfirmReturnButton";
+import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function MonederoDashboardPage() {
+    const tenant = await getServerTenantSlug();
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -28,6 +30,7 @@ export default async function MonederoDashboardPage() {
     let isStripeReady = false;
     if (wallet?.stripe_connected_account_id) {
         try {
+            const stripe = getStripe(tenant);
             const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
             isStripeReady = account.charges_enabled && account.details_submitted;
         } catch (e) {
