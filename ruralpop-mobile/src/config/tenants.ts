@@ -27,6 +27,10 @@ export function getDefaultTenantFilterString(): string {
 /**
  * Devuelve el ID de tenant actual para insertar en nuevas entidades (anuncios, chats, etc.)
  */
-export function getRuralpopDatabaseId(): string | undefined {
-    return ACTIVE_TENANT_ID;
+export function getRuralpopDatabaseId(): string {
+    return 'ea2490cc-dc33-48f3-bc7b-82b14aa70eb9';
+}
+
+export function getEquipopDatabaseId(): string {
+    return '69d55371-2f70-4e67-b55c-4502bce305bb';
 }
