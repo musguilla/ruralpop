@@ -153,7 +153,7 @@ export async function signup(formData: FormData) {
             console.error("Unexpected error sending validation email:", e);
         }
 
-        redirectPath = `/login?message=${encodeURIComponent(`Revisa tu correo electrónico para validar tu cuenta. Te hemos enviado un enlace de verificación.`)}`;
+        redirectPath = `/login?message=${encodeURIComponent(`Debes validar tu correo electrónico antes de poder acceder. Revisa tu bandeja de entrada o carpeta de spam y pincha en el enlace que te hemos enviado.`)}`;
     }
 
     try {

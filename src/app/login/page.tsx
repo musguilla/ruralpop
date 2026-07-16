@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage(props: {
-    searchParams: Promise<{ error?: string }>;
+    searchParams: Promise<{ error?: string; message?: string }>;
 }) {
     const searchParams = await props.searchParams;
     const tenant = await getServerTenantSlug();
@@ -32,8 +32,14 @@ export default async function LoginPage(props: {
                     </h2>
                 </div>
 
+                {searchParams?.message && (
+                    <div className={`p-4 text-sm rounded-md border text-center ${isEquipop ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'}`}>
+                        {searchParams.message}
+                    </div>
+                )}
+
                 {searchParams?.error && (
-                    <div className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm p-3 rounded-md border border-red-200 dark:border-red-800 text-center">
+                    <div className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-md border border-red-200 dark:border-red-800 text-center">
                         {searchParams.error}
                     </div>
                 )}

@@ -25,7 +25,7 @@ export async function login(formData: FormData) {
         let errorMsg = error.message;
         
         if (error.message === "Email not confirmed") {
-            errorMsg = "Debes validar tu correo electrónico antes de entrar. Revisa tu bandeja de entrada o carpeta de spam.";
+            errorMsg = "Debes validar tu correo electrónico antes de poder acceder. Revisa tu bandeja de entrada o carpeta de spam y pincha en el enlace que te hemos enviado.";
         }
         
         redirect(`/login?error=${encodeURIComponent(errorMsg)}`);
