@@ -58,6 +58,7 @@ export default async function DashboardPage(props: Props) {
         is_featured?: boolean;
         status: string;
         vender_online?: boolean;
+        shipping_price?: number;
         favorites: Array<{ count: number }>;
     }
 

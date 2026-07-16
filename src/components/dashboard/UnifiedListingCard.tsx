@@ -18,6 +18,7 @@ export interface Listing {
     is_featured?: boolean;
     status: string;
     vender_online?: boolean;
+    shipping_price?: number;
     favorites?: Array<{ count: number }>;
     tags?: string[];
 }
