@@ -3,7 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { type Listing } from "@/components/ui/ListingCard";
 import { ListingSlider } from "@/components/ui/ListingSlider";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
-import { getServerTenantFilterString } from "@/utils/tenant/server";
+import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
 
 export async function HomeDirectBuySlider() {
     const supabase = await createClient();
