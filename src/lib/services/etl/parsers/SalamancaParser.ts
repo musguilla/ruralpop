@@ -26,7 +26,9 @@ export class SalamancaParser {
             throw new Error(`Salamanca API returned ${csvResponse.status} for CSV download`);
         }
 
-        const csvText = await csvResponse.text();
+        const arrayBuffer = await csvResponse.arrayBuffer();
+        const decoder = new TextDecoder('iso-8859-1');
+        const csvText = decoder.decode(arrayBuffer);
         const lines = csvText.split('\n');
         
         const prices = [];
