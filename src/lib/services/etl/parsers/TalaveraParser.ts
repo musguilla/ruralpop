@@ -8,8 +8,9 @@ export class TalaveraParser {
             const today = new Date();
             const validResults: { pdfBuffer: ArrayBuffer, foundDate: Date, foundUrl: string }[] = [];
             
-            // Start from today and go back up to 14 days
-            for (let i = 0; i < 14; i++) {
+            const daysToTest = Array.from({ length: 9 }, (_, i) => i);
+            
+            const promises = daysToTest.map(async (i) => {
                 const targetDate = new Date(today);
                 targetDate.setDate(today.getDate() - i);
                 
@@ -18,27 +19,42 @@ export class TalaveraParser {
                 const day = String(targetDate.getDate()).padStart(2, '0');
                 
                 const dateStr = `${year}${month}${day}`;
-                const url = `https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_${dateStr}.pdf`;
                 
-                try {
-                    const response = await fetch(url, {
-                        cache: 'no-store',
-                        headers: {
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-                        }
-                    });
-                    
-                    const contentType = response.headers.get('content-type');
-                    if (response.ok && contentType?.includes('application/pdf')) {
-                        validResults.push({
-                            pdfBuffer: await response.arrayBuffer(),
-                            foundDate: new Date(`${year}-${month}-${day}T12:00:00Z`),
-                            foundUrl: url
+                // Prioritize revisions (_03, _02) before the original
+                const urlsToTest = [
+                    `https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_${dateStr}_03.pdf`,
+                    `https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_${dateStr}_02.pdf`,
+                    `https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_${dateStr}.pdf`
+                ];
+                
+                for (const url of urlsToTest) {
+                    try {
+                        const response = await fetch(url, {
+                            cache: 'no-store',
+                            headers: {
+                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                            }
                         });
+                        
+                        const contentType = response.headers.get('content-type');
+                        if (response.ok && contentType?.includes('application/pdf')) {
+                            const pdfBuffer = await response.arrayBuffer();
+                            return {
+                                pdfBuffer,
+                                foundDate: new Date(`${year}-${month}-${day}T12:00:00Z`),
+                                foundUrl: url
+                            };
+                        }
+                    } catch (fetchErr) {
+                        // Ignore individual fetch errors (like timeouts or 404s) and continue
                     }
-                } catch (fetchErr) {
-                    // Ignore individual fetch errors (like timeouts or 404s) and continue
                 }
+                return null;
+            });
+            
+            const results = await Promise.all(promises);
+            for (const res of results) {
+                if (res) validResults.push(res);
             }
             
             // Sort descending by date (newest first)
