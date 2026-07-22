@@ -6,26 +6,46 @@ export class SalamancaParser {
     // In Salamanca, "BOVINO DE CARNE" and "BOVINO DE VIDA" are the products
     
     static async parse(source: MarketSource): Promise<ETLParserResult> {
-        // Fetch the records from the CKAN API using the new CSV resource ID
-        // limit=300 to get the latest 300 records (approx 2 months of data) instead of 47k
-        const url = `https://datosabiertossalamanca.es/api/3/action/datastore_search?resource_id=ce918df1-9176-4139-965c-70ccab930ef8&q=BOVINO&sort=FECHA%20desc&limit=300`;
-        
-        const response = await fetch(url, { cache: 'no-store' });
-        if (!response.ok) {
-            throw new Error(`Salamanca API returned ${response.status}`);
+        // Fetch the metadata to dynamically find the latest CSV resource URL
+        const metaUrl = "https://datosabiertossalamanca.es/api/3/action/package_show?id=cotizaciones-semanales-de-la-lonja-de-salamanca";
+        const metaResponse = await fetch(metaUrl, { cache: 'no-store' });
+        if (!metaResponse.ok) {
+            throw new Error(`Salamanca API returned ${metaResponse.status} for package_show`);
         }
         
-        const json = await response.json();
-        const records = json.result?.records || [];
+        const metaJson = await metaResponse.json();
+        const csvRes = metaJson.result?.resources?.find((r: any) => r.format === 'CSV');
+        
+        if (!csvRes || !csvRes.url) {
+            throw new Error('CSV resource not found in Salamanca metadata');
+        }
+
+        // Fetch the raw CSV text
+        const csvResponse = await fetch(csvRes.url, { cache: 'no-store' });
+        if (!csvResponse.ok) {
+            throw new Error(`Salamanca API returned ${csvResponse.status} for CSV download`);
+        }
+
+        const csvText = await csvResponse.text();
+        const lines = csvText.split('\n');
         
         const prices = [];
         
-        for (const record of records) {
-            const fechaStr = record.FECHA;
-            const mesa = record.MESA;
-            const producto = record.PRODUCTO;
-            const categoria = record.CATEGORIA;
-            const valor1Str = record.VALOR1;
+        // Parse the first 3000 rows (plenty for the last few months of all mesas)
+        for (let i = 1; i < lines.length; i++) {
+            if (i > 3000) break; 
+            const line = lines[i].trim();
+            if (!line) continue;
+            
+            const parts = line.split(';');
+            const clean = parts.map(p => p.replace(/^"|"$/g, ''));
+            
+            // Expected headers: "ID";"FECHA";"MESA";"PRODUCTO";"CATEGORIA";"VALOR1";"VALOR2"
+            const fechaStr = clean[1];
+            const mesa = clean[2];
+            const producto = clean[3];
+            const categoria = clean[4];
+            const valor1Str = clean[5];
             
             if (!fechaStr || !mesa || !producto || !categoria || !valor1Str) {
                 continue;
@@ -73,8 +93,8 @@ export class SalamancaParser {
         
         return {
             prices,
-            rawContent: JSON.stringify(json),
-            contentType: 'application/json'
+            rawContent: csvText,
+            contentType: 'text/csv'
         };
     }
     
