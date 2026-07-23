@@ -21,7 +21,7 @@ export async function HomeLatestListings() {
         .eq("users.is_ghost", false)
         .neq("image_urls", "{}") // Only listings with photos
         .order("created_at", { ascending: false })
-        .limit(8);
+        .limit(12);
 
     query = query.or(tenantFilterString);
 
@@ -44,13 +44,13 @@ export async function HomeLatestListings() {
                 <h2 className="text-2xl md:text-3xl font-extrabold text-[var(--ag-sys-color-text)] flex items-center justify-center sm:justify-start gap-2">
                     Últimos anuncios publicados
                 </h2>
-                <div className="flex justify-center sm:justify-end">
+                <div className="flex justify-center sm:justify-end w-full sm:w-auto">
                     <LocalizedLink 
                         href="/?sort=recent" 
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary)] hover:text-white rounded-full font-bold text-sm transition-all shadow-sm border border-[var(--ag-sys-color-primary)]/20"
+                        className="inline-flex items-center justify-center gap-2 px-12 py-2.5 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary)] hover:text-white rounded-full font-bold text-base transition-all shadow-sm border border-[var(--ag-sys-color-primary)]/20 w-full sm:w-auto min-w-[200px]"
                     >
                         Ver más
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-5 h-5" />
                     </LocalizedLink>
                 </div>
             </div>
