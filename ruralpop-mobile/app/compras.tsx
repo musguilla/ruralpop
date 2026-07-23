@@ -78,6 +78,7 @@ export default function ComprasScreen() {
             case 'paid_held': return { label: 'Pagado - Preparando envío', color: 'text-blue-600', bg: 'bg-blue-50', icon: Package };
             case 'shipped': return { label: 'Enviado', color: 'text-purple-600', bg: 'bg-purple-50', icon: Package };
             case 'delivered': return { label: 'Entregado', color: 'text-primary', bg: 'bg-primary-muted/20', icon: CheckCircle };
+            case 'buyer_confirmed': return { label: 'Recepción Confirmada', color: 'text-primary', bg: 'bg-primary-muted/20', icon: CheckCircle };
             case 'paid_out': return { label: 'Completado', color: 'text-primary', bg: 'bg-primary-muted/20', icon: CheckCircle };
             case 'refunded': return { label: 'Reembolsado', color: 'text-gray-500', bg: 'bg-gray-100', icon: Clock };
             default: return { label: status, color: 'text-gray-500', bg: 'bg-gray-100', icon: Clock };

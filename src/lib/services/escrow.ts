@@ -307,8 +307,13 @@ export async function confirmEscrowReception(orderId: string) {
 
   if (updateError) throw new Error("Failed to confirm order");
 
-  // Call release logic
-  await releaseEscrowPayout(orderId);
+  // Call release logic but catch errors so the buyer's confirmation succeeds
+  // even if the seller's Stripe connected account is restricted.
+  try {
+    await releaseEscrowPayout(orderId);
+  } catch (err) {
+    console.error("Warning: Payout release failed during buyer confirmation. Order is in buyer_confirmed state.", err);
+  }
 
   return { success: true };
 }

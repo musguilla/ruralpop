@@ -214,6 +214,7 @@ export default function VentasScreen() {
             case 'paid_held': return { label: 'Pagado - Listo para enviar', color: 'text-blue-600', bg: 'bg-blue-50', icon: Package };
             case 'shipped': return { label: 'Enviado por ti', color: 'text-purple-600', bg: 'bg-purple-50', icon: Package };
             case 'delivered': return { label: 'Entregado - Esperando liberación', color: 'text-primary', bg: 'bg-primary-muted/20', icon: Clock };
+            case 'buyer_confirmed': return { label: 'Recepción Confirmada (Procesando Pago)', color: 'text-primary', bg: 'bg-primary-muted/20', icon: CheckCircle };
             case 'return_initiated': return { label: 'Devolución Solicitada', color: 'text-orange-600', bg: 'bg-orange-50', icon: Clock };
             case 'paid_out': return { label: 'Completado y Cobrado', color: 'text-primary', bg: 'bg-primary-muted/20', icon: CheckCircle };
             case 'refunded': return { label: 'Cancelado/Reembolsado', color: 'text-gray-500', bg: 'bg-gray-100', icon: Clock };
