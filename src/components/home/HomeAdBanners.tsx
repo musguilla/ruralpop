@@ -40,10 +40,19 @@ export function HomeAdBanners() {
                     />
                 </Link>
 
-                {/* Banner 3: Google Adsense */}
-                <div className="block relative aspect-square">
-                    <AdSenseInFeed />
-                </div>
+                {/* Banner 3: Semillas */}
+                <Link 
+                    href="https://www.ruralpop.com/empresa/semillas" 
+                    className="block relative aspect-square overflow-hidden rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-[var(--ag-sys-color-border)]"
+                >
+                    <Image 
+                        src="/semillass-banner-800x800.jpg" 
+                        alt="Semillas"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                    />
+                </Link>
 
                 {/* Banner 4: Google Adsense */}
                 <div className="block relative aspect-square">
