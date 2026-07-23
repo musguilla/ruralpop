@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -238,7 +238,7 @@ export default function ChatScreen() {
         <SafeAreaView className="flex-1 bg-surface-muted">
             <View 
                 className="px-4 pb-3 bg-white border-b border-gray-100 flex-row items-center"
-                style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 12) : 12 }}
+                style={{ paddingTop: 12 }}
             >
                 <TouchableOpacity onPress={() => router.back()} className="mr-3">
                     <ChevronLeft color="#374151" size={28} />
@@ -303,7 +303,7 @@ export default function ChatScreen() {
 
                 <View 
                     className="bg-white border-t border-gray-200 px-4 pt-3 flex-row items-center"
-                    style={{ paddingBottom: Platform.OS === 'android' ? Math.max(insets.bottom, 12) : 12 }}
+                    style={{ paddingBottom: 12 }}
                 >
                     <TextInput
                         className="flex-1 bg-surface-muted border border-gray-200 rounded-full px-4 h-12 text-base text-gray-800 mr-2"

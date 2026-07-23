@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, SafeAreaView, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../src/contexts/AuthContext';
 import { supabase } from '../src/lib/supabase';
 import { ArrowLeft, TrendingUp, RefreshCw, ShieldCheck, Zap, ChevronRight } from 'lucide-react-native';

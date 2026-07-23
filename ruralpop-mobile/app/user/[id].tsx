@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, SafeAreaView, Platform, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Platform, Modal } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { ArrowLeft, BadgeCheck } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { ListingCard } from '../../src/components/ui/ListingCard';
 import { Listing } from '../../src/types';
 import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';

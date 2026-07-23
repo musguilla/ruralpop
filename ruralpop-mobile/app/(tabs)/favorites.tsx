@@ -1,4 +1,5 @@
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl, SafeAreaView, Platform } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, SafeAreaView, Modal, TextInput, Alert } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../src/contexts/AuthContext';
 import { supabase } from '../src/lib/supabase';
 import { useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, FlatList, ActivityIndicator, Platform } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Platform } from 'react-native';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { useRouter } from 'expo-router';

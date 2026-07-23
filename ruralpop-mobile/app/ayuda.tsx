@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { IS_EQUIPOP } from '../src/config/tenants';
