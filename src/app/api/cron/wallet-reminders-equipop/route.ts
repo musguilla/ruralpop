@@ -46,7 +46,7 @@ export async function GET(req: Request) {
             .select(`
                 id, 
                 email, 
-                full_name,
+                name,
                 created_at,
                 professional_wallets (
                     stripe_connected_account_id
@@ -94,7 +94,7 @@ export async function GET(req: Request) {
         for (const user of usersToRemind) {
             if (!user.email) continue;
 
-            const name = user.full_name || 'Jinete';
+            const name = user.name || 'Jinete';
             const htmlContent = template.htmlContent.replace('{{name}}', name);
 
             try {

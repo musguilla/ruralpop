@@ -194,7 +194,7 @@ export async function getRelatedTractorListingsByFeature(featureType: string, fe
     const supabase = await createClient();
     
     // Base query for active tractor listings
-    let query = supabase.from('listings').select('*').eq('status', 'active').eq('category_id', 'tractores').order('created_at', { ascending: false }).limit(6);
+    let query = supabase.from('listings').select('*').eq('status', 'active').eq('category', 'tractores').order('created_at', { ascending: false }).limit(6);
     
     // We try to match any of the related brand names in the listing title/description as a fuzzy search
     const brandNames = relatedBrands.map(b => b.name).join(' | ');
@@ -214,7 +214,7 @@ export async function getRelatedTractorListingsByFeature(featureType: string, fe
         .from('listings')
         .select('*')
         .eq('status', 'active')
-        .eq('category_id', 'tractores')
+        .eq('category', 'tractores')
         .order('created_at', { ascending: false })
         .limit(6);
         
