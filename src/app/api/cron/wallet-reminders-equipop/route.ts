@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { EQUIPOP_EMAIL_TEMPLATES } from '@/constants/emailTemplates';
+import { sendNotification } from '@/lib/services/notifications';
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 
@@ -103,6 +104,17 @@ export async function GET(req: Request) {
                     subject: template.subject,
                     html: htmlContent,
                 });
+                
+                // Enviar también Notificación Push
+                await sendNotification(
+                    user.id,
+                    'wallet_reminder',
+                    '¡Completa tu monedero!',
+                    'Finaliza la configuración de tu monedero para empezar a vender de forma 100% segura.',
+                    { url: '/monedero' },
+                    'equipop'
+                );
+
                 sentCount++;
             } catch (err) {
                 console.error(`Failed to send wallet reminder to ${user.email}:`, err);
