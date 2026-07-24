@@ -10,7 +10,7 @@ import { supabase } from '../../src/lib/supabase';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { getDefaultTenantFilterString } from '../../src/config/tenants';
-import NotificationsList from './NotificationsList';
+import NotificationsList from '../../src/components/NotificationsList';
 
 type TabType = 'mensajes' | 'notificaciones';
 
