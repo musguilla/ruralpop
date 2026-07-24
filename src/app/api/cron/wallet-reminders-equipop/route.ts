@@ -105,15 +105,13 @@ export async function GET(req: Request) {
                     html: htmlContent,
                 });
                 
-                // Enviar también Notificación Push
-                await sendNotification(
-                    user.id,
-                    'wallet_reminder',
-                    '¡Completa tu monedero!',
-                    'Finaliza la configuración de tu monedero para empezar a vender de forma 100% segura.',
-                    { url: '/monedero' },
-                    'equipop'
-                );
+                await sendNotification({
+                    userId: user.id,
+                    type: 'wallet_reminder' as any,
+                    title: '¡Completa tu monedero!',
+                    body: 'Finaliza la configuración de tu monedero para empezar a vender de forma 100% segura.',
+                    data: { url: '/monedero' }
+                });
 
                 sentCount++;
             } catch (err) {

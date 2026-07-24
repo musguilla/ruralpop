@@ -278,7 +278,7 @@ export async function POST(req: Request) {
                     // Send push notification to the seller using the new service
                     try {
                         const { data: listing } = await supabaseAdmin.from('listings').select('title').eq('id', order.listing_id).single();
-                        const shippingDetails = session.shipping_details?.address;
+                        const shippingDetails = session.customer_details?.address || (session as any).shipping_details?.address;
                         const addressStr = shippingDetails ? `${shippingDetails.line1 || ''}, ${shippingDetails.city || ''}, ${shippingDetails.postal_code || ''}`.trim().replace(/, $/, '') : 'Dirección no especificada';
                         const priceEur = (order.gross_amount_cents / 100).toFixed(2);
 
