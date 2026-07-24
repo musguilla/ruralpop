@@ -44,6 +44,12 @@ export async function POST(req: Request) {
         switch (action) {
             case 'confirm_reception': {
                 if (order.buyer_id !== user.id) return new NextResponse("Unauthorized", { status: 403 });
+                
+                // Idempotency: If already confirmed, just return success instead of an error
+                if (order.status === "buyer_confirmed" || order.status === "paid_out") {
+                    return NextResponse.json({ success: true, message: "Order was already confirmed" });
+                }
+
                 if (order.status !== "paid_held" && order.status !== "awaiting_delivery") {
                     return new NextResponse("Order cannot be confirmed at this stage", { status: 400 });
                 }
@@ -59,6 +65,44 @@ export async function POST(req: Request) {
                 if (updateError) throw new Error("Failed to confirm order");
 
                 await releaseEscrowPayout(orderId);
+                
+                // Notify seller
+                const { sendNotification } = await import('@/lib/services/notifications');
+                await sendNotification({
+                    userId: order.seller_id,
+                    type: 'receipt_confirmed',
+                    title: '¡El comprador ha recibido tu artículo!',
+                    body: 'El comprador ha confirmado la recepción. Recibirás el pago en tu monedero muy pronto.',
+                    data: { url: '/ventas' }
+                });
+
+                return NextResponse.json({ success: true });
+            }
+
+            case 'mark_shipped': {
+                if (order.seller_id !== user.id) return new NextResponse("Unauthorized", { status: 403 });
+                if (order.status !== "paid_held") {
+                    return new NextResponse("Order cannot be marked as shipped at this stage", { status: 400 });
+                }
+
+                const { error: updateError } = await supabaseAdmin
+                    .from("escrow_orders")
+                    .update({ status: "awaiting_delivery" })
+                    .eq("id", orderId);
+
+                if (updateError) throw new Error("Failed to mark order as shipped");
+
+                // Notify buyer
+                const { data: listing } = await supabaseAdmin.from('listings').select('title').eq('id', order.listing_id).single();
+                const { sendNotification } = await import('@/lib/services/notifications');
+                await sendNotification({
+                    userId: order.buyer_id,
+                    type: 'shipped',
+                    title: '¡Tu pedido ha sido enviado!',
+                    body: `El vendedor ha enviado tu compra: ${listing?.title || 'artículo'}.`,
+                    data: { url: '/compras' }
+                });
+
                 return NextResponse.json({ success: true });
             }
 

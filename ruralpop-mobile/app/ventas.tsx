@@ -297,6 +297,12 @@ export default function VentasScreen() {
                         <Text className="text-sm text-blue-800 font-medium text-center">
                             ¡El comprador ya ha pagado! Prepara el paquete para el envío. Recibirás el dinero cuando lo reciba.
                         </Text>
+                        <TouchableOpacity
+                            onPress={() => handleEscrowAction('mark_shipped', order.id)}
+                            className="bg-primary rounded-full py-3 items-center mt-3"
+                        >
+                            <Text className="text-white font-bold text-[15px]">Envío realizado</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
 

@@ -71,6 +71,10 @@ export const getRuralpopDatabaseId = (): string | null => {
   return process.env.NEXT_PUBLIC_RURALPOP_TENANT_ID || process.env.EXPO_PUBLIC_RURALPOP_TENANT_ID || TENANTS_CONFIG[RURALPOP_TENANT_SLUG]?.id || null;
 };
 
+export const getEquipopDatabaseId = (): string | null => {
+  return process.env.NEXT_PUBLIC_EQUIPOP_TENANT_ID || process.env.EXPO_PUBLIC_EQUIPOP_TENANT_ID || TENANTS_CONFIG[EQUIPOP_TENANT_SLUG]?.id || null;
+};
+
 /**
  * Helper: Construye el string de filtro PostgREST para queries de Supabase.
  * Permite leer registros del tenant actual o legacy (null).

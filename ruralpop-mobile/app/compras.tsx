@@ -129,27 +129,28 @@ export default function ComprasScreen() {
 
                 {/* Acciones de Escrow */}
                 {(item.status === 'paid_held' || item.status === 'awaiting_delivery') && (
-                    <View className="px-4 py-3 border-t border-gray-100 flex-row gap-2 bg-white">
+                    <View className="px-4 py-4 border-t border-gray-100 flex-col gap-3 bg-white">
+                        <TouchableOpacity
+                            onPress={() => handleEscrowAction('confirm_reception', item.id)}
+                            disabled={!!actionLoading}
+                            className={`w-full py-3.5 rounded-xl items-center justify-center shadow-sm ${IS_EQUIPOP ? 'bg-[#1E3A8A]' : 'bg-emerald-600'}`}
+                        >
+                            {actionLoading === `confirm_reception_${item.id}` ? (
+                                <ActivityIndicator color="white" size="small" />
+                            ) : (
+                                <Text className="text-white font-bold text-base">Confirmar Recepción</Text>
+                            )}
+                        </TouchableOpacity>
+                        
                         <TouchableOpacity
                             onPress={() => handleEscrowAction('initiate_return', item.id)}
                             disabled={!!actionLoading}
-                            className="flex-1 bg-white border border-gray-300 py-2.5 rounded-xl items-center justify-center opacity-90"
+                            className="w-full bg-white border border-gray-300 py-3 rounded-xl items-center justify-center opacity-90"
                         >
                             {actionLoading === `initiate_return_${item.id}` ? (
                                 <ActivityIndicator color="#4b5563" size="small" />
                             ) : (
                                 <Text className="text-gray-700 font-bold text-sm">Tengo un problema</Text>
-                            )}
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => handleEscrowAction('confirm_reception', item.id)}
-                            disabled={!!actionLoading}
-                            className="flex-[1.5] bg-emerald-600 py-2.5 rounded-xl items-center justify-center shadow-sm"
-                        >
-                            {actionLoading === `confirm_reception_${item.id}` ? (
-                                <ActivityIndicator color="white" size="small" />
-                            ) : (
-                                <Text className="text-white font-bold text-sm">Confirmar Recepción</Text>
                             )}
                         </TouchableOpacity>
                     </View>

@@ -1,8 +1,8 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
 const IS_EQUIPOP = process.env.APP_VARIANT === 'equipop';
-const VERSION = '1.0.55';
-const BUILD_NUMBER = 104;
+const VERSION = '1.0.56';
+const BUILD_NUMBER = 105;
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
@@ -72,13 +72,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       "expo-notifications",
       [
         "expo-build-properties",
-        {
-          android: {
-            compileSdkVersion: 35,
-            targetSdkVersion: 35,
-            buildToolsVersion: "35.0.0"
-          }
-        }
+        {}
       ],
       [
         "react-native-google-mobile-ads",

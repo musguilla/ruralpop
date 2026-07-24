@@ -10,6 +10,9 @@ import { supabase } from '../../src/lib/supabase';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { getDefaultTenantFilterString } from '../../src/config/tenants';
+import NotificationsList from './NotificationsList';
+
+type TabType = 'mensajes' | 'notificaciones';
 
 interface Conversation {
     other_user_id: string;
@@ -28,6 +31,7 @@ export default function MessagesScreen() {
     const { session, user, isLoading } = useAuth();
     const router = useRouter();
     const insets = useSafeAreaInsets();
+    const [activeTab, setActiveTab] = useState<TabType>('mensajes');
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [fetching, setFetching] = useState(true);
 
@@ -138,13 +142,32 @@ export default function MessagesScreen() {
     return (
         <SafeAreaView className="flex-1 bg-surface-muted">
             <View 
-                className="px-4 pb-4 bg-white border-b border-gray-100 flex-row justify-between items-center"
+                className="px-4 pb-2 bg-white border-b border-gray-100"
                 style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 16) : 16 }}
             >
-                <Text className="text-2xl font-extrabold text-text">Mensajes</Text>
+                <View className="flex-row items-center space-x-2">
+                    <TouchableOpacity 
+                        onPress={() => setActiveTab('mensajes')}
+                        className={`px-4 py-2 rounded-full ${activeTab === 'mensajes' ? 'bg-primary' : 'bg-gray-100'}`}
+                    >
+                        <Text className={`font-bold ${activeTab === 'mensajes' ? 'text-white' : 'text-gray-600'}`}>
+                            Mensajes
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        onPress={() => setActiveTab('notificaciones')}
+                        className={`px-4 py-2 rounded-full ${activeTab === 'notificaciones' ? 'bg-primary' : 'bg-gray-100'}`}
+                    >
+                        <Text className={`font-bold ${activeTab === 'notificaciones' ? 'text-white' : 'text-gray-600'}`}>
+                            Notificaciones
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
 
-            {fetching ? (
+            {activeTab === 'notificaciones' ? (
+                <NotificationsList />
+            ) : fetching ? (
                 <View className="flex-1 justify-center items-center">
                     <ActivityIndicator size="large" color="#059669" />
                 </View>

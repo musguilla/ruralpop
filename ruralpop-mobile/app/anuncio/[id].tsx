@@ -22,6 +22,7 @@ const { width, height } = Dimensions.get('window');
 
 interface ExtendedListing extends Listing {
     seller?: User & { zoo_register_number?: string };
+    tags?: string[];
 }
 
 export default function ListingDetailsScreen() {

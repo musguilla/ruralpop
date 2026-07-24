@@ -275,30 +275,23 @@ export async function POST(req: Request) {
                     }
                     console.log(`✅ Escrow order ${escrowOrderId} marked as paid_held`);
 
-                    // Send push notification to the seller
+                    // Send push notification to the seller using the new service
                     try {
-                        const { data: seller } = await supabaseAdmin.from('users').select('expo_push_token').eq('id', order.seller_id).single();
                         const { data: listing } = await supabaseAdmin.from('listings').select('title').eq('id', order.listing_id).single();
+                        const shippingDetails = session.shipping_details?.address;
+                        const addressStr = shippingDetails ? `${shippingDetails.line1 || ''}, ${shippingDetails.city || ''}, ${shippingDetails.postal_code || ''}`.trim().replace(/, $/, '') : 'Dirección no especificada';
+                        const priceEur = (order.gross_amount_cents / 100).toFixed(2);
 
-                        if (seller?.expo_push_token) {
-                            await fetch('https://exp.host/--/api/v2/push/send', {
-                                method: 'POST',
-                                headers: {
-                                    Accept: 'application/json',
-                                    'Accept-encoding': 'gzip, deflate',
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    to: seller.expo_push_token,
-                                    sound: 'default',
-                                    title: '¡Has vendido un artículo!',
-                                    body: `El pago seguro por tu anuncio "${listing?.title || 'artículo'}" se ha completado. Tienes el dinero retenido en tu monedero.`,
-                                    data: { url: `/ventas` },
-                                }),
-                            });
-                            console.log(`✅ Push notification sent to seller ${order.seller_id} for order ${escrowOrderId}`);
-                        }
-                    } catch (pushErr) {
+                        const { sendNotification } = await import('@/lib/services/notifications');
+                        await sendNotification({
+                            userId: order.seller_id,
+                            type: 'sale',
+                            title: '¡Has vendido un artículo!',
+                            body: `Producto: ${listing?.title || 'artículo'}\nPrecio: ${priceEur}€\nDirección de envío: ${addressStr}`,
+                            data: { url: `/ventas` }
+                        });
+                        console.log(`✅ Notification saved and push sent to seller ${order.seller_id} for order ${escrowOrderId}`);
+                    } catch (pushErr: unknown) {
                         console.error("Failed to send push notification to seller:", pushErr);
                     }
                 }
