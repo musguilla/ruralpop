@@ -25,7 +25,7 @@
         "EXPO_PUBLIC_TENANT_ID": "ea2490cc-dc33-48f3-bc7b-82b14aa70eb9"
       },
       "android": {
-        "image": "ubuntu-22.04-jdk-17-ndk-r23b"
+        "image": "ubuntu-22.04-jdk-17-ndk-r26b"
       }
     },
     "production-equipop": {
@@ -43,7 +43,7 @@
         "EXPO_PUBLIC_TENANT_ID": "69d55371-2f70-4e67-b55c-4502bce305bb"
       },
       "android": {
-        "image": "ubuntu-22.04-jdk-17-ndk-r23b"
+        "image": "ubuntu-22.04-jdk-17-ndk-r26b"
       }
     }
   },
