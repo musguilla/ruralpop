@@ -282,6 +282,7 @@ export default async function AdminDashboard() {
                     color="purple"
                     histograms={realFeaturedHistograms}
                     showFilters={true}
+                    href="/admin/payments/featured"
                 />
 
                 {/* CARD 4: Perfiles Profesionales (REAL DATA) */}
