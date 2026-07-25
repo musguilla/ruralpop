@@ -40,8 +40,8 @@ export default async function FeaturedPaymentsPage() {
         supabase.from('users').select('id, email, name, commercial_name').in('id', allUserIds)
     ]);
 
-    const listingsMap = new Map(listingsData?.map((l: any) => [l.id, l]) || []);
-    const usersMap = new Map(usersData?.map((u: any) => [u.id, u]) || []);
+    const listingsMap = new Map<string, any>(listingsData?.map((l: any) => [l.id, l]) || []);
+    const usersMap = new Map<string, any>(usersData?.map((u: any) => [u.id, u]) || []);
 
     return (
         <div className="space-y-8">
