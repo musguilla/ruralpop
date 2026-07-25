@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Search } from "lucide-react";
 
 export type HistogramData = { value: number; tooltip: string };
 export type Histograms = { days: HistogramData[]; weeks: HistogramData[]; months: HistogramData[] };
@@ -27,10 +28,10 @@ export function AdminStatCard({
     const [filter, setFilter] = useState<'days' | 'weeks' | 'months'>('days');
 
     const colorMap = {
-        blue: { bg: 'bg-blue-500/10', text: 'text-blue-500', fill: 'bg-blue-500', activeFilter: 'bg-blue-500 text-white' },
-        green: { bg: 'bg-green-500/10', text: 'text-green-500', fill: 'bg-green-500', activeFilter: 'bg-green-500 text-white' },
-        purple: { bg: 'bg-purple-500/10', text: 'text-purple-500', fill: 'bg-purple-500', activeFilter: 'bg-purple-500 text-white' },
-        amber: { bg: 'bg-amber-500/10', text: 'text-amber-500', fill: 'bg-amber-500', activeFilter: 'bg-amber-500 text-white' },
+        blue: { bg: 'bg-blue-500/10', text: 'text-blue-500', fill: 'bg-blue-500', activeFilter: 'bg-blue-500 text-white', iconHover: 'hover:bg-blue-500/20' },
+        green: { bg: 'bg-green-500/10', text: 'text-green-500', fill: 'bg-green-500', activeFilter: 'bg-green-500 text-white', iconHover: 'hover:bg-green-500/20' },
+        purple: { bg: 'bg-purple-500/10', text: 'text-purple-500', fill: 'bg-purple-500', activeFilter: 'bg-purple-500 text-white', iconHover: 'hover:bg-purple-500/20' },
+        amber: { bg: 'bg-amber-500/10', text: 'text-amber-500', fill: 'bg-amber-500', activeFilter: 'bg-amber-500 text-white', iconHover: 'hover:bg-amber-500/20' },
     };
     const colorClasses = colorMap[color as keyof typeof colorMap] || colorMap.blue;
 
@@ -85,9 +86,10 @@ export function AdminStatCard({
                         {href && (
                             <a 
                                 href={href}
-                                className={`px-2.5 py-1 text-[10px] font-bold rounded-lg transition-colors ${colorClasses.text} hover:underline ml-auto flex items-center gap-1`}
+                                className={`flex items-center justify-center p-1.5 rounded-lg transition-colors ml-auto ${colorClasses.bg} ${colorClasses.text} ${colorClasses.iconHover}`}
+                                title="Ver detalles"
                             >
-                                Ver más <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                <Search className="w-4 h-4" />
                             </a>
                         )}
                     </div>
