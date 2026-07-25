@@ -2,8 +2,6 @@ import { createClient } from "@/utils/supabase/server";
 import stripe from "@/lib/stripe";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 import { TENANTS_CONFIG } from "@/config/tenants";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -92,7 +90,7 @@ export default async function FeaturedPaymentsPage() {
                                 return (
                                     <tr key={pi.id} className="hover:bg-[var(--ag-sys-color-background)]/50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap text-[var(--ag-sys-color-text-muted)]">
-                                            {format(date, "d MMM yyyy, HH:mm", { locale: es })}
+                                            {date.toLocaleString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                         </td>
                                         <td className="px-6 py-4">
                                             {user ? (
