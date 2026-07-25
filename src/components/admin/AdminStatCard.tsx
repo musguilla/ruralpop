@@ -13,6 +13,7 @@ export function AdminStatCard({
     histograms,
     showFilters,
     subtext,
+    href,
 }: {
     label: string;
     value: number | string;
@@ -21,6 +22,7 @@ export function AdminStatCard({
     histograms?: Histograms;
     showFilters?: boolean;
     subtext?: React.ReactNode;
+    href?: string;
 }) {
     const [filter, setFilter] = useState<'days' | 'weeks' | 'months'>('days');
 
@@ -54,26 +56,40 @@ export function AdminStatCard({
             {/* Area Inferior: Graficos y Filtros */}
             <div className="mt-auto pt-4 border-t border-[var(--ag-sys-color-border)] flex flex-col gap-4 flex-1 justify-end">
 
-                {showFilters && (
-                    <div className="flex gap-1.5 -mx-1">
-                        <button
-                            onClick={() => setFilter('days')}
-                            className={`px-2.5 py-1 text-[9px] font-bold rounded-lg uppercase tracking-wider transition-colors ${filter === 'days' ? colorClasses.activeFilter : 'bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-surface)]'}`}
-                        >
-                            Días
-                        </button>
-                        <button
-                            onClick={() => setFilter('weeks')}
-                            className={`px-2.5 py-1 text-[9px] font-bold rounded-lg uppercase tracking-wider transition-colors ${filter === 'weeks' ? colorClasses.activeFilter : 'bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-surface)]'}`}
-                        >
-                            Semanas
-                        </button>
-                        <button
-                            onClick={() => setFilter('months')}
-                            className={`px-2.5 py-1 text-[9px] font-bold rounded-lg uppercase tracking-wider transition-colors ${filter === 'months' ? colorClasses.activeFilter : 'bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-surface)]'}`}
-                        >
-                            Meses
-                        </button>
+                {(showFilters || href) && (
+                    <div className="flex justify-between items-center -mx-1">
+                        <div className="flex gap-1.5">
+                            {showFilters && (
+                                <>
+                                    <button
+                                        onClick={() => setFilter('days')}
+                                        className={`px-2.5 py-1 text-[9px] font-bold rounded-lg uppercase tracking-wider transition-colors ${filter === 'days' ? colorClasses.activeFilter : 'bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-surface)]'}`}
+                                    >
+                                        Días
+                                    </button>
+                                    <button
+                                        onClick={() => setFilter('weeks')}
+                                        className={`px-2.5 py-1 text-[9px] font-bold rounded-lg uppercase tracking-wider transition-colors ${filter === 'weeks' ? colorClasses.activeFilter : 'bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-surface)]'}`}
+                                    >
+                                        Semanas
+                                    </button>
+                                    <button
+                                        onClick={() => setFilter('months')}
+                                        className={`px-2.5 py-1 text-[9px] font-bold rounded-lg uppercase tracking-wider transition-colors ${filter === 'months' ? colorClasses.activeFilter : 'bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-surface)]'}`}
+                                    >
+                                        Meses
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                        {href && (
+                            <a 
+                                href={href}
+                                className={`px-2.5 py-1 text-[10px] font-bold rounded-lg transition-colors ${colorClasses.text} hover:underline ml-auto flex items-center gap-1`}
+                            >
+                                Ver más <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </a>
+                        )}
                     </div>
                 )}
 

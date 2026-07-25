@@ -258,6 +258,7 @@ export default async function AdminDashboard() {
                     color="blue"
                     histograms={realUsersHistograms}
                     showFilters={true}
+                    href="/admin/users"
                 />
 
                 {/* CARD 2: Anuncios Totales (REAL DATA) */}
@@ -269,6 +270,7 @@ export default async function AdminDashboard() {
                     color="green"
                     histograms={realListingsHistograms}
                     showFilters={true}
+                    href="/admin/listings"
                 />
 
                 {/* CARD 3: Anuncios Destacados (REAL DATA) */}
