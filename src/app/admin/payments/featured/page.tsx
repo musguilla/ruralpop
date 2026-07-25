@@ -112,7 +112,7 @@ export default async function FeaturedPaymentsPage() {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-600">
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-600 whitespace-nowrap">
                                                 {planName}
                                             </span>
                                         </td>
