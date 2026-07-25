@@ -118,7 +118,7 @@ export function HomeSearchHero() {
             {/* Desktop Search Bar */}
             <form
                 onSubmit={handleSearch}
-                className="hidden md:flex flex-row items-center w-full max-w-5xl bg-white border border-[var(--ag-sys-color-border)] rounded-full p-1.5 shadow-sm hover:shadow-md transition-shadow"
+                className="hidden md:flex flex-row items-center w-full max-w-[960px] bg-white border border-[var(--ag-sys-color-border)] rounded-full p-1.5 shadow-sm hover:shadow-md transition-shadow"
             >
                 {/* Query */}
                 <div className="flex-1 flex items-center px-4 gap-2">
@@ -133,7 +133,7 @@ export function HomeSearchHero() {
                 </div>
 
                 {/* Category Button Trigger */}
-                <div className="w-1/5 border-l border-gray-200 px-4 flex items-center gap-2">
+                <div className="w-[22%] border-l border-gray-200 px-4 flex items-center gap-2">
                     <button
                         type="button"
                         onClick={() => setIsCategoryModalOpen(true)}
@@ -147,7 +147,7 @@ export function HomeSearchHero() {
                 </div>
 
                 {/* Location Button Trigger */}
-                <div className="w-1/5 border-l border-gray-200 px-4 flex items-center gap-2">
+                <div className="w-[22%] border-l border-gray-200 px-4 flex items-center gap-2">
                     <button
                         type="button"
                         onClick={() => setIsLocationModalOpen(true)}
