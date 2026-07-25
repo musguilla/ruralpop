@@ -3,6 +3,8 @@ import stripe from "@/lib/stripe";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 import { TENANTS_CONFIG } from "@/config/tenants";
 import Link from "next/link";
+import { slugify } from "@/utils/seoUtils";
+import { encodeId } from "@/utils/idUtils";
 
 export const dynamic = "force-dynamic";
 
@@ -104,7 +106,7 @@ export default async function FeaturedPaymentsPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             {listing ? (
-                                                <Link href={`/admin/listings/edit/${listing.id}`} className="font-bold text-[var(--ag-sys-color-primary)] hover:underline">
+                                                <Link href={`/anuncio/${slugify(listing.title || 'anuncio')}-${encodeId(listing.id)}`} target="_blank" className="font-bold text-[var(--ag-sys-color-primary)] hover:underline">
                                                     {listing.title}
                                                 </Link>
                                             ) : (
