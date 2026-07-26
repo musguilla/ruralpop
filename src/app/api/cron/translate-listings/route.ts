@@ -46,6 +46,12 @@ export async function GET(request: Request) {
         return new Response('Unauthorized', { status: 401 });
     }
 
+    if (!process.env.ANTHROPIC_API_KEY) {
+        console.error("CRÍTICO: La variable de entorno ANTHROPIC_API_KEY no está configurada o no se ha cargado en este despliegue.");
+    } else {
+        console.log("ANTHROPIC_API_KEY detectada correctamente.");
+    }
+
     try {
         // 2. Obtener anuncios activos sin traducir
         // Limitar a 20 por ejecución para no exceder los límites de Vercel Serverless
