@@ -107,10 +107,8 @@ export async function generateMetadata(): Promise<Metadata> {
     }
   };
 
-  // Enforce noindex for Portuguese routes that are not explicitly approved
-  if (locale === 'pt' && !ptIndexableRoutes.includes(originalPathname)) {
-    metadataObj.robots = { index: false, follow: true };
-  }
+  // Layout handles default robots indexing
+
 
   return metadataObj;
 }

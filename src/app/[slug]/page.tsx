@@ -105,15 +105,8 @@ export async function generateMetadata(props: {
         canonical += `?page=${searchParams.page}`;
     }
 
-    // Portuguese fallback route detection (Strict NOINDEX)
-    const isPt = locale === 'pt';
-    const hasRouteKey = headersList.has('x-route-key');
-    const isPtFallback = isPt && !hasRouteKey;
-
     let robotsRules: any = undefined;
-    if (isPtFallback) {
-        robotsRules = { index: false, follow: false };
-    } else if (isPaginated) {
+    if (isPaginated) {
         robotsRules = { index: false, follow: true };
     }
     
