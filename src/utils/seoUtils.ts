@@ -1,5 +1,6 @@
 import { CATEGORIES } from "@/constants/categories";
 import { LOCATIONS } from "@/constants/locations";
+import { translateSeoSlug } from "@/utils/seoTranslations";
 
 export function slugify(text: string): string {
     return text
@@ -77,28 +78,28 @@ const INVERSE_SUBCATEGORY_ALIASES = Object.fromEntries(
     Object.entries(SUBCATEGORY_ALIASES).map(([k, v]) => [v, k])
 );
 
-export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlParams): string {
+export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlParams, locale: string = 'es'): string {
     const parts: string[] = [];
 
     // Keyword or base
     if (q && q.trim()) {
-        parts.push(slugify(q));
+        parts.push(translateSeoSlug(slugify(q), locale));
     } else {
-        parts.push('anuncios');
+        parts.push(translateSeoSlug('anuncios', locale));
     }
 
     // Category
     if (category && validCategories.has(category)) {
-        parts.push(CATEGORY_ALIASES[category] || category);
+        parts.push(translateSeoSlug(CATEGORY_ALIASES[category] || category, locale));
     }
 
     // Subcategory
     if (subcategory) {
         const subSlug = subcategoryIdMap.get(subcategory) || slugify(subcategory);
-        parts.push(SUBCATEGORY_ALIASES[subSlug] || subSlug);
+        parts.push(translateSeoSlug(SUBCATEGORY_ALIASES[subSlug] || subSlug, locale));
     }
 
-    // Location
+    // Location (we usually don't translate location names)
     if (province_id) {
         const locSlug = locationIdMap.get(province_id);
         if (locSlug) parts.push(locSlug);
