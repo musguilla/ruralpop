@@ -15,7 +15,7 @@ const anthropic = new Anthropic({
  * Función para traducir textos usando la API de Claude (Anthropic).
  */
 async function translateText(text: string, targetLang = 'Portugués') {
-    if (!text || !process.env.ANTHROPIC_API_KEY) return text;
+    if (!text || !process.env.ANTHROPIC_API_KEY) return null;
     
     try {
         const msg = await anthropic.messages.create({
@@ -32,10 +32,10 @@ async function translateText(text: string, targetLang = 'Portugués') {
         });
         
         // @ts-ignore
-        return msg.content[0]?.text?.trim() || text;
+        return msg.content[0]?.text?.trim() || null;
     } catch (e) {
         console.error("Error en la traducción con Claude:", e);
-        return text;
+        return null;
     }
 }
 
@@ -73,15 +73,19 @@ export async function GET(request: Request) {
                 const title_pt = await translateText(listing.title);
                 const description_pt = await translateText(listing.description);
 
-                const { error: updateError } = await supabaseAdmin
-                    .from('listings')
-                    .update({ title_pt, description_pt })
-                    .eq('id', listing.id);
+                if (title_pt) {
+                    const { error: updateError } = await supabaseAdmin
+                        .from('listings')
+                        .update({ title_pt, description_pt })
+                        .eq('id', listing.id);
 
-                if (updateError) {
-                    console.error(`Error actualizando el anuncio ${listing.id}:`, updateError);
+                    if (updateError) {
+                        console.error(`Error actualizando el anuncio ${listing.id}:`, updateError);
+                    } else {
+                        count++;
+                    }
                 } else {
-                    count++;
+                    console.error(`Traducción fallida para el anuncio ${listing.id}, ignorando...`);
                 }
 
                 // Pequeña pausa para evitar límites de rate
