@@ -180,8 +180,19 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
         <h1 class="title">Aviso de Moderación</h1>
         <p class="text">
             Hola,<br/><br/>
-            Te contactamos desde el equipo de moderación de Ruralpop para informarte que tu anuncio ha sido eliminado.<br/><br/>
-            Tras revisar el contenido, hemos determinado que no encaja en las categorías y la temática principal de nuestra plataforma, enfocada al sector agrícola, ganadero y rural.<br/><br/>
+            Te escribimos para informarte de que tu anuncio ha sido dado de baja en nuestra plataforma.<br/><br/>
+            
+            <!-- TARJETA DEL ANUNCIO -->
+            <div style="background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin: 24px 0; display: table; width: 100%; box-sizing: border-box;">
+                <div style="display: table-cell; vertical-align: middle; width: 90px;">
+                    <img src="{{IMAGE_URL}}" alt="Imagen del anuncio" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px;" />
+                </div>
+                <div style="display: table-cell; vertical-align: middle; padding-left: 16px; font-weight: bold; color: #111827; font-size: 16px; text-align: left;">
+                    {{TITLE}}
+                </div>
+            </div>
+            
+            En Ruralpop nos esforzamos por mantener un mercado de calidad centrado en el sector ganadero, agrícola y del entorno rural. Tras la revisión de nuestro equipo de moderación, hemos determinado que el artículo que intentas vender <strong>no encaja con la temática de nuestra plataforma</strong>, enfocada al sector agrícola, ganadero y rural.<br/><br/>
             Si crees que ha sido un error, no dudes en contactarnos.
         </p>
         <p class="footer">
@@ -212,6 +223,17 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
         <p class="text">
             Hola,<br/><br/>
             Te recordamos que la Ley de Bienestar Animal (Ley 7/2023) en España limita la publicación de anuncios de determinados animales de compañía por parte de usuarios particulares en plataformas online.<br/><br/>
+            
+            <!-- TARJETA DEL ANUNCIO -->
+            <div style="background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin: 24px 0; display: table; width: 100%; box-sizing: border-box;">
+                <div style="display: table-cell; vertical-align: middle; width: 90px;">
+                    <img src="{{IMAGE_URL}}" alt="Imagen del anuncio" style="width: 80px; height: 80px; object-fit: cover; border-radius: 6px;" />
+                </div>
+                <div style="display: table-cell; vertical-align: middle; padding-left: 16px; font-weight: bold; color: #111827; font-size: 16px; text-align: left;">
+                    {{TITLE}}
+                </div>
+            </div>
+            
             Para publicar anuncios de perros, aves de compañía y otros animales regulados, es necesario disponer de un perfil verificado donde debes introducir número de registro de núcleo zoológico, explotación o criadero.<br/><br/>
             En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Anuncio Pro por solo 1,99€</strong>, lo que te permitirá:
         </p>

@@ -170,12 +170,35 @@ export async function deleteListingAndSendEmail(listingId: string, email: string
         return { success: false, error: "Plantilla no encontrada." };
     }
 
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    
+    let title = "Tu anuncio";
+    let imageUrl = "https://www.ruralpop.com/ruralpop-logo.png";
+    let supabaseAdmin = null;
+
+    if (supabaseUrl && serviceRoleKey) {
+        supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey);
+        const { data: listingData } = await supabaseAdmin.from('listings').select('title, image_urls').eq('id', listingId).single();
+        if (listingData) {
+            if (listingData.title) title = listingData.title;
+            if (listingData.image_urls && listingData.image_urls.length > 0) {
+                imageUrl = listingData.image_urls[0];
+            }
+        }
+    }
+
     try {
+        const htmlContent = template.htmlContent
+            .replace(/{{LISTING_ID}}/g, listingId)
+            .replace(/{{TITLE}}/g, title)
+            .replace(/{{IMAGE_URL}}/g, imageUrl);
+
         const { error: resendError } = await resend.emails.send({
             from: "Soporte Ruralpop <soporte@ruralpop.com>",
             to: email,
             subject: template.subject,
-            html: template.htmlContent.replace('{{LISTING_ID}}', listingId)
+            html: htmlContent
         });
 
         if (resendError) {
@@ -186,10 +209,7 @@ export async function deleteListingAndSendEmail(listingId: string, email: string
     }
 
     if (reason === 'bienestar_animal') {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-        if (supabaseUrl && serviceRoleKey) {
-            const supabaseAdmin = createAdminClient(supabaseUrl, serviceRoleKey);
+        if (supabaseAdmin) {
             await supabaseAdmin.from('listings').update({ status: 'draft' }).eq('id', listingId);
             revalidatePath("/admin/listings");
             revalidatePath("/");
