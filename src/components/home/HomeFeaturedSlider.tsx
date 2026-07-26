@@ -1,4 +1,7 @@
 import React from 'react';
+import { headers } from "next/headers";
+import { getDictionary } from "@/i18n/dictionaries";
+import { LocaleCode } from "@/i18n/config";
 import { createClient } from "@/utils/supabase/server";
 import { type Listing } from "@/components/ui/ListingCard";
 import { ListingSlider } from "@/components/ui/ListingSlider";
@@ -8,6 +11,10 @@ import { getServerTenantFilterString } from "@/utils/tenant/server";
 export async function HomeFeaturedSlider() {
     const supabase = await createClient();
     const tenantFilterString = await getServerTenantFilterString();
+
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const t = await getDictionary(locale);
 
     let query = supabase
         .from("listings")
@@ -38,7 +45,7 @@ export async function HomeFeaturedSlider() {
 
     return (
         <ListingSlider 
-            title="⭐ Destacados"
+            title={t.home.featured}
             listings={listings as Listing[]}
             userFavs={userFavs}
         />

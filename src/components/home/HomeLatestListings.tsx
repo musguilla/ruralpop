@@ -5,10 +5,17 @@ import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { getServerTenantFilterString } from "@/utils/tenant/server";
 import { LocalizedLink } from "@/components/ui/LocalizedLink";
 import { ArrowRight } from "lucide-react";
+import { headers } from "next/headers";
+import { getDictionary } from "@/i18n/dictionaries";
+import { LocaleCode } from "@/i18n/config";
 
 export async function HomeLatestListings() {
     const supabase = await createClient();
     const tenantFilterString = await getServerTenantFilterString();
+    
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const t = await getDictionary(locale);
     
     // Fetch latest active listings that have images
     let query = supabase
@@ -42,15 +49,15 @@ export async function HomeLatestListings() {
         <section className="my-16">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
                 <h2 className="text-2xl md:text-3xl font-extrabold text-[var(--ag-sys-color-text)] flex items-center justify-center sm:justify-start gap-2">
-                    Últimos anuncios publicados
+                    {t.home.latest_listings}
                 </h2>
                 <div className="flex justify-center sm:justify-end w-full sm:w-auto">
                     <LocalizedLink 
                         href="/?sort=recent" 
                         className="inline-flex items-center justify-center gap-2 px-12 py-2.5 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary)] hover:text-white rounded-full font-bold text-base transition-all shadow-sm border border-[var(--ag-sys-color-primary)]/20 w-full sm:w-auto min-w-[200px]"
                     >
-                        Ver más
-                        <ArrowRight className="w-5 h-5" />
+                        <span className="truncate">{t.home.see_more}</span>
+                        <ArrowRight className="w-5 h-5 flex-shrink-0" />
                     </LocalizedLink>
                 </div>
             </div>

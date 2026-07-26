@@ -240,5 +240,11 @@
     "box1_desc": "Nuestro equipo revisa todos los formularios. Para posibles estafas o contenido fraudulento, indícalo directamente en el asunto para darle máxima prioridad.",
     "box2_title": "Feedback de la comunidad",
     "box2_desc": "Constantemente implementamos mejoras que nos sugerís. Si echas en falta alguna categoría, subcategoría o utilidad, no dudes en escribirnos un correo."
+  },
+  "home": {
+    "latest_listings": "Últimos anuncios publicados",
+    "see_more": "Ver más",
+    "direct_buy": "🛒 Anuncios con compra directa",
+    "featured": "⭐ Destacados"
   }
 }

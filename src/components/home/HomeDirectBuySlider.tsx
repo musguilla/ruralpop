@@ -4,10 +4,17 @@ import { type Listing } from "@/components/ui/ListingCard";
 import { ListingSlider } from "@/components/ui/ListingSlider";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
 import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
+import { headers } from "next/headers";
+import { getDictionary } from "@/i18n/dictionaries";
+import { LocaleCode } from "@/i18n/config";
 
 export async function HomeDirectBuySlider() {
     const supabase = await createClient();
     const tenantFilterString = await getServerTenantFilterString();
+    
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const t = await getDictionary(locale);
 
     // 1. Obtener todos los user_id que tienen el monedero 100% configurado en Stripe
     // Usamos el cliente admin de supabase para saltar el RLS de professional_wallets si está capado por user.
@@ -64,7 +71,7 @@ export async function HomeDirectBuySlider() {
 
     return (
         <ListingSlider 
-            title="🛒 Anuncios con compra directa"
+            title={t.home.direct_buy}
             listings={listings as Listing[]}
             userFavs={userFavs}
         />
