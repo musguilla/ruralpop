@@ -19,7 +19,7 @@ export async function HomeFeaturedSlider() {
     let query = supabase
         .from("listings")
         .select(`
-            id, title, price, location, image_urls, created_at, category, price_type, is_featured,
+            id, title, title_pt, description_pt, price, location, image_urls, created_at, category, price_type, is_featured,
             users!inner(is_ghost)
         `)
         .eq("status", "active")

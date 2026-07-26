@@ -56,7 +56,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         let query = supabase
             .from("listings")
             .select(`
-                id, title, price, location, image_urls, created_at, category, subcategory, price_type, is_featured,
+                id, title, title_pt, description_pt, price, location, image_urls, created_at, category, subcategory, price_type, is_featured,
                 users!inner(is_ghost),
                 favorites(count)
             `, { count: "exact" })
@@ -215,7 +215,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             let fillQuery = supabase
                 .from("listings")
                 .select(`
-                    id, title, price, location, image_urls, created_at, category, subcategory, price_type, is_featured,
+                    id, title, title_pt, description_pt, price, location, image_urls, created_at, category, subcategory, price_type, is_featured,
                     users!inner(is_ghost),
                     favorites(count)
                 `)
