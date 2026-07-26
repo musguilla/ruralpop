@@ -19,7 +19,7 @@ async function translateText(text: string, targetLang = 'Portugués') {
     
     try {
         const msg = await anthropic.messages.create({
-            model: "claude-3-5-haiku-20241022", // Último modelo de Haiku
+            model: "claude-haiku-4-5-20251001", // Último modelo de Haiku (4.5)
             max_tokens: 1024,
             temperature: 0.1,
             system: `Eres un traductor experto y profesional. Tu única tarea es traducir el texto proporcionado al ${targetLang}. Devuelve ÚNICAMENTE la traducción, sin explicaciones, sin comillas, ni texto adicional. Mantén el tono original.`,
