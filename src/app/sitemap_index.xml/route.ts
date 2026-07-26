@@ -26,9 +26,6 @@ export async function GET() {
     <sitemap>
         <loc>${baseUrl}/sitemap_lonjas.xml</loc>
     </sitemap>
-    <sitemap>
-        <loc>${baseUrl}/sitemap_pt_index.xml</loc>
-    </sitemap>
 </sitemapindex>`.trim();
 
     return new Response(xml, {
