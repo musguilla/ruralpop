@@ -83,7 +83,7 @@ export default function ChatScreen() {
 
     async function fetchOtherUser() {
         if (!otherUserId) return;
-        const { data } = await supabase.from('users').select('name, full_name, commercial_name, avatar_url').eq('id', otherUserId).single();
+        const { data } = await supabase.from('users').select('name, commercial_name, avatar_url').eq('id', otherUserId).single();
         if (data) {
             if (!paramName) setOtherUserName(data.commercial_name || data.name || data.full_name || 'Usuario');
             if (!paramAvatar) setOtherUserAvatar(data.avatar_url);

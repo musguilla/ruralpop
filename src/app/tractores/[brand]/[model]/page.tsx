@@ -209,7 +209,7 @@ export default async function BrandModelDetail(props: Props) {
         .from('listings')
         .select('price')
         .eq('status', 'active')
-        .textSearch('title', brandData.name);
+        .textSearch('title', brandData.name, { type: 'websearch' });
 
     let lowPrice: number | undefined;
     let highPrice: number | undefined;
