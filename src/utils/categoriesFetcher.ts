@@ -18,7 +18,7 @@ const supabaseAdmin = createClient(
 /**
  * Función interna que hace la llamada real a base de datos.
  */
-async function fetchCategoriesFromDB(tenantSlug: string): Promise<CategoryData[]> {
+async function fetchCategoriesFromDB(tenantSlug: string, locale: string = 'es'): Promise<CategoryData[]> {
     const config = getTenantConfig(tenantSlug);
     const uuid = config.id || tenantSlug;
     
@@ -28,18 +28,19 @@ async function fetchCategoriesFromDB(tenantSlug: string): Promise<CategoryData[]
     }
     
     const [catRes, subcatRes] = await Promise.all([
-        supabaseAdmin.from("categories").select("id, name, order_index").or(filterString).order("order_index", { ascending: true }),
-        supabaseAdmin.from("subcategories").select("category_id, name, order_index").or(filterString).order("order_index", { ascending: true })
+        supabaseAdmin.from("categories").select("id, name, name_pt, order_index").or(filterString).order("order_index", { ascending: true }),
+        supabaseAdmin.from("subcategories").select("category_id, name, name_pt, order_index").or(filterString).order("order_index", { ascending: true })
     ]);
 
     if (!catRes.data) return [];
 
     const categories: CategoryData[] = catRes.data.map((cat) => {
         const relatedSubcats = subcatRes.data?.filter(sub => sub.category_id === cat.id) || [];
+        const currentCatName = locale === 'pt' && cat.name_pt ? cat.name_pt : cat.name;
         return {
             id: cat.id,
-            label: cat.name,
-            subcategories: relatedSubcats.map(sub => sub.name)
+            label: currentCatName,
+            subcategories: relatedSubcats.map(sub => locale === 'pt' && sub.name_pt ? sub.name_pt : sub.name)
         };
     });
 
@@ -51,11 +52,11 @@ async function fetchCategoriesFromDB(tenantSlug: string): Promise<CategoryData[]
  * Cacheamos la respuesta por 1 hora o hasta revalidación manual,
  * aislada por tenant para evitar fugas de datos entre plataformas.
  */
-export const getCategories = async (tenantSlug: string) => {
+export const getCategories = async (tenantSlug: string, locale: string = 'es') => {
     const cachedFn = unstable_cache(
-        async () => fetchCategoriesFromDB(tenantSlug),
-        [`global-categories-v3-${tenantSlug}`],
-        { revalidate: 3600, tags: ['categories-v3', `categories-v3-${tenantSlug}`] }
+        async () => fetchCategoriesFromDB(tenantSlug, locale),
+        [`global-categories-v3-${tenantSlug}-${locale}`],
+        { revalidate: 3600, tags: ['categories-v3', `categories-v3-${tenantSlug}`, `categories-v3-${tenantSlug}-${locale}`] }
     );
     return cachedFn();
 };

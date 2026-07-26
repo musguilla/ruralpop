@@ -25,12 +25,16 @@ export interface Listing {
     is_featured?: boolean;
     favorites?: Array<{ count: number }>;
     tags?: string[];
+    title_pt?: string | null;
+    description_pt?: string | null;
 }
 
 export function ListingCard({ listing, isFavorited = false, isGhostPreview = false }: { listing: Listing; isFavorited?: boolean; isGhostPreview?: boolean }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [showGhostPopup, setShowGhostPopup] = useState(false);
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
+
+    const currentTitle = locale === 'pt' && listing.title_pt ? listing.title_pt : listing.title;
 
     const nextImage = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -51,7 +55,7 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
     const resolvedImageUrls = (listing.image_urls || []).map(url => getImageUrl(url));
     const mainImage = resolvedImageUrls[currentImageIndex] || resolvedImageUrls[0];
 
-    const listingSlug = slugify(listing.title);
+    const listingSlug = slugify(currentTitle);
     const shortId = encodeId(listing.id);
 
     const handleCardClick = (e: React.MouseEvent) => {
@@ -92,7 +96,7 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                         <Image
                             loader={supabaseLoader}
                             src={mainImage}
-                            alt={listing.title}
+                            alt={currentTitle}
                             fill
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -176,7 +180,7 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
 
                 {/* Title */}
                 <h3 className="font-bold text-[var(--ag-sys-color-text)] line-clamp-2 leading-tight uppercase mb-auto group-hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                    {listing.title}
+                    {currentTitle}
                 </h3>
 
                 {/* Meta: Location & Time */}

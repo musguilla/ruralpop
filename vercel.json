@@ -19,6 +19,10 @@
     {
       "path": "/api/cron/wallet-reminders-equipop",
       "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/translate-listings",
+      "schedule": "0 */4 * * *"
     }
   ]
 }

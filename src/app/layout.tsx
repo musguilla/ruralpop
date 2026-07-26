@@ -124,7 +124,7 @@ export default async function RootLayout({
   const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
   const dictionary = await getDictionary(locale);
   const tenant = await getServerTenantSlug();
-  const categories = await getCategories(tenant || 'ruralpop');
+  const categories = await getCategories(tenant || 'ruralpop', locale);
   
   // Fetch active subcategories for Equipop SEO tabs
   let activeEquipopData: { categories: string[], subcategories: string[] } = { categories: [], subcategories: [] };

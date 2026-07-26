@@ -57,7 +57,7 @@ export async function generateMetadata(
 
     const { data: listing } = await supabase
         .from("listings")
-        .select("title, description, price, image_urls, location, category")
+        .select("title, description, price, image_urls, location, category, title_pt, description_pt")
         .eq("id", id)
         .or(await getServerTenantFilterString())
         .single();
@@ -87,10 +87,13 @@ export async function generateMetadata(
         ? "Material ecuestre de segunda mano"
         : (dict.listing_detail?.meta_desc ? dict.vender + ` ${andWord} ` + dict.comprar + ' ' + (dict.category?.ganaderia || '').toLowerCase() : 'Vender y comprar ganado');
 
-    const fullTitle = `${listing.title} - ${defaultMetaDescSuffix} | ${brand}`;
+    const currentTitle = locale === 'pt' && listing.title_pt ? listing.title_pt : listing.title;
+    const currentDesc = locale === 'pt' && listing.description_pt ? listing.description_pt : listing.description;
+
+    const fullTitle = `${currentTitle} - ${defaultMetaDescSuffix} | ${brand}`;
 
     // Acortar base para dejar espacio a las keywords SEO
-    const rawDesc = listing.description?.replace(/\n/g, ' ') || "";
+    const rawDesc = currentDesc?.replace(/\n/g, ' ') || "";
     const shortDesc = rawDesc.slice(0, 60) + (rawDesc.length > 60 ? '...' : '');
 
     let optimizedDescription = isEquipop
@@ -126,7 +129,7 @@ export async function generateMetadata(
                     url: mainImage,
                     width: 1200,
                     height: 630,
-                    alt: listing.title,
+                    alt: currentTitle,
                 },
                 ...previousImages,
             ],
@@ -227,12 +230,15 @@ export default async function ListingDetailPage(props: Props) {
     const resolvedImageUrls = (listing.image_urls || []).map((url: string) => getImageUrl(url));
     const finalImages = resolvedImageUrls.length > 0 ? resolvedImageUrls : [`${baseUrl}/opengraph-image.png`];
 
+    const currentTitle = locale === 'pt' && listing.title_pt ? listing.title_pt : listing.title;
+    const currentDesc = locale === 'pt' && listing.description_pt ? listing.description_pt : listing.description;
+
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
-        "name": listing.title,
+        "name": currentTitle,
         "image": finalImages,
-        "description": listing.description || `Anuncio de clasificados de ${listing.title} en Ruralpop.`,
+        "description": currentDesc || `Anuncio de clasificados de ${currentTitle} en Ruralpop.`,
         "sku": id,
         "brand": {
             "@type": "Brand",
@@ -332,7 +338,7 @@ export default async function ListingDetailPage(props: Props) {
                     <div className="w-full min-w-0 lg:w-[728px] lg:max-w-[728px] flex-shrink-0 space-y-8">
                         <ImageGallery 
                             images={resolvedImageUrls} 
-                            title={listing.title} 
+                            title={currentTitle} 
                             likesCount={listing.favorites?.[0]?.count} 
                             listingId={listing.id}
                             initialIsFavorited={isFavorited}
@@ -341,7 +347,7 @@ export default async function ListingDetailPage(props: Props) {
                             <div className="flex flex-wrap justify-between items-start gap-4 mb-6">
                                 <div>
                                     <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] uppercase mb-2">
-                                        {listing.title}
+                                        {currentTitle}
                                     </h1>
                                     {isEquipop && (
                                         <div className="mb-4">
@@ -420,7 +426,7 @@ export default async function ListingDetailPage(props: Props) {
                             <div className="border-t border-[var(--ag-sys-color-border)] pt-6">
                                 <h3 className="text-lg font-bold text-[var(--ag-sys-color-text)] mb-4">{t("descripcion")}</h3>
                                 <div className="text-[var(--ag-sys-color-text)] whitespace-pre-wrap leading-relaxed">
-                                    {listing.description}
+                                    {currentDesc}
                                 </div>
                             </div>
                         </div>

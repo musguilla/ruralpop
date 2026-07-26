@@ -41,9 +41,12 @@ export async function middleware(request: NextRequest) {
 
         // Si "anuncio" existe y NO es el primer segmento (index > 0)
         // Significa que tenemos algo como "categoria/anuncio/slug"
-        if (anuncioIndex > 0) {
-            // Reconstruimos la URL cogiendo desde "anuncio" en adelante
-            const newPathname = '/' + segments.slice(anuncioIndex).join('/');
+        const isLocaleOrTenant = (segments[0] === 'pt' || segments[0] === 'equipop');
+        const expectedAnuncioIndex = isLocaleOrTenant ? 1 : 0;
+
+        if (anuncioIndex > expectedAnuncioIndex) {
+            const prefix = isLocaleOrTenant ? `/${segments[0]}` : '';
+            const newPathname = prefix + '/' + segments.slice(anuncioIndex).join('/');
             const url = new URL(`${newPathname}${search}`, request.url);
             // 301 Permanent Redirect
             return NextResponse.redirect(url, 301);
