@@ -19,7 +19,7 @@ async function translateText(text: string, targetLang = 'Portugués') {
     
     try {
         const msg = await anthropic.messages.create({
-            model: "claude-3-haiku-20240307", // Haiku es ultrarrápido y muy barato para traducciones
+            model: "claude-3-5-haiku-20241022", // Último modelo de Haiku
             max_tokens: 1024,
             temperature: 0.1,
             system: `Eres un traductor experto y profesional. Tu única tarea es traducir el texto proporcionado al ${targetLang}. Devuelve ÚNICAMENTE la traducción, sin explicaciones, sin comillas, ni texto adicional. Mantén el tono original.`,
@@ -33,8 +33,8 @@ async function translateText(text: string, targetLang = 'Portugués') {
         
         // @ts-ignore
         return msg.content[0]?.text?.trim() || null;
-    } catch (e) {
-        console.error("Error en la traducción con Claude:", e);
+    } catch (e: any) {
+        console.error("Error en la traducción con Claude:", e.status, e.error || e);
         return null;
     }
 }
