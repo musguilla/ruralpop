@@ -1,33 +1,42 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-
-// NOTA: Para usar esto gratuitamente, instala una librería como `google-translate-api-x`
-// Ejecuta: npm install google-translate-api-x
-// Y descomenta el import de abajo:
-// import translate from 'google-translate-api-x';
+import Anthropic from '@anthropic-ai/sdk';
 
 const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-/**
- * Función mock para traducir textos si no tienes librería.
- * Deberás reemplazarla por la librería real.
- */
-async function translateText(text: string, targetLang = 'pt') {
-    if (!text) return text;
-    
-    // --- EJEMPLO CON google-translate-api-x ---
-    // try {
-    //     const res = await translate(text, { to: targetLang });
-    //     return res.text;
-    // } catch (e) {
-    //     console.error("Error en la traducción", e);
-    //     return text;
-    // }
+const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY || '', 
+});
 
-    return text;
+/**
+ * Función para traducir textos usando la API de Claude (Anthropic).
+ */
+async function translateText(text: string, targetLang = 'Portugués') {
+    if (!text || !process.env.ANTHROPIC_API_KEY) return text;
+    
+    try {
+        const msg = await anthropic.messages.create({
+            model: "claude-3-haiku-20240307", // Haiku es ultrarrápido y muy barato para traducciones
+            max_tokens: 1024,
+            temperature: 0.1,
+            system: `Eres un traductor experto y profesional. Tu única tarea es traducir el texto proporcionado al ${targetLang}. Devuelve ÚNICAMENTE la traducción, sin explicaciones, sin comillas, ni texto adicional. Mantén el tono original.`,
+            messages: [
+                {
+                    "role": "user",
+                    "content": text
+                }
+            ]
+        });
+        
+        // @ts-ignore
+        return msg.content[0]?.text?.trim() || text;
+    } catch (e) {
+        console.error("Error en la traducción con Claude:", e);
+        return text;
+    }
 }
 
 export async function GET(request: Request) {
@@ -39,7 +48,7 @@ export async function GET(request: Request) {
 
     try {
         // 2. Obtener anuncios activos sin traducir
-        // Limitar a 20 por ejecución para no exceder los 10 segundos de límite en Vercel Serverless (Plan Hobby)
+        // Limitar a 20 por ejecución para no exceder los límites de Vercel Serverless
         const { data: listings, error } = await supabaseAdmin
             .from('listings')
             .select('id, title, description')
@@ -75,8 +84,8 @@ export async function GET(request: Request) {
                     count++;
                 }
 
-                // Pequeña pausa para no saturar la API
-                await new Promise(resolve => setTimeout(resolve, 300));
+                // Pequeña pausa para evitar límites de rate
+                await new Promise(resolve => setTimeout(resolve, 500));
             } catch (err) {
                 console.error(`Excepción al traducir anuncio ${listing.id}:`, err);
             }
