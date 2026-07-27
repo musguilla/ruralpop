@@ -41,7 +41,7 @@ export function TractorJsonLd({ brandName, modelName, description, image, brandU
             offerCount: offerCount,
             lowPrice: lowPrice,
             highPrice: highPrice || lowPrice,
-            url: `https://www.ruralpop.com/s/tractores-segunda-mano/${encodeURIComponent(brandName.toLowerCase())}`,
+            url: modelUrl,
         };
     }
 
