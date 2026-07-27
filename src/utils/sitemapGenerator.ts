@@ -39,8 +39,12 @@ export async function getSitemapXmlById(id: number, locale: 'es' | 'pt' = 'es'):
         addEntry(`/s/${landing.slug}`, 0.95);
     });
 
+    const RURALPOP_CATEGORIES = CATEGORIES.filter(cat => 
+        ['ganaderia', 'maquinaria', 'forraje', 'fincas', 'agricultura', 'servicios', 'alimentos'].includes(cat.id)
+    );
+
     // 2. Solo Categorías y Subcategorías
-    CATEGORIES.forEach(cat => {
+    RURALPOP_CATEGORIES.forEach(cat => {
         // Categoría sola
         addEntry(buildSeoUrl({ category: cat.id }, locale), 0.9);
 
@@ -56,14 +60,14 @@ export async function getSitemapXmlById(id: number, locale: 'es' | 'pt' = 'es'):
     });
 
     // 4. Combinaciones: Categoría + Localización
-    CATEGORIES.forEach(cat => {
+    RURALPOP_CATEGORIES.forEach(cat => {
         LOCATIONS.forEach(loc => {
             addEntry(buildSeoUrl({ category: cat.id, province_id: loc.id }, locale), 0.7);
         });
     });
 
     // 5. Combinaciones: Subcategoría + Localización
-    CATEGORIES.forEach(cat => {
+    RURALPOP_CATEGORIES.forEach(cat => {
         cat.subcategories.forEach(sub => {
             LOCATIONS.forEach(loc => {
                 addEntry(buildSeoUrl({ category: cat.id, subcategory: sub, province_id: loc.id }, locale), 0.6);
