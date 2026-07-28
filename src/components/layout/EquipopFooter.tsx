@@ -89,6 +89,11 @@ export async function EquipopFooter() {
                         <a href="https://www.instagram.com/equipopapp" target="_blank" rel="noopener noreferrer" className="text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors" aria-label="Instagram">
                             <Instagram className="w-7 h-7" strokeWidth={2.25} />
                         </a>
+                        <a href="https://www.tiktok.com/@equipop.app" target="_blank" rel="noopener noreferrer" className="text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors" aria-label="TikTok">
+                            <svg className="w-6 h-6 ml-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.25} strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+                            </svg>
+                        </a>
                     </div>
                     <p className="text-[var(--ag-sys-color-text-muted)] text-sm leading-relaxed">
                         App gratis para buscar, comprar y vender material y equipamientos hípicos.
