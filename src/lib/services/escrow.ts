@@ -521,11 +521,11 @@ export async function autoReleaseExpiredEscrows() {
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-  // Find all orders that are paid_held and older than 7 days
+  // Find all orders that are paid_held and older than 7 days, OR stuck in buyer_confirmed
   const { data: orders, error } = await supabaseAdmin
     .from("escrow_orders")
-    .select("id")
-    .eq("status", "paid_held")
+    .select("id, status")
+    .in("status", ["paid_held", "buyer_confirmed"])
     .lt("created_at", sevenDaysAgo);
 
   if (error) {
@@ -538,14 +538,16 @@ export async function autoReleaseExpiredEscrows() {
   for (const order of orders || []) {
     console.log(`Auto-releasing escrow order ${order.id}...`);
     try {
-      // 1. Mark as buyer_confirmed (system bypass)
-      await supabaseAdmin
-        .from("escrow_orders")
-        .update({ 
-          status: "buyer_confirmed", 
-          buyer_confirmed_at: new Date().toISOString() 
-        })
-        .eq("id", order.id);
+      if (order.status !== "buyer_confirmed") {
+        // 1. Mark as buyer_confirmed (system bypass)
+        await supabaseAdmin
+          .from("escrow_orders")
+          .update({ 
+            status: "buyer_confirmed", 
+            buyer_confirmed_at: new Date().toISOString() 
+          })
+          .eq("id", order.id);
+      }
 
       // 2. Release payout to the seller
       await releaseEscrowPayout(order.id);
@@ -553,6 +555,8 @@ export async function autoReleaseExpiredEscrows() {
       releasedCount++;
     } catch (err) {
       console.error(`❌ Failed to auto-release escrow order ${order.id}:`, err);
+      // Revert to paid_held so it gets picked up cleanly if needed, or leave it as buyer_confirmed.
+      // Since our query now picks up buyer_confirmed, it's safe to leave it.
     }
   }
   
