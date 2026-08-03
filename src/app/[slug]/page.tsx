@@ -24,6 +24,9 @@ export async function generateMetadata(props: {
     const parsed = parseSeoUrl(params.slug);
     const tenant = await getServerTenantSlug();
     const isEquipop = tenant === 'equipop';
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const originalPathname = headersList.get('x-original-pathname') || `/${params.slug}`;
 
     let locationName = "";
     if (parsed.province_id) {
@@ -31,57 +34,36 @@ export async function generateMetadata(props: {
         if (loc) locationName = loc.name;
     }
 
-    const qLabel = parsed.q ? parsed.q.charAt(0).toUpperCase() + parsed.q.slice(1) : "";
-    const subLabel = parsed.subcategory ? parsed.subcategory.charAt(0).toUpperCase() + parsed.subcategory.slice(1) : "";
-    const catLabel = parsed.category ? parsed.category.charAt(0).toUpperCase() + parsed.category.slice(1) : "";
+    const isPt = locale === 'pt';
 
-    const parts = [];
-    if (qLabel) parts.push(qLabel);
-    if (subLabel) parts.push(subLabel);
-    else if (catLabel && !qLabel) parts.push(catLabel);
+    // We can use generateSeoH1 to get a perfectly translated base subject
+    // generateSeoH1 already appends the location correctly (en/em)
+    const baseSubject = generateSeoH1(parsed, locationName, locale);
 
-    const isLocationOnly = parts.length === 0 && locationName;
-
-    if (!isLocationOnly && locationName) {
-        parts.push(`en ${locationName}`);
-    }
-
-    const baseSubject = parts.join(" ");
+    const isLocationOnly = !parsed.q && !parsed.subcategory && !parsed.category && locationName !== "";
 
     let pageTitle = isEquipop 
-        ? "Material de equitación de segunda mano | Equipop" 
-        : "Mercado Agrícola y Ganadero | Ruralpop";
+        ? (isPt ? "Material equestre em segunda mão | Equipop" : "Material de equitación de segunda mano | Equipop")
+        : (isPt ? "Mercado Agrícola e Pecuário | Ruralpop" : "Mercado Agrícola y Ganadero | Ruralpop");
 
     if (isLocationOnly) {
         const charCodeSumLoc = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
         const variations = isEquipop 
-            ? [
-                `Equitación en ${locationName} - Material ecuestre`,
-                `Caballos y monturas en ${locationName} - Equipop`
-            ]
-            : [
-                `Ganadería en ${locationName} - Comprar y vender ganado`,
-                `Ganado en venta en ${locationName} - Vender ganado ${locationName}`
-            ];
+            ? (isPt 
+                ? [`Equitação em ${locationName} - Material equestre`, `Cavalos e selas em ${locationName} - Equipop`]
+                : [`Equitación en ${locationName} - Material ecuestre`, `Caballos y monturas en ${locationName} - Equipop`])
+            : (isPt 
+                ? [`Pecuária em ${locationName} - Comprar e vender gado`, `Gado à venda em ${locationName} - Vender gado ${locationName}`]
+                : [`Ganadería en ${locationName} - Comprar y vender ganado`, `Ganado en venta en ${locationName} - Vender ganado ${locationName}`]);
         pageTitle = variations[charCodeSumLoc % 2];
-    } else if (baseSubject.trim()) {
+    } else if (baseSubject.trim() && baseSubject !== generateSeoH1({}, locationName, locale)) {
         const seoVariations = isEquipop
-            ? [
-                "Material ecuestre usado",
-                "App gratis equitación",
-                "Tienda hípica segunda mano",
-                "Artículos para el caballo",
-                "Todo para tu caballo",
-                "Equipamiento para jinetes"
-            ]
-            : [
-                "Comprar y vender ganado",
-                "Compraventa de animales ganaderos",
-                "App gratis compraventa ganado",
-                "Anuncios gratis del campo",
-                "Mercado rural de segunda mano",
-                "Compra venta ganadería"
-            ];
+            ? (isPt 
+                ? ["Material equestre usado", "App grátis equitação", "Loja hípica segunda mão", "Artigos para cavalo", "Tudo para o seu cavalo", "Equipamento para cavaleiros"]
+                : ["Material ecuestre usado", "App gratis equitación", "Tienda hípica segunda mano", "Artículos para el caballo", "Todo para tu caballo", "Equipamiento para jinetes"])
+            : (isPt 
+                ? ["Comprar e vender gado", "Compra e venda de animais", "App grátis compra e venda gado", "Anúncios grátis do campo", "Mercado rural de segunda mão", "Compra e venda de gado"]
+                : ["Comprar y vender ganado", "Compraventa de animales ganaderos", "App gratis compraventa ganado", "Anuncios gratis del campo", "Mercado rural de segunda mano", "Compra venta ganadería"]);
         const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
         const suffix = seoVariations[charCodeSum % seoVariations.length];
         
@@ -93,10 +75,6 @@ export async function generateMetadata(props: {
             pageTitle = candidateTitle;
         }
     }
-
-    const headersList = await headers();
-    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
-    const originalPathname = headersList.get('x-original-pathname') || `/${params.slug}`;
 
     let canonical = getCanonicalUrl(originalPathname, locale);
     const isPaginated = searchParams.page && typeof searchParams.page === 'string' && searchParams.page !== '1';
@@ -111,8 +89,12 @@ export async function generateMetadata(props: {
     }
     
     const descText = isEquipop
-        ? `App gratis para ${parts.join(" ") || "buscar material ecuestre"}. Compra y vende monturas, botas, accesorios y todo lo necesario para tu caballo sin comisiones en Equipop.`
-        : `Aplicación gratis para ${parts.join(" ") || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`;
+        ? (isPt
+            ? `App grátis para ${baseSubject || "pesquisar material equestre"}. Compre e venda selas, botas, acessórios e tudo o que precisa para o seu cavalo sem comissões na Equipop.`
+            : `App gratis para ${baseSubject || "buscar material ecuestre"}. Compra y vende monturas, botas, accesorios y todo lo necesario para tu caballo sin comisiones en Equipop.`)
+        : (isPt
+            ? `App grátis para ${baseSubject || "procurar ofertas"}. Descarregue a melhor app para anunciar, vender e comprar gado, vacas, touros, galinhas, éguas, cavalos, máquinas e forragem sem comissões. Anúncios 100% classificados rurais.`
+            : `Aplicación gratis para ${baseSubject || "buscar ofertas"}. Descarga la mejor app para anunciar, vender y comprar ganado, vacas, toros, gallinas, yeguas, caballos, maquinaria y forraje sin comisiones. Anuncios 100% clasificados de campo.`);
 
     return {
         title: pageTitle,

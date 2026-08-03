@@ -43,22 +43,25 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
         baseTitle = generateSeoH1(combinedParams, landing.province, locale);
     }
 
+    const isPt = locale === 'pt';
     const brand = isEquipop ? "Equipop" : "Ruralpop";
     let pageTitle = `${baseTitle} | ${brand}`;
     
-    if (locale === 'es') {
-        const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
-        const seoVariationsLocal = isEquipop 
-            ? ["Material ecuestre usado", "Tienda hípica segunda mano", "Artículos ecuestres"]
-            : seoVariations;
-        
-        const suffix = seoVariationsLocal[charCodeSum % seoVariationsLocal.length];
-        const candidateTitle = `${baseTitle} - ${suffix} | ${brand}`;
+    const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const seoVariationsLocal = isEquipop 
+        ? (isPt 
+            ? ["Material equestre usado", "Loja hípica segunda mão", "Artigos equestres"]
+            : ["Material ecuestre usado", "Tienda hípica segunda mano", "Artículos ecuestres"])
+        : (isPt 
+            ? ["Comprar e vender gado", "Compra e venda de animais", "App grátis compra e venda gado", "Anúncios grátis do campo", "Mercado rural de segunda mão", "Compra e venda de gado"]
+            : seoVariations);
+    
+    const suffix = seoVariationsLocal[charCodeSum % seoVariationsLocal.length];
+    const candidateTitle = `${baseTitle} - ${suffix} | ${brand}`;
 
-        // Maximize title length for Google (usually up to ~65-70 chars)
-        if (candidateTitle.length <= 72) {
-            pageTitle = candidateTitle;
-        }
+    // Maximize title length for Google (usually up to ~65-70 chars)
+    if (candidateTitle.length <= 72) {
+        pageTitle = candidateTitle;
     }
 
     // Making the description even more punchy and keyword rich
