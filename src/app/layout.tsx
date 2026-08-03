@@ -36,18 +36,24 @@ export async function generateMetadata(): Promise<Metadata> {
   const isEquipop = tenant === 'equipop';
   const currentDomain = isEquipop ? 'https://www.equipop.app' : 'https://www.ruralpop.com';
 
+  const isPt = locale === 'pt';
+  
+  const title = isEquipop 
+    ? (isPt ? "Equipop - Vende e compra material equestre em segunda mão" : "Equipop - Vende y compra material hípico segunda mano")
+    : (isPt ? "Ruralpop - App grátis para comprar e vender gado" : "Ruralpop - App gratis para comprar y vender ganado");
+
+  const description = isEquipop
+    ? (isPt ? "App grátis para vender, comprar e pesquisar material e equipamentos equestres." : "App gratis para vender, comprar y buscar material y equipamientos hípicos.")
+    : (isPt ? "App móvel grátis para pesquisar, vender e comprar gado, máquinas, alimentação, forragem e encontrar serviços profissionais. Vacas, cavalos, ovelhas, cabras, galinhas ... de agricultores para agricultores." : "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.");
+
   const metadataObj: Metadata = {
     metadataBase: new URL(currentDomain),
     alternates: {
       canonical: getCanonicalUrl(originalPathname, locale, currentDomain),
       languages: getHreflangLinks(originalPathname, currentDomain),
     },
-    title: isEquipop 
-      ? "Equipop - Vende y compra material hípico segunda mano" 
-      : "Ruralpop - App gratis para comprar y vender ganado",
-    description: isEquipop
-      ? "App gratis para vender, comprar y buscar material y equipamientos hípicos."
-      : "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.",
+    title: title,
+    description: description,
     applicationName: isEquipop ? "Equipop" : "Ruralpop",
     icons: {
       icon: isEquipop 
@@ -67,12 +73,8 @@ export async function generateMetadata(): Promise<Metadata> {
       ],
     },
     openGraph: {
-      title: isEquipop 
-        ? "Equipop - Vende y compra material hípico segunda mano" 
-        : "Ruralpop - App gratis para comprar y vender ganado",
-      description: isEquipop
-        ? "App gratis para vender, comprar y buscar material y equipamientos hípicos."
-        : "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales.",
+      title: title,
+      description: description,
       siteName: isEquipop ? "Equipop" : "Ruralpop",
       images: [
         {
