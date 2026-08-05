@@ -21,20 +21,21 @@ export async function GET(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const supabaseAdmin = createClient(
+        const supabaseUser = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.SUPABASE_SERVICE_ROLE_KEY!
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            { global: { headers: { Authorization: `Bearer ${token}` } } }
         );
 
         const tenantHeader = req.headers.get("x-tenant");
 
-        const { data: userProfile } = await supabaseAdmin
+        const { data: userProfile } = await supabaseUser
             .from("users")
             .select("tenant_id")
             .eq("id", user.id)
             .single();
 
-        const { data: wallet } = await supabaseAdmin
+        const { data: wallet } = await supabaseUser
             .from("professional_wallets")
             .select("*")
             .eq("user_id", user.id)

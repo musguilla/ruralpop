@@ -22,9 +22,10 @@ export async function POST(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const supabaseAdmin = createClient(
+        const supabaseUser = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.SUPABASE_SERVICE_ROLE_KEY!
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            { global: { headers: { Authorization: `Bearer ${token}` } } }
         );
 
         const body = await req.json();
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
         }
 
         // 1. Fetch listing and verify seller
-        const { data: listing, error: listingError } = await supabaseAdmin
+        const { data: listing, error: listingError } = await supabaseUser
             .from("listings")
             .select(`
               id, title, price, shipping_price, image_urls, user_id, tenant_id,
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
         }
 
         // 2. Fetch professional wallet
-        const { data: wallet, error: walletError } = await supabaseAdmin
+        const { data: wallet, error: walletError } = await supabaseUser
             .from("professional_wallets")
             .select("stripe_connected_account_id")
             .eq("user_id", seller.id)
@@ -100,7 +101,7 @@ export async function POST(req: Request) {
         });
 
         // 5. Save order in DB with initial status 'pending'
-        const { error: insertError } = await supabaseAdmin
+        const { error: insertError } = await supabaseUser
             .from("escrow_orders")
             .insert({
                 id: orderId,
