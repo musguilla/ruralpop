@@ -21,6 +21,7 @@ import { encodeId } from "@/utils/idUtils";
 import Link from "next/link";
 import { DeleteButton } from "./DeleteButton";
 import { ActivateButton } from "./ActivateButton";
+import { FeatureButton } from "./FeatureButton";
 import { useNotification } from "@/context/NotificationContext";
 import { deleteMultipleListings, toggleShareToEquipop } from "./actions";
 
@@ -363,6 +364,7 @@ export function BulkListingManager({ listings, equipopCategories }: BulkListingM
                                             {l.status === 'draft' && (
                                                 <ActivateButton listingId={l.id} title={l.title} />
                                             )}
+                                            <FeatureButton listingId={l.id} title={l.title} isFeatured={l.is_featured} />
                                             <DeleteButton listingId={l.id} title={l.title} sellerEmail={(l.seller as Record<string, string | null>)?.email || undefined} iconOnly={true} />
                                         </div>
                                     </div>
