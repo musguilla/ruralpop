@@ -8,6 +8,12 @@ import { ChevronLeft, ChevronRight, Wallet, AlertCircle, ExternalLink, ShieldChe
 import * as WebBrowser from 'expo-web-browser';
 import { formatPrice } from '../src/lib/formatters';
 
+import { ACTIVE_TENANT_ID } from '../src/config/tenants';
+
+const isEquipop = ACTIVE_TENANT_ID === '69d55371-2f70-4e67-b55c-4502bce305bb';
+const defaultBaseUrl = isEquipop ? 'https://www.equipop.app' : 'https://www.ruralpop.com';
+const baseUrl = process.env.EXPO_PUBLIC_SITE_URL || defaultBaseUrl;
+
 export default function MonederoScreen() {
     const { user } = useAuth();
     const router = useRouter();
@@ -23,10 +29,11 @@ export default function MonederoScreen() {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) return;
 
-            const apiUrl = `${process.env.EXPO_PUBLIC_SITE_URL || 'https://www.ruralpop.com'}/api/checkout/escrow/wallet-status`;
+            const apiUrl = `${baseUrl}/api/checkout/escrow/wallet-status?t=${Date.now()}`;
             const response = await fetch(apiUrl, {
                 headers: {
-                    'Authorization': `Bearer ${session.access_token}`
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'x-tenant': isEquipop ? 'equipop' : 'ruralpop'
                 }
             });
 
@@ -78,12 +85,13 @@ export default function MonederoScreen() {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) return;
 
-            const apiUrl = `${process.env.EXPO_PUBLIC_SITE_URL || 'https://www.ruralpop.com'}/api/checkout/escrow/onboarding-link`;
+            const apiUrl = `${baseUrl}/api/checkout/escrow/onboarding-link`;
             
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${session.access_token}`
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'x-tenant': isEquipop ? 'equipop' : 'ruralpop'
                 }
             });
 
@@ -112,12 +120,13 @@ export default function MonederoScreen() {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) return;
 
-            const apiUrl = `${process.env.EXPO_PUBLIC_SITE_URL || 'https://www.ruralpop.com'}/api/checkout/escrow/login-link`;
+            const apiUrl = `${baseUrl}/api/checkout/escrow/login-link`;
             
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${session.access_token}`
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'x-tenant': isEquipop ? 'equipop' : 'ruralpop'
                 }
             });
 

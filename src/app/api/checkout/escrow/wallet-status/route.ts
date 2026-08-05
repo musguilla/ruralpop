@@ -10,16 +10,23 @@ export async function GET(req: Request) {
         }
         const token = authHeader.split(" ")[1];
 
+        const supabaseAuth = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
+
+        const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(token);
+
+        if (authError || !user) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
         const supabaseAdmin = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
 
-        const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-
-        if (authError || !user) {
-            return new NextResponse("Unauthorized", { status: 401 });
-        }
+        const tenantHeader = req.headers.get("x-tenant");
 
         const { data: userProfile } = await supabaseAdmin
             .from("users")
@@ -33,7 +40,8 @@ export async function GET(req: Request) {
             .eq("user_id", user.id)
             .maybeSingle();
 
-        const stripe = getStripe(userProfile?.tenant_id);
+        const tenantToUse = tenantHeader || userProfile?.tenant_id;
+        let stripe = getStripe(tenantToUse);
 
         let isReady = false;
         if (wallet?.stripe_connected_account_id) {
@@ -42,7 +50,16 @@ export async function GET(req: Request) {
                 isReady = account.charges_enabled && account.details_submitted;
             } catch (stripeError) {
                 console.error("Stripe account retrieve error:", stripeError);
-                isReady = false;
+                // Fallback attempt: if primary stripe instance failed, try the other stripe instance
+                try {
+                    const { stripeEquipop, default: defaultStripe } = await import("@/lib/stripe");
+                    const altStripe = stripe === stripeEquipop ? defaultStripe : stripeEquipop;
+                    const account = await altStripe.accounts.retrieve(wallet.stripe_connected_account_id);
+                    isReady = account.charges_enabled && account.details_submitted;
+                } catch (fallbackErr) {
+                    console.error("Fallback Stripe account retrieve error:", fallbackErr);
+                    isReady = false;
+                }
             }
         }
 
