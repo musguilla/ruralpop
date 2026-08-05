@@ -185,7 +185,7 @@ export default async function ListingDetailPage(props: Props) {
             const { createClient: createAdminClient } = await import('@supabase/supabase-js');
             dbClient = createAdminClient(
                 process.env.NEXT_PUBLIC_SUPABASE_URL!,
-                process.env.SUPABASE_SERVICE_ROLE_KEY!
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
             );
         }
     }
@@ -203,7 +203,8 @@ export default async function ListingDetailPage(props: Props) {
         .single();
 
     if (error || !listing) {
-        redirect('/');
+        console.error("Error cargando anuncio:", error);
+        notFound();
     }
 
     if (listing.status === 'sold') {
