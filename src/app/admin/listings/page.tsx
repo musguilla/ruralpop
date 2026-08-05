@@ -34,21 +34,8 @@ export default async function AdminListingsPage(props: {
 }) {
     const searchParams = await props.searchParams;
     
-    // Auto-activate Jorge's paid featured listings
-    try {
-        const userSupabase = await createClient();
-        const featuredUntil = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString();
-        await userSupabase
-            .from("listings")
-            .update({ is_featured: true, featured_until: featuredUntil })
-            .eq("user_id", "b3fb19a4-adf2-43e0-af99-d8383b94386f")
-            .eq("status", "active");
-    } catch (e) {
-        console.error("Auto-fix error:", e);
-    }
-
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-    const serviceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
     const supabase = createAdminClient(supabaseUrl, serviceRoleKey);
     
     const PAGE_SIZE = 40;

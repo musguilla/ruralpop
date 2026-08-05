@@ -13,7 +13,7 @@ export async function deleteListing(listingId: string) {
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
         console.error("Faltan variables de entorno para inicializar Supabase Admin.");
@@ -390,7 +390,9 @@ export async function setFeaturedListing(listingId: string, days: number = 20) {
         return { success: false, error: "No estás autorizado para realizar esta acción." };
     }
 
-    const supabase = await createServerClient();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+    const supabase = createAdminClient(supabaseUrl, serviceRoleKey);
     const featuredUntil = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
 
     const { error } = await supabase
