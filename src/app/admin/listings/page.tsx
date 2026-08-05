@@ -33,7 +33,7 @@ export default async function AdminListingsPage(props: {
     const searchParams = await props.searchParams;
     
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+    const serviceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
     const supabase = createAdminClient(supabaseUrl, serviceRoleKey);
     
     const PAGE_SIZE = 40;

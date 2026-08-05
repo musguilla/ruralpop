@@ -27,6 +27,21 @@ export default async function AdminLayout({
 
     return (
         <div className="flex min-h-screen w-full bg-[var(--ag-sys-color-background)]">
+            <style>{`
+                .adsbygoogle,
+                .google-auto-placed,
+                iframe[id^="google_ads_frame"],
+                #google_esf,
+                div[id^="aswift_"],
+                ins.adsbygoogle {
+                    display: none !important;
+                    opacity: 0 !important;
+                    pointer-events: none !important;
+                    visibility: hidden !important;
+                    height: 0 !important;
+                    width: 0 !important;
+                }
+            `}</style>
             {/* Sidebar */}
             <AdminSidebar />
 

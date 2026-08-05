@@ -12,7 +12,7 @@ export const fetchCache = "force-no-store";
 export default async function InsightsPage() {
     const supabaseAdmin = createAdminClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
     const tenantSlug = await getServerTenantSlug();

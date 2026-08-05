@@ -11,7 +11,7 @@ async function uploadImage(file: File | null): Promise<string | null> {
 
     // We use the Service Role key to bypass RLS since the bucket was created manually by the user
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
     const supabaseAdmin = createSupabaseAdmin(supabaseUrl, supabaseKey);
 
     const uuid = crypto.randomUUID();

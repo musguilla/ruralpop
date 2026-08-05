@@ -122,6 +122,8 @@ export default async function RootLayout({
 }>) {
   const headersList = await headers();
   const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+  const originalPathname = headersList.get('x-original-pathname') || '';
+  const isAdmin = originalPathname.startsWith('/admin');
   const dictionary = await getDictionary(locale);
   const tenant = await getServerTenantSlug();
   const categories = await getCategories(tenant || 'ruralpop', locale);
@@ -138,14 +140,17 @@ export default async function RootLayout({
         <head>
           <style>{`
             :root {
-              --ag-sys-color-primary: #194152;
-              --ag-sys-color-primary-hover: #102B37;
+              --ag-sys-color-primary: #1E3A8A;
+              --ag-sys-color-primary-hover: #1E40AF;
+              --ag-sys-color-primary-muted: #DBEAFE;
+              --ag-sys-color-badge-bg: #EFF6FF;
+              --ag-sys-color-badge-text: #1E40AF;
             }
           `}</style>
         </head>
       )}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col font-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         {/* Google Analytics */}
         <Script
@@ -163,7 +168,7 @@ export default async function RootLayout({
           `}
         </Script>
         {/* Google AdSense */}
-        {tenant !== 'equipop' && (
+        {tenant !== 'equipop' && !isAdmin && (
           <script
             async
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2042067618462129"

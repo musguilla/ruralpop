@@ -145,7 +145,7 @@ export default async function AdminDashboard() {
     const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
     const adminClient = createSupabaseClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
     let activeListingsQuery = adminClient.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active");

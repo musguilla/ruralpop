@@ -13,7 +13,7 @@ export async function deleteListing(listingId: string) {
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
         console.error("Faltan variables de entorno para inicializar Supabase Admin.");
@@ -85,7 +85,7 @@ export async function adminUpdateListing(listingId: string, formData: FormData) 
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
         return { error: "Error de configuración de servidor." };
@@ -171,7 +171,7 @@ export async function deleteListingAndSendEmail(listingId: string, email: string
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
     let title = "Tu anuncio";
     let imageUrl = "https://www.ruralpop.com/ruralpop-logo.png";
@@ -227,7 +227,7 @@ export async function activateListing(listingId: string) {
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
         return { success: false, error: "Error de configuración de servidor." };
@@ -266,7 +266,7 @@ export async function deleteMultipleListings(listingIds: string[]) {
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
         console.error("Faltan variables de entorno para inicializar Supabase Admin.");
@@ -346,7 +346,7 @@ export async function toggleShareToEquipop(listingId: string, shared: boolean, c
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
         return { success: false, error: "Error de configuración de servidor." };
