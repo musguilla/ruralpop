@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 export async function GET() {
     try {
         const supabase = await createClient();
-        const emails = ['otemarinas@gmail.com', 'irenealonva@gmail.com'];
+        const emails = ['jorgedominguezviqueira@gmail.com'];
         const featuredUntil = new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString();
         const results = [];
 
