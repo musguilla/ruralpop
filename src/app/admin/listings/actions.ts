@@ -384,3 +384,29 @@ export async function toggleShareToEquipop(listingId: string, shared: boolean, c
 
     return { success: true };
 }
+
+export async function setFeaturedListing(listingId: string, days: number = 20) {
+    if (!await isAdmin()) {
+        return { success: false, error: "No estás autorizado para realizar esta acción." };
+    }
+
+    const supabase = await createServerClient();
+    const featuredUntil = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+
+    const { error } = await supabase
+        .from("listings")
+        .update({
+            is_featured: true,
+            featured_until: featuredUntil
+        })
+        .eq("id", listingId);
+
+    if (error) {
+        return { success: false, error: error.message };
+    }
+
+    revalidatePath("/admin/listings");
+    revalidatePath("/");
+
+    return { success: true };
+}
