@@ -393,13 +393,41 @@ export async function setFeaturedListing(listingId: string, days: number = 20) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
     const supabase = createAdminClient(supabaseUrl, serviceRoleKey);
-    const featuredUntil = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+    
+    const isRemove = days === 0;
+    const featuredUntil = isRemove ? null : new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
 
     const { error } = await supabase
         .from("listings")
         .update({
-            is_featured: true,
+            is_featured: !isRemove,
             featured_until: featuredUntil
+        })
+        .eq("id", listingId);
+
+    if (error) {
+        return { success: false, error: error.message };
+    }
+
+    revalidatePath("/admin/listings");
+    revalidatePath("/");
+
+    return { success: true };
+}
+
+export async function bumpListing(listingId: string) {
+    if (!await isAdmin()) {
+        return { success: false, error: "No estás autorizado para realizar esta acción." };
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+    const supabase = createAdminClient(supabaseUrl, serviceRoleKey);
+
+    const { error } = await supabase
+        .from("listings")
+        .update({
+            created_at: new Date().toISOString()
         })
         .eq("id", listingId);
 
