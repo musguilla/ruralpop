@@ -140,7 +140,7 @@ export async function saveCompanyEmails(companyId: string, emails: string) {
     // Use service role to bypass RLS when updating another user's profile
     const supabaseAdmin = createSupabaseClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
     const { error } = await supabaseAdmin
