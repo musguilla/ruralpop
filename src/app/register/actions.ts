@@ -62,7 +62,6 @@ export async function signup(formData: FormData) {
         email_confirm: false,
         user_metadata: {
             name: name,
-            full_name: name,
             tenant_id: activeTenantId,
         }
     });

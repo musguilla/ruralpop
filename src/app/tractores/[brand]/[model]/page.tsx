@@ -204,12 +204,11 @@ export default async function BrandModelDetail(props: Props) {
 
     const description = modelData.description || `Explora toda la información, la ficha técnica y la tecnología que ofrece el modelo de tractor ${brandData.name} ${modelData.name}. Un equipo especialmente diseñado para satisfacer las demandas más exigentes en el campo, maximizar la productividad de la explotación y ofrecer un alto nivel de confort a los operarios.`;
 
-    // Fetch aggregated data for this brand's listings to populate the AggregateOffer schema
     const { data: listingsData } = await supabase
         .from('listings')
         .select('price')
         .eq('status', 'active')
-        .textSearch('title', brandData.name, { type: 'websearch' });
+        .ilike('title', `%${brandData.name}%`);
 
     let lowPrice: number | undefined;
     let highPrice: number | undefined;

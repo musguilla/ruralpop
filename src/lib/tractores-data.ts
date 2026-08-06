@@ -196,13 +196,9 @@ export async function getRelatedTractorListingsByFeature(featureType: string, fe
     // Base query for active tractor listings
     let query = supabase.from('listings').select('*').eq('status', 'active').eq('category', 'tractores').order('created_at', { ascending: false }).limit(6);
     
-    // We try to match any of the related brand names in the listing title/description as a fuzzy search
-    const brandNames = relatedBrands.map(b => b.name).join(' | ');
-    
-    if (brandNames) {
-        // Full text search on title or description if we have brands
-        // This is a simplified approach. For production, a more complex vector or tsquery could be used.
-        const { data, error } = await query.textSearch('title', brandNames, { type: 'websearch' });
+    if (relatedBrands && relatedBrands.length > 0) {
+        const brandFilter = relatedBrands.map(b => `title.ilike.%${b.name}%`).join(',');
+        const { data, error } = await query.or(brandFilter);
         
         if (!error && data && data.length > 0) {
             return data;
