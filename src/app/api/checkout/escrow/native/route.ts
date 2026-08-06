@@ -11,6 +11,7 @@ export async function POST(req: Request) {
         }
         const token = authHeader.split(" ")[1];
 
+        // 1. Verify buyer auth token using anon client
         const supabaseAuth = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -22,10 +23,10 @@ export async function POST(req: Request) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const supabaseUser = createClient(
+        // 2. Admin client for backend operations (bypasses RLS for reading seller's wallet)
+        const supabaseAdmin = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            { global: { headers: { Authorization: `Bearer ${token}` } } }
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
 
         const body = await req.json();
@@ -35,8 +36,8 @@ export async function POST(req: Request) {
             return new NextResponse("Missing listingId", { status: 400 });
         }
 
-        // 1. Fetch listing and verify seller
-        const { data: listing, error: listingError } = await supabaseUser
+        // 3. Fetch listing and verify seller
+        const { data: listing, error: listingError } = await supabaseAdmin
             .from("listings")
             .select(`
               id, title, price, shipping_price, image_urls, user_id, tenant_id,
@@ -58,8 +59,8 @@ export async function POST(req: Request) {
             return new NextResponse("Cannot buy your own listing", { status: 400 });
         }
 
-        // 2. Fetch professional wallet
-        const { data: wallet, error: walletError } = await supabaseUser
+        // 4. Fetch professional wallet (using admin client to bypass buyer RLS)
+        const { data: wallet, error: walletError } = await supabaseAdmin
             .from("professional_wallets")
             .select("stripe_connected_account_id")
             .eq("user_id", seller.id)
@@ -71,13 +72,13 @@ export async function POST(req: Request) {
 
         const stripe = getStripe(listing.tenant_id);
 
-        // Check if charges are enabled
+        // Check if charges are enabled on seller's Stripe Connect account
         const account = await stripe.accounts.retrieve(wallet.stripe_connected_account_id);
         if (!account.charges_enabled) {
             return new NextResponse("El vendedor aún no ha completado la configuración para recibir pagos.", { status: 400 });
         }
 
-        // 3. Calculate amounts
+        // 5. Calculate amounts
         const priceCents = Math.round(listing.price * 100);
         const shippingCents = Math.round((listing.shipping_price || 0) * 100);
         const feeCents = calculateRuralpopFee(priceCents);
@@ -86,7 +87,7 @@ export async function POST(req: Request) {
 
         const orderId = crypto.randomUUID(); // Generate id for tracking
 
-        // 4. Create Stripe PaymentIntent directly for native mobile apps
+        // 6. Create Stripe PaymentIntent directly for native mobile apps
         const paymentIntent = await stripe.paymentIntents.create({
             amount: totalCents,
             currency: "eur",
@@ -100,8 +101,8 @@ export async function POST(req: Request) {
             }
         });
 
-        // 5. Save order in DB with initial status 'pending'
-        const { error: insertError } = await supabaseUser
+        // 7. Save order in DB with initial status 'pending_checkout'
+        const { error: insertError } = await supabaseAdmin
             .from("escrow_orders")
             .insert({
                 id: orderId,
