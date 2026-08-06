@@ -199,6 +199,8 @@ export const CATEGORIES = [
     }
 ];
 
+export const RURALPOP_CATEGORIES = CATEGORIES.slice(0, 7);
+
 export const PRICE_TYPES = [
     { id: "fixed", label: "Precio Fijo" },
     { id: "negotiable", label: "Negociable" },

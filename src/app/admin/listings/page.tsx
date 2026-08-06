@@ -62,6 +62,10 @@ export default async function AdminListingsPage(props: {
         query = query.eq('status', 'draft');
     }
 
+    if (searchParams.status === 'featured' || searchParams.featured === 'true') {
+        query = query.eq('is_featured', true);
+    }
+
     if (searchParams.online === 'true') {
         query = query.eq('vender_online', true);
     }
@@ -188,6 +192,12 @@ export default async function AdminListingsPage(props: {
                         className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${searchParams.online === 'true' ? 'bg-emerald-500 text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] hover:bg-emerald-50'}`}
                     >
                         Venta Online
+                    </Link>
+                    <Link 
+                        href={buildLink("featured")} 
+                        className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${searchParams.status === 'featured' ? 'bg-amber-500 text-white shadow-md' : 'bg-[var(--ag-sys-color-background)] text-amber-700 border border-amber-200 hover:bg-amber-50'}`}
+                    >
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" /> Destacados
                     </Link>
                 </div>
                 
