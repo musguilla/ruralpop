@@ -155,6 +155,7 @@ export async function POST(req: Request) {
                     .eq("user_id", order.seller_id)
                     .single();
 
+                if (wallet) {
                     await supabaseAdmin
                         .from("professional_wallets")
                         .update({
