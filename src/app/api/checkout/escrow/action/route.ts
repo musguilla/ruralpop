@@ -59,7 +59,7 @@ export async function POST(req: Request) {
                     return new NextResponse("Order cannot be confirmed at this stage", { status: 400 });
                 }
 
-                const { error: updateError } = await supabaseUser
+                const { error: updateError } = await supabaseAdmin
                     .from("escrow_orders")
                     .update({ 
                         status: "buyer_confirmed", 
@@ -90,15 +90,14 @@ export async function POST(req: Request) {
                     return new NextResponse("Order cannot be marked as shipped at this stage", { status: 400 });
                 }
 
-                const { error: updateError } = await supabaseUser
+                const { error: updateError } = await supabaseAdmin
                     .from("escrow_orders")
                     .update({ status: "awaiting_delivery" })
                     .eq("id", orderId);
 
                 if (updateError) throw new Error("Failed to mark order as shipped");
 
-                // Notify buyer
-                const { data: listing } = await supabaseUser.from('listings').select('title').eq('id', order.listing_id).single();
+                const { data: listing } = await supabaseAdmin.from('listings').select('title').eq('id', order.listing_id).single();
                 const { sendNotification } = await import('@/lib/services/notifications');
                 await sendNotification({
                     userId: order.buyer_id,
@@ -117,7 +116,7 @@ export async function POST(req: Request) {
                     return new NextResponse("Return cannot be initiated at this stage", { status: 400 });
                 }
 
-                const { error: updateError } = await supabaseUser
+                const { error: updateError } = await supabaseAdmin
                     .from("escrow_orders")
                     .update({ status: "return_initiated" })
                     .eq("id", orderId);
@@ -142,7 +141,7 @@ export async function POST(req: Request) {
                     metadata: { escrow_order_id: order.id }
                 });
 
-                await supabaseUser
+                await supabaseAdmin
                     .from("escrow_orders")
                     .update({
                         status: "refunded",
@@ -150,22 +149,20 @@ export async function POST(req: Request) {
                     })
                     .eq("id", order.id);
 
-                // Update wallet balances (deduct pending)
-                const { data: wallet } = await supabaseUser
+                const { data: wallet } = await supabaseAdmin
                     .from("professional_wallets")
                     .select("id, pending_balance_cents")
                     .eq("user_id", order.seller_id)
                     .single();
 
-                if (wallet) {
-                    await supabaseUser
+                    await supabaseAdmin
                         .from("professional_wallets")
                         .update({
                             pending_balance_cents: Math.max(0, wallet.pending_balance_cents - order.seller_net_amount_cents),
                         })
                         .eq("id", wallet.id);
                         
-                    await supabaseUser
+                    await supabaseAdmin
                         .from("wallet_transactions")
                         .insert({
                             wallet_id: wallet.id,
