@@ -1,0 +1,119 @@
+
+> ruralpopv1@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.143:3000
+- Environments: .env.local, .env
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1378ms
+ GET /register 200 in 3.0s (compile: 2.5s, proxy.ts: 69ms, render: 425ms)
+ POST /register 404 in 82ms (compile: 34ms, proxy.ts: 16ms, render: 32ms)
+✓ Compiled in 122ms
+✓ Compiled in 50ms
+✓ Compiled in 152ms
+✓ Compiled in 145ms
+✓ Compiled in 340ms
+✓ Compiled in 264ms
+✓ Compiled in 129ms
+✓ Compiled in 195ms
+✓ Compiled in 207ms
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.134:3000
+- Environments: .env.local, .env
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1272ms
+Image with src "https://media.ruralpop.com/listings/2026/07/4jg57a0m8fx-1huyca.webp" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/08/oko3b81zvo-aaea7b.webp" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/08/m0cya1thl6h-1f43e13b-c62b-427a-8db7-36f790a94998-1785777322471-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/08/bv7g2ftr7pk-e507886c-a493-4804-b91a-9bce91c3f5e2-1785742018554-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/08/4q9xndrxzn-1f43e13b-c62b-427a-8db7-36f790a94998-1785703243211-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/08/loe71n3lj9-d2c22ceb-ae00-4d7d-ba19-9af43ed78ee8-1785685956749-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/ffkvvrxsto7-08f5819b-ef2f-47e2-8f9a-5088803b5861-1785501073557-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/bz6e7fk5zr-1f43e13b-c62b-427a-8db7-36f790a94998-1785376338857-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/7vopijfr26i-c9c1e000-5510-4b99-9bd1-cfd9022f0f9f-1785364859297-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/4dsb3usnr0j-6mw1oq.webp" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/356nk85vbmr-xplwqb.webp" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/uvxps5nfpn-a9fbd3ac-14a5-410a-bf59-b744e2d7cecd-1785336303560-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/sctd2wshwr-65401c0a-8eeb-48bd-b474-c22665a5eb1a-1785152802389-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/qyjwsiq44xc-c1efe974-758b-4303-a753-c19c83d427bf-1785150202978-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/xrhekwql9jh-8cae5e36-6d3d-4c38-931b-d8426951998f-1785149026410-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/ys5lgc5aa1i-5daa4024-9368-4d33-bbd7-c32ca25b8e0d-1785100813112-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/yli20m4286g-d7f8efb3-e89d-4da6-bc7c-1f8ca7132c5e-1785091397749-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/y0aglcy48-0514d07f-3b5b-4aa3-aeb5-e7beb89699ca-1785085563711-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/g9lte9cxvw-2df9433a-447d-4e1f-beea-0124451f5113-1784997660319-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/yl4vpjc1qcs-2df9433a-447d-4e1f-beea-0124451f5113-1784997323699-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/48zlfe5n2e6-dgmyv.webp" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/ey4ic4c5um-f8db06c7-c836-47cd-b3be-fec0cf651921-1784838542833-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/os89h033wie-0248ccc2-5393-4cbe-b8dc-31c91470d4c6-1784718765541-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/hqikxlcwb29-61dd2438-0684-4c56-8f34-c454168d16f7-1784641927016-2.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/5h9gwig4t4q-b3c9071b-7057-4037-90b1-74b3e83320db-1784576721886-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/x2m2ib92ncn-c3d218c2-86fe-4f4a-858b-70cd1706f350-1784483252879-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/z87tneq6rm-a1efc31f-da31-429c-ae7f-a955e988bc93-1784326643448-1.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/ayyx9jxg22v-eec01a84-bb1a-4f43-b54b-750bfd6c8228-1784314015790-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/5p6md7uqvk-c4f128aa-6636-4b82-940b-6edb34af504b-1784218981774-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/ig2suhju13-d7405b7d-fbb8-453a-8972-ea7d8f03f963-1784187866625-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/ne7r5qsodz8-u8w6op.webp" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/bi8p9t9bxc-e5eb4f97-2804-416c-a799-af1b593000da-1784116552758-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/iprrbha79qa-c9c1e000-5510-4b99-9bd1-cfd9022f0f9f-1784040944345-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/2mfi3j1w2ry-e8c3b502-a32d-4084-888c-3d3cd53038f1-1783702505716-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/6tnzswo7p55-ef3604cd-0538-4f3d-83cf-bd74810ea755-1783686912160-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/1tpo5hn7mp2h-629d4124-fde9-46ee-8c9f-0707a2cbd245-1783678218740-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/oo4frih1dcd-a2a8443b-98d7-4c25-a5a8-9f02080503b6-1783672401040-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/c3go36dg4m8-d007f05b-2c18-4952-9675-85a89bc23cc9-1783627607052-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/7me99m7mxck-8d965311-c7e4-49e7-8ff2-3130ec83f6d4-1783584942509-0.jpg" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+Image with src "https://media.ruralpop.com/listings/2026/07/wpv087a9rx8-5npi1r.webp" has a "loader" property that does not implement width. Please implement it or use the "unoptimized" property instead.
+Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
+ GET /pt/vaca-retinta-madrid 200 in 4.6s (compile: 2.9s, proxy.ts: 239ms, render: 1436ms)
+ GET /api/checkout/escrow/wallet-status 401 in 3.2s (compile: 2.7s, proxy.ts: 349ms, render: 205ms)
+✓ Compiled in 795ms
+  Reload env: .env.local
+✓ Compiled in 342ms
+✓ Compiled in 209ms
+✓ Compiled in 370ms

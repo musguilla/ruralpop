@@ -8,8 +8,7 @@ import { getServerTenantSlug } from "@/utils/tenant/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { HomeLatestListings } from "@/components/home/HomeLatestListings";
 import { HomeDirectBuySlider } from "@/components/home/HomeDirectBuySlider";
-import { HomeFeaturedSlider } from "@/components/home/HomeFeaturedSlider";
-import { HomeAdBanners } from "@/components/home/HomeAdBanners";
+import { HomeFeaturedGrid } from "@/components/home/HomeFeaturedGrid";
 import { HomePopularListings } from "@/components/home/HomePopularListings";
 import { Metadata } from "next";
 import { generateSeoH1 } from "@/utils/h1Generator";
@@ -92,14 +91,8 @@ export default async function Home(props: {
               )}
 
               <Suspense fallback={null}>
-                  <HomeFeaturedSlider />
+                  <HomeFeaturedGrid />
               </Suspense>
-
-              {tenant !== 'equipop' && (
-                  <Suspense fallback={null}>
-                      <HomeAdBanners />
-                  </Suspense>
-              )}
 
               <Suspense fallback={<GridSkeleton />}>
                   <HomePopularListings />
