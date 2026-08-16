@@ -73,11 +73,13 @@ export async function POST(req: Request) {
                     updateData = {
                         is_featured: true,
                         featured_until: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                        created_at: new Date().toISOString(), // Bump to top when featured
                     };
                 } else if (planId === "highlight_20") {
                     updateData = {
                         is_featured: true,
                         featured_until: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
+                        created_at: new Date().toISOString(), // Bump to top when featured
                     };
                 } else if (planId === "animal_welfare_validation") {
                     const { data: currentListing } = await supabaseAdmin.from("listings").select("tags").eq("id", listingId).single();

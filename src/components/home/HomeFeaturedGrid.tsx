@@ -52,7 +52,7 @@ export async function HomeFeaturedGrid() {
         .eq("status", "active")
         .eq("is_featured", true)
         .eq("users.is_ghost", false)
-        .order("featured_until", { ascending: false })
+        .order("created_at", { ascending: false })
         .limit(12);
 
     query = query.or(tenantFilterString);
