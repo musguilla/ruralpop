@@ -27,6 +27,11 @@ export async function POST(req: Request) {
             { global: { headers: { Authorization: `Bearer ${token}` } } }
         );
 
+        const supabaseAdmin = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+
         const tenantHeader = req.headers.get("x-tenant");
 
         const { data: userProfile } = await supabaseUser
@@ -68,10 +73,10 @@ export async function POST(req: Request) {
             accountId = account.id;
 
             if (wallet) {
-                const { error: updateError } = await supabaseUser.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
+                const { error: updateError } = await supabaseAdmin.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
                 if (updateError) throw new Error("Error actualizando wallet: " + updateError.message);
             } else {
-                const { error: insertError } = await supabaseUser.from("professional_wallets").insert({
+                const { error: insertError } = await supabaseAdmin.from("professional_wallets").insert({
                     user_id: user.id,
                     stripe_connected_account_id: accountId,
                 });
@@ -108,7 +113,7 @@ export async function POST(req: Request) {
                 });
                 accountId = newAccount.id;
                 
-                const { error: updateError } = await supabaseUser.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
+                const { error: updateError } = await supabaseAdmin.from("professional_wallets").update({ stripe_connected_account_id: accountId }).eq("id", wallet.id);
                 if (updateError) throw new Error("Error actualizando wallet con nueva cuenta: " + updateError.message);
                 
                 accountLink = await stripe.accountLinks.create({
