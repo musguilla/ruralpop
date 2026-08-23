@@ -70,7 +70,12 @@ export function ActiveSearchBar() {
         params.delete("province_id");
 
         const queryStr = params.toString();
-        router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+        
+        if (url === '/' && !queryStr) {
+            router.push('/?sort=recent');
+        } else {
+            router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+        }
     };
 
     const handleClearSearch = () => {
@@ -89,7 +94,12 @@ export function ActiveSearchBar() {
         params.delete("province_id");
 
         const queryStr = params.toString();
-        router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+        
+        if (url === '/' && !queryStr) {
+            router.push('/?sort=recent');
+        } else {
+            router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+        }
     };
 
     const applyFilters = () => {
@@ -130,7 +140,12 @@ export function ActiveSearchBar() {
         params.delete("province_id");
 
         const queryStr = params.toString();
-        router.push(`${baseUrl}${queryStr ? '?' + queryStr : ''}`);
+        
+        if (baseUrl === '/' && !queryStr) {
+            router.push('/?sort=recent');
+        } else {
+            router.push(`${baseUrl}${queryStr ? '?' + queryStr : ''}`);
+        }
     };
 
     const clearFilters = () => {
@@ -147,7 +162,11 @@ export function ActiveSearchBar() {
             province_id: undefined
         });
 
-        router.push(baseUrl);
+        if (baseUrl === '/') {
+            router.push('/?sort=recent');
+        } else {
+            router.push(baseUrl);
+        }
         setIsFiltersOpen(false);
     };
 
@@ -199,7 +218,12 @@ export function ActiveSearchBar() {
         params.delete("province_id");
 
         const queryStr = params.toString();
-        router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+        
+        if (url === '/' && !queryStr) {
+            router.push('/?sort=recent');
+        } else {
+            router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+        }
     };
 
     const SORT_OPTIONS = [

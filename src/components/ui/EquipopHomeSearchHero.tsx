@@ -32,7 +32,12 @@ export function EquipopHomeSearchHero() {
             subcategory: subcategory,
             province_id: location
         });
-        router.push(getPath(url));
+        
+        if (url === '/') {
+            router.push('/?sort=recent');
+        } else {
+            router.push(getPath(url));
+        }
     };
 
     const handleCategorySelect = (catId: string, subId?: string) => {

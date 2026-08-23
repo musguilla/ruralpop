@@ -53,7 +53,12 @@ export function SearchInput({
       urlParams.delete("province_id");
 
       const queryStr = urlParams.toString();
-      router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+      
+      if (url === '/' && !queryStr) {
+          router.push('/?sort=recent');
+      } else {
+          router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
+      }
     }
   };
 
