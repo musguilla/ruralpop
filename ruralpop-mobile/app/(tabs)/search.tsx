@@ -317,13 +317,13 @@ export default function SearchScreen() {
                     {/* Filtros Button */}
                     <TouchableOpacity
                         onPress={() => setIsFiltersModalOpen(true)}
-                        className="flex-row items-center justify-center py-1"
+                        className="flex-row items-center justify-center py-1 pl-4"
                         style={{ flex: 1 }}
                         activeOpacity={0.7}
                     >
-                        <SlidersHorizontal color="#1f2937" size={22} strokeWidth={2.5} />
+                        <SlidersHorizontal color="#1f2937" size={20} strokeWidth={2.5} />
                         <View className="w-2" />
-                        <Text className="text-[17px] font-bold text-[#1f2937]">Filtros</Text>
+                        <Text className="text-[15px] font-bold text-[#1f2937]">Filtros</Text>
                         {(!!categoryId || !!locationId || !!priceMin || !!priceMax || sellerType !== 'Todos') && (
                             <View className="bg-[#1f2937] rounded-full w-[22px] h-[22px] items-center justify-center ml-2">
                                 <Text className="text-white text-xs font-bold">
@@ -334,18 +334,18 @@ export default function SearchScreen() {
                     </TouchableOpacity>
 
                     {/* Separator */}
-                    <View className="w-[1px] h-[24px] bg-gray-300 mx-2" />
+                    <View className="w-[1px] h-[20px] bg-gray-300 mx-2" />
 
                     {/* Sort Button */}
                     <TouchableOpacity
                         onPress={() => setIsSortModalOpen(true)}
-                        className="flex-row items-center justify-center py-1"
+                        className="flex-row items-center justify-center py-1 pr-4"
                         style={{ flex: 1 }}
                         activeOpacity={0.7}
                     >
-                        <ArrowUpDown color="#1f2937" size={20} strokeWidth={2.5} />
+                        <ArrowUpDown color="#1f2937" size={18} strokeWidth={2.5} />
                         <View className="w-2" />
-                        <Text className="text-[17px] font-bold text-[#1f2937]" numberOfLines={1}>
+                        <Text className="text-[15px] font-bold text-[#1f2937]" numberOfLines={1}>
                             {sortBy === 'newest' ? 'Más recientes' : (sortOptions.find(opt => opt.id === sortBy)?.label || 'Más recientes')}
                         </Text>
                     </TouchableOpacity>
