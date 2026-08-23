@@ -50,7 +50,6 @@ const CATEGORY_ALIASES: Record<string, string> = {
     "alimentacin-y-suplementos": "alimentacion",
     "herrado-y-cascos": "herrado",
     "trabajo-pie-a-tierra-y-entrenamiento": "trabajo-pie-a-tierra",
-    "transporte-y-viaje": "transporte",
     "seguridad-y-visibilidad": "seguridad",
     "equipamiento-mdico-y-recuperacin": "equipamiento-medico",
     "establo-y-cuadra": "establo",
