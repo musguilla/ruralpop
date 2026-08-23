@@ -34,8 +34,8 @@ const VISUAL_CATEGORIES = [
     { id: "motos", type: "category", label: "Motos", icon: <Image src="/icon-motos.jpg" alt="Motos" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "Transporte", type: "subcategory", label: "Transporte", icon: <Image src="/icon-transporte.jpg" alt="Transporte" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "genetica-y-reproduccion", type: "category", label: "Genética", icon: <Image src="/icon-genetica.jpg" alt="Genética" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Veterinarios", type: "subcategory", label: "Veterinarios", icon: <Image src="/icon-veterinarios.png" alt="Veterinarios" width={76} height={76} className="object-contain" /> },
-    { id: "Herradores", type: "subcategory", label: "Herradores", icon: <Image src="/icon-herradores.png" alt="Herradores" width={76} height={76} className="object-contain" /> },
+    { id: "Veterinarios", type: "subcategory", label: "Veterinarios", icon: <Image src="/icon-veterinarios.jpg" alt="Veterinarios" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Herradores", type: "subcategory", label: "Herradores", icon: <Image src="/icon-herradores.jpg" alt="Herradores" width={76} height={76} className="object-cover rounded-xl" /> },
 ];
 
 import { CategoryModal } from "./CategoryModal";
