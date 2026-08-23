@@ -12,19 +12,19 @@ import Image from "next/image";
 
 // Map icons to categories and subcategories
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-    "ganaderia": <Image src="/icon-bovino.jpg" alt="Ganadería" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "maquinaria": <Image src="/icon-maquinaria.jpg" alt="Maquinaria" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "recambios-maquinaria": <Image src="/icon-repuestos.jpg" alt="Recambios" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "equipamiento-y-material": <Image src="/icon-equipamiento.jpg" alt="Equipamiento" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "agricultura": <Image src="/icon-agricultura.jpg" alt="Agricultura" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "forraje": <Image src="/icon-forraje.jpg" alt="Forraje" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "alimentos": <Image src="/icon-alimentoskm0.jpeg" alt="Alimentos" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "servicios": <Image src="/icon-transporte.jpg" alt="Servicios" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "fincas": <Image src="/icon-fincas.jpg" alt="Fincas" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "coches": <Image src="/icon-coches.jpg" alt="Coches" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "atv": <Image src="/icon-atv.jpg" alt="ATV" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "motos": <Image src="/icon-motos.jpg" alt="Motos" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
-    "genetica-y-reproduccion": <Image src="/icon-genetica.jpg" alt="Genética" width={32} height={32} className="w-8 h-8 rounded-md object-cover" />,
+    "ganaderia": <Image src="/icon-bovino.jpg" alt="Ganadería" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "maquinaria": <Image src="/icon-maquinaria.jpg" alt="Maquinaria" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "recambios-maquinaria": <Image src="/icon-repuestos.jpg" alt="Recambios" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "equipamiento-y-material": <Image src="/icon-equipamiento.jpg" alt="Equipamiento" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "agricultura": <Image src="/icon-agricultura.jpg" alt="Agricultura" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "forraje": <Image src="/icon-forraje.jpg" alt="Forraje" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "alimentos": <Image src="/icon-alimentoskm0.jpeg" alt="Alimentos" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "servicios": <Image src="/icon-transporte.jpg" alt="Servicios" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "fincas": <Image src="/icon-fincas.jpg" alt="Fincas" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "coches": <Image src="/icon-coches.jpg" alt="Coches" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "atv": <Image src="/icon-atv.jpg" alt="ATV" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "motos": <Image src="/icon-motos.jpg" alt="Motos" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "genetica-y-reproduccion": <Image src="/icon-genetica.jpg" alt="Genética" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
 };
 
 interface CategoryModalProps {
@@ -150,8 +150,8 @@ export function CategoryModal({
                             >
                                 <div className="flex items-center gap-4">
                                     {!isEquipop && (
-                                        <div className={`p-2 rounded-lg transition-colors ${!selectedCategory ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
-                                            <List className={`w-5 h-5 ${!selectedCategory ? 'text-emerald-700' : 'text-gray-500'}`} />
+                                        <div className={`w-12 h-12 flex items-center justify-center rounded-xl transition-colors ${!selectedCategory ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
+                                            <List className={`w-6 h-6 ${!selectedCategory ? 'text-emerald-700' : 'text-gray-500'}`} />
                                         </div>
                                     )}
                                     <span>Todas las categorías</span>
@@ -181,11 +181,15 @@ export function CategoryModal({
                                     >
                                         <div className="flex items-center gap-4">
                                             {!isEquipop && (
-                                                <div className={`p-2 rounded-lg transition-colors ${selectedCategory === cat.id ? 'bg-emerald-100' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
-                                                    <div className={selectedCategory === cat.id ? 'text-emerald-700' : 'text-emerald-800'}>
-                                                        {CATEGORY_ICONS[cat.id] || <List className="w-5 h-5" />}
-                                                    </div>
-                                                </div>
+                                                <>
+                                                    {CATEGORY_ICONS[cat.id] ? (
+                                                        CATEGORY_ICONS[cat.id]
+                                                    ) : (
+                                                        <div className={`w-12 h-12 flex items-center justify-center rounded-xl transition-colors ${selectedCategory === cat.id ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'}`}>
+                                                            <List className="w-6 h-6" />
+                                                        </div>
+                                                    )}
+                                                </>
                                             )}
                                             <span>{cat.label}</span>
                                         </div>
