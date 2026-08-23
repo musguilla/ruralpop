@@ -85,7 +85,7 @@ export default function ChatScreen() {
         if (!otherUserId) return;
         const { data } = await supabase.from('users').select('name, commercial_name, avatar_url').eq('id', otherUserId).single();
         if (data) {
-            if (!paramName) setOtherUserName(data.commercial_name || data.name || data.full_name || 'Usuario');
+            if (!paramName) setOtherUserName(data.commercial_name || data.name || 'Usuario');
             if (!paramAvatar) setOtherUserAvatar(data.avatar_url);
         }
     }
@@ -182,7 +182,7 @@ export default function ChatScreen() {
                     body: JSON.stringify({
                         to: receiverToken,
                         sound: 'default',
-                        title: `Nuevo mensaje de ${user?.user_metadata?.full_name || 'Alguien'}`,
+                        title: `Nuevo mensaje de ${user?.user_metadata?.name || 'Alguien'}`,
                         body: content,
                         data: { listingId, otherUserId: user.id },
                     }),

@@ -245,7 +245,7 @@ export default function ListingDetailsScreen() {
                 paymentIntentClientSecret,
                 allowsDelayedPaymentMethods: false,
                 defaultBillingDetails: {
-                    name: user.user_metadata?.full_name || 'Usuario Ruralpop',
+                    name: user.user_metadata?.name || 'Usuario Ruralpop',
                 }
             });
 

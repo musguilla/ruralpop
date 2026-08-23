@@ -200,7 +200,7 @@ export default function SearchScreen() {
     };
 
     const getCategoryLabel = () => {
-        if (!categoryId) return 'Categoría';
+        if (!categoryId) return 'Todas las categorías';
 
         // Check main categories first
         const mainCat = CATEGORIES.find(c => c.id === categoryId);
@@ -220,7 +220,7 @@ export default function SearchScreen() {
     };
 
     const getLocationLabel = () => {
-        if (!locationId) return 'Ubicación';
+        if (!locationId) return 'Todas las ubicaciones';
         const loc = LOCATIONS.find(l => l.name.toLowerCase() === locationId.toLowerCase() || l.id.toLowerCase() === locationId.toLowerCase());
         return loc ? loc.name : locationId;
     };
@@ -274,12 +274,12 @@ export default function SearchScreen() {
         <SafeAreaView className="flex-1 bg-surface-muted">
             {/* Header Search Area */}
             <View 
-                className="bg-white px-4 pb-4 border-b border-gray-200 z-10"
+                className="bg-white px-4 pb-2 border-b border-gray-200 z-10"
                 style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 8) : 8 }}
             >
 
                 {/* Main Input with Back Button */}
-                <View className="flex-row items-center mb-4 mt-2">
+                <View className="flex-row items-center mb-2 mt-1">
                     <TouchableOpacity
                         onPress={() => router.push('/(tabs)')}
                         className="mr-3 p-1 rounded-full active:bg-gray-100"
@@ -313,11 +313,11 @@ export default function SearchScreen() {
                 </View>
 
                 {/* Filter & Sort Row */}
-                <View className="flex-row items-center py-2 mt-1">
+                <View className="flex-row items-center py-1 mt-0">
                     {/* Filtros Button */}
                     <TouchableOpacity
                         onPress={() => setIsFiltersModalOpen(true)}
-                        className="flex-row items-center justify-center py-2"
+                        className="flex-row items-center justify-center py-1"
                         style={{ flex: 1 }}
                         activeOpacity={0.7}
                     >
@@ -339,7 +339,7 @@ export default function SearchScreen() {
                     {/* Sort Button */}
                     <TouchableOpacity
                         onPress={() => setIsSortModalOpen(true)}
-                        className="flex-row items-center justify-center py-2"
+                        className="flex-row items-center justify-center py-1"
                         style={{ flex: 1 }}
                         activeOpacity={0.7}
                     >

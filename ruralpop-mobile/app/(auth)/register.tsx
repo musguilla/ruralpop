@@ -32,7 +32,6 @@ export default function RegisterScreen() {
             password,
             options: {
                 data: {
-                    full_name: fullName,
                     name: fullName,
                     tenant_id: getRuralpopDatabaseId() || undefined,
                 }

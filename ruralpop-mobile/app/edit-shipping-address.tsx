@@ -34,7 +34,7 @@ export default function EditShippingAddressScreen() {
                 setExtraInfo(currentAddress.extraInfo || '');
                 setPhone(currentAddress.phone || '');
             } else {
-                setFullName(currentUser?.user_metadata?.name || currentUser?.user_metadata?.full_name || '');
+                setFullName(currentUser?.user_metadata?.name || '');
             }
         };
         fetchAddress();

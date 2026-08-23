@@ -21,7 +21,6 @@ export interface Listing {
 export interface User {
     id: string;
     name: string;
-    full_name?: string;
     avatar_url?: string;
     phone?: string;
     created_at?: string;

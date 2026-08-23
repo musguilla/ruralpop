@@ -25,7 +25,7 @@ export default function ProfileScreen() {
         fetchProfile();
     }, [user?.id]);
 
-    const displayName = profile?.commercial_name || profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || (IS_EQUIPOP ? 'Usuario Equipop' : 'Usuario Ruralpop');
+    const displayName = profile?.commercial_name || profile?.name || user?.user_metadata?.name || (IS_EQUIPOP ? 'Usuario Equipop' : 'Usuario Ruralpop');
     const avatarUrl = profile?.company_logo_url || profile?.avatar_url || user?.user_metadata?.avatar_url;
     const joinedYear = profile?.created_at ? new Date(profile.created_at).getFullYear() : new Date().getFullYear();
 

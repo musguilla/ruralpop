@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView, SafeAreaView, TextInput } from 'react-native';
-import { X, Check, ChevronRight, ChevronLeft, Search, List, PawPrint, Tractor, Leaf, Briefcase, Apple } from 'lucide-react-native';
+import { X, Check, ChevronRight, ChevronLeft, Search, List, PawPrint, Tractor, Leaf, Briefcase, Apple, LayoutGrid } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { CATEGORIES } from '../../../constants/categories';
 import { IS_EQUIPOP } from '../../../config/tenants';
@@ -23,41 +23,36 @@ const ICONS: Record<string, any> = {
 };
 
 export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: CategoryModalProps) {
-    const [searchQuery, setSearchQuery] = useState('');
     const [activeParentId, setActiveParentId] = useState<string | null>(null);
 
     const activeParent = useMemo(() => CATEGORIES.find(c => c.id === activeParentId), [activeParentId]);
 
-    const normalizeStr = (str: string) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const RadioButton = ({ selected }: { selected: boolean }) => (
+        <View className={`w-[22px] h-[22px] rounded-full border-[2.5px] items-center justify-center ${selected ? 'border-[#1f2937]' : 'border-[#9ca3af]'}`}>
+            {selected && <View className="w-[10px] h-[10px] rounded-full bg-[#1f2937]" />}
+        </View>
+    );
 
     const activeList = useMemo(() => {
-        const query = normalizeStr(searchQuery);
         if (activeParent) {
             const subs = activeParent.subcategories
-                .filter((sub: string) => normalizeStr(sub).includes(query))
                 .map((sub: string) => ({ id: sub, label: sub, isSub: true }));
-
-            if (!query || normalizeStr(`Todo en ${activeParent.label}`).includes(query)) {
-                return [{ id: activeParent.id, label: `Todo en ${activeParent.label}`, isSub: true, isAllOption: true }, ...subs];
-            }
-            return subs;
+            return [{ id: activeParent.id, label: `Ver todo`, isSub: true, isAllOption: true }, ...subs];
         }
         return CATEGORIES
-            .filter((c: any) => normalizeStr(c.label).includes(query))
             .map((c: any) => ({
                 id: c.id,
                 label: c.label,
                 hasSub: c.subcategories && c.subcategories.length > 0,
                 isSub: false
             }));
-    }, [activeParent, searchQuery]);
+    }, [activeParent]);
 
     const handleSelect = (id: string | null) => {
         onSelect(id);
         onClose();
         // Reset state after a short delay to allow closing animation
         setTimeout(() => {
-            setSearchQuery('');
             setActiveParentId(null);
         }, 400);
     };
@@ -65,7 +60,6 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
     const handleClose = () => {
         onClose();
         setTimeout(() => {
-            setSearchQuery('');
             setActiveParentId(null);
         }, 300);
     };
@@ -90,45 +84,32 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                     </TouchableOpacity>
                 </View>
 
-                {/* Search Bar */}
-                <View className="px-6 pt-4 pb-6 border-b border-gray-100">
-                    <View className="flex-row items-center bg-white border border-gray-300 focus:border-primary rounded-xl h-12 px-4">
-                        <Search color="#10b981" size={20} />
-                        <TextInput
-                            className="flex-1 ml-3 text-base text-gray-800"
-                            style={{ paddingVertical: 0 }}
-                            placeholder={activeParent ? `Buscar en ${activeParent.label}` : "Buscar una categoría"}
-                            placeholderTextColor="#9ca3af"
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                        />
-                    </View>
-                </View>
+
 
                 <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
-                    {/* Todas las categorías - only show in root level and if no search query (or matches query) */}
-                    {!activeParent && (!searchQuery || "todas las categorias".includes(searchQuery.toLowerCase())) && (
+                    {/* Todas las categorías - only show in root level */}
+                    {!activeParent && (
                         <TouchableOpacity
                             onPress={() => handleSelect(null)}
-                            className={`flex-row items-center justify-between p-4 rounded-xl border mb-6 ${!selectedCategory ? 'bg-primary-muted/20 border-primary' : 'bg-white border-gray-200'}`}
+                            className={`flex-row items-center justify-between py-4 border-b border-gray-100`}
                         >
                             <View className="flex-row items-center">
-                                <Text className={`text-base font-bold ${!selectedCategory ? 'text-primary' : 'text-text'}`}>
+                                <LayoutGrid color="#374151" size={24} className="mr-3" />
+                                <Text className={`text-[17px] text-gray-800`}>
                                     Todas las categorías
                                 </Text>
                             </View>
-                            {!selectedCategory && <Check color="#059669" size={24} />}
+                            <RadioButton selected={!selectedCategory} />
                         </TouchableOpacity>
                     )}
 
                     {/* List */}
                     {activeList.map((item: any, index: number) => {
                         const isSelected = selectedCategory === item.id;
-                        const IconComponent = !item.isSub ? ICONS[item.id] || List : null;
                         const isLast = index === activeList.length - 1;
 
-                        const isFirstHorse = item.id === 'sillas-de-montar-y-accesorios' && !item.isSub && !searchQuery;
-                        const isFirstRider = item.id === 'calzado-ecuestre' && !item.isSub && !searchQuery;
+                        const isFirstHorse = item.id === 'sillas-de-montar-y-accesorios' && !item.isSub;
+                        const isFirstRider = item.id === 'calzado-ecuestre' && !item.isSub;
 
                         return (
                             <React.Fragment key={item.id}>
@@ -146,7 +127,6 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                                     onPress={() => {
                                         if (!item.isSub && item.hasSub) {
                                             setActiveParentId(item.id);
-                                            setSearchQuery('');
                                         } else {
                                             handleSelect(item.id);
                                         }
@@ -154,17 +134,15 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                                     className={`flex-row items-center justify-between py-4 ${!isLast ? 'border-b border-gray-100' : ''}`}
                                 >
                                 <View className="flex-row items-center">
-                                    <Text className={`text-[17px] ${isSelected ? 'font-bold text-primary' : 'text-gray-800'}`}>
+                                    <Text className={`text-[17px] text-gray-800`}>
                                         {item.label}
                                     </Text>
                                 </View>
 
-                                {item.hasSub && !item.isSub && (
+                                {item.hasSub && !item.isSub ? (
                                     <ChevronRight color="#9ca3af" size={20} />
-                                )}
-
-                                {isSelected && (!item.hasSub || item.isSub) && (
-                                    <Check color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={24} />
+                                ) : (
+                                    <RadioButton selected={isSelected} />
                                 )}
                             </TouchableOpacity>
                         </React.Fragment>

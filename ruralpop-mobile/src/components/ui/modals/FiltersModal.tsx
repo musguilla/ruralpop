@@ -62,9 +62,9 @@ export function FiltersModal({
                             onPress={() => setIsCategoryModalOpen(true)}
                             className="flex-row items-center justify-between bg-white px-6 py-5"
                         >
-                            <Text className="text-[17px] text-gray-800">Categoría</Text>
+                            <Text className="text-[17px] font-bold text-gray-800">Categoría</Text>
                             <View className="flex-row items-center">
-                                <Text className={(categoryLabel !== 'Todas las categorías' && categoryLabel !== 'Categoría') ? "text-[17px] text-primary mr-2" : "text-[17px] text-gray-500 mr-2"}>
+                                <Text className={(categoryLabel !== 'Todas las categorías' && categoryLabel !== 'Categoría') ? "text-[17px] text-primary mr-2" : "text-[15px] text-gray-500 mr-2"}>
                                     {categoryLabel}
                                 </Text>
                                 <ChevronRight color="#9ca3af" size={20} />
@@ -78,9 +78,9 @@ export function FiltersModal({
                             onPress={() => setIsLocationModalOpen(true)}
                             className="flex-row items-center justify-between px-6 py-5 border-b border-gray-100 bg-white"
                         >
-                            <Text className="text-[17px] text-gray-800">Ubicación</Text>
+                            <Text className="text-[17px] font-bold text-gray-800">Ubicación</Text>
                             <View className="flex-row items-center">
-                                <Text className={(locationLabel !== 'Toda España' && locationLabel !== 'Ubicación') ? "text-[17px] text-primary mr-2" : "text-[17px] text-gray-500 mr-2"}>
+                                <Text className={(locationLabel !== 'Todas las ubicaciones' && locationLabel !== 'Toda España' && locationLabel !== 'Ubicación') ? "text-[17px] text-primary mr-2" : "text-[15px] text-gray-500 mr-2"}>
                                     {locationLabel}
                                 </Text>
                                 <ChevronRight color="#9ca3af" size={20} />

@@ -49,8 +49,7 @@ export default function PersonalDataScreen() {
                 .single();
 
             if (data) {
-                // Support both full_name or name from supabase
-                setName(data.name || user?.user_metadata?.name || user?.user_metadata?.full_name || '');
+                setName(data.name || user?.user_metadata?.name || '');
                 setCommercialName(data.commercial_name || '');
                 setRole(data.role || 'user');
                 setPhone(data.contact_phone || '');
@@ -99,7 +98,7 @@ export default function PersonalDataScreen() {
             .eq('id', user.id);
 
         const { error: authError } = await supabase.auth.updateUser({
-            data: { full_name: name.trim() }
+            data: { name: name.trim() }
         });
 
         setIsSaving(false);

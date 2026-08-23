@@ -38,6 +38,16 @@ const RURALPOP_CATEGORIES = [
         ],
     },
     {
+        id: "recambios-maquinaria",
+        label: "Recambios maquinaria",
+        subcategories: [],
+    },
+    {
+        id: "equipamiento-y-material",
+        label: "Equipamiento y material",
+        subcategories: [],
+    },
+    {
         id: "forraje",
         label: "Forraje y alimentación animal",
         subcategories: [],
@@ -76,6 +86,26 @@ const RURALPOP_CATEGORIES = [
     {
         id: "alimentos",
         label: "Alimentos",
+        subcategories: [],
+    },
+    {
+        id: "coches",
+        label: "Coches",
+        subcategories: [],
+    },
+    {
+        id: "atv",
+        label: "ATV",
+        subcategories: [],
+    },
+    {
+        id: "motos",
+        label: "Motos",
+        subcategories: [],
+    },
+    {
+        id: "genetica-y-reproduccion",
+        label: "Genética y reproducción",
         subcategories: [],
     },
 ];

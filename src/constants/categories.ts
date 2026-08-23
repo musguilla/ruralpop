@@ -36,6 +36,16 @@ export const CATEGORIES = [
         ],
     },
     {
+        id: "recambios-maquinaria",
+        label: "Recambios maquinaria",
+        subcategories: [],
+    },
+    {
+        id: "equipamiento-y-material",
+        label: "Equipamiento y material",
+        subcategories: [],
+    },
+    {
         id: "forraje",
         label: "Forraje y alimentación animal",
         subcategories: [],
@@ -74,6 +84,26 @@ export const CATEGORIES = [
     {
         id: "alimentos",
         label: "Alimentos Km0",
+        subcategories: [],
+    },
+    {
+        id: "coches",
+        label: "Coches",
+        subcategories: [],
+    },
+    {
+        id: "atv",
+        label: "ATV",
+        subcategories: [],
+    },
+    {
+        id: "motos",
+        label: "Motos",
+        subcategories: [],
+    },
+    {
+        id: "genetica-y-reproduccion",
+        label: "Genética y reproducción",
         subcategories: [],
     },
     // EQUIPOP CATEGORIES (FOR SEO PARSING)
@@ -199,7 +229,7 @@ export const CATEGORIES = [
     }
 ];
 
-export const RURALPOP_CATEGORIES = CATEGORIES.slice(0, 7);
+export const RURALPOP_CATEGORIES = CATEGORIES.slice(0, 13);
 
 export const PRICE_TYPES = [
     { id: "fixed", label: "Precio Fijo" },
