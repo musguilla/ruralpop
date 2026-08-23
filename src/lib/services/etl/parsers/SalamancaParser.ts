@@ -5,7 +5,7 @@ export class SalamancaParser {
     // Define the bovino categories to parse from Salamanca
     // In Salamanca, "BOVINO DE CARNE" and "BOVINO DE VIDA" are the products
     
-    static async parse(source: MarketSource): Promise<ETLParserResult> {
+    static async parse(source: MarketSource, limit: number = 3000): Promise<ETLParserResult> {
         // Fetch the metadata to dynamically find the latest CSV resource URL
         const metaUrl = "https://datosabiertossalamanca.es/api/3/action/package_show?id=cotizaciones-semanales-de-la-lonja-de-salamanca";
         const metaResponse = await fetch(metaUrl, { cache: 'no-store' });
@@ -33,9 +33,9 @@ export class SalamancaParser {
         
         const prices = [];
         
-        // Parse the first 3000 rows (plenty for the last few months of all mesas)
+        // Parse the rows
         for (let i = 1; i < lines.length; i++) {
-            if (i > 3000) break; 
+            if (limit > 0 && i > limit) break; 
             const line = lines[i].trim();
             if (!line) continue;
             
