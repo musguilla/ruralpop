@@ -46,7 +46,7 @@ export default async function BovinePricesHubPage() {
                 {/* Market Explorer */}
                 <section>
                     <h2 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight mb-8">Explorar por Mercado</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                         {markets?.sort((a: any, b: any) => {
                             if (a.name.includes('Salamanca')) return -1;
                             if (b.name.includes('Salamanca')) return 1;

@@ -194,7 +194,7 @@ export default async function BrandCatalogPage(props: Props) {
                             <p className="text-lg font-bold">Aún no hay modelos sincronizados para {brandData.name}</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
                             {models.map((model) => {
                                 // Check if we have S3 legacy media for this model
                                 let s3Media = s3ItemsMap.get(model.slug);
