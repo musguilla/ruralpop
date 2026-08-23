@@ -2,11 +2,12 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, ChevronDown } from "lucide-react";
-import { RURALPOP_CATEGORIES } from "@/constants/categories";
+import { useCategories } from "@/context/CategoriesContext";
 
 export function AdminFilters() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const categories = useCategories();
 
     const currentQ = searchParams.get("q") || "";
     const currentCategory = searchParams.get("category") || "";
@@ -63,7 +64,7 @@ export function AdminFilters() {
                     className="w-full sm:w-auto pl-4 pr-10 py-2.5 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-full text-sm outline-none focus:border-[var(--ag-sys-color-primary)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/10 font-bold text-[var(--ag-sys-color-text)] shadow-sm hover:shadow-md cursor-pointer appearance-none transition-all"
                 >
                     <option value="">Todas las categorías</option>
-                    {RURALPOP_CATEGORIES.map((c) => {
+                    {categories.map((c) => {
                         if (!c.subcategories || c.subcategories.length === 0) {
                             return (
                                 <option key={c.id} value={`cat:${c.id}`}>
