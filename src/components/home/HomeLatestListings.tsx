@@ -47,14 +47,14 @@ export async function HomeLatestListings() {
 
     return (
         <section className="my-16">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-                <h2 className="text-2xl md:text-3xl font-extrabold text-[var(--ag-sys-color-text)] flex items-center justify-center sm:justify-start gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-[var(--ag-sys-color-text)] flex items-center justify-center sm:justify-start gap-2">
                     {t.home.latest_listings}
                 </h2>
-                <div className="flex justify-center sm:justify-end w-full sm:w-auto">
+                <div className="hidden sm:flex justify-end w-auto">
                     <LocalizedLink 
                         href="/?sort=recent" 
-                        className="inline-flex items-center justify-center gap-2 px-12 py-2.5 bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] rounded-full font-bold text-base transition-all shadow-md w-full sm:w-auto min-w-[200px]"
+                        className="inline-flex items-center justify-center gap-2 px-12 py-2.5 bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] rounded-full font-bold text-base transition-all shadow-md w-auto min-w-[200px]"
                     >
                         <span className="truncate">{t.home.see_all}</span>
                         <ArrowRight className="w-5 h-5 flex-shrink-0" />
@@ -62,7 +62,7 @@ export async function HomeLatestListings() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
                 {listings.map((listing: any) => (
                     <ListingCard 
                         key={listing.id}
@@ -70,6 +70,16 @@ export async function HomeLatestListings() {
                         isFavorited={userFavs.includes(listing.id)} 
                     />
                 ))}
+            </div>
+
+            <div className="flex sm:hidden justify-center w-full mt-6">
+                <LocalizedLink 
+                    href="/?sort=recent" 
+                    className="inline-flex items-center justify-center gap-2 px-12 py-2.5 bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] rounded-full font-bold text-base transition-all shadow-md w-full"
+                >
+                    <span className="truncate">{t.home.see_all}</span>
+                    <ArrowRight className="w-5 h-5 flex-shrink-0" />
+                </LocalizedLink>
             </div>
 
             {/* Documentación de memoria */}

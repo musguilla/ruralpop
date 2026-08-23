@@ -248,7 +248,7 @@ export function HomeSearchHero() {
                 {/* Slider Container */}
                 <div
                     ref={sliderRef}
-                    className="flex overflow-x-auto gap-1 pb-4 hide-scrollbar w-full px-2"
+                    className="grid grid-rows-2 grid-flow-col sm:flex sm:flex-row overflow-x-auto gap-x-2 gap-y-4 sm:gap-1 pb-4 hide-scrollbar w-full px-2"
                     style={{ touchAction: 'pan-y' }}
                 >
                     {VISUAL_CATEGORIES.map(cat => (
