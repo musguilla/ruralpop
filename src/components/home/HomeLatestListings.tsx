@@ -54,9 +54,9 @@ export async function HomeLatestListings() {
                 <div className="flex justify-center sm:justify-end w-full sm:w-auto">
                     <LocalizedLink 
                         href="/?sort=recent" 
-                        className="inline-flex items-center justify-center gap-2 px-12 py-2.5 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary)] hover:text-white rounded-full font-bold text-base transition-all shadow-sm border border-[var(--ag-sys-color-primary)]/20 w-full sm:w-auto min-w-[200px]"
+                        className="inline-flex items-center justify-center gap-2 px-12 py-2.5 bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] rounded-full font-bold text-base transition-all shadow-md w-full sm:w-auto min-w-[200px]"
                     >
-                        <span className="truncate">{t.home.see_more}</span>
+                        <span className="truncate">{t.home.see_all}</span>
                         <ArrowRight className="w-5 h-5 flex-shrink-0" />
                     </LocalizedLink>
                 </div>
