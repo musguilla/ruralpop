@@ -36,7 +36,7 @@ const RURALPOP_CATEGORIES_LIST = [
     { id: 'Conejos', label: 'Conejos', image: require('../assets/ruralpop/categories/conejos.jpg') },
     { id: 'maquinaria', label: 'Maquinaria', image: require('../assets/ruralpop/categories/maquinaria.jpg') },
     { id: 'recambios-maquinaria', label: 'Recambios maquinaria', image: require('../assets/ruralpop/categories/repuestos.jpg') },
-    { id: 'equipamiento-y-material', label: 'Equipamiento y material', image: require('../assets/icon-tractor.png') },
+    { id: 'equipamiento-y-material', label: 'Equipamiento y material', image: require('../assets/ruralpop/categories/equipamiento.jpg') },
     { id: 'agricultura', label: 'Agricultura', image: require('../assets/ruralpop/categories/agricultura.jpg') },
     { id: 'forraje', label: 'Forraje', image: require('../assets/ruralpop/categories/forraje.jpg') },
     { id: 'fincas', label: 'Fincas', image: require('../assets/ruralpop/categories/fincas.jpg') },
