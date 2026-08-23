@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, FlatList, ActivityIndicator, RefreshControl, Dimensions, Platform, ScrollView, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CategoriesSlider } from '../../src/components/ui/CategoriesSlider';
 import { ListingCard } from '../../src/components/ui/ListingCard';
 import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
 import { supabase } from '../../src/lib/supabase';
@@ -17,7 +16,7 @@ const numColumns = width > 768 ? 3 : 2;
 const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit, onCategoryPress, featuredListings }: { searchQuery: string, setSearchQuery: (s: string) => void, onSearchSubmit: () => void, onCategoryPress: () => void, featuredListings: Listing[] }) => (
     <View>
         {!IS_EQUIPOP && (
-            <View className="px-4 mt-6">
+            <View className="px-4 mt-6 mb-4">
                 <View className="flex-row items-center">
                     <View className="flex-1 flex-row items-center bg-[#f8f9fa] border border-[#475569] rounded-full h-[46px] px-4">
                         <Search color="#475569" size={24} />
@@ -31,11 +30,15 @@ const HomeHeader = ({ searchQuery, setSearchQuery, onSearchSubmit, onCategoryPre
                             clearButtonMode="while-editing"
                         />
                     </View>
+                    <TouchableOpacity 
+                        onPress={onCategoryPress}
+                        className="ml-3 h-[46px] w-[40px] items-center justify-center"
+                    >
+                        <LayoutGrid color="#475569" size={28} />
+                    </TouchableOpacity>
                 </View>
             </View>
         )}
-
-        {!IS_EQUIPOP && <CategoriesSlider />}
 
         {featuredListings.length > 0 && (
             <View className="mb-2 mt-4 bg-white py-2">
