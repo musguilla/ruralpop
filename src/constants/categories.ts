@@ -11,8 +11,7 @@ export const CATEGORIES = [
             "Avicultura",
             "Apicultura",
             "Perros",
-            "Conejos",
-            "Otros",
+            "Conejos"
         ],
     },
     {

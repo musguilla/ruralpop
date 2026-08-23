@@ -13,8 +13,7 @@ const RURALPOP_CATEGORIES = [
             "Avicultura",
             "Apicultura",
             "Perros",
-            "Conejos",
-            "Otros",
+            "Conejos"
         ],
     },
     {
