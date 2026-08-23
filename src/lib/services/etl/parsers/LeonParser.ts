@@ -2,8 +2,14 @@ import * as cheerio from 'cheerio';
 import { ETLParserResult, TrendType, UnitType, MarketSource, SegmentType } from '@/types/livestock';
 
 export class LeonParser {
-    static async parse(source: MarketSource): Promise<ETLParserResult> {
+    static async parse(source: MarketSource, htmlInput?: string, urlOverride?: string, dateOverride?: Date): Promise<ETLParserResult> {
         try {
+            if (htmlInput) {
+                const date = dateOverride || new Date();
+                const url = urlOverride || source.source_url;
+                return await LeonParser.parseHtml(htmlInput, date, url);
+            }
+
             // 1. Dynamic URL Discovery
             const today = new Date();
             const fetchPromises: Promise<{ htmlText: string, foundDate: Date, foundUrl: string } | null>[] = [];
@@ -18,7 +24,9 @@ export class LeonParser {
                 
                 const urls = [
                     `https://www.lonjadeleon.es/lonja-carne-de-vacuno-${day}-${month}-${year}/`,
-                    `https://www.lonjadeleon.es/lonja-carne-vacuno-${day}-${month}-${year}/`
+                    `https://www.lonjadeleon.es/lonja-carne-vacuno-${day}-${month}-${year}/`,
+                    `https://www.lonjadeleon.es/lonja-vacuno-de-carne-${day}-${month}-${year}/`,
+                    `https://www.lonjadeleon.es/lonja-de-leon-vacuno-${day}-${month}-${year}/`
                 ];
                 
                 for (const url of urls) {
