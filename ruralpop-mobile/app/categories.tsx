@@ -25,21 +25,25 @@ const JINETES_CATEGORIES = [
     { id: 'fustas-espuelas-y-ayudas', type: 'category', label: 'Fustas, espuelas y ayudas', image: require('../assets/equipop/categories/fustas-espuelas-y-ayudas.jpg') },
 ];
 
-// Placeholder ruralpop categories, you can drop your images in assets/ruralpop/categories/ and update the requires later
 const RURALPOP_CATEGORIES_LIST = [
-    { id: 'ganaderia', label: 'Ganadería', image: require('../assets/icon-ganaderia.png') },
-    { id: 'maquinaria', label: 'Maquinaria y herramientas', image: require('../assets/icon-tractor.png') },
-    { id: 'recambios-maquinaria', label: 'Recambios maquinaria', image: require('../assets/icon-tractor.png') },
-    { id: 'equipamiento-y-material', label: 'Equipamiento y material', image: require('../assets/icon-tractor.png') },
-    { id: 'forraje', label: 'Forraje y alimentación animal', image: require('../assets/icon-forraje.png') },
-    { id: 'fincas', label: 'Fincas', image: require('../assets/icon-fincas.webp') },
-    { id: 'agricultura', label: 'Agricultura', image: require('../assets/icon-agricultura.png') },
-    { id: 'servicios', label: 'Servicios', image: require('../assets/icon-veterinarios.png') },
-    { id: 'alimentos', label: 'Alimentos', image: require('../assets/icon-alimentos.png') },
-    { id: 'coches', label: 'Coches', image: require('../assets/icon-transportes.png') },
-    { id: 'atv', label: 'ATV', image: require('../assets/icon-transportes.png') },
-    { id: 'motos', label: 'Motos', image: require('../assets/icon-transportes.png') },
-    { id: 'genetica-y-reproduccion', label: 'Genética y reproducción', image: require('../assets/icon-ganaderia.png') },
+    { id: 'Bovino', label: 'Bovino', image: require('../assets/ruralpop/categories/bovino.jpg') },
+    { id: 'Equino', label: 'Equino', image: require('../assets/ruralpop/categories/equino.jpg') },
+    { id: 'Caprino', label: 'Caprino', image: require('../assets/ruralpop/categories/caprino.jpg') },
+    { id: 'Ovino', label: 'Ovino', image: require('../assets/ruralpop/categories/ovino.jpg') },
+    { id: 'Porcino', label: 'Porcino', image: require('../assets/ruralpop/categories/porcino.jpg') },
+    { id: 'Avicultura', label: 'Avicultura', image: require('../assets/ruralpop/categories/avicultura.jpg') },
+    { id: 'Apicultura', label: 'Apicultura', image: require('../assets/ruralpop/categories/apicultura.jpg') },
+    { id: 'Conejos', label: 'Conejos', image: require('../assets/ruralpop/categories/conejos.jpg') },
+    { id: 'maquinaria', label: 'Maquinaria', image: require('../assets/ruralpop/categories/maquinaria.jpg') },
+    { id: 'agricultura', label: 'Agricultura', image: require('../assets/ruralpop/categories/agricultura.jpg') },
+    { id: 'forraje', label: 'Forraje', image: require('../assets/ruralpop/categories/forraje.jpg') },
+    { id: 'alimentos', label: 'Alimentos Km0', image: require('../assets/ruralpop/categories/alimentoskm0.jpeg') },
+    { id: 'coches', label: 'Coches', image: require('../assets/ruralpop/categories/coches.jpg') },
+    { id: 'atv', label: 'ATV', image: require('../assets/ruralpop/categories/atv.jpg') },
+    { id: 'motos', label: 'Motos', image: require('../assets/ruralpop/categories/motos.jpg') },
+    { id: 'servicios', label: 'Servicios', image: require('../assets/ruralpop/categories/servicios.jpg') },
+    { id: 'Transporte', label: 'Transporte', image: require('../assets/ruralpop/categories/transporte.jpg') },
+    { id: 'genetica-y-reproduccion', label: 'Genética y reproducción', image: require('../assets/ruralpop/categories/genetica.jpg') },
 ];
 
 export default function CategoriesScreen() {
