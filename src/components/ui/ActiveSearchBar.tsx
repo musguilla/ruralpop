@@ -70,12 +70,7 @@ export function ActiveSearchBar() {
         params.delete("province_id");
 
         const queryStr = params.toString();
-        
-        if (url === '/' && !queryStr) {
-            router.push('/?sort=recent');
-        } else {
-            router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
-        }
+        router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
     };
 
     const handleClearSearch = () => {
@@ -94,12 +89,7 @@ export function ActiveSearchBar() {
         params.delete("province_id");
 
         const queryStr = params.toString();
-        
-        if (url === '/' && !queryStr) {
-            router.push('/?sort=recent');
-        } else {
-            router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
-        }
+        router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
     };
 
     const applyFilters = () => {
@@ -140,12 +130,7 @@ export function ActiveSearchBar() {
         params.delete("province_id");
 
         const queryStr = params.toString();
-        
-        if (baseUrl === '/' && !queryStr) {
-            router.push('/?sort=recent');
-        } else {
-            router.push(`${baseUrl}${queryStr ? '?' + queryStr : ''}`);
-        }
+        router.push(`${baseUrl}${queryStr ? '?' + queryStr : ''}`);
     };
 
     const clearFilters = () => {
@@ -162,11 +147,7 @@ export function ActiveSearchBar() {
             province_id: undefined
         });
 
-        if (baseUrl === '/') {
-            router.push('/?sort=recent');
-        } else {
-            router.push(baseUrl);
-        }
+        router.push(baseUrl);
         setIsFiltersOpen(false);
     };
 
@@ -218,12 +199,7 @@ export function ActiveSearchBar() {
         params.delete("province_id");
 
         const queryStr = params.toString();
-        
-        if (url === '/' && !queryStr) {
-            router.push('/?sort=recent');
-        } else {
-            router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
-        }
+        router.push(`${url}${queryStr ? '?' + queryStr : ''}`);
     };
 
     const SORT_OPTIONS = [
