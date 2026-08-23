@@ -219,7 +219,8 @@ export default function Home() {
                     <Search color="#475569" size={24} />
                     <TextInput
                         className="flex-1 ml-3 text-base text-text h-full"
-                        placeholder={IS_EQUIPOP ? "Buscar en Equipop..." : "Estoy buscando..."}
+                        placeholder={IS_EQUIPOP ? "Buscar en Equipop" : "Buscar en Ruralpop"}
+                        placeholderTextColor="#374151"
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                         onSubmitEditing={handleSearchSubmit}
