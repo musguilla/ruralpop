@@ -57,15 +57,20 @@ export default async function MarketCategoryDetailPage({ params }: { params: Pro
         .eq('market_source_id', marketId)
         .eq('normalized_category', categoria)
         .order('date', { ascending: false })
-        .limit(2000);
+        .limit(10000); // Increased limit to support up to 20 years of weekly data for multiple sub-categories
 
     if (!pricesDesc || pricesDesc.length === 0) {
         // Return a proper 404 so Google drops these invalid/legacy URLs from its index
         notFound();
     }
 
-    // Reverse to chronological order for the chart
-    const prices = pricesDesc.reverse();
+    // Reverse to chronological order
+    const rawPrices = pricesDesc.reverse();
+    const latestRawPrice = rawPrices[rawPrices.length - 1];
+    
+    // Filter to only include the EXACT category name (e.g. "Ternero - Extra macho") 
+    // so we don't mix and average it with "Ternero - Segunda macho" in the same chart
+    const prices = rawPrices.filter(p => p.category_name === latestRawPrice.category_name);
 
     const latestPrice = prices[prices.length - 1];
     const previousPrice = prices.length > 1 ? prices[prices.length - 2] : null;
