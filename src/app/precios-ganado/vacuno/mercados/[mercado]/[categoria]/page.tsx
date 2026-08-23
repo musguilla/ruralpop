@@ -70,7 +70,7 @@ export default async function MarketCategoryDetailPage({ params }: { params: Pro
     
     // Filter to only include the EXACT category name (e.g. "Ternero - Extra macho") 
     // so we don't mix and average it with "Ternero - Segunda macho" in the same chart
-    const prices = rawPrices.filter(p => p.category_name === latestRawPrice.category_name);
+    const prices = rawPrices.filter((p: any) => p.category_name === latestRawPrice.category_name);
 
     const latestPrice = prices[prices.length - 1];
     const previousPrice = prices.length > 1 ? prices[prices.length - 2] : null;
