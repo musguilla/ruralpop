@@ -21,6 +21,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
     "alimentos": <Image src="/icon-alimentoskm0.jpeg" alt="Alimentos" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
     "servicios": <Image src="/icon-transporte.jpg" alt="Servicios" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
     "fincas": <Image src="/icon-fincas.jpg" alt="Fincas" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
+    "camiones-y-furgonetas": <Image src="/icon-camiones.jpg" alt="Camiones y furgonetas" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
     "coches": <Image src="/icon-coches.jpg" alt="Coches" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
     "atv": <Image src="/icon-atv.jpg" alt="ATV" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,
     "motos": <Image src="/icon-motos.jpg" alt="Motos" width={48} height={48} className="w-12 h-12 rounded-xl object-cover" />,

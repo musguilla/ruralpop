@@ -29,6 +29,7 @@ const VISUAL_CATEGORIES = [
     { id: "fincas", type: "category", label: "Fincas", icon: <Image src="/icon-fincas.jpg" alt="Fincas" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "forraje", type: "category", label: "Forraje", icon: <Image src="/icon-forraje.jpg" alt="Forraje" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "alimentos", type: "category", label: "Km0", icon: <Image src="/icon-alimentoskm0.jpeg" alt="Km0" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "camiones-y-furgonetas", type: "category", label: "Camiones y furgonetas", icon: <Image src="/icon-camiones.jpg" alt="Camiones y furgonetas" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "coches", type: "category", label: "Coches", icon: <Image src="/icon-coches.jpg" alt="Coches" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "atv", type: "category", label: "ATV", icon: <Image src="/icon-atv.jpg" alt="ATV" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "motos", type: "category", label: "Motos", icon: <Image src="/icon-motos.jpg" alt="Motos" width={76} height={76} className="object-cover rounded-xl" /> },

@@ -31,6 +31,8 @@ export const CATEGORIES = [
             "Segadoras",
             "Trituradoras",
             "Volteadoras",
+            "Silos",
+            "Depósitos",
             "Otra maquinaria agrícola"
         ],
     },
@@ -42,7 +44,18 @@ export const CATEGORIES = [
     {
         id: "equipamiento-y-material",
         label: "Equipamiento y material",
-        subcategories: [],
+        subcategories: [
+            "Alimentación y agua",
+            "Equitación y material equino",
+            "Material apicultura",
+            "Material avicultura",
+            "Material conejos",
+            "Material porcino",
+            "Ordeño y leche",
+            "Identificación y trazabilidad",
+            "Cerramientos",
+            "Limpieza, purines y estiércol"
+        ],
     },
     {
         id: "forraje",
@@ -83,6 +96,11 @@ export const CATEGORIES = [
     {
         id: "alimentos",
         label: "Alimentos Km0",
+        subcategories: [],
+    },
+    {
+        id: "camiones-y-furgonetas",
+        label: "Camiones y furgonetas",
         subcategories: [],
     },
     {
@@ -228,7 +246,7 @@ export const CATEGORIES = [
     }
 ];
 
-export const RURALPOP_CATEGORIES = CATEGORIES.slice(0, 13);
+export const RURALPOP_CATEGORIES = CATEGORIES.slice(0, 14);
 
 export const PRICE_TYPES = [
     { id: "fixed", label: "Precio Fijo" },
