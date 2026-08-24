@@ -430,12 +430,14 @@ export default function ListingDetailsScreen() {
                         </View>
 
                         {listing.subcategory && (
-                            <View className="flex-row items-center bg-surface-muted px-3 py-2 rounded-xl border border-gray-100">
-                                <Layers color="#6b7280" size={18} />
-                                <Text className="text-text-muted font-medium ml-1 capitalize">
+                            <TouchableOpacity 
+                                onPress={() => router.push({ pathname: '/(tabs)/search', params: { category: listing.subcategory } })}
+                                className="flex-row items-center bg-surface-muted px-3 py-2 rounded-xl border border-gray-100"
+                            >
+                                <Text className="text-text-muted font-medium capitalize">
                                     {listing.subcategory}
                                 </Text>
-                            </View>
+                            </TouchableOpacity>
                         )}
                     </View>
 
