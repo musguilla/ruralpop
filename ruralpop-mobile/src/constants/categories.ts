@@ -23,14 +23,16 @@ const RURALPOP_CATEGORIES = [
             "Tractores",
             "Abonadoras",
             "Cosechadoras",
+            "Depósitos",
             "Desbrozadoras",
-            "Encintadoras",
             "Empacadoras",
+            "Encintadoras",
             "Motocultores",
             "Remolques",
-            "Sembradoras",
-            "Sulfatadoras",
             "Segadoras",
+            "Sembradoras",
+            "Silos",
+            "Sulfatadoras",
             "Trituradoras",
             "Volteadoras",
             "Otra maquinaria agrícola"
@@ -44,7 +46,20 @@ const RURALPOP_CATEGORIES = [
     {
         id: "equipamiento-y-material",
         label: "Equipamiento y material",
-        subcategories: [],
+        subcategories: [
+            "Alimentación y agua",
+            "Cerramientos",
+            "Equitación y material equino",
+            "Identificación y trazabilidad",
+            "Limpieza, purines y estiércol",
+            "Material apicultura",
+            "Material avicultura",
+            "Material conejos",
+            "Material ovino",
+            "Material porcino",
+            "Material vacuno",
+            "Ordeño y leche"
+        ],
     },
     {
         id: "forraje",
@@ -84,7 +99,12 @@ const RURALPOP_CATEGORIES = [
     },
     {
         id: "alimentos",
-        label: "Alimentos",
+        label: "Alimentos Km0",
+        subcategories: [],
+    },
+    {
+        id: "camiones-y-furgonetas",
+        label: "Camiones y furgonetas",
         subcategories: [],
     },
     {

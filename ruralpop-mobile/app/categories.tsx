@@ -41,6 +41,7 @@ const RURALPOP_CATEGORIES_LIST = [
     { id: 'forraje', label: 'Forraje', image: require('../assets/ruralpop/categories/forraje.jpg') },
     { id: 'fincas', label: 'Fincas', image: require('../assets/ruralpop/categories/fincas.jpg') },
     { id: 'alimentos', label: 'Alimentos Km0', image: require('../assets/ruralpop/categories/alimentoskm0.jpeg') },
+    { id: 'camiones-y-furgonetas', label: 'Camiones y furgonetas', image: require('../assets/ruralpop/categories/camiones.jpg') },
     { id: 'coches', label: 'Coches', image: require('../assets/ruralpop/categories/coches.jpg') },
     { id: 'atv', label: 'ATV', image: require('../assets/ruralpop/categories/atv.jpg') },
     { id: 'motos', label: 'Motos', image: require('../assets/ruralpop/categories/motos.jpg') },
