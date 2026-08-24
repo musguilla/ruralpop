@@ -162,7 +162,7 @@ export function PriceTable({ prices, showMarketColumn = true, showMinMax = false
                                                     return (
                                                     <tr 
                                                         key={price.id || idx} 
-                                                        onClick={() => router.push(`/precios-ganado/vacuno/mercados/${targetSlug}/${price.normalized_category}`)}
+                                                        onClick={() => router.push(`/precios-ganado/vacuno/mercados/${targetSlug}/${price.normalized_category}?exact=${encodeURIComponent(price.category_name)}`)}
                                                         className="hover:bg-[var(--ag-sys-color-background)] transition-colors group cursor-pointer"
                                                     >
                                                         {showMarketColumn && (

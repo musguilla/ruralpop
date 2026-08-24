@@ -9,9 +9,10 @@ import { slugify } from '@/lib/utils/slugify';
 export const revalidate = 3600;
 
 export async function generateMetadata(
-    { params }: { params: Promise<{ mercado: string, categoria: string }> }
+    { params, searchParams }: { params: Promise<{ mercado: string, categoria: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
 ): Promise<Metadata> {
     const { mercado, categoria } = await params;
+    const { exact } = await searchParams;
     const supabase = await createClient();
     
     const { data: markets } = await supabase
@@ -24,7 +25,7 @@ export async function generateMetadata(
     if (!data) return { title: 'No encontrado' };
     
     // Convert url param to readable name
-    const categoryName = categoria.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    const categoryName = exact ? (exact as string) : categoria.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     
     return {
         title: `Precio Histórico de ${categoryName} en ${data.name} | Ruralpop`,
@@ -32,8 +33,9 @@ export async function generateMetadata(
     };
 }
 
-export default async function MarketCategoryDetailPage({ params }: { params: Promise<{ mercado: string, categoria: string }> }) {
+export default async function MarketCategoryDetailPage({ params, searchParams }: { params: Promise<{ mercado: string, categoria: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const { mercado, categoria } = await params;
+    const { exact } = await searchParams;
     const supabase = await createClient();
 
     const { data: markets } = await supabase
@@ -49,23 +51,25 @@ export default async function MarketCategoryDetailPage({ params }: { params: Pro
     
     const marketId = market.id;
 
-    // Fetch prices for this category ordered by date descending to get the most recent ones first
-    // (Supabase has a default limit of 1000 rows, so ascending would cut off recent years if data > 1000 rows)
-    // Step 1: Get the latest price to know the EXACT category name 
-    // (since multiple qualities e.g. Extra, Primera map to the same normalized_category slug)
-    const { data: latestRecords } = await supabase
-        .from('livestock_prices')
-        .select('category_name')
-        .eq('market_source_id', marketId)
-        .eq('normalized_category', categoria)
-        .order('date', { ascending: false })
-        .limit(1);
-
-    if (!latestRecords || latestRecords.length === 0) {
-        notFound();
-    }
+    // Step 1: Get the exact category name
+    let targetCategoryName = exact as string;
     
-    const targetCategoryName = latestRecords[0].category_name;
+    if (!targetCategoryName) {
+        // Fallback: Get the latest price to know the EXACT category name 
+        const { data: latestRecords } = await supabase
+            .from('livestock_prices')
+            .select('category_name')
+            .eq('market_source_id', marketId)
+            .eq('normalized_category', categoria)
+            .order('date', { ascending: false })
+            .limit(1);
+
+        if (!latestRecords || latestRecords.length === 0) {
+            notFound();
+        }
+        
+        targetCategoryName = latestRecords[0].category_name;
+    }
 
     // Step 2: Fetch the full history for that EXACT category name.
     // This avoids the Supabase 1000-row API limit because a single specific category has <1000 rows over 20 years.
