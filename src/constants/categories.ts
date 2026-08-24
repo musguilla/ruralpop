@@ -54,6 +54,7 @@ export const CATEGORIES = [
             "Material avicultura",
             "Material conejos",
             "Material porcino",
+            "Material vacuno",
             "Ordeño y leche"
         ],
     },
