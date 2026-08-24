@@ -51,26 +51,38 @@ export default async function MarketCategoryDetailPage({ params }: { params: Pro
 
     // Fetch prices for this category ordered by date descending to get the most recent ones first
     // (Supabase has a default limit of 1000 rows, so ascending would cut off recent years if data > 1000 rows)
+    // Step 1: Get the latest price to know the EXACT category name 
+    // (since multiple qualities e.g. Extra, Primera map to the same normalized_category slug)
+    const { data: latestRecords } = await supabase
+        .from('livestock_prices')
+        .select('category_name')
+        .eq('market_source_id', marketId)
+        .eq('normalized_category', categoria)
+        .order('date', { ascending: false })
+        .limit(1);
+
+    if (!latestRecords || latestRecords.length === 0) {
+        notFound();
+    }
+    
+    const targetCategoryName = latestRecords[0].category_name;
+
+    // Step 2: Fetch the full history for that EXACT category name.
+    // This avoids the Supabase 1000-row API limit because a single specific category has <1000 rows over 20 years.
     const { data: pricesDesc } = await supabase
         .from('livestock_prices')
         .select('*')
         .eq('market_source_id', marketId)
-        .eq('normalized_category', categoria)
+        .eq('category_name', targetCategoryName)
         .order('date', { ascending: false })
-        .limit(10000); // Increased limit to support up to 20 years of weekly data for multiple sub-categories
+        .limit(2000);
 
     if (!pricesDesc || pricesDesc.length === 0) {
-        // Return a proper 404 so Google drops these invalid/legacy URLs from its index
         notFound();
     }
 
     // Reverse to chronological order
-    const rawPrices = pricesDesc.reverse();
-    const latestRawPrice = rawPrices[rawPrices.length - 1];
-    
-    // Filter to only include the EXACT category name (e.g. "Ternero - Extra macho") 
-    // so we don't mix and average it with "Ternero - Segunda macho" in the same chart
-    const prices = rawPrices.filter((p: any) => p.category_name === latestRawPrice.category_name);
+    const prices = pricesDesc.reverse();
 
     const latestPrice = prices[prices.length - 1];
     const previousPrice = prices.length > 1 ? prices[prices.length - 2] : null;
