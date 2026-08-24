@@ -49,9 +49,9 @@ export default function SearchScreen() {
     const [sortBy, setSortBy] = useState<'newest' | 'price_asc' | 'price_desc'>('newest');
 
     const sortOptions = [
-        { id: 'newest', label: 'Más recientes' },
-        { id: 'price_asc', label: 'Precio: de menor a mayor' },
-        { id: 'price_desc', label: 'Precio: de mayor a menor' }
+        { id: 'newest', label: 'Novedades' },
+        { id: 'price_asc', label: 'Más barato' },
+        { id: 'price_desc', label: 'Más Caro' }
     ];
 
     async function performSearch(pageIndex = 0) {
@@ -346,7 +346,7 @@ export default function SearchScreen() {
                         <ArrowUpDown color="#1f2937" size={18} strokeWidth={2.5} />
                         <View className="w-2" />
                         <Text className="text-[15px] font-bold text-[#1f2937]" numberOfLines={1}>
-                            {sortBy === 'newest' ? 'Más recientes' : (sortOptions.find(opt => opt.id === sortBy)?.label || 'Más recientes')}
+                            {sortBy === 'newest' ? 'Novedades' : (sortOptions.find(opt => opt.id === sortBy)?.label || 'Novedades')}
                         </Text>
                     </TouchableOpacity>
                 </View>
