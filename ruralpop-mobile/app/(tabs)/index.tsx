@@ -215,7 +215,7 @@ export default function Home() {
         >
             {/* Header that sticks to top */}
             <View className="px-4 py-3 bg-white border-b border-gray-100 flex-row items-center h-16">
-                <View className="flex-1 flex-row items-center bg-[#f8f9fa] border border-[#475569] rounded-full h-[46px] px-4">
+                <View className="flex-1 flex-row items-center bg-[#f2f3f5] border border-[#475569] rounded-full h-[46px] px-4">
                     <Search color="#475569" size={24} />
                     <TextInput
                         className="flex-1 ml-3 text-base text-text h-full"
@@ -225,7 +225,6 @@ export default function Home() {
                         onChangeText={setSearchQuery}
                         onSubmitEditing={handleSearchSubmit}
                         returnKeyType="search"
-                        clearButtonMode="while-editing"
                     />
                     {searchQuery.length > 0 && (
                         <TouchableOpacity
