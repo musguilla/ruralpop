@@ -27,11 +27,7 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
 
     const activeParent = useMemo(() => CATEGORIES.find(c => c.id === activeParentId), [activeParentId]);
 
-    const RadioButton = ({ selected }: { selected: boolean }) => (
-        <View className={`w-[22px] h-[22px] rounded-full border-2 items-center justify-center ${selected ? 'border-gray-800' : 'border-gray-400'}`}>
-            {selected && <View className="w-[10px] h-[10px] rounded-full bg-gray-800" />}
-        </View>
-    );
+
 
     const activeList = useMemo(() => {
         if (activeParent) {
@@ -99,7 +95,9 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                                     Todas las categorías
                                 </Text>
                             </View>
-                            <RadioButton selected={!selectedCategory} />
+                            <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: !selectedCategory ? '#1f2937' : '#9ca3af', alignItems: 'center', justifyContent: 'center' }}>
+                                {!selectedCategory && <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: '#1f2937' }} />}
+                            </View>
                         </TouchableOpacity>
                     )}
 
@@ -142,7 +140,9 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                                 {item.hasSub && !item.isSub ? (
                                     <ChevronRight color="#9ca3af" size={20} />
                                 ) : (
-                                    <RadioButton selected={isSelected} />
+                                    <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: isSelected ? '#1f2937' : '#9ca3af', alignItems: 'center', justifyContent: 'center' }}>
+                                        {isSelected && <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: '#1f2937' }} />}
+                                    </View>
                                 )}
                             </TouchableOpacity>
                         </React.Fragment>
