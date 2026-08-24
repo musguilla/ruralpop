@@ -243,7 +243,7 @@ export default function Home() {
                     {IS_EQUIPOP ? (
                         <Image source={require('../../assets/equipop/categories-icon.png')} style={{ width: 28, height: 28, resizeMode: 'contain' }} />
                     ) : (
-                        <LayoutGrid color="#475569" size={28} />
+                        <Image source={require('../../assets/icon-categories.jpg')} style={{ width: 28, height: 28, resizeMode: 'contain', borderRadius: 6 }} />
                     )}
                 </TouchableOpacity>
             </View>
