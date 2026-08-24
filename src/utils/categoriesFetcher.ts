@@ -55,8 +55,8 @@ async function fetchCategoriesFromDB(tenantSlug: string, locale: string = 'es'):
 export const getCategories = async (tenantSlug: string, locale: string = 'es') => {
     const cachedFn = unstable_cache(
         async () => fetchCategoriesFromDB(tenantSlug, locale),
-        [`global-categories-v9-${tenantSlug}-${locale}`],
-        { revalidate: 3600, tags: ['categories-v9', `categories-v9-${tenantSlug}`, `categories-v9-${tenantSlug}-${locale}`] }
+        [`global-categories-v10-${tenantSlug}-${locale}`],
+        { revalidate: 3600, tags: ['categories-v10', `categories-v10-${tenantSlug}`, `categories-v10-${tenantSlug}-${locale}`] }
     );
     return cachedFn();
 };
