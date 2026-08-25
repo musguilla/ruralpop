@@ -5,7 +5,9 @@ import { supabase } from '../../src/lib/supabase';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
-import { ArrowLeft, BadgeCheck } from 'lucide-react-native';
+import { ArrowLeft, BadgeCheck, Heart, Share, UserPlus } from 'lucide-react-native';
+import { useFavoriteProfiles } from '../../src/hooks/useFavoriteProfiles';
+import { Share as RNShare } from 'react-native';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { ListingCard } from '../../src/components/ui/ListingCard';
 import { Listing } from '../../src/types';
@@ -18,6 +20,7 @@ export default function UserProfileScreen() {
     const { user: currentUser } = useAuth();
     const router = useRouter();
     const insets = useSafeAreaInsets();
+    const { isFavoriteProfile, toggleFavoriteProfile } = useFavoriteProfiles();
 
     const [profile, setProfile] = useState<any>(null);
     const [listings, setListings] = useState<Listing[]>([]);
@@ -28,6 +31,16 @@ export default function UserProfileScreen() {
     const [isAvatarExpanded, setIsAvatarExpanded] = useState(false);
 
     const isOwnProfile = currentUser?.id === id;
+    
+    const handleShare = async () => {
+        try {
+            await RNShare.share({
+                message: `Mira este perfil en ${IS_EQUIPOP ? 'Equipop' : 'Ruralpop'}: https://${IS_EQUIPOP ? 'equipop' : 'ruralpop'}.es/user/${id}`,
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     useEffect(() => {
         if (!id) return;

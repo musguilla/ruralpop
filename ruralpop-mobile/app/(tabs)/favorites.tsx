@@ -9,6 +9,8 @@ import { supabase } from "../../src/lib/supabase";
 import { ListingCard } from "../../src/components/ui/ListingCard";
 import { Listing } from "../../src/types";
 import { useFavorites } from "../../src/contexts/FavoritesContext";
+import { useFavoriteProfiles } from "../../src/hooks/useFavoriteProfiles";
+import { FavoriteProfileCard } from "../../src/components/ui/FavoriteProfileCard";
 import { getDefaultTenantFilterString } from "../../src/config/tenants";
 
 const { width } = Dimensions.get('window');
@@ -22,6 +24,46 @@ export default function FavoritesScreen() {
     const [listings, setListings] = useState<Listing[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [activeTab, setActiveTab] = useState<'products' | 'profiles'>('products');
+    
+    const { favoriteProfiles, loading: loadingFavProfiles } = useFavoriteProfiles();
+    const [profilesData, setProfilesData] = useState<any[]>([]);
+    const [profilesListings, setProfilesListings] = useState<Record<string, any[]>>({});
+    const [loadingProfiles, setLoadingProfiles] = useState(false);
+
+    async function fetchFavoritedProfiles() {
+        if (favoriteProfiles.length === 0) {
+            setProfilesData([]);
+            setLoadingProfiles(false);
+            return;
+        }
+        setLoadingProfiles(true);
+        try {
+            const { data: users } = await supabase.from('users').select('*').in('id', favoriteProfiles);
+            if (users) {
+                setProfilesData(users);
+                const { data: userListings } = await supabase.from('listings').select('id, user_id, images').in('user_id', favoriteProfiles).eq('status', 'active');
+                if (userListings) {
+                    const grouped: Record<string, any[]> = {};
+                    userListings.forEach(l => {
+                        if (!grouped[l.user_id]) grouped[l.user_id] = [];
+                        grouped[l.user_id].push(l);
+                    });
+                    setProfilesListings(grouped);
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoadingProfiles(false);
+        }
+    }
+    
+    useEffect(() => {
+        if (activeTab === 'profiles') {
+            fetchFavoritedProfiles();
+        }
+    }, [activeTab, favoriteProfiles]);
 
     async function fetchFavoritedListings() {
         if (!session || favorites.size === 0) {
