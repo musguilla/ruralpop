@@ -155,8 +155,8 @@ export default function MessagesScreen() {
                         <Text className={`font-bold ${activeTab === 'mensajes' ? 'text-white' : 'text-gray-600'}`}>
                             Mensajes
                             {unreadMessages > 0 && (
-                                <View className="bg-red-500 rounded-full h-5 min-w-[20px] px-1.5 ml-1.5 items-center justify-center">
-                                    <Text className="text-white text-[11px] font-bold">{unreadMessages}</Text>
+                                <View className={`rounded-full h-5 min-w-[20px] px-1.5 ml-1.5 items-center justify-center ${activeTab === 'mensajes' ? 'bg-white' : 'bg-primary'}`}>
+                                    <Text className={`text-[11px] font-bold ${activeTab === 'mensajes' ? 'text-primary' : 'text-white'}`}>{unreadMessages}</Text>
                                 </View>
                             )}
                         </Text>
@@ -168,8 +168,8 @@ export default function MessagesScreen() {
                         <Text className={`font-bold ${activeTab === 'notificaciones' ? 'text-white' : 'text-gray-600'}`}>
                             Notificaciones
                             {unreadNotifications > 0 && (
-                                <View className="bg-red-500 rounded-full h-5 min-w-[20px] px-1.5 ml-1.5 items-center justify-center">
-                                    <Text className="text-white text-[11px] font-bold">{unreadNotifications}</Text>
+                                <View className={`rounded-full h-5 min-w-[20px] px-1.5 ml-1.5 items-center justify-center ${activeTab === 'notificaciones' ? 'bg-white' : 'bg-primary'}`}>
+                                    <Text className={`text-[11px] font-bold ${activeTab === 'notificaciones' ? 'text-primary' : 'text-white'}`}>{unreadNotifications}</Text>
                                 </View>
                             )}
                         </Text>
