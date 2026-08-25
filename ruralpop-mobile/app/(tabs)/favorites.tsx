@@ -42,7 +42,7 @@ export default function FavoritesScreen() {
             const { data: users } = await supabase.from('users').select('*').in('id', favoriteProfiles);
             if (users) {
                 setProfilesData(users);
-                const { data: userListings } = await supabase.from('listings').select('id, user_id, images').in('user_id', favoriteProfiles).eq('status', 'active');
+                const { data: userListings } = await supabase.from('listings').select('id, user_id, image_urls').in('user_id', favoriteProfiles).eq('status', 'active').or(getDefaultTenantFilterString());
                 if (userListings) {
                     const grouped: Record<string, any[]> = {};
                     userListings.forEach(l => {
@@ -203,10 +203,9 @@ export default function FavoritesScreen() {
                     <FlatList
                         data={profilesData}
                         keyExtractor={(item) => item.id}
-                        numColumns={2}
-                        columnWrapperStyle={{ paddingHorizontal: 16, justifyContent: 'space-between' }}
+                        numColumns={1}
                         renderItem={({ item }) => (
-                            <View style={{ width: '48.5%' }}>
+                            <View style={{ width: '100%' }}>
                                 <FavoriteProfileCard 
                                     profile={item} 
                                     listings={profilesListings[item.id] || []} 

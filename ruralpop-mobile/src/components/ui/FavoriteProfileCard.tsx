@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function FavoriteProfileCard({ profile, listings, onPress }: Props) {
-    const images = listings.map(l => l.images?.[0]).filter(Boolean);
+    const images = listings.map(l => l.image_urls?.[0]).filter(Boolean);
     const totalListings = listings.length;
     
     // We show 1, 2, or 4 images
@@ -29,7 +29,7 @@ export function FavoriteProfileCard({ profile, listings, onPress }: Props) {
             className="bg-white rounded-xl mb-4 border border-gray-200 overflow-hidden"
             activeOpacity={0.8}
         >
-            <View className="h-32 bg-gray-100 flex-row flex-wrap">
+            <View className="h-48 bg-gray-100 flex-row flex-wrap">
                 {displayImages.length === 0 && (
                     <View className="flex-1 items-center justify-center bg-gray-50">
                         <Text className="text-gray-400">Sin anuncios</Text>
