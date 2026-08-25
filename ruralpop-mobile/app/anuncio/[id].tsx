@@ -566,7 +566,7 @@ export default function ListingDetailsScreen() {
                     <View className="mb-8 mt-6">
                         <View className="flex-row items-center mb-3">
                             <MapPin color="#475569" size={24} className="mr-2" />
-                            <Text className="text-xl font-bold text-[#475569]">
+                            <Text className="text-lg font-medium text-[#475569]">
                                 {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
                             </Text>
                         </View>
@@ -604,7 +604,7 @@ export default function ListingDetailsScreen() {
                     {/* Related Listings */}
                     {relatedListings.length > 0 && (
                         <View className="mb-8 mt-4 pt-6 border-t border-gray-100">
-                            <Text className="text-2xl font-extrabold text-text mb-4">Más como esto</Text>
+                            <Text className="text-2xl font-medium text-text mb-4">Más como esto</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
                                 {relatedListings.map(item => (
                                     <View key={item.id} style={{ width: 160, marginRight: 12 }}>
@@ -915,8 +915,8 @@ export default function ListingDetailsScreen() {
                         initialRegion={{
                             latitude: mapCoords.lat,
                             longitude: mapCoords.lon,
-                            latitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.05,
-                            longitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.05,
+                            latitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.1,
+                            longitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.1,
                         }}
                         showsUserLocation={true}
                     >
