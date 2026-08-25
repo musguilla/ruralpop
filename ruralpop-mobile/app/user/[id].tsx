@@ -125,12 +125,23 @@ export default function UserProfileScreen() {
         <SafeAreaView className="flex-1 bg-surface">
             {/* Header */}
             <View 
-                className="px-4 pb-4 flex-row items-center border-b border-gray-100 bg-white"
+                className="px-4 pb-2 flex-row items-center justify-between bg-white border-b border-gray-100 z-10"
                 style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 16) : 16 }}
             >
                 <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2 mr-2">
                     <ArrowLeft color="#374151" size={24} />
                 </TouchableOpacity>
+                
+                {!isOwnProfile && (
+                    <View className="flex-row items-center">
+                        <TouchableOpacity onPress={() => toggleFavoriteProfile(id as string)} className="p-2 mr-2 active:bg-gray-100 rounded-full">
+                            <Heart color={isFavoriteProfile(id as string) ? "#ef4444" : "#374151"} fill={isFavoriteProfile(id as string) ? "#ef4444" : "transparent"} size={26} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleShare} className="p-2 active:bg-gray-100 rounded-full">
+                            <Share color="#374151" size={24} />
+                        </TouchableOpacity>
+                    </View>
+                )}
             </View>
 
             <FlatList
@@ -142,7 +153,7 @@ export default function UserProfileScreen() {
                 ListHeaderComponent={() => (
                     <View>
                         {/* Profile Info */}
-                        <View className="px-6 py-8 flex-row items-center justify-between border-b border-gray-100 bg-white">
+                        <View className="px-6 pt-4 pb-6 flex-row items-center justify-between border-b border-gray-100 bg-white">
                             <View className="flex-1 pr-4">
                                 <Text className="text-[26px] font-extrabold text-text mb-1" numberOfLines={2}>
                                     {displayName}
