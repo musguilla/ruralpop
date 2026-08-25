@@ -1,25 +1,43 @@
 import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IS_EQUIPOP } from '../config/tenants';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 const STORAGE_KEY = IS_EQUIPOP ? '@equipop_favorite_profiles' : '@ruralpop_favorite_profiles';
 
 export function useFavoriteProfiles() {
+    const { user } = useAuth();
     const [favoriteProfiles, setFavoriteProfiles] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
 
     const loadFavorites = useCallback(async () => {
         try {
-            const data = await AsyncStorage.getItem(STORAGE_KEY);
-            if (data) {
-                setFavoriteProfiles(JSON.parse(data));
+            if (user) {
+                // Fetch from Supabase
+                const { data, error } = await supabase
+                    .from('favorite_profiles')
+                    .select('profile_id')
+                    .eq('follower_id', user.id);
+                
+                if (data && !error) {
+                    setFavoriteProfiles(data.map(d => d.profile_id));
+                }
+            } else {
+                // Fallback to local storage for guests
+                const data = await AsyncStorage.getItem(STORAGE_KEY);
+                if (data) {
+                    setFavoriteProfiles(JSON.parse(data));
+                } else {
+                    setFavoriteProfiles([]);
+                }
             }
         } catch (e) {
             console.error('Failed to load favorite profiles', e);
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         loadFavorites();
@@ -29,6 +47,8 @@ export function useFavoriteProfiles() {
         if (!profileId) return;
         try {
             const isFav = favoriteProfiles.includes(profileId);
+            
+            // Optimistic UI update
             let newFavs;
             if (isFav) {
                 newFavs = favoriteProfiles.filter(id => id !== profileId);
@@ -36,9 +56,28 @@ export function useFavoriteProfiles() {
                 newFavs = [profileId, ...favoriteProfiles];
             }
             setFavoriteProfiles(newFavs);
-            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newFavs));
+
+            if (user) {
+                // Sync with Supabase
+                if (isFav) {
+                    await supabase
+                        .from('favorite_profiles')
+                        .delete()
+                        .eq('follower_id', user.id)
+                        .eq('profile_id', profileId);
+                } else {
+                    await supabase
+                        .from('favorite_profiles')
+                        .insert({ follower_id: user.id, profile_id: profileId });
+                }
+            } else {
+                // Save locally for guests
+                await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newFavs));
+            }
         } catch (e) {
             console.error('Failed to toggle favorite profile', e);
+            // Revert on error
+            loadFavorites();
         }
     };
     

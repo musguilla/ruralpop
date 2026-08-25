@@ -6,7 +6,7 @@ const supabaseAdmin = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export type NotificationType = 'sale' | 'shipped' | 'receipt_confirmed' | 'favorite' | 'message';
+export type NotificationType = 'sale' | 'shipped' | 'receipt_confirmed' | 'favorite' | 'message' | 'new_listing';
 
 export interface SendNotificationParams {
     userId: string;
