@@ -18,6 +18,7 @@ import { calculateRuralpopFee } from '../../src/lib/escrow';
 import { buildWebListingUrl } from '../../src/lib/urls';
 import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenants';
 import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
+import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
 import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';
 
 const { width, height } = Dimensions.get('window');
@@ -554,6 +555,11 @@ export default function ListingDetailsScreen() {
                         <Text className="text-gray-400 text-sm border-t border-gray-100 pt-3">
                             Editado el {new Date((listing as any).updated_at || listing.created_at).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
                         </Text>
+                    </View>
+
+                    {/* Square Ad */}
+                    <View className="my-6">
+                        <NativeAdCard />
                     </View>
 
                     {/* Location Map */}
