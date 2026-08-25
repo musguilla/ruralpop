@@ -4,7 +4,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { Heart } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from "../../src/lib/supabase";
 import { ListingCard } from "../../src/components/ui/ListingCard";
 import { Listing } from "../../src/types";
@@ -26,8 +27,14 @@ export default function FavoritesScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const [activeTab, setActiveTab] = useState<'products' | 'profiles'>('products');
     
-    const { favoriteProfiles, loading: loadingFavProfiles } = useFavoriteProfiles();
+    const { favoriteProfiles, loading: loadingFavProfiles, refreshFavorites } = useFavoriteProfiles();
     const [profilesData, setProfilesData] = useState<any[]>([]);
+    useFocusEffect(
+        useCallback(() => {
+            refreshFavorites();
+        }, [refreshFavorites])
+    );
+
     const [profilesListings, setProfilesListings] = useState<Record<string, any[]>>({});
     const [loadingProfiles, setLoadingProfiles] = useState(false);
 
@@ -61,6 +68,7 @@ export default function FavoritesScreen() {
     
     useEffect(() => {
         if (activeTab === 'profiles') {
+            setProfilesData(prev => prev.filter(p => favoriteProfiles.includes(p.id)));
             fetchFavoritedProfiles();
         }
     }, [activeTab, favoriteProfiles]);
