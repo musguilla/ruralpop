@@ -114,69 +114,95 @@ export default function FavoritesScreen() {
 
     if (!session) {
         return (
-            <View className="flex-1 items-center justify-center bg-surface px-6">
-                <View className="w-16 h-16 bg-primary-muted rounded-full items-center justify-center mb-6">
-                    <Heart className="text-primary" size={32} />
-                </View>
-                <Text className="text-xl font-bold text-center text-text mb-2">Inicia sesión para ver tus favoritos</Text>
-                <Text className="text-center text-text-muted mb-8">
-                    Guarda los anuncios que más te interesen para no perderlos de vista.
-                </Text>
-                <TouchableOpacity
-                    onPress={() => router.push('/(auth)/login')}
-                    className="bg-primary px-8 py-3 rounded-full mb-2 w-full items-center"
-                >
-                    <Text className="text-white font-bold text-base">Iniciar sesión</Text>
-                </TouchableOpacity>
-                <Text className="text-text-muted mt-4 mb-4">Si no tienes una cuenta</Text>
-                <TouchableOpacity
-                    onPress={() => router.push('/(auth)/register')}
-                    className="border-2 border-primary px-8 py-3 rounded-full w-full items-center"
-                >
-                    <Text className="text-primary font-bold text-base">Registrarme</Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
-
-    return (
         <SafeAreaView className="flex-1 bg-surface">
             <View 
-                className="px-6 pb-4 border-b border-gray-100 bg-white"
+                className="px-6 pb-4 bg-white"
                 style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 16) : 16 }}
             >
                 <Text className="text-2xl font-extrabold text-text">Favoritos</Text>
             </View>
 
-            {loading && !refreshing ? (
-                <View className="flex-1 justify-center items-center">
-                    <ActivityIndicator size="large" color="#059669" />
-                </View>
+            {/* Tabs */}
+            <View className="flex-row px-4 pb-4 border-b border-gray-100 bg-white">
+                <TouchableOpacity
+                    onPress={() => setActiveTab('products')}
+                    className={`mr-4 px-4 py-2 rounded-full ${activeTab === 'products' ? 'bg-[#1f2937]' : 'bg-transparent'}`}
+                >
+                    <Text className={`font-bold ${activeTab === 'products' ? 'text-white' : 'text-gray-600'}`}>Productos</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => setActiveTab('profiles')}
+                    className={`px-4 py-2 rounded-full ${activeTab === 'profiles' ? 'bg-[#1f2937]' : 'bg-transparent'}`}
+                >
+                    <Text className={`font-bold ${activeTab === 'profiles' ? 'text-white' : 'text-gray-600'}`}>Perfiles</Text>
+                </TouchableOpacity>
+            </View>
+
+            {activeTab === 'products' ? (
+                loading && !refreshing ? (
+                    <View className="flex-1 justify-center items-center">
+                        <ActivityIndicator size="large" color="#059669" />
+                    </View>
+                ) : (
+                    <FlatList
+                        key={`grid-${numColumns}`}
+                        data={listings}
+                        keyExtractor={(item) => item.id}
+                        numColumns={numColumns}
+                        columnWrapperStyle={{ flex: 1, justifyContent: 'flex-start' }}
+                        renderItem={({ item }) => (
+                            <View className="p-1" style={{ flex: 1, maxWidth: `${100 / numColumns}%` }}>
+                                <ListingCard listing={item} />
+                            </View>
+                        )}
+                        contentContainerStyle={{ padding: 8, paddingBottom: 100 }}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#059669']} />
+                        }
+                        ListEmptyComponent={
+                            <View className="items-center justify-center p-12 mt-10">
+                                <Heart className="text-gray-300 mb-4" size={48} />
+                                <Text className="text-xl font-bold text-text mb-2 text-center">Sin favoritos aún</Text>
+                                <Text className="text-gray-500 text-center">Navega por los anuncios y presiona el corazón para guardarlos aquí.</Text>
+                            </View>
+                        }
+                    />
+                )
             ) : (
-                <FlatList
-                    key={`grid-${numColumns}`}
-                    data={listings}
-                    keyExtractor={(item) => item.id}
-                    numColumns={numColumns}
-                    columnWrapperStyle={{ flex: 1, justifyContent: 'flex-start' }}
-                    renderItem={({ item }) => (
-                        <View className="p-1" style={{ flex: 1, maxWidth: `${100 / numColumns}%` }}>
-                            <ListingCard listing={item} />
-                        </View>
-                    )}
-                    contentContainerStyle={{ padding: 8, paddingBottom: 20 }}
-                    refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#059669']} />
-                    }
-                    ListEmptyComponent={
-                        <View className="items-center justify-center p-12 mt-10">
-                            <Heart className="text-gray-300 mb-4" size={48} />
-                            <Text className="text-xl font-bold text-text mb-2 text-center">Sin favoritos aún</Text>
-                            <Text className="text-gray-500 text-center">Navega por los anuncios y presiona el corazón para guardarlos aquí.</Text>
-                        </View>
-                    }
-                />
+                loadingProfiles && !refreshing ? (
+                    <View className="flex-1 justify-center items-center">
+                        <ActivityIndicator size="large" color="#059669" />
+                    </View>
+                ) : (
+                    <FlatList
+                        data={profilesData}
+                        keyExtractor={(item) => item.id}
+                        numColumns={2}
+                        columnWrapperStyle={{ paddingHorizontal: 16, justifyContent: 'space-between' }}
+                        renderItem={({ item }) => (
+                            <View style={{ width: '48.5%' }}>
+                                <FavoriteProfileCard 
+                                    profile={item} 
+                                    listings={profilesListings[item.id] || []} 
+                                    onPress={() => router.push(`/user/${item.id}`)} 
+                                />
+                            </View>
+                        )}
+                        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#059669']} />
+                        }
+                        ListEmptyComponent={
+                            <View className="items-center justify-center p-12 mt-10">
+                                <Heart color="#d1d5db" style={{ marginBottom: 16 }} size={48} />
+                                <Text className="text-xl font-bold text-gray-800 mb-2 text-center">Sin perfiles favoritos</Text>
+                                <Text className="text-gray-500 text-center">Los vendedores que guardes aparecerán aquí.</Text>
+                            </View>
+                        }
+                    />
+                )
             )}
         </SafeAreaView>
     );
+}
 }
