@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
+import { useUnread } from '../../src/contexts/UnreadContext';
 import { supabase } from '../../src/lib/supabase';
 import { Bell } from 'lucide-react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -19,6 +20,7 @@ export interface Notification {
 
 export default function NotificationsList() {
     const { user } = useAuth();
+    const { refreshUnread } = useUnread();
     const router = useRouter();
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [fetching, setFetching] = useState(true);
@@ -62,6 +64,9 @@ export default function NotificationsList() {
                 setNotifications(prev => 
                     prev.map(n => n.id === notification.id ? { ...n, is_read: true } : n)
                 );
+                
+                // Immediately refresh unread count globally
+                refreshUnread();
             } catch (e) {
                 console.error("Failed to mark notification as read", e);
             }

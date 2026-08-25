@@ -150,29 +150,29 @@ export default function MessagesScreen() {
                 <View className="flex-row items-center space-x-2">
                     <TouchableOpacity 
                         onPress={() => setActiveTab('mensajes')}
-                        className={`px-4 py-2 rounded-full ${activeTab === 'mensajes' ? 'bg-primary' : 'bg-gray-100'}`}
+                        className={`px-4 py-2 rounded-full flex-row items-center ${activeTab === 'mensajes' ? 'bg-primary' : 'bg-gray-100'}`}
                     >
                         <Text className={`font-bold ${activeTab === 'mensajes' ? 'text-white' : 'text-gray-600'}`}>
                             Mensajes
-                            {unreadMessages > 0 && (
-                                <View className={`rounded-full h-5 min-w-[20px] px-1.5 ml-1.5 items-center justify-center ${activeTab === 'mensajes' ? 'bg-white' : 'bg-primary'}`}>
-                                    <Text className={`text-[11px] font-bold ${activeTab === 'mensajes' ? 'text-primary' : 'text-white'}`}>{unreadMessages}</Text>
-                                </View>
-                            )}
                         </Text>
+                        {unreadMessages > 0 && (
+                            <View className={`rounded-full h-5 min-w-[20px] px-1.5 ml-2 items-center justify-center ${activeTab === 'mensajes' ? 'bg-white' : 'bg-primary'}`}>
+                                <Text className={`text-[11px] font-bold ${activeTab === 'mensajes' ? 'text-primary' : 'text-white'}`}>{unreadMessages}</Text>
+                            </View>
+                        )}
                     </TouchableOpacity>
                     <TouchableOpacity 
                         onPress={() => setActiveTab('notificaciones')}
-                        className={`px-4 py-2 rounded-full ${activeTab === 'notificaciones' ? 'bg-primary' : 'bg-gray-100'}`}
+                        className={`px-4 py-2 rounded-full flex-row items-center ${activeTab === 'notificaciones' ? 'bg-primary' : 'bg-gray-100'}`}
                     >
                         <Text className={`font-bold ${activeTab === 'notificaciones' ? 'text-white' : 'text-gray-600'}`}>
                             Notificaciones
-                            {unreadNotifications > 0 && (
-                                <View className={`rounded-full h-5 min-w-[20px] px-1.5 ml-1.5 items-center justify-center ${activeTab === 'notificaciones' ? 'bg-white' : 'bg-primary'}`}>
-                                    <Text className={`text-[11px] font-bold ${activeTab === 'notificaciones' ? 'text-primary' : 'text-white'}`}>{unreadNotifications}</Text>
-                                </View>
-                            )}
                         </Text>
+                        {unreadNotifications > 0 && (
+                            <View className={`rounded-full h-5 min-w-[20px] px-1.5 ml-2 items-center justify-center ${activeTab === 'notificaciones' ? 'bg-white' : 'bg-primary'}`}>
+                                <Text className={`text-[11px] font-bold ${activeTab === 'notificaciones' ? 'text-primary' : 'text-white'}`}>{unreadNotifications}</Text>
+                            </View>
+                        )}
                     </TouchableOpacity>
                 </View>
             </View>
