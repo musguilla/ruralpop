@@ -90,7 +90,9 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                             className={`flex-row items-center justify-between py-4 border-b border-gray-100`}
                         >
                             <View className="flex-row items-center">
-                                <LayoutGrid color="#374151" size={24} className="mr-3" />
+                                <View className="mr-3">
+                                    <LayoutGrid color="#374151" size={24} />
+                                </View>
                                 <Text className={`text-[17px] text-gray-800`}>
                                     Todas las categorías
                                 </Text>
