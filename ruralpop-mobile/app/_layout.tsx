@@ -8,11 +8,6 @@ import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import { FavoritesProvider } from "../src/contexts/FavoritesContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { UIManager, Platform } from "react-native";
-
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 import { StripeProvider } from "@stripe/stripe-react-native";
 
 export default function RootLayout() {
