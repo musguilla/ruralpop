@@ -63,6 +63,8 @@ export default function ListingDetailsScreen() {
 
     // Scroll Animation - Simplified to avoid Animated/Native driver crashes
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMapModalVisible, setIsMapModalVisible] = useState(false);
+    const [relatedListings, setRelatedListings] = useState<Listing[]>([]);
 
     const isOwnListing = user?.id === listing?.user_id;
 
@@ -410,32 +412,25 @@ export default function ListingDetailsScreen() {
                     {/* Title first */}
                     <Text className="text-3xl font-extrabold text-text mb-2 leading-tight">{listing.title}</Text>
                     
-                    {/* Price & Negotiable Row */}
-                    <View className="flex-row justify-start items-center mb-6">
-                        <Text className="text-2xl font-extrabold text-primary mr-3">{formattedPrice}</Text>
-                        {listing.price_type === 'negotiable' && (
-                            <View className="bg-gray-100 px-3 py-1.5 rounded flex-row items-center">
-                                <Tag color="#6b7280" size={14} />
-                                <Text className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Negociable</Text>
-                            </View>
-                        )}
-                    </View>
-
-                    <View className="flex-row flex-wrap gap-2 mb-6">
-                        <View className="flex-row items-center bg-surface-muted px-3 py-2 rounded-xl border border-gray-100">
-                            <MapPin color="#6b7280" size={18} />
-                            <Text className="text-text-muted font-medium ml-1">
-                                {listing.location ? (typeof listing.location === 'object' ? (listing.location as any).name : listing.location) : 'Toda España'}
-                            </Text>
+                    {/* Price & Negotiable & Category Row */}
+                    <View className="flex-row justify-between items-center mb-6">
+                        <View className="flex-row items-center flex-1">
+                            <Text className="text-2xl font-extrabold text-primary mr-3">{formattedPrice}</Text>
+                            {listing.price_type === 'negotiable' && (
+                                <View className="bg-gray-100 px-3 py-1.5 rounded flex-row items-center">
+                                    <Tag color="#6b7280" size={14} />
+                                    <Text className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Negociable</Text>
+                                </View>
+                            )}
                         </View>
-
+                        
                         {listing.subcategory && (
                             <TouchableOpacity 
                                 onPress={() => router.push({ pathname: '/(tabs)/search', params: { category: listing.subcategory } })}
-                                className="flex-row items-center bg-surface-muted px-3 py-2 rounded-xl border border-gray-100"
+                                className="flex-row items-center bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 ml-2"
                             >
-                                <Text className="text-text-muted font-medium capitalize">
-                                    {listing.subcategory}
+                                <Text className="text-gray-600 font-bold capitalize">
+                                    {listing.subcategory.replace(/-/g, ' ')}
                                 </Text>
                             </TouchableOpacity>
                         )}
@@ -805,6 +800,33 @@ export default function ListingDetailsScreen() {
                         </View>
                     </View>
                 </View>
+            </Modal>
+
+            {/* Map Modal */}
+            <Modal
+                transparent={false}
+                visible={isMapModalVisible}
+                animationType="slide"
+                onRequestClose={() => setIsMapModalVisible(false)}
+            >
+                <SafeAreaView className="flex-1 bg-white">
+                    <View className="flex-row items-center px-4 py-3 border-b border-gray-100 relative">
+                        <TouchableOpacity 
+                            onPress={() => setIsMapModalVisible(false)}
+                            className="p-2 -ml-2 z-10"
+                        >
+                            <X color="#374151" size={24} />
+                        </TouchableOpacity>
+                        <Text className="text-xl font-bold text-center absolute left-0 right-0">Ubicación</Text>
+                    </View>
+                    <View className="flex-1">
+                        <Image 
+                            source={require('../../assets/ruralpop/map-placeholder.jpg')} 
+                            style={{ width: '100%', height: '100%' }} 
+                            contentFit="cover" 
+                        />
+                    </View>
+                </SafeAreaView>
             </Modal>
 
             {/* Options Bottom Sheet */}
