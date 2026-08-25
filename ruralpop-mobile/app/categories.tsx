@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState, useEffect } from 'react';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, ChevronRight } from 'lucide-react-native';
@@ -53,21 +55,67 @@ const RURALPOP_CATEGORIES_LIST = [
 export default function CategoriesScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
+    const [recentCategories, setRecentCategories] = useState<any[]>([]);
 
-    const handleCategoryPress = (category: any) => {
+    useEffect(() => {
+        const loadRecent = async () => {
+            try {
+                const stored = await AsyncStorage.getItem('recent_categories');
+                if (stored) {
+                    const ids = JSON.parse(stored);
+                    const allCategories = IS_EQUIPOP ? [...CABALLOS_CATEGORIES, ...JINETES_CATEGORIES] : RURALPOP_CATEGORIES_LIST;
+                    const recent = ids.map((id: string) => allCategories.find(c => c.id === id)).filter(Boolean);
+                    setRecentCategories(recent);
+                }
+            } catch (e) {}
+        };
+        loadRecent();
+    }, []);
+
+    const handleCategoryPress = async (category: any) => {
+        try {
+            const stored = await AsyncStorage.getItem('recent_categories');
+            let ids = stored ? JSON.parse(stored) : [];
+            ids = ids.filter((id: string) => id !== category.id);
+            ids.unshift(category.id);
+            ids = ids.slice(0, 3);
+            await AsyncStorage.setItem('recent_categories', JSON.stringify(ids));
+        } catch (e) {}
+        
         router.push({ pathname: '/(tabs)/search', params: { category: category.id } });
     };
 
+    
+
     return (
         <View className="flex-1 bg-white" style={{ paddingTop: Platform.OS === 'android' ? insets.top : 48 }}>
-            <View className="px-4 py-3 flex-row items-center border-b border-gray-100">
+            <View className="px-4 py-3 flex-row items-center ">
                 <TouchableOpacity onPress={() => router.back()} className="mr-4">
                     <ArrowLeft color="#1e293b" size={24} />
                 </TouchableOpacity>
-                <Text className="text-xl font-bold text-slate-800">Buscar por categoría</Text>
+                
             </View>
 
             <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
+                {recentCategories.length > 0 && (
+                    <View className="px-4 pt-6 pb-2">
+                        <Text className="text-xl font-bold text-slate-800 mb-4">Categorías que sueles mirar</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
+                            {recentCategories.map(cat => (
+                                <TouchableOpacity key={cat.id} onPress={() => handleCategoryPress(cat)} className="items-center mr-4 w-20">
+                                    <View className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden mb-2">
+                                        <Image source={cat.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                                    </View>
+                                    <Text className="text-xs text-center text-slate-700" numberOfLines={2}>{cat.label}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                )}
+
+                <View className="px-4 pt-6 pb-4">
+                    <Text className="text-xl font-bold text-slate-800">Buscar por categoría</Text>
+                </View>
                 {IS_EQUIPOP ? (
                     <>
                         {/* Header Para Caballos */}
@@ -79,9 +127,9 @@ export default function CategoriesScreen() {
                             <TouchableOpacity
                                 key={category.id}
                                 onPress={() => handleCategoryPress(category)}
-                                className={`flex-row items-center px-4 py-4 ${index !== CABALLOS_CATEGORIES.length - 1 ? 'border-b border-gray-100' : ''}`}
+                                className={`flex-row items-center px-4 py-2.5 ${index !== CABALLOS_CATEGORIES.length - 1 ? 'border-b border-gray-100' : ''}`}
                             >
-                                <View className="w-16 h-16 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
+                                <View className="w-12 h-12 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
                                     <Image source={category.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 </View>
                                 <Text className="flex-1 text-lg text-slate-700">{category.label}</Text>
@@ -98,9 +146,9 @@ export default function CategoriesScreen() {
                             <TouchableOpacity
                                 key={category.id}
                                 onPress={() => handleCategoryPress(category)}
-                                className={`flex-row items-center px-4 py-4 ${index !== JINETES_CATEGORIES.length - 1 ? 'border-b border-gray-100' : ''}`}
+                                className={`flex-row items-center px-4 py-2.5 ${index !== JINETES_CATEGORIES.length - 1 ? 'border-b border-gray-100' : ''}`}
                             >
-                                <View className="w-16 h-16 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
+                                <View className="w-12 h-12 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
                                     <Image source={category.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 </View>
                                 <Text className="flex-1 text-lg text-slate-700">{category.label}</Text>
@@ -114,9 +162,9 @@ export default function CategoriesScreen() {
                             <TouchableOpacity
                                 key={category.id}
                                 onPress={() => handleCategoryPress(category)}
-                                className={`flex-row items-center px-4 py-4 ${index !== RURALPOP_CATEGORIES_LIST.length - 1 ? 'border-b border-gray-100' : ''}`}
+                                className={`flex-row items-center px-4 py-2.5 ${index !== RURALPOP_CATEGORIES_LIST.length - 1 ? 'border-b border-gray-100' : ''}`}
                             >
-                                <View className="w-16 h-16 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
+                                <View className="w-12 h-12 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
                                     <Image source={category.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 </View>
                                 <Text className="flex-1 text-lg text-slate-700">{category.label}</Text>
