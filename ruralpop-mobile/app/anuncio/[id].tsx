@@ -87,6 +87,26 @@ export default function ListingDetailsScreen() {
                 if (error) throw error;
                 setListing(data as ExtendedListing);
                 
+                // Fetch related listings
+                if (data.subcategory) {
+                    try {
+                        const { data: relatedData } = await supabase
+                            .from('listings')
+                            .select('*, seller:users!listings_user_id_fkey(*)')
+                            .eq('subcategory', data.subcategory)
+                            .eq('status', 'active')
+                            .neq('id', data.id)
+                            .order('created_at', { ascending: false })
+                            .limit(6);
+                            
+                        if (relatedData) {
+                            setRelatedListings(relatedData as Listing[]);
+                        }
+                    } catch (e) {
+                        console.error('Error fetching related listings', e);
+                    }
+                }
+                
                 // Set initial likes count
                 if (data.favorites && Array.isArray(data.favorites) && data.favorites.length > 0) {
                     setLikesCount(data.favorites[0].count);
