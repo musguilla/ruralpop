@@ -11,10 +11,10 @@ export function RectangularBanner() {
     const adUnitId = __DEV__ ? TestIds.BANNER : 'ca-app-pub-2042067618462129/3189662937';
 
     return (
-        <View className="items-center justify-center py-4 w-full bg-surface-muted" style={{ minHeight: 60 }}>
+        <View className="items-center justify-center w-full my-2">
             <BannerAd
                 unitId={adUnitId}
-                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+                size={BannerAdSize.BANNER}
                 onAdFailedToLoad={(error) => {
                     console.log('Ad failed to load: ', error);
                     setAdFailed(true);

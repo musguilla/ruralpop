@@ -615,11 +615,9 @@ export default function ListingDetailsScreen() {
                         </View>
                     )}
 
-                    {/* Ad Unit */}
-                    <View className="mt-4 mb-4">
-                        <View className="w-full items-center justify-center bg-gray-50/50 mb-6 rounded-xl overflow-hidden">
-                            <RectangularBanner />
-                        </View>
+                    {/* Thin Banner Ad */}
+                    <View className="w-full mb-6">
+                        <RectangularBanner />
                     </View>
                 </View>
             </ScrollView>
