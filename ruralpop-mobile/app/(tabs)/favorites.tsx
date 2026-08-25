@@ -201,11 +201,13 @@ export default function FavoritesScreen() {
                     </View>
                 ) : (
                     <FlatList
+                        key="profiles-grid-2"
                         data={profilesData}
                         keyExtractor={(item) => item.id}
-                        numColumns={1}
+                        numColumns={2}
+                        columnWrapperStyle={{ paddingHorizontal: 16, justifyContent: 'space-between' }}
                         renderItem={({ item }) => (
-                            <View style={{ width: '100%' }}>
+                            <View style={{ width: '48.5%' }}>
                                 <FavoriteProfileCard 
                                     profile={item} 
                                     listings={profilesListings[item.id] || []} 
