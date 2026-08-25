@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl, Modal, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Dimensions, RefreshControl, Modal, Platform, ScrollView, LayoutAnimation, Keyboard } from 'react-native';
+import { RecentSearchesOverlay } from '../../src/components/ui/RecentSearchesOverlay';
+import { useRecentSearches } from '../../src/hooks/useRecentSearches';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { Search, MapPin, List, SlidersHorizontal, ArrowUpDown, ChevronLeft, ArrowLeft, X, Check } from 'lucide-react-native';
 import { supabase } from '../../src/lib/supabase';
@@ -19,6 +21,8 @@ const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 2;
 
 export default function SearchScreen() {
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const { addSearch } = useRecentSearches();
     const router = useRouter();
     const params = useLocalSearchParams();
     const insets = useSafeAreaInsets();
@@ -283,6 +287,7 @@ export default function SearchScreen() {
                     <TouchableOpacity
                         onPress={() => router.push('/(tabs)')}
                         className="mr-3 p-1 rounded-full active:bg-gray-100"
+                        style={{ display: isSearchFocused ? 'none' : 'flex' }}
                     >
                         <ArrowLeft color="#1f2937" size={26} strokeWidth={2.5} />
                     </TouchableOpacity>
@@ -297,6 +302,10 @@ export default function SearchScreen() {
                             onChangeText={setQuery}
                             onSubmitEditing={handleSearchSubmit}
                             returnKeyType="search"
+                            onFocus={() => {
+                                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                                setIsSearchFocused(true);
+                            }}
                         />
                         {query.length > 0 && (
                             <TouchableOpacity
@@ -310,6 +319,19 @@ export default function SearchScreen() {
                             </TouchableOpacity>
                         )}
                     </View>
+                    {isSearchFocused && (
+                        <TouchableOpacity 
+                            className="ml-3" 
+                            onPress={() => {
+                                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                                setIsSearchFocused(false);
+                                Keyboard.dismiss();
+                                setQuery(activeQuery || '');
+                            }}
+                        >
+                            <Text className="text-[#0f172a] font-bold text-base">Cancelar</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 {/* Filter & Sort Row */}
@@ -352,6 +374,19 @@ export default function SearchScreen() {
                 </View>
             </View>
 
+            <View className="flex-1 w-full" style={{ display: isSearchFocused ? 'flex' : 'none', position: 'absolute', top: 110, bottom: 0, left: 0, right: 0, zIndex: 100 }}>
+                <RecentSearchesOverlay 
+                    visible={isSearchFocused} 
+                    onSelectSearch={(q) => {
+                        setQuery(q);
+                        addSearch(q);
+                        setActiveQuery(q);
+                        setFilterTrigger(prev => prev + 1);
+                        setIsSearchFocused(false);
+                        Keyboard.dismiss();
+                    }} 
+                />
+            </View>
             {/* Results Grid */}
             {loading && !refreshing ? (
                 <View className="flex-1 justify-center items-center">

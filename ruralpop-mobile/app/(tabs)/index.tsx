@@ -6,6 +6,9 @@ import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
 import { supabase } from '../../src/lib/supabase';
 import { Listing } from '../../src/types';
 import { Search, LayoutGrid, X } from 'lucide-react-native';
+import { LayoutAnimation, Keyboard } from 'react-native';
+import { RecentSearchesOverlay } from '../../src/components/ui/RecentSearchesOverlay';
+import { useRecentSearches } from '../../src/hooks/useRecentSearches';
 import { TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenants';
@@ -42,6 +45,8 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const { addSearch } = useRecentSearches();
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -225,16 +230,32 @@ export default function Home() {
                         onChangeText={setSearchQuery}
                         onSubmitEditing={handleSearchSubmit}
                         returnKeyType="search"
+                        onFocus={() => {
+                            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                            setIsSearchFocused(true);
+                        }}
                     />
                     {searchQuery.length > 0 && (
                         <TouchableOpacity
                             onPress={() => setSearchQuery('')}
-                            className="ml-2 bg-[#4b5563] rounded-full w-[22px] h-[22px] items-center justify-center"
+                            className="bg-gray-300 rounded-full w-5 h-5 items-center justify-center ml-2"
                         >
-                            <X color="white" size={14} strokeWidth={3} />
+                            <X color="white" size={14} />
                         </TouchableOpacity>
                     )}
                 </View>
+                {isSearchFocused && (
+                    <TouchableOpacity 
+                        className="ml-3" 
+                        onPress={() => {
+                            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                            setIsSearchFocused(false);
+                            Keyboard.dismiss();
+                        }}
+                    >
+                        <Text className="text-[#0f172a] font-bold text-base">Cancelar</Text>
+                    </TouchableOpacity>
+                )}
                 <TouchableOpacity 
                     onPress={() => router.push('/categories')}
                     className="ml-3 h-[46px] w-[40px] items-center justify-center"
