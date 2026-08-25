@@ -5,6 +5,7 @@ import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
+import { useUnread } from '../../src/contexts/UnreadContext';
 import { MessageCircle, Search, User as UserIcon } from 'lucide-react-native';
 import { supabase } from '../../src/lib/supabase';
 import { useFocusEffect } from '@react-navigation/native';
@@ -29,6 +30,7 @@ interface Conversation {
 
 export default function MessagesScreen() {
     const { session, user, isLoading } = useAuth();
+    const { unreadMessages, unreadNotifications } = useUnread();
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const [activeTab, setActiveTab] = useState<TabType>('mensajes');
@@ -152,6 +154,11 @@ export default function MessagesScreen() {
                     >
                         <Text className={`font-bold ${activeTab === 'mensajes' ? 'text-white' : 'text-gray-600'}`}>
                             Mensajes
+                            {unreadMessages > 0 && (
+                                <View className="bg-red-500 rounded-full h-5 min-w-[20px] px-1.5 ml-1.5 items-center justify-center">
+                                    <Text className="text-white text-[11px] font-bold">{unreadMessages}</Text>
+                                </View>
+                            )}
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
@@ -160,6 +167,11 @@ export default function MessagesScreen() {
                     >
                         <Text className={`font-bold ${activeTab === 'notificaciones' ? 'text-white' : 'text-gray-600'}`}>
                             Notificaciones
+                            {unreadNotifications > 0 && (
+                                <View className="bg-red-500 rounded-full h-5 min-w-[20px] px-1.5 ml-1.5 items-center justify-center">
+                                    <Text className="text-white text-[11px] font-bold">{unreadNotifications}</Text>
+                                </View>
+                            )}
                         </Text>
                     </TouchableOpacity>
                 </View>

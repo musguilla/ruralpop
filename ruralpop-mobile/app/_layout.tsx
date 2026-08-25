@@ -7,6 +7,7 @@ import * as Notifications from "expo-notifications";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { AuthProvider } from "../src/contexts/AuthContext";
 import { FavoritesProvider } from "../src/contexts/FavoritesContext";
+import { UnreadProvider } from "../src/contexts/UnreadContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StripeProvider } from "@stripe/stripe-react-native";
 
@@ -55,12 +56,14 @@ export default function RootLayout() {
             <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''}>
                 <AuthProvider>
                     <FavoritesProvider>
+                        <UnreadProvider>
                         <StatusBar style="auto" />
                         <Stack screenOptions={{ headerShown: false }}>
                             <Stack.Screen name="(tabs)" />
                             <Stack.Screen name="(auth)" options={{ presentation: 'modal' }} />
                             <Stack.Screen name="+not-found" options={{ presentation: 'modal' }} />
                         </Stack>
+                    </UnreadProvider>
                     </FavoritesProvider>
                 </AuthProvider>
             </StripeProvider>

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Tabs } from "expo-router";
 import { Home, Search, PlusCircle, Heart, User, MessageCircle } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Platform, View } from "react-native";
+import { Platform, View, Text } from "react-native";
 import { useAuth } from "../../src/contexts/AuthContext";
+import { useUnread } from "../../src/contexts/UnreadContext";
 import { supabase } from "../../src/lib/supabase";
 import { IS_EQUIPOP } from '../../src/config/tenants';
 
@@ -11,47 +12,8 @@ export default function TabLayout() {
     const insets = useSafeAreaInsets();
     const baseHeight = Platform.OS === 'ios' ? 60 : 60;
     const { user } = useAuth();
-    const [hasUnread, setHasUnread] = useState(false);
+    const { totalUnread } = useUnread();
 
-    useEffect(() => {
-        if (!user) {
-            setHasUnread(false);
-            return;
-        }
-
-        const checkUnread = async () => {
-            const { count } = await supabase
-                .from('messages')
-                .select('*', { count: 'exact', head: true })
-                .eq('receiver_id', user.id)
-                .eq('is_read', false);
-            
-            setHasUnread(!!(count && count > 0));
-        };
-
-        checkUnread();
-
-        const channel = supabase
-            .channel(`public:messages:receiver_id=${user.id}`)
-            .on(
-                'postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'messages', filter: `receiver_id=eq.${user.id}` },
-                (payload: any) => {
-                    if (!payload.new.is_read) setHasUnread(true);
-                }
-            )
-            .on(
-                'postgres_changes',
-                { event: 'UPDATE', schema: 'public', table: 'messages', filter: `receiver_id=eq.${user.id}` },
-                () => checkUnread()
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }, [user]);
-    
     return (
         <Tabs
             initialRouteName="index"
@@ -107,8 +69,12 @@ export default function TabLayout() {
                     tabBarIcon: ({ color }) => (
                         <View>
                             <MessageCircle color={color} size={24} />
-                            {hasUnread && (
-                                <View style={{ position: 'absolute', top: -2, right: -4, width: 10, height: 10, backgroundColor: '#ef4444', borderRadius: 5, borderWidth: 1.5, borderColor: '#ffffff' }} />
+                            {totalUnread > 0 && (
+                                <View style={{ position: 'absolute', top: -4, right: -6, backgroundColor: '#ef4444', borderRadius: 10, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#ffffff', paddingHorizontal: 2 }}>
+                                    <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>
+                                        {totalUnread > 99 ? '99+' : totalUnread}
+                                    </Text>
+                                </View>
                             )}
                         </View>
                     ),
