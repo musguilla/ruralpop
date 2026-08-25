@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../lib/image-optimization';
-import { Star } from 'lucide-react-native';
 
 interface Props {
     profile: any;
@@ -81,11 +80,7 @@ export function FavoriteProfileCard({ profile, listings, onPress }: Props) {
                 <Text className="font-bold text-gray-900 text-base mb-1" numberOfLines={1}>
                     {profile.commercial_name || profile.name || "Usuario"}
                 </Text>
-                <View className="flex-row items-center">
-                    {[1, 2, 3, 4, 5].map(star => (
-                        <Star key={star} size={14} color="#1f2937" fill="#1f2937" />
-                    ))}
-                </View>
+                
             </View>
         </TouchableOpacity>
     );
