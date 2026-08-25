@@ -70,11 +70,7 @@ export default function TabLayout() {
                         <View>
                             <MessageCircle color={color} size={24} />
                             {totalUnread > 0 && (
-                                <View style={{ position: 'absolute', top: -4, right: -6, backgroundColor: '#ef4444', borderRadius: 10, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#ffffff', paddingHorizontal: 2 }}>
-                                    <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>
-                                        {totalUnread > 99 ? '99+' : totalUnread}
-                                    </Text>
-                                </View>
+                                <View style={{ position: 'absolute', top: -2, right: -2, width: 12, height: 12, backgroundColor: '#34d399', borderRadius: 6, borderWidth: 2, borderColor: '#ffffff' }} />
                             )}
                         </View>
                     ),
