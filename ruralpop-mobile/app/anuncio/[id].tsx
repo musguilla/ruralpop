@@ -922,15 +922,15 @@ export default function ListingDetailsScreen() {
                             strokeWidth={1.5} 
                         />
                     </MapView>
-                    <SafeAreaView style={{ position: 'absolute', top: 0, left: 0, right: 0 }} pointerEvents="box-none">
+                    <View style={{ position: 'absolute', top: Math.max(insets.top, 40), left: 16 }} pointerEvents="box-none">
                         <TouchableOpacity 
                             onPress={() => setIsMapModalVisible(false)}
-                            className="m-4 w-11 h-11 bg-white rounded-full items-center justify-center shadow-md"
+                            className="w-11 h-11 bg-white rounded-full items-center justify-center shadow-md"
                             style={{ elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 }}
                         >
                             <X color="#374151" size={24} />
                         </TouchableOpacity>
-                    </SafeAreaView>
+                    </View>
                 </View>
             </Modal>
 
