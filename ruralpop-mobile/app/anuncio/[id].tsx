@@ -1,3 +1,4 @@
+import MapView, { Circle } from 'react-native-maps';
 import { ListingCard } from '../../src/components/ui/ListingCard';
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions, Linking, Alert, Share as RNShare, Platform, Modal, FlatList, TextInput } from 'react-native';
@@ -66,6 +67,7 @@ export default function ListingDetailsScreen() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMapModalVisible, setIsMapModalVisible] = useState(false);
     const [relatedListings, setRelatedListings] = useState<Listing[]>([]);
+    const [mapCoords, setMapCoords] = useState({ lat: 40.416775, lon: -3.703790, delta: 7.0 });
 
     const isOwnListing = user?.id === listing?.user_id;
 
@@ -86,6 +88,25 @@ export default function ListingDetailsScreen() {
 
                 if (error) throw error;
                 setListing(data as ExtendedListing);
+                
+                // Fetch coords
+                if (data.location) {
+                    const locStr = typeof data.location === 'object' ? (data.location as any).name : data.location;
+                    if (locStr && locStr !== 'Toda España' && locStr.trim() !== '') {
+                        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locStr + ', España')}&format=json&limit=1`)
+                            .then(res => res.json())
+                            .then(json => {
+                                if (json && json.length > 0) {
+                                    setMapCoords({
+                                        lat: parseFloat(json[0].lat),
+                                        lon: parseFloat(json[0].lon),
+                                        delta: 0.1
+                                    });
+                                }
+                            })
+                            .catch(e => console.log('Geocoding error', e));
+                    }
+                }
                 
                 // Fetch related listings
                 if (data.subcategory) {
@@ -544,15 +565,33 @@ export default function ListingDetailsScreen() {
                             </Text>
                         </View>
                         <TouchableOpacity 
-                            activeOpacity={0.8}
+                            activeOpacity={0.9}
                             onPress={() => setIsMapModalVisible(true)}
-                            className="w-full h-[100px] rounded-2xl overflow-hidden relative border border-gray-200"
+                            className="w-full h-[120px] rounded-2xl overflow-hidden relative border border-gray-200 bg-gray-100"
                         >
-                            <Image 
-                                source={require('../../assets/ruralpop/map-placeholder.jpg')} 
-                                style={{ width: '100%', height: '100%' }} 
-                                contentFit="cover" 
-                            />
+                            <View pointerEvents="none" style={{ flex: 1 }}>
+                                <MapView
+                                    style={{ flex: 1 }}
+                                    region={{
+                                        latitude: mapCoords.lat,
+                                        longitude: mapCoords.lon,
+                                        latitudeDelta: mapCoords.delta,
+                                        longitudeDelta: mapCoords.delta,
+                                    }}
+                                    scrollEnabled={false}
+                                    zoomEnabled={false}
+                                    pitchEnabled={false}
+                                    rotateEnabled={false}
+                                >
+                                    <Circle 
+                                        center={{ latitude: mapCoords.lat, longitude: mapCoords.lon }} 
+                                        radius={mapCoords.delta === 7.0 ? 200000 : 2000} 
+                                        fillColor="rgba(16, 185, 129, 0.4)" 
+                                        strokeColor="rgba(16, 185, 129, 0.8)" 
+                                        strokeWidth={1} 
+                                    />
+                                </MapView>
+                            </View>
                         </TouchableOpacity>
                     </View>
                     
@@ -864,24 +903,35 @@ export default function ListingDetailsScreen() {
                 animationType="slide"
                 onRequestClose={() => setIsMapModalVisible(false)}
             >
-                <SafeAreaView className="flex-1 bg-white">
-                    <View className="flex-row items-center px-4 py-3 border-b border-gray-100 relative">
+                <View className="flex-1 bg-white">
+                    <MapView
+                        style={{ flex: 1 }}
+                        initialRegion={{
+                            latitude: mapCoords.lat,
+                            longitude: mapCoords.lon,
+                            latitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.05,
+                            longitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.05,
+                        }}
+                        showsUserLocation={true}
+                    >
+                        <Circle 
+                            center={{ latitude: mapCoords.lat, longitude: mapCoords.lon }} 
+                            radius={mapCoords.delta === 7.0 ? 200000 : 2000} 
+                            fillColor="rgba(16, 185, 129, 0.4)" 
+                            strokeColor="rgba(16, 185, 129, 0.8)" 
+                            strokeWidth={1.5} 
+                        />
+                    </MapView>
+                    <SafeAreaView style={{ position: 'absolute', top: 0, left: 0, right: 0 }} pointerEvents="box-none">
                         <TouchableOpacity 
                             onPress={() => setIsMapModalVisible(false)}
-                            className="p-2 -ml-2 z-10"
+                            className="m-4 w-11 h-11 bg-white rounded-full items-center justify-center shadow-md"
+                            style={{ elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 }}
                         >
                             <X color="#374151" size={24} />
                         </TouchableOpacity>
-                        <Text className="text-xl font-bold text-center absolute left-0 right-0">Ubicación</Text>
-                    </View>
-                    <View className="flex-1">
-                        <Image 
-                            source={require('../../assets/ruralpop/map-placeholder.jpg')} 
-                            style={{ width: '100%', height: '100%' }} 
-                            contentFit="cover" 
-                        />
-                    </View>
-                </SafeAreaView>
+                    </SafeAreaView>
+                </View>
             </Modal>
 
             {/* Options Bottom Sheet */}
