@@ -114,6 +114,32 @@ export default function FavoritesScreen() {
 
     if (!session) {
         return (
+            <View className="flex-1 items-center justify-center bg-surface px-6">
+                <View className="w-16 h-16 bg-primary-muted rounded-full items-center justify-center mb-6">
+                    <Heart className="text-primary" size={32} />
+                </View>
+                <Text className="text-xl font-bold text-center text-text mb-2">Inicia sesión para ver tus favoritos</Text>
+                <Text className="text-center text-text-muted mb-8">
+                    Guarda los anuncios que más te interesen para no perderlos de vista.
+                </Text>
+                <TouchableOpacity
+                    onPress={() => router.push('/(auth)/login')}
+                    className="bg-primary px-8 py-3 rounded-full mb-2 w-full items-center"
+                >
+                    <Text className="text-white font-bold text-base">Iniciar sesión</Text>
+                </TouchableOpacity>
+                <Text className="text-text-muted mt-4 mb-4">Si no tienes una cuenta</Text>
+                <TouchableOpacity
+                    onPress={() => router.push('/(auth)/register')}
+                    className="border-2 border-primary px-8 py-3 rounded-full w-full items-center"
+                >
+                    <Text className="text-primary font-bold text-base">Registrarme</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    return (
         <SafeAreaView className="flex-1 bg-surface">
             <View 
                 className="px-6 pb-4 bg-white"
@@ -204,5 +230,4 @@ export default function FavoritesScreen() {
             )}
         </SafeAreaView>
     );
-}
 }
