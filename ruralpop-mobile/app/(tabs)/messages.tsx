@@ -147,10 +147,10 @@ export default function MessagesScreen() {
                 className="px-4 pb-2 bg-white border-b border-gray-100"
                 style={{ paddingTop: Platform.OS === 'android' ? Math.max(insets.top, 16) : 16 }}
             >
-                <View className="flex-row items-center space-x-2">
+                <View className="flex-row bg-gray-100 rounded-full self-start p-1">
                     <TouchableOpacity 
                         onPress={() => setActiveTab('mensajes')}
-                        className={`px-4 py-2 rounded-full flex-row items-center ${activeTab === 'mensajes' ? 'bg-primary' : 'bg-gray-100'}`}
+                        className={`px-6 py-2 rounded-full flex-row items-center ${activeTab === 'mensajes' ? 'bg-[#1a2b3c]' : 'bg-transparent'}`}
                     >
                         <Text className={`font-bold ${activeTab === 'mensajes' ? 'text-white' : 'text-gray-600'}`}>
                             Mensajes
@@ -163,7 +163,7 @@ export default function MessagesScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity 
                         onPress={() => setActiveTab('notificaciones')}
-                        className={`px-4 py-2 rounded-full flex-row items-center ${activeTab === 'notificaciones' ? 'bg-primary' : 'bg-gray-100'}`}
+                        className={`px-6 py-2 rounded-full flex-row items-center ${activeTab === 'notificaciones' ? 'bg-[#1a2b3c]' : 'bg-transparent'}`}
                     >
                         <Text className={`font-bold ${activeTab === 'notificaciones' ? 'text-white' : 'text-gray-600'}`}>
                             Notificaciones
