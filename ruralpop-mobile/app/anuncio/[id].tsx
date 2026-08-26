@@ -462,7 +462,7 @@ export default function ListingDetailsScreen() {
                             {listing.price_type === 'negotiable' && (
                                 <View className="bg-gray-100 px-3 py-1.5 rounded flex-row items-center">
                                     <Tag color="#6b7280" size={14} />
-                                    <Text className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Negociable</Text>
+                                    <Text className="text-xs font-bold text-gray-600 uppercase tracking-wider ml-1">Negociable</Text>
                                 </View>
                             )}
                         </View>
@@ -504,8 +504,8 @@ export default function ListingDetailsScreen() {
                                     <Text className="text-[17px] font-bold text-text mr-1" numberOfLines={1}>{rawSellerName}</Text>
                                     {isProfessional && <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={16} />}
                                 </View>
-                                <View className="self-start px-3 py-1 rounded-full border border-black bg-transparent">
-                                    <Text className="text-xs font-bold text-black">Ver perfil</Text>
+                                <View className="self-start px-3 py-1 rounded-full border border-gray-300 bg-transparent">
+                                    <Text className="text-xs font-bold text-gray-600">Ver perfil</Text>
                                 </View>
                                 {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
                                     <View style={{ backgroundColor: IS_EQUIPOP ? '#1e3a8a1a' : '#0596691a', borderColor: IS_EQUIPOP ? '#1e3a8a33' : '#05966933' }} className="mt-1 flex-row items-center self-start px-2 py-1 rounded border">
@@ -866,7 +866,7 @@ export default function ListingDetailsScreen() {
                 <View className="flex-1 justify-center items-center bg-black/50 px-4">
                     <View className="bg-white w-full max-w-sm rounded-3xl p-6 shadow-xl">
                         <Text className="text-xl font-bold text-text mb-2 text-center">¡Enhorabuena por la venta!</Text>
-                        <Text className="text-gray-500 text-center mb-6 text-sm">
+                        <Text className="text-gray-600 text-center mb-6 text-sm">
                             Este anuncio desaparecerá de las búsquedas. Para ayudarnos a analizar el mercado, ¿podrías indicarnos el precio final de venta?
                         </Text>
 
