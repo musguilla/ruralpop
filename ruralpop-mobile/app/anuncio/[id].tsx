@@ -5,6 +5,7 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../src/lib/supabase';
+import { fetchRelevantListings } from '../../src/lib/relevance';
 import { getOptimizedImageUrl } from '../../src/lib/image-optimization';
 import { Listing, User } from '../../src/types';
 import { ChevronLeft, Share as ShareIcon, Heart, MapPin, Tag, Phone, Mail, ImageIcon, X, ShieldCheck, Layers, MoreVertical, Edit3, Info, Truck } from 'lucide-react-native';
@@ -109,24 +110,14 @@ export default function ListingDetailsScreen() {
                     }
                 }
                 
-                // Fetch related listings
-                if (data.subcategory) {
-                    try {
-                        const { data: relatedData } = await supabase
-                            .from('listings')
-                            .select('*, seller:users!listings_user_id_fkey(*)')
-                            .eq('subcategory', data.subcategory)
-                            .eq('status', 'active')
-                            .neq('id', data.id)
-                            .order('created_at', { ascending: false })
-                            .limit(6);
-                            
-                        if (relatedData) {
-                            setRelatedListings(relatedData as Listing[]);
-                        }
-                    } catch (e) {
-                        console.error('Error fetching related listings', e);
+                // Fetch related listings with new relevance algorithm
+                try {
+                    const relatedData = await fetchRelevantListings(data as any);
+                    if (relatedData) {
+                        setRelatedListings(relatedData);
                     }
+                } catch (e) {
+                    console.error('Error fetching related listings', e);
                 }
                 
                 // Set initial likes count
@@ -604,7 +595,7 @@ export default function ListingDetailsScreen() {
                     {/* Related Listings */}
                     {relatedListings.length > 0 && (
                         <View className="mb-8 mt-4 pt-6 border-t border-gray-100">
-                            <Text className="text-2xl font-medium text-text mb-4">Más como esto</Text>
+                            <Text className="text-xl font-bold text-text mb-4">Más como esto</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
                                 {relatedListings.map(item => (
                                     <View key={item.id} style={{ width: 160, marginRight: 12 }}>
