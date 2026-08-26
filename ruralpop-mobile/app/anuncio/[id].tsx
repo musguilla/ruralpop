@@ -467,13 +467,14 @@ export default function ListingDetailsScreen() {
                             )}
                         </View>
                         
-                        {listing.subcategory && (
+                        {/* Category Badge */}
+                        {(listing.subcategory || listing.category) && (
                             <TouchableOpacity 
-                                onPress={() => router.push({ pathname: '/(tabs)/search', params: { category: listing.subcategory } })}
+                                onPress={() => router.push({ pathname: '/(tabs)/search', params: { category: listing.subcategory || listing.category } })}
                                 className="flex-row items-center bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 ml-2"
                             >
                                 <Text className="text-gray-600 font-bold capitalize">
-                                    {listing.subcategory.replace(/-/g, ' ')}
+                                    {String(listing.subcategory || listing.category).replace(/-/g, ' ')}
                                 </Text>
                             </TouchableOpacity>
                         )}
