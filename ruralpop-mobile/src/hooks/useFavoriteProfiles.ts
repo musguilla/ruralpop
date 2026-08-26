@@ -20,7 +20,11 @@ export function useFavoriteProfiles() {
                     .select('profile_id')
                     .eq('follower_id', user.id);
                 
-                if (data && !error) {
+                if (error) {
+                    console.error('Supabase error loading fav profiles (falling back to local):', error.message);
+                    const localData = await AsyncStorage.getItem(STORAGE_KEY);
+                    setFavoriteProfiles(localData ? JSON.parse(localData) : []);
+                } else if (data) {
                     setFavoriteProfiles(data.map(d => d.profile_id));
                 }
             } else {
@@ -60,15 +64,25 @@ export function useFavoriteProfiles() {
             if (user) {
                 // Sync with Supabase
                 if (isFav) {
-                    await supabase
+                    const { error } = await supabase
                         .from('favorite_profiles')
                         .delete()
                         .eq('follower_id', user.id)
                         .eq('profile_id', profileId);
+                    if (error) {
+                        console.error('Failed to delete from supabase:', error.message);
+                        // Fallback to local
+                        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newFavs));
+                    }
                 } else {
-                    await supabase
+                    const { error } = await supabase
                         .from('favorite_profiles')
                         .insert({ follower_id: user.id, profile_id: profileId });
+                    if (error) {
+                        console.error('Failed to insert into supabase:', error.message);
+                        // Fallback to local
+                        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newFavs));
+                    }
                 }
             } else {
                 // Save locally for guests
