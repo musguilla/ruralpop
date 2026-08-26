@@ -490,7 +490,7 @@ export default function ListingDetailsScreen() {
                             className="flex-row items-center flex-1"
                             activeOpacity={0.7}
                         >
-                            <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm mr-3 overflow-hidden border border-gray-100">
+                            <View className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-sm mr-4 overflow-hidden border border-gray-300">
                                 {listing.seller?.avatar_url ? (
                                     <Image source={{ uri: getOptimizedImageUrl(listing.seller.avatar_url, { width: 100 }) || undefined }} style={{ width: '100%', height: '100%' }} contentFit="cover" transition={200} />
                                 ) : (
@@ -499,15 +499,22 @@ export default function ListingDetailsScreen() {
                                     </Text>
                                 )}
                             </View>
-                            <View className="flex-1 pr-2">
-                                <Text className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Vendedor</Text>
-                                <View className="flex-row items-center flex-wrap">
-                                    <Text className="text-lg font-bold text-text mr-1" numberOfLines={1}>{rawSellerName}</Text>
+                            <View className="flex-1 pr-2 justify-center">
+                                <View className="flex-row items-center flex-wrap mb-1.5">
+                                    <Text className="text-[17px] font-bold text-text mr-1" numberOfLines={1}>{rawSellerName}</Text>
                                     {isProfessional && <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={16} />}
                                 </View>
-                                {isProfessional && (
-                                    <Text className="text-[10px] text-primary font-bold uppercase tracking-wider mt-0.5">Ver más anuncios</Text>
-                                )}
+                                <View 
+                                    className="self-start px-3 py-1 rounded-full"
+                                    style={{ backgroundColor: IS_EQUIPOP ? '#eff6ff' : '#ecfdf5' }}
+                                >
+                                    <Text 
+                                        className="text-xs font-bold"
+                                        style={{ color: IS_EQUIPOP ? '#1d4ed8' : '#047857' }}
+                                    >
+                                        Ver perfil
+                                    </Text>
+                                </View>
                                 {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
                                     <View style={{ backgroundColor: IS_EQUIPOP ? '#1e3a8a1a' : '#0596691a', borderColor: IS_EQUIPOP ? '#1e3a8a33' : '#05966933' }} className="mt-1 flex-row items-center self-start px-2 py-1 rounded border">
                                         <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={12} />
