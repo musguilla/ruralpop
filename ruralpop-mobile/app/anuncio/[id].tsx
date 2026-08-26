@@ -474,7 +474,7 @@ export default function ListingDetailsScreen() {
                                 className="flex-row items-center bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 ml-2"
                             >
                                 <Text className="text-gray-600 font-bold capitalize">
-                                    {String(listing.subcategory || listing.category).replace(/-/g, ' ')}
+                                    {String(listing.subcategory || listing.category).replace(/-/g, ' ').replace(/Otra maquinaria agrícola/i, 'Otra maquinaria').replace(/Forraje y alimentación animal/i, 'Forraje y alimentación')}
                                 </Text>
                             </TouchableOpacity>
                         )}

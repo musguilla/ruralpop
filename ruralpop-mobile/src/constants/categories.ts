@@ -35,7 +35,7 @@ const RURALPOP_CATEGORIES = [
             "Sulfatadoras",
             "Trituradoras",
             "Volteadoras",
-            "Otra maquinaria agrícola"
+            "Otra maquinaria"
         ],
     },
     {
@@ -63,7 +63,7 @@ const RURALPOP_CATEGORIES = [
     },
     {
         id: "forraje",
-        label: "Forraje y alimentación animal",
+        label: "Forraje y alimentación",
         subcategories: [],
     },
     {
