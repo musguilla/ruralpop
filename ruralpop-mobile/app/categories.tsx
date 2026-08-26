@@ -102,11 +102,11 @@ export default function CategoriesScreen() {
                         <Text className="text-xl font-bold text-slate-800 mb-4">Categorías que sueles mirar</Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
                             {recentCategories.map(cat => (
-                                <TouchableOpacity key={cat.id} onPress={() => handleCategoryPress(cat)} className="items-center mr-4 w-20">
-                                    <View className="w-20 h-20 rounded-xl bg-slate-100 overflow-hidden mb-2">
+                                <TouchableOpacity key={cat.id} onPress={() => handleCategoryPress(cat)} className="items-center mr-4 w-24">
+                                    <View className="w-24 h-24 rounded-2xl bg-slate-100 overflow-hidden mb-2">
                                         <Image source={cat.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                     </View>
-                                    <Text className="text-xs text-center text-slate-700" numberOfLines={2}>{cat.label}</Text>
+                                    <Text className="text-sm text-center text-slate-700" numberOfLines={2}>{cat.label}</Text>
                                 </TouchableOpacity>
                             ))}
                         </ScrollView>
@@ -127,9 +127,9 @@ export default function CategoriesScreen() {
                             <TouchableOpacity
                                 key={category.id}
                                 onPress={() => handleCategoryPress(category)}
-                                className={`flex-row items-center px-4 py-2.5 ${index !== CABALLOS_CATEGORIES.length - 1 ? 'border-b border-gray-100' : ''}`}
+                                className={`flex-row items-center px-4 py-3 ${index !== CABALLOS_CATEGORIES.length - 1 ? 'border-b border-gray-100' : ''}`}
                             >
-                                <View className="w-12 h-12 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
+                                <View className="w-14 h-14 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
                                     <Image source={category.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 </View>
                                 <Text className="flex-1 text-lg text-slate-700">{category.label}</Text>
@@ -146,9 +146,9 @@ export default function CategoriesScreen() {
                             <TouchableOpacity
                                 key={category.id}
                                 onPress={() => handleCategoryPress(category)}
-                                className={`flex-row items-center px-4 py-2.5 ${index !== JINETES_CATEGORIES.length - 1 ? 'border-b border-gray-100' : ''}`}
+                                className={`flex-row items-center px-4 py-3 ${index !== JINETES_CATEGORIES.length - 1 ? 'border-b border-gray-100' : ''}`}
                             >
-                                <View className="w-12 h-12 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
+                                <View className="w-14 h-14 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
                                     <Image source={category.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 </View>
                                 <Text className="flex-1 text-lg text-slate-700">{category.label}</Text>
@@ -162,9 +162,9 @@ export default function CategoriesScreen() {
                             <TouchableOpacity
                                 key={category.id}
                                 onPress={() => handleCategoryPress(category)}
-                                className={`flex-row items-center px-4 py-2.5 ${index !== RURALPOP_CATEGORIES_LIST.length - 1 ? 'border-b border-gray-100' : ''}`}
+                                className={`flex-row items-center px-4 py-3 ${index !== RURALPOP_CATEGORIES_LIST.length - 1 ? 'border-b border-gray-100' : ''}`}
                             >
-                                <View className="w-12 h-12 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
+                                <View className="w-14 h-14 rounded-xl bg-slate-100 items-center justify-center mr-4 overflow-hidden">
                                     <Image source={category.image} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                                 </View>
                                 <Text className="flex-1 text-lg text-slate-700">{category.label}</Text>
