@@ -504,16 +504,8 @@ export default function ListingDetailsScreen() {
                                     <Text className="text-[17px] font-bold text-text mr-1" numberOfLines={1}>{rawSellerName}</Text>
                                     {isProfessional && <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={16} />}
                                 </View>
-                                <View 
-                                    className="self-start px-3 py-1 rounded-full"
-                                    style={{ backgroundColor: IS_EQUIPOP ? '#eff6ff' : '#ecfdf5' }}
-                                >
-                                    <Text 
-                                        className="text-xs font-bold"
-                                        style={{ color: IS_EQUIPOP ? '#1d4ed8' : '#047857' }}
-                                    >
-                                        Ver perfil
-                                    </Text>
+                                <View className="self-start px-3 py-1 rounded-full border border-black bg-transparent">
+                                    <Text className="text-xs font-bold text-black">Ver perfil</Text>
                                 </View>
                                 {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
                                     <View style={{ backgroundColor: IS_EQUIPOP ? '#1e3a8a1a' : '#0596691a', borderColor: IS_EQUIPOP ? '#1e3a8a33' : '#05966933' }} className="mt-1 flex-row items-center self-start px-2 py-1 rounded border">
