@@ -157,19 +157,21 @@ export default function FavoritesScreen() {
             </View>
 
             {/* Tabs */}
-            <View className="flex-row px-4 pb-4 border-b border-gray-100 bg-white">
-                <TouchableOpacity
-                    onPress={() => setActiveTab('products')}
-                    className={`mr-4 px-4 py-2 rounded-full ${activeTab === 'products' ? 'bg-[#1f2937]' : 'bg-transparent'}`}
-                >
-                    <Text className={`font-bold ${activeTab === 'products' ? 'text-white' : 'text-gray-600'}`}>Productos</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => setActiveTab('profiles')}
-                    className={`px-4 py-2 rounded-full ${activeTab === 'profiles' ? 'bg-[#1f2937]' : 'bg-transparent'}`}
-                >
-                    <Text className={`font-bold ${activeTab === 'profiles' ? 'text-white' : 'text-gray-600'}`}>Perfiles</Text>
-                </TouchableOpacity>
+            <View className="px-4 pb-4 bg-white border-b border-gray-100">
+                <View className="flex-row bg-gray-100 rounded-full self-start p-1">
+                    <TouchableOpacity
+                        onPress={() => setActiveTab('products')}
+                        className={`px-6 py-2 rounded-full ${activeTab === 'products' ? 'bg-[#1a2b3c]' : 'bg-transparent'}`}
+                    >
+                        <Text className={`font-bold ${activeTab === 'products' ? 'text-white' : 'text-gray-600'}`}>Productos</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => setActiveTab('profiles')}
+                        className={`px-6 py-2 rounded-full ${activeTab === 'profiles' ? 'bg-[#1a2b3c]' : 'bg-transparent'}`}
+                    >
+                        <Text className={`font-bold ${activeTab === 'profiles' ? 'text-white' : 'text-gray-600'}`}>Perfiles</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
 
             {activeTab === 'products' ? (
@@ -213,7 +215,7 @@ export default function FavoritesScreen() {
                         data={profilesData}
                         keyExtractor={(item) => item.id}
                         numColumns={2}
-                        columnWrapperStyle={{ paddingHorizontal: 16, justifyContent: 'space-between' }}
+                        columnWrapperStyle={{ justifyContent: 'space-between' }}
                         renderItem={({ item }) => (
                             <View style={{ width: '48.5%' }}>
                                 <FavoriteProfileCard 
@@ -223,7 +225,7 @@ export default function FavoritesScreen() {
                                 />
                             </View>
                         )}
-                        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+                        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 100 }}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#059669']} />
                         }
