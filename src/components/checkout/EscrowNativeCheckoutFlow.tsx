@@ -1,5 +1,5 @@
-import { useTranslation } from "@/context/LocaleContext";
 "use client";
+import { useTranslation } from "@/context/LocaleContext";
 
 import React, { useState } from "react";
 import { Loader2, ShieldCheck, ArrowLeft } from "lucide-react";

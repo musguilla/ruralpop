@@ -1,5 +1,5 @@
-import { useTranslation } from "@/context/LocaleContext";
 "use client";
+import { useTranslation } from "@/context/LocaleContext";
 
 import { useState } from "react";
 import { handleEscrowCheckout } from "@/app/checkout/escrowActions";
