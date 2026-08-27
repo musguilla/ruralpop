@@ -59,9 +59,16 @@ export async function getSitemapXmlById(id: number, locale: 'es' | 'pt' = 'es'):
         addEntry(buildSeoUrl({ province_id: loc.id }, locale), 0.8);
     });
 
+    // Filter locations by locale
+    const validLocations = LOCATIONS.filter(loc => {
+        if (loc.type === 'community') return true; // keep communities for both or filter? actually communities are ES only right now (galicia, andalucia). Let's restrict communities to ES only for now.
+        const isPtLoc = !isNaN(Number(loc.id)) && Number(loc.id) >= 100;
+        return locale === 'pt' ? isPtLoc : (!isPtLoc);
+    });
+
     // 4. Combinaciones: Categoría + Localización
     RURALPOP_CATEGORIES.forEach(cat => {
-        LOCATIONS.forEach(loc => {
+        validLocations.forEach(loc => {
             addEntry(buildSeoUrl({ category: cat.id, province_id: loc.id }, locale), 0.7);
         });
     });

@@ -21,7 +21,7 @@ export function LocationModal({
     onSelect,
     selectedLocationId = ""
 }: LocationModalProps) {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const [searchTerm, setSearchTerm] = useState("");
 
     // Reset when modal opens
@@ -32,12 +32,18 @@ export function LocationModal({
     }, [isOpen]);
 
     const filteredLocations = useMemo(() => {
-        if (!searchTerm.trim()) return LOCATIONS.filter(l => l.type === 'province');
+        const isPt = locale === 'pt';
+        
+        let validLocs = LOCATIONS.filter(l => {
+            const isPtLoc = !isNaN(Number(l.id)) && Number(l.id) >= 100;
+            return isPt ? isPtLoc : (!isPtLoc && l.type !== 'community'); // Hide communities here too just in case
+        });
+
+        if (!searchTerm.trim()) return validLocs.filter(l => l.type === 'province');
+        
         const term = normalizeStr(searchTerm);
-        return LOCATIONS.filter(l =>
-            normalizeStr(l.name).includes(term)
-        );
-    }, [searchTerm]);
+        return validLocs.filter(l => normalizeStr(l.name).includes(term));
+    }, [searchTerm, locale]);
 
     if (!isOpen) return null;
 

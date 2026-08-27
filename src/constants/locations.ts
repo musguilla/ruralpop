@@ -7,6 +7,26 @@ export interface LocationItem {
 }
 
 export const LOCATIONS: LocationItem[] = [
+    // PT DISTRITOS
+    { id: "101", name: "Aveiro", province: "Aveiro", type: "province" },
+    { id: "102", name: "Beja", province: "Beja", type: "province" },
+    { id: "103", name: "Braga", province: "Braga", type: "province" },
+    { id: "104", name: "Bragança", province: "Bragança", type: "province" },
+    { id: "105", name: "Castelo Branco", province: "Castelo Branco", type: "province" },
+    { id: "106", name: "Coimbra", province: "Coimbra", type: "province" },
+    { id: "107", name: "Évora", province: "Évora", type: "province" },
+    { id: "108", name: "Faro", province: "Faro", type: "province" },
+    { id: "109", name: "Guarda", province: "Guarda", type: "province" },
+    { id: "110", name: "Leiria", province: "Leiria", type: "province" },
+    { id: "111", name: "Lisboa", province: "Lisboa", type: "province" },
+    { id: "112", name: "Portalegre", province: "Portalegre", type: "province" },
+    { id: "113", name: "Porto", province: "Porto", type: "province" },
+    { id: "114", name: "Santarém", province: "Santarém", type: "province" },
+    { id: "115", name: "Setúbal", province: "Setúbal", type: "province" },
+    { id: "116", name: "Viana do Castelo", province: "Viana do Castelo", type: "province" },
+    { id: "117", name: "Vila Real", province: "Vila Real", type: "province" },
+    { id: "118", name: "Viseu", province: "Viseu", type: "province" },
+
     // COMMUNITIES
     { id: "c-galicia", name: "Galicia", province: "Galicia", type: "community", provinces: ["15", "27", "32", "36"] },
     { id: "c-andalucia", name: "Andalucía", province: "Andalucía", type: "community", provinces: ["04", "11", "14", "18", "21", "23", "29", "41"] },

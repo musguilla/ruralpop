@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { isAdmin } from "@/utils/auth-check";
@@ -32,10 +33,16 @@ export default async function AdminEditListingPage(props: Props) {
 
     if (error || !listing) notFound();
 
+    // Determine country from locale
+    const headersList = await headers();
+    const locale = headersList.get('x-locale') || 'es';
+    const targetCountry = locale === 'pt' ? 'PT' : 'ES';
+
     // Fetch provinces to feed the first selector
     const { data: provinces } = await supabase
         .from("provinces")
         .select("id, name")
+        .eq("country_id", targetCountry)
         .order("name");
 
     const initialProvinces = provinces || [];

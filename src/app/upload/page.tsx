@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import UploadForm from "./UploadForm";
 import { getStripe } from "@/lib/stripe";
 import { getServerTenantSlug } from "@/utils/tenant/server";
@@ -29,10 +30,16 @@ export default async function UploadPage() {
 
     const savedPhone = profile?.contact_phone ?? null;
 
+    // Determine country from locale
+    const headersList = await headers();
+    const locale = headersList.get('x-locale') || 'es';
+    const targetCountry = locale === 'pt' ? 'PT' : 'ES';
+
     // Fetch provinces to feed the first selector
     const { data: provinces } = await supabase
         .from("provinces")
         .select("id, name")
+        .eq("country_id", targetCountry)
         .order("name");
 
     const initialProvinces = provinces || [];

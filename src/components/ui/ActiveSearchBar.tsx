@@ -15,7 +15,7 @@ export function ActiveSearchBar() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const urlParams = useParams();
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
 
     const slug = urlParams?.slug as string | undefined;
     const parsedSlug = slug ? parseSeoUrl(slug) : null;
@@ -320,8 +320,11 @@ export function ActiveSearchBar() {
                                     value={modalLocation}
                                     onChange={(val) => setModalLocation(val as string)}
                                     options={[
-                                        { id: "", name: t("toda_espana") },
-                                        ...LOCATIONS.filter(loc => loc.type === 'province').map(loc => ({ id: loc.id, name: loc.name }))
+                                        { id: "", name: locale === 'pt' ? 'Todo o Portugal' : t("toda_espana") },
+                                        ...LOCATIONS.filter(loc => {
+                                            const isPtLoc = !isNaN(Number(loc.id)) && Number(loc.id) >= 100;
+                                            return loc.type === 'province' && (locale === 'pt' ? isPtLoc : !isPtLoc);
+                                        }).map(loc => ({ id: loc.id, name: loc.name }))
                                     ]}
                                     placeholder={t("toda_espana")}
                                     searchPlaceholder={t("search.buscar_provincia")}

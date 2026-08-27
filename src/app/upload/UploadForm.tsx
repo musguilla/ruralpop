@@ -33,7 +33,7 @@ interface UploadFormProps {
 }
 
 export default function UploadForm({ savedPhone, initialProvinces, userEmail, hasWalletConfigured = false, isProfesional = false, userProfile, activeTenantId, isEquipop = false }: UploadFormProps) {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();
@@ -393,7 +393,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                     onChange={(val) => setSelectedProvince(val as number | "")}
                                     options={initialProvinces}
                                     placeholder={t('upload.province_placeholder')}
-                                    searchPlaceholder="Ej: Salamanca, Asturias..."
+                                    searchPlaceholder={locale === 'pt' ? "Ex: Porto, Braga..." : "Ej: Salamanca, Asturias..."}
                                 />
                             </div>
                         )}
@@ -411,8 +411,8 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                     value={selectedMunicipality}
                                     onChange={(val) => setSelectedMunicipality(val as number | "")}
                                     options={municipalities}
-                                    placeholder={selectedProvince === "" ? "Selecciona primero provincia" : t('upload.municipality_placeholder')}
-                                    searchPlaceholder="Ej: Suances, Tineo..."
+                                    placeholder={selectedProvince === "" ? (locale === 'pt' ? "Selecione o distrito primeiro" : "Selecciona primero provincia") : t('upload.municipality_placeholder')}
+                                    searchPlaceholder={locale === 'pt' ? "Ex: Lisboa, Faro..." : "Ej: Suances, Tineo..."}
                                     disabled={selectedProvince === ""}
                                     isLoading={isLoadingMunicipalities}
                                 />
