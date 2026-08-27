@@ -30,6 +30,12 @@ export async function HomeLatestListings() {
         .order("created_at", { ascending: false })
         .limit(12);
 
+    
+    // Asymmetric Country filter: Spain MUST NOT see Portugal ads.
+    if (locale !== 'pt') {
+        query = query.or("province_id.lt.100,province_id.is.null");
+    }
+
     query = query.or(tenantFilterString);
 
     const { data: listings, error } = await query;
