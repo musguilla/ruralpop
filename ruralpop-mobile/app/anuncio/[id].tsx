@@ -496,13 +496,15 @@ export default function ListingDetailsScreen() {
                                     <Text className="text-[17px] font-bold text-text mr-1" numberOfLines={1}>{rawSellerName}</Text>
                                     {isProfessional && <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={16} />}
                                 </View>
-                                {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
-                                    <Text className="text-[13px] text-gray-600 font-normal mb-2">
-                                        Nº registro: {listing.seller.zoo_register_number}
-                                    </Text>
-                                )}
-                                <View className="self-start px-3 py-1 rounded-full border border-gray-300 bg-transparent">
-                                    <Text className="text-xs font-bold text-gray-600">Ver perfil</Text>
+                                <View className="flex-row items-center flex-wrap mt-0.5">
+                                    {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
+                                        <Text className="text-[13px] text-gray-600 font-normal mr-3">
+                                            Nº registro: {listing.seller.zoo_register_number}
+                                        </Text>
+                                    )}
+                                    <View className="px-3 py-1 rounded-full border border-gray-300 bg-transparent">
+                                        <Text className="text-xs font-bold text-gray-600">Ver perfil</Text>
+                                    </View>
                                 </View>
                             </View>
                         </TouchableOpacity>
