@@ -81,7 +81,7 @@ export default function ListingDetailsScreen() {
                     .from('listings')
                     .select(`
             *,
-            seller:users (id, name, avatar_url, created_at, role, commercial_name),
+            seller:users (id, name, avatar_url, created_at, role, commercial_name, zoo_register_number),
             favorites (count)
           `)
                     .eq('id', id)
@@ -496,15 +496,14 @@ export default function ListingDetailsScreen() {
                                     <Text className="text-[17px] font-bold text-text mr-1" numberOfLines={1}>{rawSellerName}</Text>
                                     {isProfessional && <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={16} />}
                                 </View>
+                                {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
+                                    <Text className="text-[13px] text-gray-600 font-normal mb-2">
+                                        Nº registro: {listing.seller.zoo_register_number}
+                                    </Text>
+                                )}
                                 <View className="self-start px-3 py-1 rounded-full border border-gray-300 bg-transparent">
                                     <Text className="text-xs font-bold text-gray-600">Ver perfil</Text>
                                 </View>
-                                {listing.seller?.zoo_register_number && listing.tags?.includes('welfare_validated') && (
-                                    <View style={{ backgroundColor: IS_EQUIPOP ? '#1e3a8a1a' : '#0596691a', borderColor: IS_EQUIPOP ? '#1e3a8a33' : '#05966933' }} className="mt-1 flex-row items-center self-start px-2 py-1 rounded border">
-                                        <ShieldCheck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={12} />
-                                        <Text style={{ color: IS_EQUIPOP ? '#1e3a8a' : '#059669' }} className="text-[10px] font-bold ml-1">Nº de registro: {listing.seller.zoo_register_number}</Text>
-                                    </View>
-                                )}
                             </View>
                         </TouchableOpacity>
                         {(listing.vender_online || IS_EQUIPOP) && (
