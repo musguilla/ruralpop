@@ -31,23 +31,29 @@ export async function fetchRelevantListings(currentListing: Listing): Promise<Li
         .neq('id', currentListing.id)
         .neq('user_id', currentListing.user_id);
         
-    if (currentListing.category) {
-        catQuery = catQuery.eq('category', currentListing.category);
-    } else if (currentListing.subcategory) {
+    if (currentListing.subcategory) {
         catQuery = catQuery.eq('subcategory', currentListing.subcategory);
+    } else if (currentListing.category) {
+        catQuery = catQuery.eq('category', currentListing.category);
     }
     const catPromise = catQuery.order('created_at', { ascending: false }).limit(30);
 
     let kwPromise: any = Promise.resolve({ data: [] as any[] });
     if (stems.length > 0) {
         const orConditions = stems.map(s => `title.ilike.%${s}%,description.ilike.%${s}%`).join(',');
-        kwPromise = supabase.from('listings')
+        let query = supabase.from('listings')
             .select('*, seller:users!listings_user_id_fkey(*)')
             .eq('status', 'active')
             .neq('id', currentListing.id)
-            .neq('user_id', currentListing.user_id)
-            .or(orConditions)
-            .limit(30);
+            .neq('user_id', currentListing.user_id);
+            
+        if (currentListing.subcategory) {
+            query = query.eq('subcategory', currentListing.subcategory);
+        } else if (currentListing.category) {
+            query = query.eq('category', currentListing.category);
+        }
+        
+        kwPromise = query.or(orConditions).limit(30);
     }
 
     const [catRes, kwRes] = await Promise.all([catPromise, kwPromise]);

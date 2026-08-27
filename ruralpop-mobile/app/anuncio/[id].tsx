@@ -600,7 +600,7 @@ export default function ListingDetailsScreen() {
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-4 px-4 pb-4">
                                 {relatedListings.map(item => (
                                     <View key={item.id} style={{ width: 160, marginRight: 12 }}>
-                                        <ListingCard listing={item} isSingleColumn={true} />
+                                        <ListingCard listing={item} isSingleColumn={true} disableImageSlider={true} />
                                     </View>
                                 ))}
                             </ScrollView>

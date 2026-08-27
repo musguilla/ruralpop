@@ -15,9 +15,10 @@ interface ListingCardProps {
     showFeatureButton?: boolean;
     onFeaturePress?: () => void;
     hideLocation?: boolean;
+    disableImageSlider?: boolean;
 }
 
-export function ListingCard({ listing, isSingleColumn, showFeatureButton, onFeaturePress, hideLocation }: ListingCardProps) {
+export function ListingCard({ listing, isSingleColumn, showFeatureButton, onFeaturePress, hideLocation, disableImageSlider }: ListingCardProps) {
     const { user } = useAuth();
     const { favorites, toggleFavorite } = useFavorites();
     const router = useRouter();
@@ -119,7 +120,7 @@ export function ListingCard({ listing, isSingleColumn, showFeatureButton, onFeat
 
     return (
         <View className="bg-surface rounded-2xl overflow-hidden border border-gray-200 mb-4 shadow-sm w-[100%] max-w-[400px]">
-            {isSingleColumn && hasImages && listing.image_urls!.length > 1 ? (
+            {!disableImageSlider && isSingleColumn && hasImages && listing.image_urls!.length > 1 ? (
                 <View 
                     className="relative w-full bg-surface-muted overflow-hidden" 
                     style={{ aspectRatio: 4 / 3 }}
