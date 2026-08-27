@@ -144,3 +144,10 @@ Read more: https://nextjs.org/docs/messages/next-image-missing-loader-width
 ✓ Compiled in 144ms
 ✓ Compiled in 206ms
 ✓ Compiled in 193ms
+✓ Compiled in 561ms
+Persisting failed: Unable to write SST file 00006474.sst
+
+Caused by:
+    No such file or directory (os error 2)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
