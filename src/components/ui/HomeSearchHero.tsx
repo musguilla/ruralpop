@@ -14,29 +14,29 @@ import { useLocalizedRoute } from "@/i18n/hooks";
 
 // Define a unified list for the slider
 const VISUAL_CATEGORIES = [
-    { id: "Bovino", type: "subcategory", label: "Bovino", icon: <Image src="/icon-bovino.jpg" alt="Bovino" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Equino", type: "subcategory", label: "Equino", icon: <Image src="/icon-equino.jpg" alt="Equino" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Caprino", type: "subcategory", label: "Caprino", icon: <Image src="/icon-caprino.jpg" alt="Caprino" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Ovino", type: "subcategory", label: "Ovino", icon: <Image src="/icon-ovino.jpg" alt="Ovino" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Porcino", type: "subcategory", label: "Porcino", icon: <Image src="/icon-porcino.jpg" alt="Porcino" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Avicultura", type: "subcategory", label: "Avicultura", icon: <Image src="/icon-avicultura.jpg" alt="Avicultura" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Apicultura", type: "subcategory", label: "Apicultura", icon: <Image src="/icon-apicultura.jpg" alt="Apicultura" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Conejos", type: "subcategory", label: "Conejos", icon: <Image src="/icon-conejos.jpg" alt="Conejos" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "maquinaria", type: "category", label: "Maquinaria", icon: <Image src="/icon-maquinaria.jpg" alt="Maquinaria" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "recambios-maquinaria", type: "category", label: "Recambios", icon: <Image src="/icon-repuestos.jpg" alt="Recambios" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "equipamiento-y-material", type: "category", label: "Equipamiento", icon: <Image src="/icon-equipamiento.jpg" alt="Equipamiento" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "agricultura", type: "category", label: "Agricultura", icon: <Image src="/icon-agricultura.jpg" alt="Agricultura" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "fincas", type: "category", label: "Fincas", icon: <Image src="/icon-fincas.jpg" alt="Fincas" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "forraje", type: "category", label: "Forraje", icon: <Image src="/icon-forraje.jpg" alt="Forraje" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "alimentos", type: "category", label: "Km0", icon: <Image src="/icon-alimentoskm0.jpeg" alt="Km0" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "camiones-y-furgonetas", type: "category", label: "Camiones", icon: <Image src="/icon-camiones.jpg" alt="Camiones y furgonetas" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "coches", type: "category", label: "Coches", icon: <Image src="/icon-coches.jpg" alt="Coches" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "atv", type: "category", label: "ATV", icon: <Image src="/icon-atv.jpg" alt="ATV" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "motos", type: "category", label: "Motos", icon: <Image src="/icon-motos.jpg" alt="Motos" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "genetica-y-reproduccion", type: "category", label: "Genética", icon: <Image src="/icon-genetica.jpg" alt="Genética" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Transporte", type: "subcategory", label: "Transporte", icon: <Image src="/icon-transporte.jpg" alt="Transporte" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Veterinarios", type: "subcategory", label: "Veterinarios", icon: <Image src="/icon-veterinarios.jpg" alt="Veterinarios" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Herradores", type: "subcategory", label: "Herradores", icon: <Image src="/icon-herradores.jpg" alt="Herradores" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Bovino", type: "subcategory", label: "Bovino", labelPt: "Bovino", icon: <Image src="/icon-bovino.jpg" alt="Bovino" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Equino", type: "subcategory", label: "Equino", labelPt: "Equino", icon: <Image src="/icon-equino.jpg" alt="Equino" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Caprino", type: "subcategory", label: "Caprino", labelPt: "Caprinos", icon: <Image src="/icon-caprino.jpg" alt="Caprino" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Ovino", type: "subcategory", label: "Ovino", labelPt: "Ovinos", icon: <Image src="/icon-ovino.jpg" alt="Ovino" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Porcino", type: "subcategory", label: "Porcino", labelPt: "Suínos", icon: <Image src="/icon-porcino.jpg" alt="Porcino" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Avicultura", type: "subcategory", label: "Avicultura", labelPt: "Aves", icon: <Image src="/icon-avicultura.jpg" alt="Avicultura" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Apicultura", type: "subcategory", label: "Apicultura", labelPt: "Apicultura", icon: <Image src="/icon-apicultura.jpg" alt="Apicultura" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Conejos", type: "subcategory", label: "Conejos", labelPt: "Coelhos", icon: <Image src="/icon-conejos.jpg" alt="Conejos" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "maquinaria", type: "category", label: "Maquinaria", labelPt: "Máquinas", icon: <Image src="/icon-maquinaria.jpg" alt="Maquinaria" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "recambios-maquinaria", type: "category", label: "Recambios", labelPt: "Peças", icon: <Image src="/icon-repuestos.jpg" alt="Recambios" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "equipamiento-y-material", type: "category", label: "Equipamiento", labelPt: "Equipamento", icon: <Image src="/icon-equipamiento.jpg" alt="Equipamiento" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "agricultura", type: "category", label: "Agricultura", labelPt: "Agricultura", icon: <Image src="/icon-agricultura.jpg" alt="Agricultura" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "fincas", type: "category", label: "Fincas", labelPt: "Fazendas", icon: <Image src="/icon-fincas.jpg" alt="Fincas" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "forraje", type: "category", label: "Forraje", labelPt: "Forragem", icon: <Image src="/icon-forraje.jpg" alt="Forraje" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "alimentos", type: "category", label: "Km0", labelPt: "Km0", icon: <Image src="/icon-alimentoskm0.jpeg" alt="Km0" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "camiones-y-furgonetas", type: "category", label: "Camiones", labelPt: "Camiões", icon: <Image src="/icon-camiones.jpg" alt="Camiones y furgonetas" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "coches", type: "category", label: "Coches", labelPt: "Carros", icon: <Image src="/icon-coches.jpg" alt="Coches" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "atv", type: "category", label: "ATV", labelPt: "ATV", icon: <Image src="/icon-atv.jpg" alt="ATV" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "motos", type: "category", label: "Motos", labelPt: "Motos", icon: <Image src="/icon-motos.jpg" alt="Motos" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "genetica-y-reproduccion", type: "category", label: "Genética", labelPt: "Genética", icon: <Image src="/icon-genetica.jpg" alt="Genética" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Transporte", type: "subcategory", label: "Transporte", labelPt: "Transporte", icon: <Image src="/icon-transporte.jpg" alt="Transporte" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Veterinarios", type: "subcategory", label: "Veterinarios", labelPt: "Veterinários", icon: <Image src="/icon-veterinarios.jpg" alt="Veterinarios" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Herradores", type: "subcategory", label: "Herradores", labelPt: "Ferradores", icon: <Image src="/icon-herradores.jpg" alt="Herradores" width={76} height={76} className="object-cover rounded-xl" /> },
 ];
 
 import { CategoryModal } from "./CategoryModal";
@@ -45,7 +45,7 @@ import { buildSeoUrl } from "@/utils/seoUtils";
 
 export function HomeSearchHero() {
     const CATEGORIES = useCategories();
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const { getPath } = useLocalizedRoute();
     const router = useRouter();
     const [query, setQuery] = useState("");
@@ -268,7 +268,7 @@ export function HomeSearchHero() {
                                 {cat.icon}
                             </div>
                             <span className="text-[15px] font-bold text-[var(--ag-sys-color-text)] text-center w-full">
-                                {t(`category.${cat.label}`) || cat.label}
+                                {locale === 'pt' ? cat.labelPt : (t(`category.${cat.label}`) || cat.label)}
                             </span>
                         </button>
                     ))}
