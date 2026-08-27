@@ -62,16 +62,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             `, { count: "exact" })
             .order("is_featured", { ascending: false, nullsFirst: false });
 
-        // Country filter logic
-        const locationFilterParam = searchParams.province_id;
-        if (!locationFilterParam) {
-            // Apply strict country boundary only if user hasn't explicitly chosen a specific location
-            if (locale === 'pt') {
-                query = query.gte("province_id", 100);
-            } else {
-                query = query.or("province_id.lt.100,province_id.is.null");
-            }
-        }
+
 
         // Hide ghost listings globally UNLESS we are specifically fetching a user's listings
         if (!userIdFilter) {

@@ -15,7 +15,7 @@
   "que_quieres_encontrar": "O que procuras?",
   "estoy_buscando": "Estou à procura...",
   "todas_las_categorias": "Todas as categorias",
-  "toda_espana": "Todo o país (Espanha)",
+  "toda_espana": "Todo o Portugal",
   "mi_cuenta": "A minha conta",
   "mis_anuncios": "Os meus anúncios",
   "mis_guardados": "Os meus favoritos",
@@ -137,7 +137,7 @@
   "location_modal": {
     "title": "Onde procuras?",
     "placeholder": "Escreve o teu distrito ou localidade",
-    "all_spain": "Todo o país (Espanha)",
+    "all_spain": "Todo o Portugal",
     "no_results": "Não foram encontrados resultados para",
     "apply": "Aplicar filtro"
   },
