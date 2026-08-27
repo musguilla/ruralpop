@@ -16,7 +16,7 @@ import { LocaleCode } from "@/i18n/config";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 
 export async function generateMetadata(props: { 
-    params: Promise<{ slug: string }>;
+    params: Promise<{ slug: string | string[] }>;
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
     const params = await props.params;
@@ -26,7 +26,8 @@ export async function generateMetadata(props: {
     const isEquipop = tenant === 'equipop';
     const headersList = await headers();
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
-    const originalPathname = headersList.get('x-original-pathname') || `/${params.slug}`;
+    const slugStr = Array.isArray(params.slug) ? params.slug.join("/") : params.slug;
+    const originalPathname = headersList.get('x-original-pathname') || `/${slugStr}`;
 
     let locationName = "";
     if (parsed.province_id) {
@@ -47,7 +48,7 @@ export async function generateMetadata(props: {
         : (isPt ? "Mercado Agrícola e Pecuário | Ruralpop" : "Mercado Agrícola y Ganadero | Ruralpop");
 
     if (isLocationOnly) {
-        const charCodeSumLoc = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const charCodeSumLoc = (Array.isArray(params.slug) ? params.slug.join("/") : params.slug).split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
         const variations = isEquipop 
             ? (isPt 
                 ? [`Equitação em ${locationName} - Material equestre`, `Cavalos e selas em ${locationName} - Equipop`]
@@ -64,7 +65,7 @@ export async function generateMetadata(props: {
             : (isPt 
                 ? ["Comprar e vender gado", "Compra e venda de animais", "App grátis compra e venda gado", "Anúncios grátis do campo", "Mercado rural de segunda mão", "Compra e venda de gado"]
                 : ["Comprar y vender ganado", "Compraventa de animales ganaderos", "App gratis compraventa ganado", "Anuncios gratis del campo", "Mercado rural de segunda mano", "Compra venta ganadería"]);
-        const charCodeSum = params.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const charCodeSum = (Array.isArray(params.slug) ? params.slug.join("/") : params.slug).split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
         const suffix = seoVariations[charCodeSum % seoVariations.length];
         
         const brand = isEquipop ? "Equipop" : "Ruralpop";
@@ -117,7 +118,7 @@ export default async function SearchResultsPage(props: {
     
     // Explicit protection against catching known folders if the dev server hasn't hot-reloaded the tree perfectly
     const reservedRoutes = ['tienda', 'checkout', 'admin', 'auth', 'favoritos'];
-    if (reservedRoutes.includes(params.slug)) {
+    if (reservedRoutes.includes(Array.isArray(params.slug) ? params.slug.join("/") : params.slug)) {
         notFound();
     }
 

@@ -2,10 +2,23 @@ export interface LocationItem {
     id: string;
     name: string;
     province: string;
-    type: 'province' | 'municipality';
+    type: 'province' | 'municipality' | 'community';
+    provinces?: string[];
 }
 
 export const LOCATIONS: LocationItem[] = [
+    // COMMUNITIES
+    { id: "c-galicia", name: "Galicia", province: "Galicia", type: "community", provinces: ["15", "27", "32", "36"] },
+    { id: "c-andalucia", name: "Andalucía", province: "Andalucía", type: "community", provinces: ["04", "11", "14", "18", "21", "23", "29", "41"] },
+    { id: "c-cataluna", name: "Cataluña", province: "Cataluña", type: "community", provinces: ["08", "17", "25", "43"] },
+    { id: "c-pais-vasco", name: "País Vasco", province: "País Vasco", type: "community", provinces: ["01", "20", "48"] },
+    { id: "c-castilla-y-leon", name: "Castilla y León", province: "Castilla y León", type: "community", provinces: ["05", "09", "24", "34", "37", "40", "42", "47", "49"] },
+    { id: "c-castilla-la-mancha", name: "Castilla-La Mancha", province: "Castilla-La Mancha", type: "community", provinces: ["02", "13", "16", "19", "45"] },
+    { id: "c-extremadura", name: "Extremadura", province: "Extremadura", type: "community", provinces: ["06", "10"] },
+    { id: "c-aragon", name: "Aragón", province: "Aragón", type: "community", provinces: ["22", "44", "50"] },
+    { id: "c-comunidad-valenciana", name: "Comunidad Valenciana", province: "Comunidad Valenciana", type: "community", provinces: ["03", "12", "46"] },
+    { id: "c-canarias", name: "Canarias", province: "Canarias", type: "community", provinces: ["35", "38"] },
+
     // PROVINCES
     { id: "01", name: "Álava", province: "Álava", type: "province" },
     { id: "02", name: "Albacete", province: "Albacete", type: "province" },

@@ -142,7 +142,12 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
         const locationFilter = searchParams.province_id as string;
         if (locationFilter && fallbackLevel < 1) {
-            if (locationFilter.startsWith('m')) {
+            if (locationFilter.startsWith('c-')) {
+                const community = LOCATIONS.find((l: { id: string, provinces?: string[] }) => l.id === locationFilter);
+                if (community && community.provinces) {
+                    query = query.in("province_id", community.provinces);
+                }
+            } else if (locationFilter.startsWith('m')) {
                 const muni = LOCATIONS.find((l: { id: string }) => l.id === locationFilter);
                 if (muni) {
                     query = query.ilike("location", `%${muni.name}%`);

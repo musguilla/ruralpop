@@ -83,8 +83,11 @@ export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlPar
     // Keyword or base
     if (q && q.trim()) {
         parts.push(translateSeoSlug(slugify(q), locale));
-    } else {
-        parts.push(translateSeoSlug('anuncios', locale));
+        if (province_id) {
+            const locSlug = locationIdMap.get(province_id);
+            if (locSlug) parts.push(locSlug);
+        }
+        return `/${parts.join('-')}`;
     }
 
     // Category
@@ -104,16 +107,13 @@ export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlPar
         if (locSlug) parts.push(locSlug);
     }
 
-    // If there were no params and no query, it redirects home
-    if (parts.length === 1 && parts[0] === 'anuncios') {
-        return '/';
-    }
-
-    return `/${parts.join('-')}`;
+    if (parts.length === 0) return '/';
+    
+    return `/${parts.join('/')}`;
 }
 
-export function parseSeoUrl(slug: string): SeoUrlParams {
-    let parts = slug.split('-');
+export function parseSeoUrl(slug: string | string[]): SeoUrlParams {
+    let parts = Array.isArray(slug) ? slug.join('-').split('-') : slug.split('-');
 
     let province_id = "";
     let category = "";
