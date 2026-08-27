@@ -247,15 +247,11 @@ export default function SearchScreen() {
                 rows.push({ isRow: true, id: `row-${totalItems}`, items: currentRow });
                 currentRow = [];
                 
-                if (adCount === 0 && itemsSinceLastAd >= 8) {
+                if (adCount === 0 && itemsSinceLastAd >= 12) {
                     rows.push({ isAd: true, id: `ad-${totalItems}` });
                     adCount++;
                     itemsSinceLastAd = 0;
-                } else if (adCount === 1 && itemsSinceLastAd >= 10) {
-                    rows.push({ isAd: true, id: `ad-${totalItems}` });
-                    adCount++;
-                    itemsSinceLastAd = 0;
-                } else if (adCount >= 2 && itemsSinceLastAd >= 10) {
+                } else if (adCount > 0 && itemsSinceLastAd >= 10) {
                     rows.push({ isAd: true, id: `ad-${totalItems}` });
                     adCount++;
                     itemsSinceLastAd = 0;

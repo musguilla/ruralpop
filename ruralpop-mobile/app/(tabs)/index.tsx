@@ -180,18 +180,13 @@ export default function Home() {
                 currentRow = [];
                 
                 // Lógica de inserción de anuncios:
-                // 1º anuncio después de 8 items
-                // 2º anuncio después de 10 items (desde el último anuncio)
-                // 3º anuncio después de 12 items (desde el último anuncio)
-                if (adCount === 0 && itemsSinceLastAd >= 8) {
+                // 1º anuncio a los 12 items
+                // Siguientes anuncios cada 10 items
+                if (adCount === 0 && itemsSinceLastAd >= 12) {
                     rows.push({ isAd: true, id: `ad-${totalItems}` });
                     adCount++;
                     itemsSinceLastAd = 0;
-                } else if (adCount === 1 && itemsSinceLastAd >= 10) {
-                    rows.push({ isAd: true, id: `ad-${totalItems}` });
-                    adCount++;
-                    itemsSinceLastAd = 0;
-                } else if (adCount === 2 && itemsSinceLastAd >= 12) {
+                } else if (adCount > 0 && itemsSinceLastAd >= 10) {
                     rows.push({ isAd: true, id: `ad-${totalItems}` });
                     adCount++;
                     itemsSinceLastAd = 0;
