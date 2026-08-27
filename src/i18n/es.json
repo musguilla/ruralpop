@@ -250,5 +250,15 @@
   },
   "chat_vendedor": "Chat con el vendedor",
   "ver_telefono": "Ver teléfono",
-  "comparte_anuncio": "Comparte este anuncio"
+  "comparte_anuncio": "Comparte este anuncio",
+  "compra_protegida": "Compra protegida por protección Ruralpop",
+  "compra_segura_titulo": "Compra segura con Ruralpop",
+  "compra_segura_desc": "Tu dinero queda protegido hasta que confirmes que has recibido el producto correctamente.",
+  "procesando": "Procesando...",
+  "error_pago": "Ocurrió un error al iniciar el pago.",
+  "error_conexion": "Error de conexión.",
+  "configurar_monedero": "Configurar mi monedero",
+  "compras_cubiertas": "Las compras están cubiertas por la",
+  "compra_segura_equipop": "Compra segura con protección Equipop",
+  "debes_iniciar_sesion": "Debes iniciar sesión o registrarte para poder realizar una compra."
 }

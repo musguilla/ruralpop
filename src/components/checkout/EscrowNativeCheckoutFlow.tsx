@@ -1,3 +1,4 @@
+import { useTranslation } from "@/context/LocaleContext";
 "use client";
 
 import React, { useState } from "react";
@@ -21,6 +22,7 @@ interface EscrowNativeCheckoutFlowProps {
 
 export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingPrice = 0, isSeller, variant = 'default', isEquipop = false }: EscrowNativeCheckoutFlowProps) {
     const stripePromise = getStripeClient(isEquipop ? 'equipop' : 'ruralpop');
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -76,7 +78,7 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                         </div>
                     )}
                     <div className="text-[11px] mb-3 text-[var(--ag-sys-color-text-muted)] font-light">
-                        Las compras están cubiertas por la{" "}
+                        {t("compras_cubiertas")}{" "}
                         <a 
                             href="https://www.ruralpop.com/preguntas-frecuentes#proteccion" 
                             target="_blank" 
@@ -123,7 +125,7 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                     ) : (
                         <>
                             <ShieldCheck className="w-5 h-5" />
-                            Comprar
+                            {t("comprar")}
                         </>
                     )}
                 </button>
@@ -141,11 +143,11 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                     {isEquipop ? (
                         <p className="flex items-center justify-center gap-1.5 text-xs text-green-600 dark:text-green-500 mt-2 font-medium">
                             <ShieldCheck className="w-4 h-4" />
-                            Compra segura con protección Equipop
+                            {t("compra_segura_equipop")}
                         </p>
                     ) : (
                         <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
-                            Compra protegida por protección Ruralpop
+                            {t("compra_protegida")}
                         </p>
                     )}
                 </div>
@@ -154,7 +156,7 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                     <div className="mb-4 text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-100 flex flex-col gap-3">
                         {error === "User not authenticated" || error === "No autenticado" ? (
                             <>
-                                <p className="text-center font-medium">Debes iniciar sesión o registrarte para poder realizar una compra.</p>
+                                <p className="text-center font-medium">{t("debes_iniciar_sesion")}</p>
                                 <div className="flex gap-2 w-full mt-1">
                                     <a 
                                         href="/login" 
@@ -203,7 +205,7 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                             Iniciando pago seguro...
                         </>
                     ) : (
-                        "Comprar"
+                        t("comprar")
                     )}
                 </button>
             </div>
@@ -213,10 +215,10 @@ export function EscrowNativeCheckoutFlow({ listingId, price, feeCents, shippingP
                     <ShieldCheck className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0" />
                     <div>
                         <h4 className="font-bold text-green-900 dark:text-green-300 text-sm">
-                            Compra segura con Ruralpop
+                            {t("compra_segura_titulo")}
                         </h4>
                         <p className="text-xs text-green-700/80 dark:text-green-500/80 mt-1 leading-normal">
-                            Tu dinero queda protegido hasta que confirmes que has recibido el producto correctamente.
+                            {t("compra_segura_desc")}
                         </p>
                     </div>
                 </div>

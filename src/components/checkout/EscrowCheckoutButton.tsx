@@ -1,3 +1,4 @@
+import { useTranslation } from "@/context/LocaleContext";
 "use client";
 
 import { useState } from "react";
@@ -15,6 +16,7 @@ interface EscrowCheckoutButtonProps {
 }
 
 export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, variant = 'default' }: EscrowCheckoutButtonProps) {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -29,11 +31,11 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
             if (res.success && res.url) {
                 window.location.href = res.url;
             } else {
-                setError(res.error || "Ocurrió un error al iniciar el pago.");
+                setError(res.error || t("error_pago"));
                 setLoading(false);
             }
         } catch (err: any) {
-            setError(err.message || "Error de conexión.");
+            setError(err.message || t("error_conexion"));
             setLoading(false);
         }
     };
@@ -51,10 +53,10 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
                 {loading ? (
                     <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        Procesando...
+                        {t("procesando")}
                     </>
                 ) : (
-                    "Comprar"
+                    t("comprar")
                 )}
             </button>
         );
@@ -69,7 +71,7 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
                         {formatCurrency(price)}
                     </div>
                     <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1">
-                        Compra protegida por protección Ruralpop
+                        {t("compra_protegida")}
                     </p>
                 </div>
 
@@ -81,7 +83,7 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
                                 href="/dashboard/monedero" 
                                 className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-center transition-colors shadow-sm"
                             >
-                                Configurar mi monedero
+                                {t("configurar_monedero")}
                             </a>
                         )}
                     </div>
@@ -100,10 +102,10 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
                     {loading ? (
                         <>
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            Procesando...
+                            {t("procesando")}
                         </>
                     ) : (
-                        "Comprar"
+                        t("comprar")
                     )}
                 </button>
             </div>
@@ -113,10 +115,10 @@ export function EscrowCheckoutButton({ listingId, price, feeCents, isSeller, var
                 <ShieldCheck className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0" />
                 <div>
                     <h4 className="font-bold text-green-900 dark:text-green-300 text-sm">
-                        Compra segura con Ruralpop
+                        {t("compra_segura_titulo")}
                     </h4>
                     <p className="text-xs text-green-700/80 dark:text-green-500/80 mt-1 leading-normal">
-                        Tu dinero queda protegido hasta que confirmes que has recibido el producto correctamente.
+                        {t("compra_segura_desc")}
                     </p>
                 </div>
             </div>
