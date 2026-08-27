@@ -312,7 +312,9 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                             name="price_type"
                                             value={formDataState.priceType}
                                             onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
-                                            options={PRICE_TYPES.map(p => ({ id: p.id, name: p.label }))}
+                                            options={PRICE_TYPES.map(type => ({
+...type, label: t(type.id === "fixed" ? "precio_fijo" : type.id === "negotiable" ? "precio_negociable" : "precio_a_convenir") || type.label
+})).map(p => ({ id: p.id, name: p.label }))}
                                             placeholder={t('upload.price_type_placeholder')}
                                             disabled={sellOnline}
                                         />
@@ -344,12 +346,12 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                                 <div className={`block w-12 h-7 rounded-full transition-colors ${sellOnline ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                                                 <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform ${sellOnline ? 'transform translate-x-5' : ''}`}></div>
                                             </div>
-                                            <span className="text-sm font-bold text-green-800">Vender online</span>
+                                            <span className="text-sm font-bold text-green-800">{t("vender_online")}</span>
                                         </label>
                                         
                                         {sellOnline && (
                                             <div className="flex items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
-                                                <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">Precio transporte (€)</span>
+                                                <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">{t("precio_transporte")}</span>
                                                 <input
                                                     name="shipping_price"
                                                     type="number"
@@ -368,10 +370,10 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                         <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                                         <div>
                                             <p className="text-sm font-medium text-amber-900">
-                                                {isEquipop ? "Configura tu monedero para poder recibir tus pagos." : "Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos."}
+                                                {isEquipop ? t("configura_monedero_pagos") : t("has_activado_online")}
                                             </p>
                                             <a href="/dashboard/monedero" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline mt-1 inline-block">
-                                                Configurar mi monedero →
+                                                {t("configurar_mi_monedero_flecha")}
                                             </a>
                                         </div>
                                     </div>

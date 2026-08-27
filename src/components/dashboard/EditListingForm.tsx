@@ -13,6 +13,7 @@ import { TagSelector } from "@/components/ui/TagSelector";
 import { useRouter } from "next/navigation";
 import { useNotification } from "@/context/NotificationContext";
 import Link from "next/link";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface EditListingFormProps {
     listing: any;
@@ -25,6 +26,7 @@ interface EditListingFormProps {
 }
 
 export default function EditListingForm({ listing, savedPhone, initialProvinces, initialMunicipalities, userEmail, hasWalletConfigured = false, isEquipop = false }: EditListingFormProps) {
+    const { t } = useTranslation();
     const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();
@@ -280,7 +282,9 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                             name="price_type"
                                             value={formDataState.priceType}
                                             onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
-                                            options={PRICE_TYPES.map(p => ({ id: p.id, name: p.label }))}
+                                            options={PRICE_TYPES.map(type => ({
+...type, label: t(type.id === "fixed" ? "precio_fijo" : type.id === "negotiable" ? "precio_negociable" : "precio_a_convenir") || type.label
+})).map(p => ({ id: p.id, name: p.label }))}
                                             placeholder="Selecciona tipo..."
                                             disabled={sellOnline}
                                         />
@@ -317,12 +321,12 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                                 <div className={`block w-12 h-7 rounded-full transition-colors ${sellOnline ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                                                 <div className={`dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform ${sellOnline ? 'transform translate-x-5' : ''}`}></div>
                                             </div>
-                                            <span className="text-sm font-bold text-green-800">Vender online</span>
+                                            <span className="text-sm font-bold text-green-800">{t("vender_online")}</span>
                                         </label>
                                         
                                         {sellOnline && !isEquipop && (
                                             <div className="flex items-center gap-3 w-full md:w-auto">
-                                                <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">Precio transporte (€)</span>
+                                                <span className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] whitespace-nowrap">{t("precio_transporte")}</span>
                                                 <input
                                                     name="shipping_price"
                                                     type="number"
@@ -346,7 +350,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                                     Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
                                                 </p>
                                                 <a href="/dashboard/monedero" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline mt-1 inline-block">
-                                                    Configurar mi monedero →
+                                                    {t("configurar_mi_monedero_flecha")}
                                                 </a>
                                             </div>
                                         </div>

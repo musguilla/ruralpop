@@ -260,5 +260,13 @@
   "configurar_monedero": "Configurar a minha carteira",
   "compras_cubiertas": "As compras estão cobertas pela",
   "compra_segura_equipop": "Compra segura com a proteção Equipop",
-  "debes_iniciar_sesion": "Deves iniciar sessão ou registar-te para efetuar uma compra."
+  "debes_iniciar_sesion": "Deves iniciar sessão ou registar-te para efetuar uma compra.",
+  "precio_fijo": "Preço Fixo",
+  "precio_negociable": "Negociável",
+  "precio_a_convenir": "A combinar / Troca",
+  "precio_transporte": "Preço de transporte (€)",
+  "configura_monedero_pagos": "Configura a tua carteira para poderes receber os teus pagamentos.",
+  "has_activado_online": "Ativaste a venda online, mas ainda não configuraste a tua carteira para receber pagamentos.",
+  "configurar_mi_monedero_flecha": "Configurar a minha carteira →",
+  "vender_online": "Venda online"
 }
