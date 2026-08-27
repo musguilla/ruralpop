@@ -72,7 +72,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       "expo-notifications",
       [
         "expo-build-properties",
-        {}
+        {
+          android: {
+            compileSdkVersion: 36,
+            targetSdkVersion: 36,
+            buildToolsVersion: "36.0.0"
+          }
+        }
       ],
       [
         "react-native-google-mobile-ads",
