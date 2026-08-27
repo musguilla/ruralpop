@@ -219,8 +219,10 @@ export default async function ListingDetailPage(props: Props) {
     const rawSellerName = isProfessional && listing.seller?.commercial_name ? listing.seller.commercial_name : (listing.seller?.name || "Usuario");
     
     const joinedDateObj = listing.seller?.created_at ? new Date(listing.seller.created_at) : null;
+    const localeMap = { es: 'es-ES', pt: 'pt-PT' };
+    const dateLocale = localeMap[locale as 'es'|'pt'] || 'es-ES';
     const sellerJoinedDate = joinedDateObj
-        ? `${joinedDateObj.toLocaleString('es-ES', { month: 'long' })} ${joinedDateObj.getFullYear()}`
+        ? `${joinedDateObj.toLocaleString(dateLocale, { month: 'long' })} ${joinedDateObj.getFullYear()}`
         : "";
 
     // Schema Markup for Google (JSON-LD)

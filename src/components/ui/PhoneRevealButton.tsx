@@ -9,7 +9,9 @@ interface PhoneRevealButtonProps {
     isLoggedIn: boolean;
 }
 
+import { useTranslation } from "@/context/LocaleContext";
 export function PhoneRevealButton({ phone, isLoggedIn }: PhoneRevealButtonProps) {
+    const { t } = useTranslation();
     const [showModal, setShowModal] = useState(false);
     const router = useRouter();
 
@@ -24,7 +26,7 @@ export function PhoneRevealButton({ phone, isLoggedIn }: PhoneRevealButtonProps)
                 className="w-full flex items-center justify-center gap-2 py-4 px-6 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)] font-bold rounded-2xl hover:bg-[var(--ag-sys-color-border)] transition-all active:scale-95"
             >
                 <Phone className="w-5 h-5" />
-                Ver teléfono
+                {t("ver_telefono")}
             </button>
 
             {showModal && (

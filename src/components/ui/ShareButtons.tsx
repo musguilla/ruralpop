@@ -1,3 +1,4 @@
+import { useTranslation } from "@/context/LocaleContext";
 "use client";
 
 import React from "react";
@@ -10,13 +11,14 @@ interface ShareButtonsProps {
 }
 
 export function ShareButtons({ title, url }: ShareButtonsProps) {
+    const { t } = useTranslation();
     const { showAlert } = useNotification();
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(url).then(() => {
             showAlert({
-                title: "Enlace copiado",
-                message: "El enlace al anuncio se ha copiado al portapapeles.",
+                title: t("link_copied_title") || "Enlace copiado",
+                message: t("link_copied_msg") || "El enlace al anuncio se ha copiado al portapapeles.",
                 type: "success"
             });
         }).catch(() => {
@@ -37,7 +39,7 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
 
     return (
         <div className="mt-8 mb-6">
-            <h4 className="text-lg font-bold text-[var(--ag-sys-color-text)] mb-4 px-1">Comparte este anuncio</h4>
+            <h4 className="text-lg font-bold text-[var(--ag-sys-color-text)] mb-4 px-1">{t("comparte_anuncio")}</h4>
             <div className="flex items-center gap-4 px-1">
                 {/* WhatsApp */}
                 <a

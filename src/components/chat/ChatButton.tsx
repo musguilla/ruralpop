@@ -1,3 +1,4 @@
+import { useTranslation } from "@/context/LocaleContext";
 "use client";
 
 import React, { useState } from "react";
@@ -12,6 +13,7 @@ interface ChatButtonProps {
 }
 
 export function ChatButton({ listingId, isLoggedIn, variant = 'primary' }: ChatButtonProps) {
+    const { t } = useTranslation();
     const [showModal, setShowModal] = useState(false);
     const router = useRouter();
 
@@ -34,7 +36,7 @@ export function ChatButton({ listingId, isLoggedIn, variant = 'primary' }: ChatB
                 }`}
             >
                 <MessageCircle className={`w-5 h-5 ${variant === 'secondary' ? 'text-gray-400' : ''}`} />
-                Chat con el vendedor
+                {t("chat_vendedor")}
             </button>
 
             {/* Auth Incentive Modal */}
