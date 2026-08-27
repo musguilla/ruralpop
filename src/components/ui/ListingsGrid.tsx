@@ -62,6 +62,17 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             `, { count: "exact" })
             .order("is_featured", { ascending: false, nullsFirst: false });
 
+        // Country filter logic
+        const locationFilterParam = searchParams.province_id;
+        if (!locationFilterParam) {
+            // Apply strict country boundary only if user hasn't explicitly chosen a specific location
+            if (locale === 'pt') {
+                query = query.gte("province_id", 100);
+            } else {
+                query = query.or("province_id.lt.100,province_id.is.null");
+            }
+        }
+
         // Hide ghost listings globally UNLESS we are specifically fetching a user's listings
         if (!userIdFilter) {
             query = query.eq("status", "active").eq("users.is_ghost", false);
@@ -140,7 +151,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             query = query.lte("price", priceMax);
         }
 
-        const locationFilter = searchParams.province_id as string;
+        const locationFilter = (Array.isArray(searchParams.province_id) ? searchParams.province_id[0] : searchParams.province_id) as string;
         if (locationFilter && fallbackLevel < 1) {
             if (locationFilter.startsWith('c-')) {
                 const community = LOCATIONS.find((l: { id: string, provinces?: string[] }) => l.id === locationFilter);

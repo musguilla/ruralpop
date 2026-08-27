@@ -321,10 +321,11 @@ export function ActiveSearchBar() {
                                     onChange={(val) => setModalLocation(val as string)}
                                     options={[
                                         { id: "", name: locale === 'pt' ? 'Todo o Portugal' : t("toda_espana") },
-                                        ...LOCATIONS.filter(loc => {
-                                            const isPtLoc = !isNaN(Number(loc.id)) && Number(loc.id) >= 100;
-                                            return loc.type === 'province' && (locale === 'pt' ? isPtLoc : !isPtLoc);
-                                        }).map(loc => ({ id: loc.id, name: loc.name }))
+                                        ...(() => {
+                                            const ptLocs = LOCATIONS.filter(l => !isNaN(Number(l.id)) && Number(l.id) >= 100 && l.type === 'province').map(l => ({ id: l.id, name: l.name }));
+                                            const esLocs = LOCATIONS.filter(l => (isNaN(Number(l.id)) || Number(l.id) < 100) && l.type === 'province').map(l => ({ id: l.id, name: l.name }));
+                                            return locale === 'pt' ? [...ptLocs, ...esLocs] : [...esLocs, ...ptLocs];
+                                        })()
                                     ]}
                                     placeholder={t("toda_espana")}
                                     searchPlaceholder={t("search.buscar_provincia")}

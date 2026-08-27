@@ -31,19 +31,25 @@ export function LocationModal({
         }
     }, [isOpen]);
 
-    const filteredLocations = useMemo(() => {
-        const isPt = locale === 'pt';
-        
-        let validLocs = LOCATIONS.filter(l => {
-            const isPtLoc = !isNaN(Number(l.id)) && Number(l.id) >= 100;
-            return isPt ? isPtLoc : (!isPtLoc && l.type !== 'community'); // Hide communities here too just in case
-        });
+    const [showSpainInPt, setShowSpainInPt] = useState(false);
 
-        if (!searchTerm.trim()) return validLocs.filter(l => l.type === 'province');
+    const isPt = locale === 'pt';
+
+    const ptLocs = useMemo(() => LOCATIONS.filter(l => !isNaN(Number(l.id)) && Number(l.id) >= 100 && l.type === 'province'), []);
+    const esLocs = useMemo(() => LOCATIONS.filter(l => (isNaN(Number(l.id)) || Number(l.id) < 100) && l.type === 'province'), []);
+
+    const filteredLocations = useMemo(() => {
+        if (!searchTerm.trim()) {
+            if (isPt) return ptLocs;
+            return esLocs;
+        }
         
         const term = normalizeStr(searchTerm);
-        return validLocs.filter(l => normalizeStr(l.name).includes(term));
-    }, [searchTerm, locale]);
+        // If searching, show from both if in PT, or maybe just ES if in ES?
+        // Let's just search everything to be helpful.
+        const all = isPt ? [...ptLocs, ...esLocs] : esLocs;
+        return all.filter(l => normalizeStr(l.name).includes(term));
+    }, [searchTerm, isPt, ptLocs, esLocs]);
 
     if (!isOpen) return null;
 
@@ -95,12 +101,11 @@ export function LocationModal({
                     <div className="flex flex-col gap-1">
                         {!searchTerm && (
                             <button
-                                onClick={() => { onSelect("", t('location_modal.all_spain')); onClose(); }}
+                                onClick={() => { onSelect("", isPt ? 'Todo o Portugal' : t('location_modal.all_spain')); onClose(); }}
                                 className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all ${!selectedLocationId ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'
                                     }`}
                             >
-
-                                <span>{t('location_modal.all_spain')}</span>
+                                <span>{isPt ? 'Todo o Portugal' : t('location_modal.all_spain')}</span>
                                 {!selectedLocationId && <Check className="ml-auto w-5 h-5 text-emerald-600" />}
                             </button>
                         )}
@@ -145,6 +150,43 @@ export function LocationModal({
                         {filteredLocations.length === 0 && (
                             <div className="py-10 text-center text-gray-500">
                                 <p>{t('location_modal.no_results')} "{searchTerm}"</p>
+                            </div>
+                        )}
+
+                        {!searchTerm && isPt && (
+                            <div className="mt-4 pt-4 border-t border-gray-100">
+                                <button
+                                    onClick={() => setShowSpainInPt(!showSpainInPt)}
+                                    className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors font-medium text-gray-800"
+                                >
+                                    <span>Espanha</span>
+                                    <svg className={`w-5 h-5 transition-transform ${showSpainInPt ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                
+                                {showSpainInPt && (
+                                    <div className="mt-2 flex flex-col gap-1">
+                                        <button
+                                            onClick={() => { onSelect("", "Toda a Espanha"); onClose(); }}
+                                            className="flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all hover:bg-gray-50 text-sm sm:text-base text-gray-800"
+                                        >
+                                            Toda a Espanha
+                                        </button>
+                                        {esLocs.map(loc => (
+                                            <button
+                                                key={loc.id}
+                                                onClick={() => handleSelect(loc)}
+                                                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all group ${selectedLocationId === loc.id ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'hover:bg-gray-50'}`}
+                                            >
+                                                <div className="flex-1 text-left flex flex-col">
+                                                    <span className="text-sm sm:text-base text-gray-800">{loc.name}</span>
+                                                </div>
+                                                {selectedLocationId === loc.id && <Check className="w-5 h-5 text-emerald-600" />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
