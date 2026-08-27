@@ -13,17 +13,35 @@ export async function GET() {
     );
 
     // Pedimos solo los campos estrictamente necesarios de anuncios activos
-    const { data: listings, error } = await supabase
-        .from('listings')
-        .select('tags, province_id')
-        .eq('status', 'active');
+    let allListings: any[] = [];
+    let hasMore = true;
+    let page = 0;
+    const PAGE_SIZE = 1000;
 
-    if (error || !listings) {
-        console.error("Error fetching tags for sitemap:", error);
-        return new Response('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>', {
-            headers: { 'Content-Type': 'application/xml' }
-        });
+    while (hasMore) {
+        const { data, error } = await supabase
+            .from('listings')
+            .select('tags, province_id')
+            .eq('status', 'active')
+            .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+
+        if (error) {
+            console.error("Error fetching tags for sitemap:", error);
+            break;
+        }
+
+        if (data && data.length > 0) {
+            allListings = [...allListings, ...data];
+            page++;
+            if (data.length < PAGE_SIZE) {
+                hasMore = false;
+            }
+        } else {
+            hasMore = false;
+        }
     }
+    
+    const listings = allListings;
 
     // Usamos un Set para asegurar que no mandamos combinaciones duplicadas a Google
     const uniqueUrls = new Set<string>();
