@@ -64,6 +64,13 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
 
 
+        // Asymmetric Country filter: Spain MUST NOT see Portugal ads. Portugal can see everything.
+        const locationFilterParam = searchParams.province_id;
+        if (!locationFilterParam && locale !== 'pt') {
+            // If viewing the general catalog in Spain, strictly hide Portugal ads (ID >= 100)
+            query = query.or("province_id.lt.100,province_id.is.null");
+        }
+
         // Hide ghost listings globally UNLESS we are specifically fetching a user's listings
         if (!userIdFilter) {
             query = query.eq("status", "active").eq("users.is_ghost", false);
