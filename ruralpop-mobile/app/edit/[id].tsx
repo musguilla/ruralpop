@@ -612,6 +612,7 @@ export default function EditListingScreen() {
             </ScrollView>
 
             <CategoryModal
+                requireSubcategorySelection={true}
                 visible={isCategoryModalOpen}
                 onClose={() => setIsCategoryModalOpen(false)}
                 selectedCategory={categoryId}

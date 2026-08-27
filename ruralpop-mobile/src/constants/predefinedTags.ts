@@ -143,11 +143,9 @@ export const PREDEFINED_TAGS: Record<string, string[]> = {
     "regalo conejos", "adopción conejos", "conejo de exposición", "conejo cunícola"
   ],
     otros: [
-    "helicicultura", "caracoles", 
-    "peces", "truchas", "esturiones", "tilapia", "anguilas", "carpas", "doradas", 
-    "lubinas",
-    "lombrices", "vermicompostaje", 
-    "granja didáctica", "animales granja escuela", "animales de compañía rural"
+    "tractor", "vaca", "yegua", "caballo", "oveja", "cabra", "cerdo", 
+    "remolque", "cosechadora", "arado", "ganadería", "agricultura", 
+    "herramientas", "finca", "terreno", "forraje", "paja", "alfalfa"
   ],
   
   // MAQUINARIA Y HERRAMIENTAS

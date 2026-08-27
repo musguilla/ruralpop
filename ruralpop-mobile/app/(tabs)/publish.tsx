@@ -620,6 +620,7 @@ export default function PublishScreen() {
             </ScrollView>
 
             <CategoryModal
+                requireSubcategorySelection={true}
                 visible={isCategoryModalOpen}
                 onClose={() => setIsCategoryModalOpen(false)}
                 selectedCategory={categoryId}

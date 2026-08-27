@@ -6,6 +6,7 @@ import { CATEGORIES } from '../../../constants/categories';
 import { IS_EQUIPOP } from '../../../config/tenants';
 
 interface CategoryModalProps {
+    requireSubcategorySelection?: boolean;
     visible: boolean;
     onClose: () => void;
     selectedCategory: string | null;
@@ -22,7 +23,7 @@ const ICONS: Record<string, any> = {
     agricultura: (props: any) => <Image source={require('../../../../assets/icon-agricultura.png')} style={{ width: props.size, height: props.size }} contentFit="contain" />,
 };
 
-export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: CategoryModalProps) {
+export function CategoryModal({ visible, onClose, selectedCategory, onSelect, requireSubcategorySelection }: CategoryModalProps) {
     const [activeParentId, setActiveParentId] = useState<string | null>(null);
 
     const activeParent = useMemo(() => CATEGORIES.find(c => c.id === activeParentId), [activeParentId]);
@@ -33,6 +34,9 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
         if (activeParent) {
             const subs = activeParent.subcategories
                 .map((sub: string) => ({ id: sub, label: sub, isSub: true }));
+            if (requireSubcategorySelection) {
+                return subs;
+            }
             return [{ id: activeParent.id, label: `Ver todo`, isSub: true, isAllOption: true }, ...subs];
         }
         return CATEGORIES
@@ -42,7 +46,7 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
                 hasSub: c.subcategories && c.subcategories.length > 0,
                 isSub: false
             }));
-    }, [activeParent]);
+    }, [activeParent, requireSubcategorySelection]);
 
     const handleSelect = (id: string | null) => {
         onSelect(id);
@@ -84,7 +88,7 @@ export function CategoryModal({ visible, onClose, selectedCategory, onSelect }: 
 
                 <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
                     {/* Todas las categorías - only show in root level */}
-                    {!activeParent && (
+                    {!activeParent && !requireSubcategorySelection && (
                         <TouchableOpacity
                             onPress={() => handleSelect(null)}
                             className={`flex-row items-center justify-between py-4 border-b border-gray-100`}
