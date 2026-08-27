@@ -142,18 +142,12 @@ export const PREDEFINED_TAGS: Record<string, string[]> = {
     "carne de conejo", "conejo ecológico", "conejo casero", "venta conejos segunda mano", 
     "regalo conejos", "adopción conejos", "conejo de exposición", "conejo cunícola"
   ],
-  otros: [
-    "llamas", "alpacas", "avestruces", "emús", "ñandú", "búfalos", "búfalo de agua", 
-    "ciervos", "gamos", "muflones", "jabalí domesticado", "helicicultura", "caracoles", 
+    otros: [
+    "helicicultura", "caracoles", 
     "peces", "truchas", "esturiones", "tilapia", "anguilas", "carpas", "doradas", 
-    "lubinas", "pavos reales", "faisanes ornamentales", "aves exóticas", "loros", 
-    "agapornis", "ninfas", "cacatúas", "reptiles", "tortugas", "iguanas", "hurones", 
-    "chinchillas", "cobayas", "cobaya peruano", "ratones", "ratas", "hámster", 
-    "cobayas exóticas", "ranas", "hormigas", "escarabajos", "grillos", "gusanos de seda", 
-    "lombrices", "vermicompostaje", "gusanos tenebrios", "perdices reales", 
-    "codornices ornamentales", "faisán dorado", "cisnes", "patos ornamentales", 
-    "granja didáctica", "animales granja escuela", "animales de compañía rural", 
-    "fauna autóctona"
+    "lubinas",
+    "lombrices", "vermicompostaje", 
+    "granja didáctica", "animales granja escuela", "animales de compañía rural"
   ],
   
   // MAQUINARIA Y HERRAMIENTAS

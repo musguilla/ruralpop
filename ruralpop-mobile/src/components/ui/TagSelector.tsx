@@ -6,13 +6,14 @@ import { CATEGORIES } from '../../constants/categories';
 import { IS_EQUIPOP } from '../../config/tenants';
 
 interface TagSelectorProps {
+    title?: string;
     category: string | null;
     subcategory: string | null;
     initialTags?: string[];
     onTagsChange: (tags: string[]) => void;
 }
 
-export function TagSelector({ category, subcategory, initialTags = [], onTagsChange }: TagSelectorProps) {
+export function TagSelector({ category, subcategory, title = "", initialTags = [], onTagsChange }: TagSelectorProps) {
     const [selectedTags, setSelectedTags] = useState<string[]>(initialTags || []);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -33,6 +34,29 @@ export function TagSelector({ category, subcategory, initialTags = [], onTagsCha
         
         const normalize = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         
+        // 1. EXTRAER KEYWORDS DEL TÍTULO
+        const STOP_WORDS = new Set([
+            "de", "la", "el", "en", "para", "con", "por", "muy", "se", "un", "una", "unos", "unas",
+            "año", "años", "mes", "meses", "vendo", "vende", "venta", "oportunidad", "ocasión", "ocasion",
+            "compro", "busco", "cambio", "regalo", "gratis", "barato", "nuevo", "nueva", "buen", "estado"
+        ]);
+        
+        let titleKeywords: string[] = [];
+        if (title) {
+            const cleanTitle = normalize(title).replace(/[.,;:!?()"']/g, ' ');
+            const tokens = cleanTitle.split(/\s+/);
+            
+            for (const token of tokens) {
+                if (token.length >= 3 && !STOP_WORDS.has(token) && !/^\d+$/.test(token)) {
+                    if (!titleKeywords.includes(token)) {
+                        titleKeywords.push(token);
+                        if (titleKeywords.length >= 6) break;
+                    }
+                }
+            }
+        }
+
+        // 2. BUSCAR EN CATEGORÍAS PREDEFINIDAS
         const subKeyNormalized = subcategory ? normalize(subcategory).replace(/-/g, ' ') : '';
         
         let effectiveCategory = category;
@@ -63,8 +87,41 @@ export function TagSelector({ category, subcategory, initialTags = [], onTagsCha
             }
         }
         
-        return list;
-    }, [category, subcategory]);
+        // 3. FUSIONAR KEYWORDS Y ETIQUETAS RELACIONADAS
+        // Las keywords extraídas del título van primero.
+        let finalTags = [...titleKeywords];
+        
+        // Luego añadimos las etiquetas de la categoría, y priorizamos las que hagan match con las keywords
+        let matchedTags: string[] = [];
+        let otherTags: string[] = [];
+        
+        for (const tag of list) {
+            if (finalTags.includes(tag.toLowerCase())) continue; // ya está como keyword directa
+            
+            // Ver si hace match por raíz (ej. "burro" -> "burros", "burrito")
+            let hasMatch = false;
+            const normTag = normalize(tag);
+            for (const kw of titleKeywords) {
+                // Hacemos match simple si comparten los primeros 4 caracteres, o si uno incluye al otro
+                const root = kw.length > 4 ? kw.substring(0, 4) : kw;
+                if (normTag.includes(root) || normTag.includes(kw)) {
+                    hasMatch = true;
+                    break;
+                }
+            }
+            
+            if (hasMatch) {
+                matchedTags.push(tag);
+            } else {
+                otherTags.push(tag);
+            }
+        }
+        
+        // Unimos: [Keywords exactas] + [Etiquetas que coinciden con keywords] + [Resto de etiquetas de la categoría]
+        finalTags = [...finalTags, ...matchedTags, ...otherTags];
+        
+        return finalTags;
+    }, [category, subcategory, title]);
 
     const filteredTags = useMemo(() => {
         if (!category) return [];

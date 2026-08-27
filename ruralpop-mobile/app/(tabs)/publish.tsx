@@ -456,6 +456,7 @@ export default function PublishScreen() {
                         <TagSelector 
                             category={categoryId} 
                             subcategory={null} 
+                            title={title}
                             initialTags={tags} 
                             onTagsChange={setTags} 
                         />
