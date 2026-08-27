@@ -55,12 +55,14 @@ export async function HomeDirectBuySlider() {
     }
 
     
-    // Asymmetric Country filter: Spain MUST NOT see Portugal ads.
+    
+    // Asymmetric Country filter (ROBUST PostgREST syntax)
     if (locale !== 'pt') {
-        query = query.or("province_id.lt.100,province_id.is.null");
+        query = query.or(`and(or(province_id.lt.100,province_id.is.null),or(${tenantFilterString}))`);
+    } else {
+        query = query.or(tenantFilterString);
     }
-
-    query = query.or(tenantFilterString);
+    
 
     const { data: listings, error } = await query;
 

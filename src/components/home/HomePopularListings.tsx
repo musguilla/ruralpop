@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import React from 'react';
 import { createClient } from "@/utils/supabase/server";
 import { ListingCard, type Listing } from "@/components/ui/ListingCard";
@@ -7,6 +8,8 @@ import { getServerTenantFilterString } from "@/utils/tenant/server";
 export async function HomePopularListings() {
     const supabase = await createClient();
     const tenantFilterString = await getServerTenantFilterString();
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es');
 
     const tenantSlug = await getServerTenantFilterString();
     const isEquipop = tenantSlug.includes('equipop') || (await import('@/utils/tenant/server')).getServerTenantSlug().then(slug => slug === 'equipop');
@@ -44,12 +47,14 @@ export async function HomePopularListings() {
         .in("id", topListingIds);
 
     
-    // Asymmetric Country filter: Spain MUST NOT see Portugal ads.
+    
+    // Asymmetric Country filter (ROBUST PostgREST syntax)
     if (locale !== 'pt') {
-        query = query.or("province_id.lt.100,province_id.is.null");
+        query = query.or(`and(or(province_id.lt.100,province_id.is.null),or(${tenantFilterString}))`);
+    } else {
+        query = query.or(tenantFilterString);
     }
-
-    query = query.or(tenantFilterString);
+    
 
     const { data: listings, error } = await query;
 
