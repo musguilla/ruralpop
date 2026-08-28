@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslation } from "@/context/LocaleContext";
 import { Search } from "lucide-react";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { parseSeoUrl, buildSeoUrl } from "@/utils/seoUtils";
@@ -16,6 +17,7 @@ export function SearchInput({
   className = "",
   onSearch
 }: SearchInputProps) {
+  const { locale } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = useParams();

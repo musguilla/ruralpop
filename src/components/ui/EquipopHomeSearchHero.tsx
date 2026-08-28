@@ -13,7 +13,7 @@ import { buildSeoUrl } from "@/utils/seoUtils";
 
 export function EquipopHomeSearchHero() {
     const CATEGORIES = useCategories();
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const { getPath } = useLocalizedRoute();
     const router = useRouter();
     const [query, setQuery] = useState("");
