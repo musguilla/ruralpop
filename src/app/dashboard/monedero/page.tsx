@@ -8,12 +8,16 @@ import { EmbeddedWalletOnboarding } from "@/components/dashboard/EmbeddedWalletO
 import { ConfirmReturnButton } from "@/components/dashboard/ConfirmReturnButton";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 
+import { headers } from "next/headers";
+
 export const dynamic = "force-dynamic";
 
 export default async function MonederoDashboardPage() {
     const tenant = await getServerTenantSlug();
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+    const headersList = await headers();
+    const locale = headersList.get('x-locale') || 'es';
 
     if (!user) {
         redirect("/dashboard");
@@ -150,7 +154,7 @@ export default async function MonederoDashboardPage() {
                                             orders.map((order: any) => (
                                                 <tr key={order.id} className="hover:bg-[var(--ag-sys-color-background)]/50 transition-colors">
                                                     <td className="px-6 py-4 text-sm text-[var(--ag-sys-color-text)]">
-                                                        {formatRelativeTime(order.created_at)}
+                                                        {formatRelativeTime(order.created_at, locale)}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-[var(--ag-sys-color-text)] max-w-[200px] truncate">
                                                         {order.listings?.title || "Anuncio eliminado"}

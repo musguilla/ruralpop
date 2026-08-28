@@ -8,6 +8,7 @@ import { useNotification } from "@/context/NotificationContext";
 import Link from "next/link";
 import Image from "next/image";
 import { formatRelativeTime } from "@/utils/format";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface Message {
     id: string;
@@ -25,6 +26,7 @@ interface ChatThreadProps {
 }
 
 export function ChatThread({ listing, initialMessages, currentUser, otherUser }: ChatThreadProps) {
+    const { locale } = useTranslation();
     const { showAlert } = useNotification();
     const [messages, setMessages] = useState<Message[]>(initialMessages);
     const [content, setContent] = useState("");
@@ -212,7 +214,7 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
                                     {msg.content}
                                 </div>
                                 <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] mt-1.5 px-1 font-medium">
-                                    {formatRelativeTime(msg.created_at)}
+                                    {formatRelativeTime(msg.created_at, locale)}
                                 </span>
                             </div>
                         );

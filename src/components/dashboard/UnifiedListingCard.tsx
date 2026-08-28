@@ -51,9 +51,10 @@ type Props = {
     publicUser: PublicUser | null;
     currentTab: 'active' | 'sold' | 'reserved';
     isEquipop?: boolean;
+    locale?: string;
 };
 
-export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = false }: Props) {
+export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = false, locale = 'es' }: Props) {
     const isEscrow = item.type === 'escrow';
     const order = isEscrow ? (item.data as EscrowOrder) : null;
     const listing = isEscrow ? (order?.listings) : (item.data as Listing);
@@ -168,7 +169,7 @@ export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = f
                             )}
                             <div className="flex items-center gap-1 bg-[var(--ag-sys-color-background)] px-2 py-1 rounded-md border border-[var(--ag-sys-color-border)]">
                                 <Clock className="w-3.5 h-3.5" />
-                                {formatRelativeTime(item.date ? new Date(item.date).toISOString() : listing.created_at)}
+                                {formatRelativeTime(item.date ? new Date(item.date).toISOString() : listing.created_at, locale)}
                             </div>
                         </div>
                     </div>

@@ -190,7 +190,7 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
                         <span className="truncate">{listing.location}</span>
                     </div>
                     <span className="flex-shrink-0 whitespace-nowrap">
-                        {formatRelativeTime(listing.created_at)}
+                        {formatRelativeTime(listing.created_at, locale)}
                     </span>
                 </div>
             </div>

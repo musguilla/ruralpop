@@ -373,7 +373,7 @@ export default async function ListingDetailPage(props: Props) {
                                         </Link>
                                         {!isEquipop && (
                                             <span className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full">
-                                                <Calendar className="w-4 h-4" /> {formatRelativeTime(listing.created_at)}
+                                                <Calendar className="w-4 h-4" /> {formatRelativeTime(listing.created_at, locale)}
                                             </span>
                                         )}
                                         <Link

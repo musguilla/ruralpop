@@ -6,11 +6,16 @@ import { Package, CheckCircle2 } from "lucide-react";
 import { ConfirmReceptionButton } from "@/components/dashboard/ConfirmReceptionButton";
 import { InitiateReturnButton } from "@/components/dashboard/InitiateReturnButton";
 
+import { headers } from "next/headers";
+
 export const dynamic = "force-dynamic";
 
 export default async function ComprasDashboardPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+    
+    const headersList = await headers();
+    const locale = headersList.get('x-locale') || 'es';
 
     if (!user) {
         redirect("/dashboard");
@@ -66,7 +71,7 @@ export default async function ComprasDashboardPage() {
                                     <div className="flex-1">
                                         <div className="flex items-center gap-3 mb-2">
                                             <span className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-text-muted)]">
-                                                {formatRelativeTime(order.created_at)}
+                                                {formatRelativeTime(order.created_at, locale)}
                                             </span>
                                             {isPendingConfirmation && (
                                                 <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">

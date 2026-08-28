@@ -32,7 +32,7 @@ interface ChatInboxListProps {
 }
 
 export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const router = useRouter();
     const [threads, setThreads] = React.useState<Thread[]>(initialThreads);
     const supabase = createClient();
@@ -153,7 +153,7 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
                                         </span>
                                     )}
                                     <span className={`text-[10px] whitespace-nowrap ${thread.unreadCount > 0 ? "text-[var(--ag-sys-color-primary)] font-bold" : "text-[var(--ag-sys-color-text-muted)]"}`}>
-                                        {formatRelativeTime(thread.lastMessage.created_at)}
+                                        {formatRelativeTime(thread.lastMessage.created_at, locale)}
                                     </span>
                                 </div>
                             </div>

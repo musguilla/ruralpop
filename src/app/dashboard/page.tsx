@@ -287,6 +287,7 @@ export default async function DashboardPage(props: Props) {
                                         publicUser={publicUser as any} 
                                         currentTab={currentTab} 
                                         isEquipop={isEquipop}
+                                        locale={locale}
                                     />
                                 ))}
                             </div>
