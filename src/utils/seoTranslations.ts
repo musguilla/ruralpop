@@ -2,19 +2,19 @@ export const SEO_TRANSLATIONS: Record<string, string> = {
     // Base keywords
     "anuncios": "anuncios", // We keep 'anuncios' or 'anuncios' in Portuguese (anúncios)
     "ganaderia": "pecuaria",
-    "maquinaria": "maquinaria",
+    "maquinaria": "maquinas-e-ferramentas",
     "forraje": "forragem",
     "fincas": "quintas",
     "agricultura": "agricultura",
     "servicios": "servicos",
-    "alimentos": "alimentos",
+    "alimentos": "alimentos-km0",
     
     // Subcategories (examples)
-    "bovino": "bovino",
-    "equino": "equino",
-    "caprino": "caprino",
-    "ovino": "ovino",
-    "porcino": "porcino",
+    "bovino": "bovinos",
+    "equino": "equinos",
+    "caprino": "caprinos",
+    "ovino": "ovinos",
+    "porcino": "suinos",
     "avicultura": "avicultura",
     "apicultura": "apicultura",
     "perros": "caes",

@@ -27,7 +27,6 @@ export function getInternalSpanishRoute(pathname: string): { routeKey: string | 
   const locale = getLocaleFromPath(pathname);
   
   if (locale === 'es') {
-    // Determine routeKey if it's a known route
     const normalized = normalizePath(pathname);
     let foundKey = null;
     for (const [key, tr] of Object.entries(routeTranslations)) {
@@ -39,19 +38,34 @@ export function getInternalSpanishRoute(pathname: string): { routeKey: string | 
     return { routeKey: foundKey, internalPath: pathname };
   }
 
-  // If locale is pt, remove the /pt prefix
   let ptSlug = pathname.replace(/^\/pt(\/|$)/, '/');
   if (ptSlug === '') ptSlug = '/';
   
-  // Find in routeTranslations
+  // Try exact match first
   for (const [key, tr] of Object.entries(routeTranslations)) {
     if (tr.pt === ptSlug) {
-      return { routeKey: key, internalPath: tr.es }; // Return the spanish equivalent
+      return { routeKey: key, internalPath: tr.es };
     }
   }
 
-  // If not found in translations, fallback to exact matching of slug
-  // i.e., /pt/anuncio/123 -> /anuncio/123
+  // Segment by segment translation for composite slugs (e.g. /pecuaria/suinos -> /ganaderia/porcino)
+  if (ptSlug !== '/') {
+    const segments = ptSlug.split('/').filter(Boolean);
+    const translatedSegments = segments.map(segment => {
+      const segmentWithSlash = `/${segment}`;
+      for (const [key, tr] of Object.entries(routeTranslations)) {
+        if (tr.pt === segmentWithSlash) {
+          // Remove the slash from the translated part
+          return tr.es.substring(1);
+        }
+      }
+      return segment;
+    });
+    
+    // Also try to find if this composite route has a base routeKey (just for tracking)
+    return { routeKey: null, internalPath: '/' + translatedSegments.join('/') };
+  }
+
   return { routeKey: null, internalPath: ptSlug };
 }
 
