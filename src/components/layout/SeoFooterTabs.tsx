@@ -11,6 +11,7 @@ import { SEO_LANDINGS } from "@/constants/seoLandings";
 import { usePathname } from "next/navigation";
 
 export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { categories: string[], subcategories: string[] } }) {
+    const { locale } = useTranslation();
     const CATEGORIES = useCategories();
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<"provinces" | "categories" | "popular">("provinces");
