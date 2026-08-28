@@ -20,12 +20,6 @@ const STATIC_BANNERS = [
         alt: 'Cunimar - Comida y productos secos para conejos'
     },
     {
-        id: 'masdelbrunet',
-        href: 'https://masdelbrunet.cat/',
-        src: '/masdelbrunet-banner-800x800.jpg',
-        alt: 'Mas del Brunet'
-    },
-    {
         id: 'semillas',
         href: 'https://www.ruralpop.com/empresa/semillas',
         src: '/semillass-banner-800x800.jpg',
@@ -86,8 +80,8 @@ export async function HomeFeaturedGrid() {
         data: listing as Listing
     }));
 
-    // 2. Append Static Banners (only for ruralpop, not equipop)
-    if (tenant !== 'equipop') {
+    // 2. Append Static Banners (only for ruralpop, not equipop, and only for non-pt locales)
+    if (tenant !== 'equipop' && locale !== 'pt') {
         STATIC_BANNERS.forEach(banner => {
             gridItems.push({
                 type: 'banner',

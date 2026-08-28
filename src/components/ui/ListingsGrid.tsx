@@ -52,7 +52,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
     // y evitar que JavaScript resuelva prematuramente el Builder Thenable.
     const tenantFilterString = await getServerTenantFilterString();
 
-    const buildQuery = (fallbackLevel = 0) => {
+    const buildQuery = (fallbackLevel = 0, overrideCountryFilter?: 'pt_only' | 'es_only') => {
         let query = supabase
             .from("listings")
             .select(`
@@ -80,14 +80,18 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         }
 
         // FASE 6: Multi-tenant filter
-        
-    // Unified Asymmetric Country + Tenant Filter (ROBUST PostgREST syntax)
-    if (!locationFilterParam && locale !== 'pt') {
-        query = query.or(`and(or(province_id.lt.100,province_id.is.null),or(${tenantFilterString}))`);
-    } else {
-        query = query.or(tenantFilterString);
-    }
-
+        if (overrideCountryFilter === 'pt_only') {
+            query = query.gte("province_id", 101).or(tenantFilterString);
+        } else if (overrideCountryFilter === 'es_only') {
+            query = query.or(`and(or(province_id.lt.100,province_id.is.null),or(${tenantFilterString}))`);
+        } else {
+            // Unified Asymmetric Country + Tenant Filter (ROBUST PostgREST syntax)
+            if (!locationFilterParam && locale !== 'pt') {
+                query = query.or(`and(or(province_id.lt.100,province_id.is.null),or(${tenantFilterString}))`);
+            } else {
+                query = query.or(tenantFilterString);
+            }
+        }
 
         // Apply Sorting
         switch (sortParam) {
@@ -176,9 +180,81 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         return query;
     };
 
+    const executeQuery = async (level: number) => {
+        if (locale === 'pt' && !searchParams.province_id && !userIdFilter) {
+            let queryPT = buildQuery(level, 'pt_only');
+            let ptRes = await queryPT.range(from, to);
+            
+            let ptError = ptRes.error;
+            let countPT = ptRes.count || 0;
+            
+            if (ptError && ptError.message?.trim() === '{"') {
+                // Out of bounds for PT results. We need the real count to calculate the ES offset.
+                let ptCountRes = await buildQuery(level, 'pt_only').range(0, 0);
+                countPT = ptCountRes.count || 0;
+                ptError = null as any;
+                ptRes.data = []; // No data for this page from PT
+            }
+            
+            if (ptError) return { data: null, count: 0, error: ptError };
+            
+            let data = ptRes.data || [];
+            let count = countPT;
+            
+            let esFrom = Math.max(0, from - countPT);
+            let remaining = PAGE_SIZE - data.length;
+            
+            if (remaining > 0) {
+                let esTo = esFrom + remaining - 1;
+                let queryES = buildQuery(level, 'es_only');
+                let esRes = await queryES.range(esFrom, esTo);
+                
+                let esError = esRes.error;
+                let countES = esRes.count || 0;
+                
+                if (esError && esError.message?.trim() === '{"') {
+                    let esCountRes = await buildQuery(level, 'es_only').range(0, 0);
+                    countES = esCountRes.count || 0;
+                    esError = null as any;
+                    esRes.data = [];
+                }
+                
+                if (esError) return { data: null, count: 0, error: esError };
+                
+                data = [...data, ...(esRes.data || [])];
+                count += countES;
+            } else {
+                let queryES = buildQuery(level, 'es_only');
+                // Only need total count of ES for pagination math
+                let esRes = await queryES.range(0, 0);
+                
+                let esError = esRes.error;
+                let countES = esRes.count || 0;
+                if (esError && esError.message?.trim() === '{"') {
+                    countES = 0; // if 0,0 fails, it's really 0
+                    esError = null as any;
+                }
+                if (esError) return { data: null, count: 0, error: esError };
+                
+                count += countES;
+            }
+            return { data, count, error: null };
+        } else {
+            let res = await buildQuery(level).range(from, to);
+            let error = res.error;
+            let resCount = res.count || 0;
+            if (error && error.message?.trim() === '{"') {
+                let countRes = await buildQuery(level).range(0, 0);
+                resCount = countRes.count || 0;
+                error = null as any;
+                res.data = [];
+            }
+            return { data: res.data || [], count: resCount, error };
+        }
+    };
+
     // Attempt primary strict AND search
-    let query = buildQuery(0);
-    let { data: listings, error, count } = await query.range(from, to);
+    let { data: listings, error, count } = await executeQuery(0);
 
     const isMultiWordSearch = typeof searchParams.q === 'string' && searchParams.q.trim().split(/[\s\-]+/).filter(t => t.length > 2).length > 1;
 
@@ -186,8 +262,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     // Fallback 1: Drop Location restriction (if there was one)
     if (!error && (!listings || listings.length === 0) && searchParams.province_id) {
-        query = buildQuery(1);
-        const fbRes = await query.range(from, to);
+        const fbRes = await executeQuery(1);
         listings = fbRes.data;
         count = fbRes.count;
         error = fbRes.error;
@@ -195,8 +270,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     // Fallback 2: First word of multi-word search
     if (!error && (!listings || listings.length === 0) && isMultiWordSearch) {
-        query = buildQuery(2);
-        const wildcardRes = await query.range(from, to);
+        const wildcardRes = await executeQuery(2);
         listings = wildcardRes.data;
         count = wildcardRes.count;
         error = wildcardRes.error;
@@ -204,8 +278,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     // SEO Fallback 3: Keep only Category, drop subcategory, search and location
     if (!error && (!listings || listings.length === 0) && searchParams.category) {
-        query = buildQuery(3);
-        const catRes = await query.range(from, to);
+        const catRes = await executeQuery(3);
         listings = catRes.data;
         count = catRes.count;
         error = catRes.error;
@@ -213,8 +286,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
 
     // SEO Fallback 4: Drop absolutely everything to prevent 0 results (Soft 404 Google warning)
     if (!error && (!listings || listings.length === 0)) {
-        query = buildQuery(4);
-        const globalRes = await query.range(from, to);
+        const globalRes = await executeQuery(4);
         listings = globalRes.data;
         count = globalRes.count;
         error = globalRes.error;
@@ -270,14 +342,7 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         }
     }
 
-    // Supabase has a known bug in PostgREST where an out-of-bounds range request (HTTP 416) 
-    // with Prefer: count=exact returns a malformed JSON body of just '{"'.
-    // We suppress this specific error from polluting Vercel logs and treat it as 0 results.
-    if (error && error.message?.trim() === '{"') {
-        error = null;
-        listings = [];
-        count = 0;
-    }
+    // Supabase bug workaround moved inside executeQuery
 
     if (error) {
         console.error("Supabase Error fetching listings:", error);
@@ -409,3 +474,16 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
         </div>
     );
 }
+
+/**
+ * Memoria / Decisiones Técnicas (ListingsGrid):
+ * - Orden asimétrico por país: Para la locale 'pt', se requiere que los anuncios de Portugal aparezcan SIEMPRE primero,
+ *   y luego los de España, independientemente de la fecha.
+ * - Solución de Paginación: En lugar de agrupar o añadir una columna extra, se ha implementado `executeQuery` que 
+ *   divide la consulta en dos fases (PT primero, luego ES) de forma transparente. Calcula el 'offset' dinámicamente 
+ *   en base al count de PT, de modo que la paginación a través del límite entre PT y ES funcione sin errores.
+ * - Edge Cases Cubiertos: 
+ *   - Error 416 (Range Not Satisfiable) de PostgREST al hacer peticiones fuera de rango en la tabla PT. 
+ *     Se captura y se utiliza `.range(0,0)` para obtener el `count` real y así calcular correctamente el offset para ES.
+ *   - Si una página se llena exactamente con los últimos resultados de PT, la siguiente página comienza perfectamente con ES.
+ */
