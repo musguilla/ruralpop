@@ -1,4 +1,4 @@
-const isEquipop = process.env.APP_VARIANT === 'equipop';
+const isEquipop = process.env.APP_VARIANT === 'equipop' || process.env.EXPO_PUBLIC_TENANT_ID === '69d55371-2f70-4e67-b55c-4502bce305bb';
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
