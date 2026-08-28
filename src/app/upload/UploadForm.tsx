@@ -169,7 +169,8 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                     setShowWelfareModal(true);
                 } else {
                     // Redirect to highlight flow after successful publish
-                    router.push(`/dashboard/destacar/${res.listingId}?published=true`);
+                    const basePath = locale === 'pt' ? '/pt' : '';
+                    router.push(`${basePath}/dashboard/destacar/${res.listingId}?published=true`);
                     router.refresh();
                 }
             }

@@ -110,7 +110,7 @@ export function FeaturedCheckoutFlow({
                 throw new Error(txt || "Error al activar la funcionalidad.");
             }
 
-            router.push("/dashboard?success=activated");
+            router.push(`${isPt ? '/pt' : ''}/dashboard?success=activated`);
             router.refresh();
         } catch (error) {
             console.error("Error activating feature:", error);
@@ -179,7 +179,7 @@ export function FeaturedCheckoutFlow({
 
                 <div className="pt-8 border-t border-[var(--ag-sys-color-border)] flex flex-col items-center">
                     <button
-                        onClick={() => router.push("/dashboard")}
+                        onClick={() => router.push(`${isPt ? '/pt' : ''}/dashboard`)}
                         className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] font-bold text-sm flex items-center gap-2 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
