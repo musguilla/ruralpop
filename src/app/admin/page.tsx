@@ -299,7 +299,7 @@ export default async function AdminDashboard() {
                 <AdminStatCard
                     label="Anuncios destacados"
                     value={`${new Intl.NumberFormat('de-DE').format(metrics.totalFeaturedRevenue)} €`}
-                    subtext={`${metrics.destacadosCount} Destacados • ${metrics.proCount} PRO`}
+                    subtext={`${metrics.destacadosCount} Destacados • ${metrics.proCount} Validaciones`}
                     icon={<Star className="w-7 h-7" />}
                     color="purple"
                     histograms={realFeaturedHistograms}
