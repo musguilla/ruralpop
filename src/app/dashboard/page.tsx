@@ -168,7 +168,7 @@ export default async function DashboardPage(props: Props) {
     let successMessage = "";
 
     if (isProActivationSuccess) {
-        successMessage = "¡Tu anuncio ha sido actualizado correctamente!";
+        successMessage = locale === 'pt' ? "O seu anúncio foi atualizado com sucesso!" : "¡Tu anuncio ha sido actualizado correctamente!";
     } else if (isFeaturedSuccess) {
         if (listingIdForSuccess) {
             // Obtenemos el título real directamente de la DB por si no estuviese en la lista actual
@@ -178,20 +178,20 @@ export default async function DashboardPage(props: Props) {
                 .eq("id", listingIdForSuccess)
                 .single();
 
-            const listingTitle = featuredListing ? featuredListing.title : "tu anuncio";
+            const listingTitle = featuredListing ? featuredListing.title : (locale === 'pt' ? "o seu anúncio" : "tu anuncio");
 
             if (planId === "bump") {
-                successMessage = `El anuncio '${listingTitle}' ya está en primera posición.`;
+                successMessage = locale === 'pt' ? `O anúncio '${listingTitle}' já se encontra na primeira posição.` : `El anuncio '${listingTitle}' ya está en primera posición.`;
             } else if (planId === "highlight_7") {
-                successMessage = `Tu anuncio '${listingTitle}' ya está destacado 7 días en primeras posiciones.`;
+                successMessage = locale === 'pt' ? `O seu anúncio '${listingTitle}' já está destacado 7 dias nas primeiras posições.` : `Tu anuncio '${listingTitle}' ya está destacado 7 días en primeras posiciones.`;
             } else if (planId === "highlight_20") {
-                successMessage = `Tu anuncio '${listingTitle}' ya está destacado 20 días en primeras posiciones.`;
+                successMessage = locale === 'pt' ? `O seu anúncio '${listingTitle}' já está destacado 20 dias nas primeiras posições.` : `Tu anuncio '${listingTitle}' ya está destacado 20 días en primeras posiciones.`;
             } else {
-                successMessage = `Tu anuncio '${listingTitle}' ha sido destacado correctamente.`;
+                successMessage = locale === 'pt' ? `O seu anúncio '${listingTitle}' foi destacado com sucesso.` : `Tu anuncio '${listingTitle}' ha sido destacado correctamente.`;
             }
         } else {
             // Fallback genérico si faltan los parámetros en la URL (ej: caché o sesión antigua)
-            successMessage = "Tu anuncio ha sido destacado correctamente.";
+            successMessage = locale === 'pt' ? "O seu anúncio foi destacado com sucesso." : "Tu anuncio ha sido destacado correctamente.";
         }
     }
 

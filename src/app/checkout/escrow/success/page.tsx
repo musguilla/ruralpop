@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { CheckCircle2, ShoppingBag } from "lucide-react";
 
-export default function EscrowSuccessPage() {
+import { headers } from "next/headers";
+
+export default async function EscrowSuccessPage() {
+    const headersList = await headers();
+    const locale = headersList.get('x-locale') || 'es';
+    const isPt = locale === 'pt';
+
     return (
         <div className="min-h-[80vh] flex items-center justify-center bg-[var(--ag-sys-color-background)] px-4">
             <div className="max-w-md w-full bg-[var(--ag-sys-color-surface)] rounded-3xl p-8 shadow-xl text-center border border-[var(--ag-sys-color-border)]">
@@ -10,11 +16,11 @@ export default function EscrowSuccessPage() {
                 </div>
                 
                 <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] mb-3">
-                    ¡Pago recibido!
+                    {isPt ? "Pagamento recebido!" : "¡Pago recibido!"}
                 </h1>
                 
                 <p className="text-[var(--ag-sys-color-text-muted)] mb-8">
-                    Tu dinero queda retenido y protegido por Ruralpop. El pago al vendedor solo se liberará cuando confirmes que has recibido el artículo correctamente.
+                    {isPt ? "O seu dinheiro fica retido e protegido pela Ruralpop. O pagamento ao vendedor só será libertado quando confirmar que recebeu o artigo corretamente." : "Tu dinero queda retenido y protegido por Ruralpop. El pago al vendedor solo se liberará cuando confirmes que has recibido el artículo correctamente."}
                 </p>
 
                 <div className="space-y-4">
@@ -23,14 +29,14 @@ export default function EscrowSuccessPage() {
                         className="w-full py-4 px-6 rounded-xl font-bold bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] transition-all flex items-center justify-center gap-2"
                     >
                         <ShoppingBag className="w-5 h-5" />
-                        Ver mis compras
+                        {isPt ? "Ver as minhas compras" : "Ver mis compras"}
                     </Link>
                     
                     <Link 
                         href="/" 
                         className="w-full py-4 px-6 rounded-xl font-bold bg-[var(--ag-sys-color-surface-variant)] text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-surface-variant-hover)] transition-all block"
                     >
-                        Volver a la portada
+                        {isPt ? "Voltar à página inicial" : "Volver a la portada"}
                     </Link>
                 </div>
             </div>

@@ -7,6 +7,8 @@ import { FeaturedCheckoutFlow } from "@/components/dashboard/FeaturedCheckoutFlo
 import Image from "next/image";
 import { formatCurrency } from "@/utils/format";
 
+import { headers } from "next/headers";
+
 export const dynamic = "force-dynamic";
 
 type Props = {
@@ -15,6 +17,10 @@ type Props = {
 };
 
 export default async function DestacarAnuncioPage(props: Props) {
+    const headersList = await headers();
+    const locale = headersList.get('x-locale') || 'es';
+    const isPt = locale === 'pt';
+
     // Feature flag protection
     if (process.env.NEXT_PUBLIC_ENABLE_HIGHLIGHT_ADS !== 'true') {
         redirect("/dashboard");
@@ -37,38 +43,34 @@ export default async function DestacarAnuncioPage(props: Props) {
         redirect("/login");
     }
 
-    const { data: profile } = await supabase
-        .from("users")
+    // Comprobar si el usuario es un profesional
+    const { data: publicUser } = await supabase
+        .from("public_users")
         .select("role, available_featured, available_bumps")
         .eq("id", user.id)
         .single();
-    
-    const isProfesional = profile?.role === 'profesional';
+
+    const isProfesional = publicUser?.role === "profesional";
+    const availableFeatured = publicUser?.available_featured || 0;
+    const availableBumps = publicUser?.available_bumps || 0;
 
     const { data: listing, error } = await supabase
         .from("listings")
-        .select("id, title, price, image_urls, user_id, is_featured, featured_until")
+        .select("*")
         .eq("id", listingId)
+        .eq("user_id", user.id)
         .single();
 
     if (error || !listing) {
         notFound();
     }
 
-    // Ensure the user owns this listing
-    if (listing.user_id !== user.id) {
-        redirect("/dashboard");
-    }
-
     return (
-        <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-8 sm:py-12 w-full">
-            <div className="container mx-auto px-4 max-w-4xl">
-                <Link
-                    href="/dashboard"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group mb-8"
-                >
+        <div className="bg-[var(--ag-sys-color-background)] min-h-screen">
+            <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+                <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] font-semibold mb-8 group transition-colors">
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                    Volver a mi panel
+                    {isPt ? "Voltar ao meu painel" : "Volver a mi panel"}
                 </Link>
 
                 {isNewlyPublished && (
@@ -78,17 +80,17 @@ export default async function DestacarAnuncioPage(props: Props) {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <span className="text-xl">¡Tu anuncio ha sido publicado!</span>
+                        <span className="text-xl">{isPt ? "O seu anúncio foi publicado!" : "¡Tu anuncio ha sido publicado!"}</span>
                     </div>
                 )}
 
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10">
                     <div className="flex-1 text-center md:text-left">
                         <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-4">
-                            Destaca tu anuncio
+                            {isPt ? "Destaque o seu anúncio" : "Destaca tu anuncio"}
                         </h1>
                         <p className="text-[var(--ag-sys-color-text-muted)] text-lg max-w-xl mx-auto md:mx-0">
-                            Multiplica tus posibilidades de venta. Elige el plan que mejor se adapte a ti y haz que tu anuncio destaque por encima del resto.
+                            {isPt ? "Multiplique as suas possibilidades de venda. Escolha o plano que melhor se adapta a si e faça o seu anúncio destacar-se dos restantes." : "Multiplica tus posibilidades de venta. Elige el plan que mejor se adapte a ti y haz que tu anuncio destaque por encima del resto."}
                         </p>
                     </div>
 
@@ -113,7 +115,7 @@ export default async function DestacarAnuncioPage(props: Props) {
                             <div className="text-base font-black text-[var(--ag-sys-color-primary)] mt-0.5">{formatCurrency(listing.price)}</div>
                             {listing.is_featured && (
                                 <div className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded-full border border-green-200">
-                                    ¡Destacado!
+                                    {isPt ? "Destacado!" : "¡Destacado!"}
                                 </div>
                             )}
                         </div>
@@ -123,8 +125,8 @@ export default async function DestacarAnuncioPage(props: Props) {
                 <FeaturedCheckoutFlow 
                     listingId={listing.id} 
                     isProfesional={isProfesional}
-                    availableFeatured={profile?.available_featured || 0}
-                    availableBumps={profile?.available_bumps || 0}
+                    availableFeatured={availableFeatured}
+                    availableBumps={availableBumps}
                     isNewlyPublished={isNewlyPublished}
                 />
 
@@ -134,7 +136,7 @@ export default async function DestacarAnuncioPage(props: Props) {
                             href="/" 
                             className="inline-flex py-4 px-10 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-md shadow-[var(--ag-sys-color-primary)]/20 w-full md:w-auto justify-center"
                         >
-                            Ver mi anuncio publicado
+                            {isPt ? "Ver o meu anúncio publicado" : "Ver mi anuncio publicado"}
                         </Link>
                         <p className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] mt-5 flex items-center gap-2">
                             Si no deseas destacarlo ahora, puedes hacerlo más adelante desde tu panel.

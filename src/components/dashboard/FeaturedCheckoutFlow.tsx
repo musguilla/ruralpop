@@ -6,31 +6,34 @@ import { getStripeClient } from "@/lib/stripe-client";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
 
-export const STRIPE_PLANS = [
+import { useTranslation } from "@/context/LocaleContext";
+import { useRouter } from "next/navigation";
+
+export const getStripePlans = (isPt: boolean) => [
     {
         id: "bump",
-        name: "Subir arriba",
-        description: "Dale un empujón a tu anuncio y colócalo de nuevo en primera posición.",
+        name: isPt ? "Subir para o topo" : "Subir arriba",
+        description: isPt ? "Dê um impulso ao seu anúncio e coloque-o de novo na primeira posição." : "Dale un empujón a tu anuncio y colócalo de nuevo en primera posición.",
         price: 1.49,
-        priceId: "price_bump", // To be defined or handled dynamically
+        priceId: "price_bump",
         icon: ArrowUpCircle,
         color: "blue",
         badge: null
     },
     {
         id: "highlight_7",
-        name: "Destacar 7 días",
-        description: "Tu anuncio aparecerá en primeras posiciones durante los próximos 7 días en su categoría.",
+        name: isPt ? "Destacar 7 dias" : "Destacar 7 días",
+        description: isPt ? "O seu anúncio aparecerá nas primeiras posições durante os próximos 7 dias na sua categoria." : "Tu anuncio aparecerá en primeras posiciones durante los próximos 7 días en su categoría.",
         price: 2.99,
         priceId: "price_hl_7",
         icon: Sparkles,
         color: "green",
-        badge: "el más vendido"
+        badge: isPt ? "o mais vendido" : "el más vendido"
     },
     {
         id: "highlight_20",
-        name: "Destacar 20 días",
-        description: "Tu anuncio aparecerá en primeras posiciones durante los próximos 20 días en su categoría.",
+        name: isPt ? "Destacar 20 dias" : "Destacar 20 días",
+        description: isPt ? "O seu anúncio aparecerá nas primeiras posições durante os próximos 20 dias na sua categoria." : "Tu anuncio aparecerá en primeras posiciones durante los próximos 20 días en su categoría.",
         price: 4.99,
         priceId: "price_hl_20",
         icon: Crown,
@@ -38,8 +41,6 @@ export const STRIPE_PLANS = [
         badge: null
     }
 ];
-
-import { useRouter } from "next/navigation";
 
 export interface FeaturedCheckoutFlowProps {
     listingId: string;
@@ -56,6 +57,11 @@ export function FeaturedCheckoutFlow({
     availableBumps = 0,
     isNewlyPublished = false
 }: FeaturedCheckoutFlowProps) {
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
+
+    const STRIPE_PLANS = getStripePlans(isPt);
+
     const stripePromise = getStripeClient();
     const router = useRouter();
     const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
@@ -157,7 +163,7 @@ export function FeaturedCheckoutFlow({
                         <div className="mt-auto w-full">
                             <div className="flex items-center justify-center gap-2 mb-6 text-gray-400 font-bold text-sm">
                                 <span className="px-3 py-1 bg-gray-50 rounded-full border border-gray-100">
-                                    {availableBumps} disponibles
+                                    {availableBumps} {isPt ? "disponíveis" : "disponibles"}
                                 </span>
                             </div>
                             <button
@@ -165,7 +171,7 @@ export function FeaturedCheckoutFlow({
                                 disabled={availableBumps <= 0 || isActivating}
                                 className="w-full py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-colors disabled:opacity-50"
                             >
-                                Subir anuncio
+                                {isPt ? "Subir anúncio" : "Subir anuncio"}
                             </button>
                         </div>
                     </div>
@@ -177,7 +183,7 @@ export function FeaturedCheckoutFlow({
                         className="text-[var(--ag-sys-color-text-muted)] hover:text-[#059669] font-bold text-sm flex items-center gap-2 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        No deseo destacarlo ahora, volver a mi panel
+                        {isPt ? "Não desejo destacar agora, voltar ao meu painel" : "No deseo destacarlo ahora, volver a mi panel"}
                     </button>
                 </div>
             </div>
@@ -189,13 +195,13 @@ export function FeaturedCheckoutFlow({
             <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 sm:p-10 border border-[var(--ag-sys-color-border)] shadow-md">
                 <div className="flex justify-between items-center mb-8 pb-4 border-b border-[var(--ag-sys-color-border)]">
                     <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)]">
-                        Completa tu pago de forma segura
+                        {isPt ? "Complete o seu pagamento de forma segura" : "Completa tu pago de forma segura"}
                     </h3>
                     <button 
                         onClick={() => { setSelectedPlanId(null); setClientSecret(null); }}
                         className="text-sm font-semibold text-[var(--ag-sys-color-text-muted)] hover:text-[#059669] transition-colors"
                     >
-                        Cambiar plan
+                        {isPt ? "Alterar plano" : "Cambiar plan"}
                     </button>
                 </div>
                 
@@ -212,7 +218,7 @@ export function FeaturedCheckoutFlow({
 
     return (
         <div className="space-y-6 mb-16">
-            <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Selecciona un plan</h3>
+            <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">{isPt ? "Selecione um plano" : "Selecciona un plan"}</h3>
             <div className={`grid grid-cols-1 md:grid-cols-${plansToShow.length} gap-6`}>
                 {plansToShow.map((plan) => {
                     const Icon = plan.icon;
@@ -267,7 +273,7 @@ export function FeaturedCheckoutFlow({
                                             : "bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] group-hover:bg-gray-800 group-hover:text-white"
                                     }`}
                                 >
-                                    {isLoading ? 'Cargando...' : 'Seleccionar'}
+                                    {isLoading ? (isPt ? 'A carregar...' : 'Cargando...') : (isPt ? 'Selecionar' : 'Seleccionar')}
                                 </button>
                             </div>
                         </div>

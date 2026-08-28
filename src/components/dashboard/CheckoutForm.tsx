@@ -3,11 +3,16 @@
 import React, { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 import { Loader2 } from "lucide-react";
-import { STRIPE_PLANS } from "./FeaturedCheckoutFlow";
+import { getStripePlans } from "./FeaturedCheckoutFlow";
 import { useRouter } from "next/navigation";
 import { useNotification } from "@/context/NotificationContext";
+import { useTranslation } from "@/context/LocaleContext";
 
 export function CheckoutForm({ planId, listingId }: { planId: string, listingId: string }) {
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
+    const STRIPE_PLANS = getStripePlans(isPt);
+
     const stripe = useStripe();
     const elements = useElements();
     const router = useRouter();
@@ -16,7 +21,7 @@ export function CheckoutForm({ planId, listingId }: { planId: string, listingId:
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const plan = STRIPE_PLANS.find(p => p.id === planId);
+    const plan = STRIPE_PLANS.find((p: any) => p.id === planId);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,7 +53,7 @@ export function CheckoutForm({ planId, listingId }: { planId: string, listingId:
         <form onSubmit={handleSubmit} className="space-y-6">
             <div className="bg-gray-50 rounded-2xl p-6 border border-[var(--ag-sys-color-border)] mb-6">
                 <h4 className="font-bold text-[var(--ag-sys-color-text)] flex justify-between">
-                    <span>Resumen: {plan?.name}</span>
+                    <span>{isPt ? "Resumo:" : "Resumen:"} {plan?.name}</span>
                     <span className="text-[var(--ag-sys-color-primary)]">{plan?.price.toString().replace('.', ',')}€</span>
                 </h4>
                 <p className="text-sm text-[var(--ag-sys-color-text-muted)] mt-1">
@@ -81,14 +86,14 @@ export function CheckoutForm({ planId, listingId }: { planId: string, listingId:
                 {isLoading ? (
                     <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        Procesando pago...
+                        {isPt ? "A processar pagamento..." : "Procesando pago..."}
                     </>
                 ) : (
-                    `Pagar ${plan?.price.toString().replace('.', ',')}€`
+                    isPt ? `Pagar ${plan?.price.toString().replace('.', ',')}€` : `Pagar ${plan?.price.toString().replace('.', ',')}€`
                 )}
             </button>
             <p className="text-center text-xs text-[var(--ag-sys-color-text-muted)] mt-4">
-                Pagos seguros procesados por Stripe.
+                {isPt ? "Pagamentos seguros processados pela Stripe." : "Pagos seguros procesados por Stripe."}
             </p>
         </form>
     );

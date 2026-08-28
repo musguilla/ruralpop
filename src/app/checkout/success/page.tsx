@@ -5,15 +5,18 @@ import { useCartStore } from '@/stores/cartStore';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle2, ChevronRight, Download } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslation } from '@/context/LocaleContext';
 import { Suspense } from 'react';
 
 function SuccessClientContent() {
+  const { locale } = useTranslation();
+  const isPt = locale === 'pt';
   const { items, clearCart } = useCartStore();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [cleared, setCleared] = useState(false);
 
-  const email = searchParams.get('email') || 'tu correo';
+  const email = searchParams.get('email') || (isPt ? 'o seu email' : 'tu correo');
   const paymentIntent = searchParams.get('payment_intent');
 
   useEffect(() => {
@@ -30,7 +33,7 @@ function SuccessClientContent() {
       clearCart();
       setCleared(true);
     }
-  }, [clearCart, cleared, email, paymentIntent]);
+  }, [clearCart, cleared, email, paymentIntent, items]);
 
   return (
     <div className="bg-[var(--ag-sys-color-background)] min-h-screen py-16">
@@ -42,27 +45,27 @@ function SuccessClientContent() {
           </div>
 
           <h1 className="text-3xl md:text-5xl font-extrabold text-[var(--ag-sys-color-text)] mb-6">
-            ¡Pago completado!
+            {isPt ? "Pagamento concluído!" : "¡Pago completado!"}
           </h1>
           
           <p className="text-lg text-[var(--ag-sys-color-text-muted)] mb-8">
-            Tu pedido se ha procesado con éxito. Hemos enviado un resumen de tu compra a <strong className="text-[var(--ag-sys-color-text)]">{email}</strong>.
+            {isPt ? "A sua encomenda foi processada com sucesso. Enviámos um resumo da sua compra para" : "Tu pedido se ha procesado con éxito. Hemos enviado un resumen de tu compra a"} <strong className="text-[var(--ag-sys-color-text)]">{email}</strong>.
           </p>
 
           <div className="bg-[var(--ag-sys-color-background)] p-6 rounded-2xl border border-[var(--ag-sys-color-border)] text-left mb-10">
-            <h3 className="font-bold text-[var(--ag-sys-color-text)] mb-2">Siguientes pasos</h3>
+            <h3 className="font-bold text-[var(--ag-sys-color-text)] mb-2">{isPt ? "Próximos passos" : "Siguientes pasos"}</h3>
             <ul className="space-y-3 text-sm text-[var(--ag-sys-color-text-muted)]">
               <li className="flex gap-3">
                 <span className="w-6 h-6 rounded-full bg-[var(--ag-sys-color-primary)] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
-                Preparamos tu paquete en menos de 24 horas laborables.
+                {isPt ? "Preparamos a sua encomenda em menos de 24 horas úteis." : "Preparamos tu paquete en menos de 24 horas laborables."}
               </li>
               <li className="flex gap-3">
                 <span className="w-6 h-6 rounded-full bg-[var(--ag-sys-color-primary)] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
-                Recibirás un SMS/Email de Correos Express con el número de seguimiento.
+                {isPt ? "Receberá um SMS/Email da transportadora com o número de rastreamento." : "Recibirás un SMS/Email de Correos Express con el número de seguimiento."}
               </li>
               <li className="flex gap-3">
                 <span className="w-6 h-6 rounded-full bg-[var(--ag-sys-color-primary)] text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">3</span>
-                Entrega estimada en 48/72 horas en tu domicilio.
+                {isPt ? "Entrega estimada em 48/72 horas na sua morada." : "Entrega estimada en 48/72 horas en tu domicilio."}
               </li>
             </ul>
           </div>
@@ -72,13 +75,13 @@ function SuccessClientContent() {
               href="/tienda"
               className="bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] font-bold py-4 px-8 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
-              Volver a la tienda
+              {isPt ? "Voltar à loja" : "Volver a la tienda"}
             </Link>
             <Link 
               href="/"
               className="bg-[var(--ag-sys-color-primary)] text-white font-bold py-4 px-8 rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-colors flex items-center justify-center gap-2 group"
             >
-              Ir a Anuncios <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              {isPt ? "Ir para os anúncios" : "Ir a Anuncios"} <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           
