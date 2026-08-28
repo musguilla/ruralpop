@@ -239,7 +239,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                 onChange={(val) => setSelectedCategory(val as string)}
                                 options={CATEGORIES.map(c => ({ id: c.id, name: c.label }))}
                                 placeholder={t('upload.category_placeholder')}
-                                searchPlaceholder="Buscar categoría..."
+                                searchPlaceholder={locale === 'pt' ? "Buscar categoria..." : "Buscar categoría..."}
                             />
                         </div>
 
@@ -256,7 +256,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                         setFormDataState(prev => ({ ...prev, subcategory: subcat }));
                                     }}
                                     placeholder={t('upload.subcategory_placeholder')}
-                                    searchPlaceholder="Buscar subcategoría..."
+                                    searchPlaceholder={locale === 'pt' ? "Buscar subcategoria..." : "Buscar subcategoría..."}
                                 />
                             </div>
                         )}

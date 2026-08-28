@@ -32,15 +32,95 @@ async function fetchCategoriesFromDB(tenantSlug: string, locale: string = 'es'):
         supabaseAdmin.from("subcategories").select("category_id, name, name_pt, order_index").or(filterString).order("order_index", { ascending: true })
     ]);
 
+const ptSubcategoryFallback: Record<string, string> = {
+    "Bovino": "Bovinos",
+    "Equino": "Equinos",
+    "Caprino": "Caprinos",
+    "Ovino": "Ovinos",
+    "Porcino": "Suínos",
+    "Avicultura": "Avicultura",
+    "Apicultura": "Apicultura",
+    "Perros": "Cães",
+    "Conejos": "Coelhos",
+    "Tractores": "Tratores",
+    "Abonadoras": "Distribuidores de adubo",
+    "Cosechadoras": "Ceifeiras",
+    "Depósitos": "Depósitos",
+    "Desbrozadoras": "Roçadoras",
+    "Empacadoras": "Enfaradadeiras",
+    "Encintadoras": "Plastificadoras",
+    "Motocultores": "Motocultivadores",
+    "Remolques": "Reboques",
+    "Segadoras": "Gadanheiras",
+    "Sembradoras": "Semeadores",
+    "Silos": "Silos",
+    "Sulfatadoras": "Pulverizadores",
+    "Trituradoras": "Trituradores",
+    "Volteadoras": "Viradores",
+    "Otra maquinaria agrícola": "Outras máquinas agrícolas",
+    "Alimentación y agua": "Alimentação e água",
+    "Cerramientos": "Vedações",
+    "Equitación y material equino": "Equitação e material equino",
+    "Identificación y trazabilidad": "Identificação e rastreabilidade",
+    "Limpieza, purines y estiércol": "Limpeza, chorume e estrume",
+    "Material apicultura": "Material de apicultura",
+    "Material avicultura": "Material de avicultura",
+    "Material conejos": "Material para coelhos",
+    "Material ovino": "Material para ovinos",
+    "Material porcino": "Material para suínos",
+    "Material vacuno": "Material para bovinos",
+    "Ordeño y leche": "Ordenha e leite",
+    "Venta": "Venda",
+    "Alquiler": "Arrendamento",
+    "Traspasos explotaciones": "Trespasse de explorações",
+    "Semillas": "Sementes",
+    "Plantas y plantones": "Plantas e mudas",
+    "Cerramientos y vallados": "Vedações",
+    "Construcción rural": "Construção rural",
+    "Esquiladores": "Tosquiadores",
+    "Herradores": "Ferradores",
+    "Mantenimiento de fincas": "Manutenção de quintas",
+    "Servicios forestales": "Serviços florestais",
+    "Transporte": "Transporte",
+    "Veterinarios": "Veterinários",
+};
+
+const ptCategoryFallback: Record<string, string> = {
+    "Ganadería": "Pecuária",
+    "Maquinaria y herramientas": "Máquinas e ferramentas",
+    "Recambios maquinaria": "Peças de máquinas",
+    "Equipamiento y material": "Equipamento e material",
+    "Forraje y alimentación animal": "Forragem e alimentação animal",
+    "Fincas": "Quintas",
+    "Agricultura": "Agricultura",
+    "Servicios": "Serviços",
+    "Alimentos Km0": "Alimentos Km0",
+    "Camiones y furgonetas": "Camiões e carrinhas",
+    "Coches": "Carros",
+    "ATV": "Moto4",
+    "Motos": "Motos",
+    "Genética y reproducción": "Genética e reprodução"
+};
+
     if (!catRes.data) return [];
 
     const categories: CategoryData[] = catRes.data.map((cat) => {
         const relatedSubcats = subcatRes.data?.filter(sub => sub.category_id === cat.id) || [];
-        const currentCatName = locale === 'pt' && cat.name_pt ? cat.name_pt : cat.name;
+        
+        let currentCatName = cat.name;
+        if (locale === 'pt') {
+            currentCatName = cat.name_pt || ptCategoryFallback[cat.name] || cat.name;
+        }
+
         return {
             id: cat.id,
             label: currentCatName,
-            subcategories: relatedSubcats.map(sub => locale === 'pt' && sub.name_pt ? sub.name_pt : sub.name)
+            subcategories: relatedSubcats.map(sub => {
+                if (locale === 'pt') {
+                    return sub.name_pt || ptSubcategoryFallback[sub.name] || sub.name;
+                }
+                return sub.name;
+            })
         };
     });
 
