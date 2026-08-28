@@ -503,7 +503,7 @@ export default async function ListingDetailPage(props: Props) {
 
                                 {!isEquipop && listing.contact_phone && (
                                     <PhoneRevealButton
-                                        phone={listing.contact_phone}
+                                        phone={user ? listing.contact_phone : ""}
                                         isLoggedIn={!!user}
                                     />
                                 )}

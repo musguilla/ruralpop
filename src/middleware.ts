@@ -5,6 +5,22 @@ import { getInternalSpanishRoute } from "@/i18n/utils";
 export async function middleware(request: NextRequest) {
     const { pathname, search } = request.nextUrl;
 
+    // --- Anti-Scraping Basico ---
+    const userAgent = request.headers.get('user-agent') || '';
+    const blockedAgents = [
+        'python-requests', 'curl', 'scrapy', 'bot', 'crawler', 'spider', 'wget', 'postman', 'insomnia', 'httpclient', 'urllib'
+    ];
+    // Permitir Googlebot, Bingbot, etc. para SEO
+    const allowedBots = ['googlebot', 'bingbot', 'yandexbot', 'slurp', 'duckduckbot', 'baiduspider', 'twitterbot', 'facebookexternalhit'];
+    
+    const uaLower = userAgent.toLowerCase();
+    const isBlocked = blockedAgents.some(agent => uaLower.includes(agent));
+    const isAllowed = allowedBots.some(agent => uaLower.includes(agent));
+
+    if (isBlocked && !isAllowed) {
+        return new NextResponse("Access Denied", { status: 403 });
+    }
+
     // --- Multi-Tenant: Equipop Domain Detection ---
     const hostname = request.headers.get('host') || '';
     // Reconocemos equipop.app, www.equipop.app, o entornos locales como equipop.localhost:3000
@@ -102,4 +118,6 @@ export const config = {
  * Memory / Decisiones Técnicas:
  * - El Middleware intercepta todas las peticiones (excluyendo estáticos)
  *   para garantizar que la cookie de Supabase Auth está fresca antes del render SSR de las páginas de Next.
+ * - Bloqueo Anti-Scraping: Se filtran peticiones de herramientas comunes de scrapping/scripts (Python, cURL, etc) 
+ *   mientras se hace whitelist explícito a los bots de SEO para proteger la BD.
  */
