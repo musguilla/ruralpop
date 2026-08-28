@@ -3,7 +3,7 @@ import { UserRow } from "./UserRow";
 import { SearchUsers } from "./SearchUsers";
 import { Pagination } from "@/components/ui/Pagination";
 import { getServerTenantSlug } from "@/utils/tenant/server";
-import { TENANTS_CONFIG } from "@/config/tenants";
+import { getTenantFilterString } from "@/config/tenants";
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +24,8 @@ export default async function AdminUsersPage(props: Props) {
         .from("users")
         .select("*, listings(count)", { count: "exact" });
 
-    const tenantId = tenant ? TENANTS_CONFIG[tenant]?.id : null;
-    if (tenantId) {
-        query = query.eq('tenant_id', tenantId);
+    if (tenant) {
+        query = query.or(getTenantFilterString(tenant));
     }
 
     if (search) {
