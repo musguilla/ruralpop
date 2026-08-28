@@ -14,7 +14,7 @@ interface SeoBlockProps {
 }
 
 export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery }: SeoBlockProps) {
-    const headersList = headers();
+    const headersList = await headers();
     const locale = headersList.get("x-locale") || "es";
     const { count, tags } = await getCatalogSeoData(parsedSlug);
     
