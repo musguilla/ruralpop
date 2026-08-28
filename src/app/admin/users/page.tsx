@@ -22,7 +22,7 @@ export default async function AdminUsersPage(props: Props) {
 
     let query = supabase
         .from("users")
-        .select("*, listings(count)", { count: "exact" });
+        .select("*", { count: "exact" });
 
     if (tenant) {
         query = query.or(getTenantFilterString(tenant));
@@ -38,6 +38,22 @@ export default async function AdminUsersPage(props: Props) {
 
     if (error) {
         console.error("Error fetching users:", error);
+    }
+    
+    // Fetch listings count separately to prevent PostgREST exact count join timeouts
+    const listingsCounts: Record<string, number> = {};
+    if (users && users.length > 0) {
+        const userIds = users.map((u: any) => u.id);
+        const { data: userListings } = await supabase
+            .from("listings")
+            .select("user_id")
+            .in("user_id", userIds);
+            
+        userListings?.forEach((l: any) => {
+            if (l.user_id) {
+                listingsCounts[l.user_id] = (listingsCounts[l.user_id] || 0) + 1;
+            }
+        });
     }
 
     const totalPages = count ? Math.ceil(count / limit) : 1;
@@ -71,7 +87,7 @@ export default async function AdminUsersPage(props: Props) {
                     </thead>
                     <tbody className="divide-y divide-[var(--ag-sys-color-border)] text-sm">
                         {users?.map((u: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
-                            const adsCount = u.listings?.[0]?.count || 0;
+                            const adsCount = listingsCounts[u.id] || 0;
                             return <UserRow key={u.id} user={u} adsCount={adsCount} />;
                         })}
                     </tbody>
