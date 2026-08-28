@@ -1,4 +1,4 @@
-import { useTranslation } from "@/context/LocaleContext";
+import { headers } from 'next/headers';
 import React from 'react';
 import Link from 'next/link';
 import { NEIGHBORING_PROVINCES } from '@/constants/neighboringProvinces';
@@ -14,6 +14,8 @@ interface SeoBlockProps {
 }
 
 export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery }: SeoBlockProps) {
+    const headersList = headers();
+    const locale = headersList.get("x-locale") || "es";
     const { count, tags } = await getCatalogSeoData(parsedSlug);
     
     const tenant = await getServerTenantSlug();
