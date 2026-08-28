@@ -17,11 +17,16 @@ export const IS_EQUIPOP = ACTIVE_TENANT_ID === '69d55371-2f70-4e67-b55c-4502bce3
  * .from('listings').select('*').or(getDefaultTenantFilterString())
  */
 export function getDefaultTenantFilterString(): string {
-    const defaultId = ACTIVE_TENANT_ID || 'RURALPOP';
+    const defaultId = ACTIVE_TENANT_ID || 'ea2490cc-dc33-48f3-bc7b-82b14aa70eb9';
+    let tenantFilter = `tenant_id.eq.${defaultId}`;
+    
     if (defaultId === 'RURALPOP' || defaultId === 'ea2490cc-dc33-48f3-bc7b-82b14aa70eb9') {
-        return `tenant_id.eq.${defaultId},tenant_id.is.null`;
+        tenantFilter = `tenant_id.eq.${defaultId},tenant_id.is.null`;
     }
-    return `tenant_id.eq.${defaultId}`;
+    
+    // Asymmetric Country filter: The native App is ONLY for Spain currently.
+    // We MUST hide Portuguese inventory (province_id >= 100).
+    return `and(or(province_id.lt.100,province_id.is.null),or(${tenantFilter}))`;
 }
 
 /**

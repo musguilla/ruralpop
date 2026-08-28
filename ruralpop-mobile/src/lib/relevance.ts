@@ -1,3 +1,4 @@
+import { getDefaultTenantFilterString } from '../config/tenants';
 import { supabase } from './supabase';
 import { Listing } from '../types';
 
@@ -29,7 +30,8 @@ export async function fetchRelevantListings(currentListing: Listing): Promise<Li
         .select('*, seller:users!listings_user_id_fkey(*)')
         .eq('status', 'active')
         .neq('id', currentListing.id)
-        .neq('user_id', currentListing.user_id);
+        .neq('user_id', currentListing.user_id)
+        .or(getDefaultTenantFilterString());
         
     if (currentListing.subcategory) {
         catQuery = catQuery.eq('subcategory', currentListing.subcategory);
@@ -45,7 +47,8 @@ export async function fetchRelevantListings(currentListing: Listing): Promise<Li
             .select('*, seller:users!listings_user_id_fkey(*)')
             .eq('status', 'active')
             .neq('id', currentListing.id)
-            .neq('user_id', currentListing.user_id);
+            .neq('user_id', currentListing.user_id)
+        .or(getDefaultTenantFilterString());
             
         if (currentListing.subcategory) {
             query = query.eq('subcategory', currentListing.subcategory);
