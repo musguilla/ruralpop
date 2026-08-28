@@ -28,7 +28,7 @@ export const getStripePlans = (isPt: boolean) => [
         priceId: "price_hl_7",
         icon: Sparkles,
         color: "green",
-        badge: isPt ? "o mais vendido" : "el más vendido"
+        badge: null
     },
     {
         id: "highlight_20",
@@ -38,7 +38,7 @@ export const getStripePlans = (isPt: boolean) => [
         priceId: "price_hl_20",
         icon: Crown,
         color: "amber",
-        badge: null
+        badge: isPt ? "o mais vendido" : "el más vendido"
     }
 ];
 
@@ -180,7 +180,7 @@ export function FeaturedCheckoutFlow({
                 <div className="pt-8 border-t border-[var(--ag-sys-color-border)] flex flex-col items-center">
                     <button
                         onClick={() => router.push("/dashboard")}
-                        className="text-[var(--ag-sys-color-text-muted)] hover:text-[#059669] font-bold text-sm flex items-center gap-2 transition-colors"
+                        className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] font-bold text-sm flex items-center gap-2 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
                         {isPt ? "Não desejo destacar agora, voltar ao meu painel" : "No deseo destacarlo ahora, volver a mi panel"}
@@ -199,7 +199,7 @@ export function FeaturedCheckoutFlow({
                     </h3>
                     <button 
                         onClick={() => { setSelectedPlanId(null); setClientSecret(null); }}
-                        className="text-sm font-semibold text-[var(--ag-sys-color-text-muted)] hover:text-[#059669] transition-colors"
+                        className="text-sm font-semibold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors"
                     >
                         {isPt ? "Alterar plano" : "Cambiar plan"}
                     </button>
@@ -227,7 +227,7 @@ export function FeaturedCheckoutFlow({
 
                     const colorMap = {
                         blue: "border-blue-200 bg-blue-50/30 hover:border-blue-400 group-hover:text-blue-600",
-                        green: "border-green-200 bg-green-50/30 hover:border-[#059669] group-hover:text-[#059669]",
+                        green: "border-green-200 bg-green-50/30 hover:border-[var(--ag-sys-color-primary)] group-hover:text-[var(--ag-sys-color-primary)]",
                         amber: "border-amber-200 bg-amber-50/30 hover:border-amber-500 group-hover:text-amber-500"
                     };
 
@@ -244,7 +244,7 @@ export function FeaturedCheckoutFlow({
                         >
                             {/* Recomendado Badge */}
                             {plan.badge && (
-                                <div className="absolute top-0 right-0 bg-[#059669] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-xl z-10">
+                                <div className="absolute top-0 right-0 bg-[var(--ag-sys-color-primary)] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-xl z-10">
                                     {plan.badge}
                                 </div>
                             )}
@@ -268,9 +268,11 @@ export function FeaturedCheckoutFlow({
                                     className={`w-full py-3 rounded-xl font-bold text-sm transition-all ${
                                         isSelected 
                                         ? "bg-gray-800 text-white" 
-                                        : plan.id === "highlight_7"
+                                        : plan.id === "highlight_20"
                                             ? "bg-[var(--ag-sys-color-primary)] text-white hover:bg-[var(--ag-sys-color-primary-hover)] shadow-md shadow-[var(--ag-sys-color-primary)]/20"
-                                            : "bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] group-hover:bg-gray-800 group-hover:text-white"
+                                            : plan.id === "highlight_7"
+                                                ? "bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] border border-[var(--ag-sys-color-primary)]/20 hover:bg-[var(--ag-sys-color-primary)]/20 group-hover:bg-[var(--ag-sys-color-primary)] group-hover:text-white"
+                                                : "bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] group-hover:bg-gray-800 group-hover:text-white"
                                     }`}
                                 >
                                     {isLoading ? (isPt ? 'A carregar...' : 'Cargando...') : (isPt ? 'Selecionar' : 'Seleccionar')}
