@@ -3,8 +3,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Check, Zap } from "lucide-react";
+import { useTranslation } from "@/context/LocaleContext";
 
 export function ProPlanCard({ isGhostClaim, isEquipop = false }: { isGhostClaim: boolean; isEquipop?: boolean }) {
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
     // Estado para controlar el tipo de pago: mensual (por defecto) o anual
     const [isAnnual, setIsAnnual] = useState(false);
 
@@ -13,7 +16,7 @@ export function ProPlanCard({ isGhostClaim, isEquipop = false }: { isGhostClaim:
             {/* Etiqueta superior */}
             {!isGhostClaim && (
                 <div className="absolute top-0 right-8 -mt-4 bg-white text-[var(--ag-sys-color-primary)] text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg z-20">
-                    El más popular
+                    {isPt ? "O mais popular" : "El más popular"}
                 </div>
             )}
             
@@ -24,9 +27,13 @@ export function ProPlanCard({ isGhostClaim, isEquipop = false }: { isGhostClaim:
                     Plan Pro <Zap className="w-5 h-5 text-amber-300 fill-amber-300" />
                 </h3>
                 <p className="text-white/80 text-sm">
-                    {isEquipop 
-                        ? "El arma definitiva para vender más si eres empresa del sector, fabricante, tienda, distribuidor, ..."
-                        : "El arma definitiva para vender más si eres empresa del sector, ganadería, concesionario de maquinaria, criadores, ..."
+                    {isPt 
+                        ? (isEquipop 
+                            ? "A arma definitiva para vender mais se for uma empresa do setor, fabricante, loja, distribuidor, ..."
+                            : "A arma definitiva para vender mais se for uma empresa do setor, pecuária, concessionário de maquinaria, criadores, ...")
+                        : (isEquipop 
+                            ? "El arma definitiva para vender más si eres empresa del sector, fabricante, tienda, distribuidor, ..."
+                            : "El arma definitiva para vender más si eres empresa del sector, ganadería, concesionario de maquinaria, criadores, ...")
                     }
                 </p>
             </div>
@@ -38,13 +45,13 @@ export function ProPlanCard({ isGhostClaim, isEquipop = false }: { isGhostClaim:
                         onClick={() => setIsAnnual(false)} 
                         className={`px-4 py-2 text-sm font-bold rounded-xl transition-all ${!isAnnual ? 'bg-white text-[var(--ag-sys-color-primary)] shadow' : 'text-white hover:bg-white/10'}`}
                     >
-                        Mensual
+                        {isPt ? "Mensal" : "Mensual"}
                     </button>
                     <button 
                         onClick={() => setIsAnnual(true)} 
                         className={`px-4 py-2 text-sm font-bold rounded-xl transition-all flex items-center gap-2 ${isAnnual ? 'bg-white text-[var(--ag-sys-color-primary)] shadow' : 'text-white hover:bg-white/10'}`}
                     >
-                        Anual <span className="text-[10px] bg-amber-400 text-amber-900 px-1.5 py-0.5 rounded-md leading-none uppercase tracking-wider font-black">-25%</span>
+                        {isPt ? "Anual" : "Anual"} <span className="text-[10px] bg-amber-400 text-amber-900 px-1.5 py-0.5 rounded-md leading-none uppercase tracking-wider font-black">-25%</span>
                     </button>
 
                     {/* Flecha Handwriting (solo visible en desktop o si hay espacio) */}
@@ -54,7 +61,7 @@ export function ProPlanCard({ isGhostClaim, isEquipop = false }: { isGhostClaim:
                                 d="M110,20 C80,10 50,40 10,40 L30,20 M10,40 L30,60" 
                             />
                         </svg>
-                        <span className="text-amber-300 text-[16px] font-bold font-serif italic drop-shadow-md -ml-1 transform -rotate-1 whitespace-nowrap mt-2">¡Mejor opción!</span>
+                        <span className="text-amber-300 text-[16px] font-bold font-serif italic drop-shadow-md -ml-1 transform -rotate-1 whitespace-nowrap mt-2">{isPt ? "Melhor opção!" : "¡Mejor opción!"}</span>
                     </div>
                 </div>
             </div>
@@ -64,18 +71,18 @@ export function ProPlanCard({ isGhostClaim, isEquipop = false }: { isGhostClaim:
                     <div>
                         <div className="flex items-baseline gap-2">
                             <span className="text-5xl font-black text-amber-300 tracking-tighter">450 €</span>
-                            <span className="text-white/80 font-medium">/año</span>
+                            <span className="text-white/80 font-medium">{isPt ? "/ano" : "/año"}</span>
                         </div>
-                        <p className="text-xs text-amber-100 font-bold mt-2 uppercase tracking-wide">Descuento 25% aplicado (equivale a 37,50€/mes)</p>
-                        <p className="text-xs text-white/70 mt-1">IVA incluido. Pago único anual.</p>
+                        <p className="text-xs text-amber-100 font-bold mt-2 uppercase tracking-wide">{isPt ? "Desconto de 25% aplicado (equivale a 37,50€/mês)" : "Descuento 25% aplicado (equivale a 37,50€/mes)"}</p>
+                        <p className="text-xs text-white/70 mt-1">{isPt ? "IVA incluído. Pagamento único anual." : "IVA incluido. Pago único anual."}</p>
                     </div>
                 ) : (
                     <div>
                         <div className="flex items-baseline gap-2">
                             <span className="text-5xl font-black text-white tracking-tighter">49,99 €</span>
-                            <span className="text-white/80 font-medium">/mes</span>
+                            <span className="text-white/80 font-medium">{isPt ? "/mês" : "/mes"}</span>
                         </div>
-                        <p className="text-xs text-white/70 mt-2">IVA incluido. Cancela cuando quieras.</p>
+                        <p className="text-xs text-white/70 mt-2">{isPt ? "IVA incluído. Cancele quando quiser." : "IVA incluido. Cancela cuando quieras."}</p>
                     </div>
                 )}
             </div>
@@ -85,37 +92,37 @@ export function ProPlanCard({ isGhostClaim, isEquipop = false }: { isGhostClaim:
                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                         <Check className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="text-white font-medium">Hasta <strong className="text-amber-300 font-bold">50 anuncios</strong> activos simultáneos</span>
+                    <span className="text-white font-medium">{isPt ? "Até " : "Hasta "}<strong className="text-amber-300 font-bold">{isPt ? "50 anúncios" : "50 anuncios"}</strong> {isPt ? "ativos em simultâneo" : "activos simultáneos"}</span>
                 </li>
                 <li className="flex items-start gap-3">
                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                         <Check className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="text-white font-medium">Página web pública de tu empresa con todos tus productos, logotipo y descripción.</span>
+                    <span className="text-white font-medium">{isPt ? "Página web pública da sua empresa com todos os seus produtos, logotipo e descrição." : "Página web pública de tu empresa con todos tus productos, logotipo y descripción."}</span>
                 </li>
                 <li className="flex items-start gap-3">
                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                         <Check className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="text-white font-medium">Sello <strong className="text-amber-300 font-bold">Profesional Verificado</strong> en tu perfil</span>
+                    <span className="text-white font-medium">{isPt ? "Selo" : "Sello"} <strong className="text-amber-300 font-bold">{isPt ? "Profissional Verificado" : "Profesional Verificado"}</strong> {isPt ? "no seu perfil" : "en tu perfil"}</span>
                 </li>
                 <li className="flex items-start gap-3">
                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                         <Check className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">6 impulsos</strong> de subida de anuncio al mes incluidos</span>
+                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">{isPt ? "6 impulsos" : "6 impulsos"}</strong> {isPt ? "de subida de anúncio por mês incluídos" : "de subida de anuncio al mes incluidos"}</span>
                 </li>
                 <li className="flex items-start gap-3">
                     <div className="mt-1 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
                         <Check className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">2 anuncios destacados</strong> en página principal</span>
+                    <span className="text-white font-medium"><strong className="text-amber-300 font-bold">{isPt ? "2 anúncios destacados" : "2 anuncios destacados"}</strong> {isPt ? "na página principal" : "en página principal"}</span>
                 </li>
             </ul>
 
             <Link href={`/profesionales/checkout/pro?${isGhostClaim ? 'ghost_claim=true&' : ''}${isAnnual ? 'interval=year' : 'interval=month'}`} className="mt-auto relative z-10 w-full flex items-center justify-center gap-2 px-6 py-4 bg-white text-[var(--ag-sys-color-primary)] font-black rounded-2xl hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5">
                 <Zap className="w-5 h-5" />
-                {isGhostClaim ? 'Activar Plan PRO' : 'Quiero el PRO'}
+                {isGhostClaim ? (isPt ? 'Ativar Plano PRO' : 'Activar Plan PRO') : (isPt ? 'Quero o PRO' : 'Quiero el PRO')}
             </Link>
         </div>
     );

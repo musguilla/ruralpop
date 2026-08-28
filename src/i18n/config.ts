@@ -33,6 +33,7 @@ export const routeTranslations: Record<string, Record<LocaleCode, string>> = {
   // Base Next.js Pages
   tractores: { es: '/tractores', pt: '/tractores' },
   magazine: { es: '/magazine', pt: '/magazine' },
+  empresasProfesionales: { es: '/empresas-profesionales-sector-rural', pt: '/empresas-profissionais-setor-rural' },
   preciosGanado: { es: '/precios-ganado/vacuno', pt: '/precios-ganado/vacuno' },
   lonjaSalamanca: { es: '/precios-ganado/vacuno/mercados/lonja-de-salamanca', pt: '/precios-ganado/vacuno/mercados/lonja-de-salamanca' },
   lonjaSiero: { es: '/precios-ganado/vacuno/mercados/mercado-nacional-de-ganado-de-pola-de-siero', pt: '/precios-ganado/vacuno/mercados/mercado-nacional-de-ganado-de-pola-de-siero' },
