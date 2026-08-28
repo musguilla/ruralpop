@@ -1,3 +1,4 @@
+import { useTranslation } from "@/context/LocaleContext";
 import React from 'react';
 import Link from 'next/link';
 import { NEIGHBORING_PROVINCES } from '@/constants/neighboringProvinces';
@@ -38,7 +39,7 @@ export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery 
                                     category: parsedSlug.category,
                                     subcategory: parsedSlug.subcategory,
                                     province_id: neighborLoc ? neighborLoc.id : undefined
-                                });
+                                }, locale);
 
                                 return (
                                     <Link 
@@ -89,7 +90,7 @@ export async function DynamicSeoBlock({ parsedSlug, locationName, categoryQuery 
                                 category: parsedSlug.category,
                                 subcategory: parsedSlug.subcategory,
                                 province_id: neighborLoc ? neighborLoc.id : undefined
-                            });
+                            }, locale);
 
                             return (
                                 <Link 

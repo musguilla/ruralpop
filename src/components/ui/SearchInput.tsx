@@ -43,7 +43,7 @@ export function SearchInput({
         category: category || undefined,
         subcategory: subcategory || undefined,
         province_id: location || undefined
-      });
+      }, locale);
 
       // Maintain any extra query params like price max/min
       const urlParams = new URLSearchParams(searchParams.toString());

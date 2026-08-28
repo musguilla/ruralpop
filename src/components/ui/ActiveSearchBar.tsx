@@ -60,7 +60,7 @@ export function ActiveSearchBar() {
             category: category || undefined,
             subcategory: subcategory || undefined,
             province_id: location || undefined
-        });
+        }, locale);
 
         // Maintain any extra query params like price max/min
         const params = new URLSearchParams(searchParams.toString());
@@ -80,7 +80,7 @@ export function ActiveSearchBar() {
             category: category || undefined,
             subcategory: subcategory || undefined,
             province_id: location || undefined
-        });
+        }, locale);
 
         const params = new URLSearchParams(searchParams.toString());
         params.delete("q");
@@ -122,7 +122,7 @@ export function ActiveSearchBar() {
             category: newCat || undefined,
             subcategory: newSub || undefined,
             province_id: modalLocation || undefined
-        });
+        }, locale);
 
         params.delete("q");
         params.delete("category");
@@ -145,7 +145,7 @@ export function ActiveSearchBar() {
             category: undefined,
             subcategory: undefined,
             province_id: undefined
-        });
+        }, locale);
 
         router.push(baseUrl);
         setIsFiltersOpen(false);
@@ -190,7 +190,7 @@ export function ActiveSearchBar() {
             category: category ?? undefined,
             subcategory: subcategory ?? undefined,
             province_id: location ?? undefined
-        });
+        }, locale);
 
         // Remove SEO params from regular search params to avoid duplication
         params.delete("q");

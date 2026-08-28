@@ -31,7 +31,7 @@ export function EquipopHomeSearchHero() {
             category: category,
             subcategory: subcategory,
             province_id: location
-        });
+        }, locale);
         
         if (url === '/') {
             router.push('/?sort=recent');

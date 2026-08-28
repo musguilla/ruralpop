@@ -65,7 +65,7 @@ export function HomeSearchHero() {
             category: category,
             subcategory: subcategory,
             province_id: location
-        });
+        }, locale);
         
         if (url === '/') {
             router.push('/?sort=recent');
@@ -105,7 +105,7 @@ export function HomeSearchHero() {
             }
         }
 
-        const url = buildSeoUrl({ category: cat, subcategory: subcat });
+        const url = buildSeoUrl({ category: cat, subcategory: subcat }, locale);
         router.push(getPath(url));
     };
 

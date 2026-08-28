@@ -1,3 +1,4 @@
+import { useTranslation } from "@/context/LocaleContext";
 "use client";
 
 import React, { useState } from "react";
@@ -95,7 +96,7 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                             {provinces.map((prov) => (
                                 <Link
                                     key={prov.id}
-                                    href={buildSeoUrl({ province_id: prov.id })}
+                                    href={buildSeoUrl({ province_id: prov.id }, locale)}
                                     className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors"
                                 >
                                     {prov.name}
@@ -112,11 +113,11 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
 
                                 return (
                                     <div key={cat.id} className="flex flex-col gap-2">
-                                        <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                        <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
                                             {cat.label}
                                         </Link>
                                         {subcategoriesToRender.map((sub) => (
-                                            <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                            <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
                                                 {sub}
                                             </Link>
                                         ))}
@@ -135,11 +136,11 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                                     if (!cat) return null;
                                     return (
                                         <>
-                                            <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                            <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
                                                 {cat.label}
                                             </Link>
                                             {cat.subcategories.map((sub) => (
-                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
                                                     {sub}
                                                 </Link>
                                             ))}
@@ -155,11 +156,11 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                                     if (!cat) return null;
                                     return (
                                         <>
-                                            <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                            <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
                                                 {cat.label}
                                             </Link>
                                             {cat.subcategories.map((sub) => (
-                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
                                                     {sub}
                                                 </Link>
                                             ))}
@@ -175,11 +176,11 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                                     if (!cat) return null;
                                     return (
                                         <>
-                                            <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                            <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
                                                 {cat.label}
                                             </Link>
                                             {cat.subcategories.map((sub) => (
-                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
                                                     {sub}
                                                 </Link>
                                             ))}
@@ -195,11 +196,11 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                                     if (!cat) return null;
                                     return (
                                         <div key={cat.id} className="flex flex-col gap-2">
-                                            <Link href={buildSeoUrl({ category: cat.id })} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                            <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
                                                 {cat.label}
                                             </Link>
                                             {cat.subcategories.map((sub) => (
-                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub })} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
                                                     {sub}
                                                 </Link>
                                             ))}
