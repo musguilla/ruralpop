@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "@/context/LocaleContext";
 
 export function SubscriptionCheckoutForm({ planName, planPrice }: { planName: string, planPrice: string }) {
     const stripe = useStripe();
@@ -10,6 +11,9 @@ export function SubscriptionCheckoutForm({ planName, planPrice }: { planName: st
     
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -24,12 +28,12 @@ export function SubscriptionCheckoutForm({ planName, planPrice }: { planName: st
         const { error } = await stripe.confirmPayment({
             elements,
             confirmParams: {
-                return_url: `${window.location.origin}/dashboard/pro?success=true`,
+                return_url: `${window.location.origin}${isPt ? '/pt' : ''}/dashboard/pro?success=true`,
             },
         });
 
         if (error) {
-            setErrorMessage(error.message ?? "Ocurrió un error inesperado al procesar el pago.");
+            setErrorMessage(error.message ?? (isPt ? "Ocorreu um erro inesperado ao processar o pagamento." : "Ocurrió un error inesperado al procesar el pago."));
             setIsLoading(false);
         } else {
             // Success is handled by the redirect to return_url and webhooks
@@ -40,11 +44,11 @@ export function SubscriptionCheckoutForm({ planName, planPrice }: { planName: st
         <form onSubmit={handleSubmit} className="space-y-6">
             <div className="bg-gray-50 rounded-2xl p-6 border border-[var(--ag-sys-color-border)] mb-6">
                 <h4 className="font-bold text-[var(--ag-sys-color-text)] flex justify-between">
-                    <span>Suscripción Mensual: {planName}</span>
+                    <span>{isPt ? `Subscrição: ${planName}` : `Suscripción: ${planName}`}</span>
                     <span className="text-[var(--ag-sys-color-primary)]">{planPrice}</span>
                 </h4>
                 <p className="text-sm text-[var(--ag-sys-color-text-muted)] mt-1">
-                    Pago recurrente mensual. Cancela cuando quieras desde tu panel.
+                    {isPt ? "Pagamento recorrente. Cancele quando quiser a partir do seu painel." : "Pago recurrente. Cancela cuando quieras desde tu panel."}
                 </p>
             </div>
 
@@ -73,14 +77,14 @@ export function SubscriptionCheckoutForm({ planName, planPrice }: { planName: st
                 {isLoading ? (
                     <>
                         <Loader2 className="w-5 h-5 animate-spin" />
-                        Procesando pago...
+                        {isPt ? "A processar o pagamento..." : "Procesando pago..."}
                     </>
                 ) : (
-                    `Pagar ${planPrice} ahora`
+                    isPt ? `Pagar ${planPrice} agora` : `Pagar ${planPrice} ahora`
                 )}
             </button>
             <p className="text-center text-xs text-[var(--ag-sys-color-text-muted)] mt-4">
-                Pagos seguros procesados por Stripe.
+                {isPt ? "Pagamentos seguros processados por Stripe." : "Pagos seguros procesados por Stripe."}
             </p>
         </form>
     );

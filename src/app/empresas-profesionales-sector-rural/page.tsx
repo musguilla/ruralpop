@@ -156,7 +156,7 @@ export default async function EmpresasProfesionalesPage() {
                                 </li>
                             </ul>
 
-                            <Link href="/profesionales/checkout/start" className="mt-auto w-full flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ag-sys-color-surface)] border-2 border-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-primary)] font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all group-hover:bg-[var(--ag-sys-color-primary)] group-hover:text-white">
+                            <Link href={`${isPt ? '/pt' : ''}/profesionales/checkout/start`} className="mt-auto w-full flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ag-sys-color-surface)] border-2 border-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-primary)] font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all group-hover:bg-[var(--ag-sys-color-primary)] group-hover:text-white">
                                 {isPt ? "Começar agora" : "Empezar ahora"}
                             </Link>
                         </div>

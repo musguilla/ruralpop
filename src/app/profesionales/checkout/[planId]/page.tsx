@@ -1,20 +1,26 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { SubscriptionCheckoutFlow } from "@/components/profesionales/SubscriptionCheckoutFlow";
+import { headers } from "next/headers";
 
 export default async function SubscriptionCheckoutPage({ params, searchParams }: { params: Promise<{ planId: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const { planId } = await params;
     const sp = await searchParams;
     const isAnnual = sp.interval === "year";
+    
+    const headersList = await headers();
+    const isPt = headersList.get('x-locale') === 'pt';
+    const basePath = isPt ? '/pt' : '';
+
     if (planId !== "start" && planId !== "pro") {
-        redirect("/profesionales");
+        redirect(`${basePath}/profesionales`);
     }
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect(`/login?redirect=/profesionales/checkout/${planId}`);
+        redirect(`${basePath}/login?redirect=${basePath}/profesionales/checkout/${planId}`);
     }
 
     let priceId = "";

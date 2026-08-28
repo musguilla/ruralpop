@@ -6,6 +6,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { SubscriptionCheckoutForm } from "./SubscriptionCheckoutForm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "@/context/LocaleContext";
 
 export function SubscriptionCheckoutFlow({ planId, priceId, isAnnual }: { planId: string, priceId: string, isAnnual?: boolean }) {
     const stripePromise = getStripeClient();
@@ -43,30 +44,33 @@ export function SubscriptionCheckoutFlow({ planId, priceId, isAnnual }: { planId
     const planName = planId === "start" ? "Plan Start" : (isAnnual ? "Plan Pro (Anual)" : "Plan Pro");
     const planPrice = planId === "start" ? "19,99€" : (isAnnual ? "450 €" : "49,99€");
 
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
+
     return (
         <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 sm:p-10 border border-[var(--ag-sys-color-border)] shadow-md relative">
-            <Link href="/profesionales" className="absolute top-6 left-6 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors flex items-center gap-2 text-sm font-semibold">
+            <Link href={`${isPt ? '/pt' : ''}/empresas-profesionales-sector-rural`} className="absolute top-6 left-6 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors flex items-center gap-2 text-sm font-semibold">
                 <ArrowLeft className="w-4 h-4" />
-                Volver
+                {isPt ? "Voltar" : "Volver"}
             </Link>
             
             <div className="mt-8 mb-8 pb-4 border-b border-[var(--ag-sys-color-border)] text-center">
                 <h3 className="text-2xl font-black text-[var(--ag-sys-color-text)]">
-                    Pago de Suscripción a <span className="text-[var(--ag-sys-color-primary)]">{planName}</span>
+                    {isPt ? "Pagamento da subscrição do" : "Pago de Suscripción a"} <span className="text-[var(--ag-sys-color-primary)]">{planName}</span>
                 </h3>
             </div>
 
             {isCreatingIntent ? (
                 <div className="flex flex-col items-center justify-center py-12">
                     <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-[var(--ag-sys-color-primary)] animate-spin mb-4"></div>
-                    <p className="text-[var(--ag-sys-color-text-muted)] font-medium">Preparando pago seguro...</p>
+                    <p className="text-[var(--ag-sys-color-text-muted)] font-medium">{isPt ? "A preparar o pagamento seguro..." : "Preparando pago seguro..."}</p>
                 </div>
             ) : error ? (
                 <div className="bg-red-50 text-red-600 p-6 rounded-2xl text-center">
-                    <p className="font-semibold mb-2">No se pudo inicializar el pago</p>
+                    <p className="font-semibold mb-2">{isPt ? "Não foi possível inicializar o pagamento" : "No se pudo inicializar el pago"}</p>
                     <p className="text-sm">{error}</p>
-                    <Link href="/profesionales" className="mt-4 inline-block px-6 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-medium">
-                        Cancelar y volver
+                    <Link href={`${isPt ? '/pt' : ''}/empresas-profesionales-sector-rural`} className="mt-4 inline-block px-6 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-medium">
+                        {isPt ? "Cancelar e voltar" : "Cancelar y volver"}
                     </Link>
                 </div>
             ) : clientSecret && (
