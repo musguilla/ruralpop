@@ -426,11 +426,6 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                 <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
                                     <Phone className="w-4 h-4" />
                                     {t('upload.phone_label')}
-                                    {savedPhone && (
-                                        <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] font-semibold">
-                                            {t('upload.phone_autofill')}
-                                        </span>
-                                    )}
                                 </label>
                                 <input
                                     name="contact_phone"
