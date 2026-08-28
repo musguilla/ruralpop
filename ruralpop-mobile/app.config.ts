@@ -2,7 +2,7 @@ import { ExpoConfig, ConfigContext } from 'expo/config';
 
 const IS_EQUIPOP = process.env.APP_VARIANT === 'equipop';
 const VERSION = '1.0.61';
-const BUILD_NUMBER = 110;
+const BUILD_NUMBER = 116;
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
