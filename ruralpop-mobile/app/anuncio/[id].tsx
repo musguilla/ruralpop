@@ -578,27 +578,34 @@ export default function ListingDetailsScreen() {
                             className="w-full h-[120px] rounded-2xl overflow-hidden relative border border-gray-200 bg-gray-100"
                         >
                             <View pointerEvents="none" style={{ flex: 1 }}>
-                                <MapView
-                                    style={{ flex: 1 }}
-                                    region={{
-                                        latitude: mapCoords.lat,
-                                        longitude: mapCoords.lon,
-                                        latitudeDelta: mapCoords.delta,
-                                        longitudeDelta: mapCoords.delta,
-                                    }}
-                                    scrollEnabled={false}
-                                    zoomEnabled={false}
-                                    pitchEnabled={false}
-                                    rotateEnabled={false}
-                                >
-                                    <Circle 
-                                        center={{ latitude: mapCoords.lat, longitude: mapCoords.lon }} 
-                                        radius={mapCoords.delta === 7.0 ? 200000 : 2000} 
-                                        fillColor="rgba(16, 185, 129, 0.4)" 
-                                        strokeColor="rgba(16, 185, 129, 0.8)" 
-                                        strokeWidth={1} 
-                                    />
-                                </MapView>
+                                {Platform.OS === 'ios' ? (
+                                    <MapView
+                                        style={{ flex: 1 }}
+                                        region={{
+                                            latitude: mapCoords.lat,
+                                            longitude: mapCoords.lon,
+                                            latitudeDelta: mapCoords.delta,
+                                            longitudeDelta: mapCoords.delta,
+                                        }}
+                                        scrollEnabled={false}
+                                        zoomEnabled={false}
+                                        pitchEnabled={false}
+                                        rotateEnabled={false}
+                                    >
+                                        <Circle 
+                                            center={{ latitude: mapCoords.lat, longitude: mapCoords.lon }} 
+                                            radius={mapCoords.delta === 7.0 ? 200000 : 2000} 
+                                            fillColor="rgba(16, 185, 129, 0.4)" 
+                                            strokeColor="rgba(16, 185, 129, 0.8)" 
+                                            strokeWidth={1} 
+                                        />
+                                    </MapView>
+                                ) : (
+                                    <View style={{ flex: 1, backgroundColor: '#f1f5f9', justifyContent: 'center', alignItems: 'center' }}>
+                                        <MapPin color="#94a3b8" size={32} />
+                                        <Text style={{ color: '#64748b', marginTop: 8, fontWeight: '500' }}>Mapa no disponible</Text>
+                                    </View>
+                                )}
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -910,23 +917,30 @@ export default function ListingDetailsScreen() {
                 onRequestClose={() => setIsMapModalVisible(false)}
             >
                 <View className="flex-1 bg-white">
-                    <MapView
-                        style={{ flex: 1 }}
-                        initialRegion={{
-                            latitude: mapCoords.lat,
-                            longitude: mapCoords.lon,
-                            latitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.1,
-                            longitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.1,
-                        }}
-                    >
-                        <Circle 
-                            center={{ latitude: mapCoords.lat, longitude: mapCoords.lon }} 
-                            radius={mapCoords.delta === 7.0 ? 200000 : 2000} 
-                            fillColor="rgba(16, 185, 129, 0.4)" 
-                            strokeColor="rgba(16, 185, 129, 0.8)" 
-                            strokeWidth={1.5} 
-                        />
-                    </MapView>
+                    {Platform.OS === 'ios' ? (
+                        <MapView
+                            style={{ flex: 1 }}
+                            initialRegion={{
+                                latitude: mapCoords.lat,
+                                longitude: mapCoords.lon,
+                                latitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.1,
+                                longitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.1,
+                            }}
+                        >
+                            <Circle 
+                                center={{ latitude: mapCoords.lat, longitude: mapCoords.lon }} 
+                                radius={mapCoords.delta === 7.0 ? 200000 : 2000} 
+                                fillColor="rgba(16, 185, 129, 0.4)" 
+                                strokeColor="rgba(16, 185, 129, 0.8)" 
+                                strokeWidth={1.5} 
+                            />
+                        </MapView>
+                    ) : (
+                        <View style={{ flex: 1, backgroundColor: '#f1f5f9', justifyContent: 'center', alignItems: 'center' }}>
+                            <MapPin color="#94a3b8" size={64} />
+                            <Text style={{ color: '#64748b', marginTop: 16, fontSize: 18, fontWeight: '500' }}>El mapa requiere iOS o una clave API de Google Maps.</Text>
+                        </View>
+                    )}
                     <View style={{ position: 'absolute', top: Math.max(insets.top, 40), left: 16 }} pointerEvents="box-none">
                         <TouchableOpacity 
                             onPress={() => setIsMapModalVisible(false)}
