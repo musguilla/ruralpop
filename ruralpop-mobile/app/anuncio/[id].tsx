@@ -578,7 +578,7 @@ export default function ListingDetailsScreen() {
                             className="w-full h-[120px] rounded-2xl overflow-hidden relative border border-gray-200 bg-gray-100"
                         >
                             <View pointerEvents="none" style={{ flex: 1 }}>
-                                {Platform.OS === 'ios' ? (
+                                {Platform.OS === 'ios' || process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ? (
                                     <MapView
                                         style={{ flex: 1 }}
                                         region={{
@@ -917,7 +917,7 @@ export default function ListingDetailsScreen() {
                 onRequestClose={() => setIsMapModalVisible(false)}
             >
                 <View className="flex-1 bg-white">
-                    {Platform.OS === 'ios' ? (
+                    {Platform.OS === 'ios' || process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ? (
                         <MapView
                             style={{ flex: 1 }}
                             initialRegion={{

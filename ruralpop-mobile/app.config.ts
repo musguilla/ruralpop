@@ -34,6 +34,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       }
     },
     android: {
+      config: {
+        googleMaps: {
+          apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || ""
+        }
+      },
       adaptiveIcon: {
         foregroundImage: IS_EQUIPOP ? "./assets/equipop/icon.png" : "./assets/icon.png",
         backgroundColor: IS_EQUIPOP ? "#1E3A8A" : "#059669"
