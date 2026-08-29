@@ -20,7 +20,7 @@ export function BovineRelatedLinks({ parsedSlug }: BovineRelatedLinksProps) {
         "Terneras", "terneras limusinas", "Ternero blonda", "Terneros", "Terneros de vida", 
         "toro", "toro semental", "vaca angus", "Vaca parida", "Vacas", "Vacas de vida", "Vacas preñadas", 
         "Vacas Rubias", "wagyu", "xato pastero"
-    ].sort((a, b) => a.localeCompare(b, 'es'));
+    ].map(t => t.charAt(0).toUpperCase() + t.slice(1)).sort((a, b) => a.localeCompare(b, 'es'));
 
     // Obtener todas las provincias de España (id <= 52)
     const spanishProvinces = LOCATIONS.filter(l => l.type === 'province' && parseInt(l.id) <= 52);
