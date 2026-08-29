@@ -19,7 +19,8 @@ export async function AppBanner() {
                 {/* Lado izquierdo: Textos y botones */}
                 <div className="flex flex-col text-center md:text-left z-10 max-w-xl">
                     <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] leading-tight font-medium text-slate-900 mb-4 tracking-tight">
-                        Descarga ya la app de <strong className="font-extrabold">{brandName}</strong>
+                        Descarga ahora la<br />
+                        app de <strong className="font-extrabold">{brandName}</strong>
                     </h2>
                     <p className="text-lg md:text-xl text-slate-700 mb-8 font-light">
                         Chatea, guarda tus favoritos, y publica más rápido desde tu móvil.
