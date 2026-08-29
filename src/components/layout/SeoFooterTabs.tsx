@@ -66,7 +66,7 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                             : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
                             }`}
                     >
-                        Más buscado
+                        Lo más buscado
                     </button>
                     {!isEquipop && (
                         <button
