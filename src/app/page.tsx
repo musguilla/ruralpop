@@ -93,11 +93,11 @@ export default async function Home(props: {
               )}
 
               <Suspense fallback={null}>
-                  <HomeFeaturedGrid />
+                  <AppBanner />
               </Suspense>
 
               <Suspense fallback={null}>
-                  <AppBanner />
+                  <HomeFeaturedGrid />
               </Suspense>
 
               <Suspense fallback={<GridSkeleton />}>
