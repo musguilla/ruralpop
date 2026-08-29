@@ -11,11 +11,11 @@ export async function AppBanner() {
     const bgColor = isEquipop ? 'bg-blue-50' : 'bg-[#f4fcf7]';
 
     return (
-        <section id="app" className={`w-full ${bgColor} mt-8 mb-12 rounded-2xl border border-gray-100 shadow-sm overflow-hidden`}>
-            <div className="px-6 py-8 md:px-12 md:py-10 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+        <section id="app" className={`w-full ${bgColor} mt-4 mb-12 rounded-2xl border border-gray-100 overflow-hidden`}>
+            <div className="px-6 pt-8 md:px-12 md:pt-12 flex flex-col md:flex-row items-center md:items-end justify-between gap-8 md:gap-4">
                 
                 {/* Lado izquierdo: Textos y botones */}
-                <div className="flex flex-col text-center md:text-left z-10 w-full md:w-[45%] lg:w-[40%]">
+                <div className="flex flex-col text-center md:text-left z-10 w-full md:w-[45%] lg:w-[45%] pb-8 md:pb-12 md:self-center">
                     <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] leading-tight font-medium text-slate-900 mb-4 tracking-tight">
                         Descarga ahora la<br />
                         app de <strong className="font-extrabold">{brandName}</strong>
@@ -35,13 +35,13 @@ export async function AppBanner() {
                 </div>
 
                 {/* Lado derecho: Imagen unificada proporcionada por el usuario */}
-                <div className="z-10 flex items-center justify-center w-full md:w-[55%] lg:w-[60%]">
+                <div className="z-10 flex items-end justify-end w-full md:w-[55%] lg:w-[55%] pt-4 md:pt-0">
                     <Image 
                         src="/descargar-app-ruralpop.jpg" 
                         alt={`Escanea para descargar la app de ${brandName}`}
                         width={900}
                         height={600}
-                        className="w-full max-w-[700px] h-auto object-contain mix-blend-multiply"
+                        className="w-[110%] max-w-[800px] h-auto object-contain mix-blend-multiply translate-y-[1px] origin-bottom-right"
                         priority
                         unoptimized
                     />
