@@ -40,8 +40,10 @@ export function SearchInput({
       const subcategory = parsedSlug ? parsedSlug.subcategory : searchParams.get("subcategory");
       const location = parsedSlug ? parsedSlug.province_id : searchParams.get("province_id");
 
+      const useQInSlug = !category && !subcategory;
+
       const url = buildSeoUrl({
-        q: query || undefined,
+        q: useQInSlug ? (query || undefined) : undefined,
         category: category || undefined,
         subcategory: subcategory || undefined,
         province_id: location || undefined
@@ -49,7 +51,11 @@ export function SearchInput({
 
       // Maintain any extra query params like price max/min
       const urlParams = new URLSearchParams(searchParams.toString());
-      urlParams.delete("q");
+      if (query && !useQInSlug) {
+          urlParams.set("q", query);
+      } else {
+          urlParams.delete("q");
+      }
       urlParams.delete("category");
       urlParams.delete("subcategory");
       urlParams.delete("province_id");

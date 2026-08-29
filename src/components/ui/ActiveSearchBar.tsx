@@ -117,14 +117,20 @@ export function ActiveSearchBar() {
             newCat = CATEGORIES.find(c => c.subcategories.includes(newSub!))?.id;
         }
 
+        const useQInSlug = !newCat && !newSub;
+
         const baseUrl = buildSeoUrl({
-            q: query ?? undefined,
+            q: useQInSlug ? (query ?? undefined) : undefined,
             category: newCat || undefined,
             subcategory: newSub || undefined,
             province_id: modalLocation || undefined
         }, locale);
 
-        params.delete("q");
+        if (query && !useQInSlug) {
+            params.set("q", query);
+        } else {
+            params.delete("q");
+        }
         params.delete("category");
         params.delete("subcategory");
         params.delete("province_id");

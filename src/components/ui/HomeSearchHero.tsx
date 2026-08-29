@@ -60,17 +60,28 @@ export function HomeSearchHero() {
 
     const handleSearch = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
+        
+        const useQInSlug = !category && !subcategory;
+        
         const url = buildSeoUrl({
-            q: query.trim(),
+            q: useQInSlug ? query.trim() : undefined,
             category: category,
             subcategory: subcategory,
             province_id: location
         }, locale);
         
-        if (url === '/') {
+        const params = new URLSearchParams();
+        if (query.trim() && !useQInSlug) {
+            params.set("q", query.trim());
+        }
+        
+        const queryStr = params.toString();
+        const fullUrl = `${url}${queryStr ? '?' + queryStr : ''}`;
+        
+        if (fullUrl === '/') {
             router.push('/?sort=recent');
         } else {
-            router.push(getPath(url));
+            router.push(getPath(fullUrl));
         }
     };
 
