@@ -9,7 +9,7 @@ interface BovineRelatedLinksProps {
 
 export function BovineRelatedLinks({ parsedSlug }: BovineRelatedLinksProps) {
     // Solo aplicar en ganaderia/bovino
-    if (parsedSlug.category !== 'ganaderia' || parsedSlug.subcategory !== 'bovino') {
+    if (parsedSlug.category !== 'ganaderia' || parsedSlug.subcategory?.toLowerCase() !== 'bovino') {
         return null;
     }
 
