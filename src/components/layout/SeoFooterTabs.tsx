@@ -14,7 +14,7 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
     const { locale } = useTranslation();
     const CATEGORIES = useCategories();
     const pathname = usePathname();
-    const [activeTab, setActiveTab] = useState<"provinces" | "categories" | "popular">("provinces");
+    const [activeTab, setActiveTab] = useState<"provinces" | "categories" | "popular">("popular");
     const [isEquipop, setIsEquipop] = useState(false);
 
     React.useEffect(() => {
@@ -59,6 +59,15 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
 
                 {/* Tabs */}
                 <div className="flex flex-wrap border-b border-[var(--ag-sys-color-border)] mb-8">
+                    <button
+                        onClick={() => setActiveTab("popular")}
+                        className={`py-3 px-6 font-bold text-sm tracking-wide transition-all ${activeTab === "popular"
+                            ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
+                            : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
+                            }`}
+                    >
+                        Más buscado
+                    </button>
                     {!isEquipop && (
                         <button
                             onClick={() => setActiveTab("provinces")}
@@ -78,15 +87,6 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                             }`}
                     >
                         Por categorías
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("popular")}
-                        className={`py-3 px-6 font-bold text-sm tracking-wide transition-all ${activeTab === "popular"
-                            ? "text-[var(--ag-sys-color-primary)] border-b-2 border-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/5"
-                            : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
-                            }`}
-                    >
-                        Más buscado
                     </button>
                 </div>
 
@@ -129,86 +129,19 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                     )}
 
                     {activeTab === "categories" && !isEquipop && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-6">
-                            {/* Columna 1: Ganadería */}
-                            <div className="flex flex-col gap-2">
-                                {(() => {
-                                    const cat = CATEGORIES.find(c => c.id === "ganaderia");
-                                    if (!cat) return null;
-                                    return (
-                                        <>
-                                            <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
-                                                {cat.label}
-                                            </Link>
-                                            {cat.subcategories.map((sub) => (
-                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
-                                                    {sub}
-                                                </Link>
-                                            ))}
-                                        </>
-                                    );
-                                })()}
-                            </div>
-
-                            {/* Columna 2: Maquinaria */}
-                            <div className="flex flex-col gap-2">
-                                {(() => {
-                                    const cat = CATEGORIES.find(c => c.id === "maquinaria");
-                                    if (!cat) return null;
-                                    return (
-                                        <>
-                                            <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
-                                                {cat.label}
-                                            </Link>
-                                            {cat.subcategories.map((sub) => (
-                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
-                                                    {sub}
-                                                </Link>
-                                            ))}
-                                        </>
-                                    );
-                                })()}
-                            </div>
-
-                            {/* Columna 3: Servicios */}
-                            <div className="flex flex-col gap-2">
-                                {(() => {
-                                    const cat = CATEGORIES.find(c => c.id === "servicios");
-                                    if (!cat) return null;
-                                    return (
-                                        <>
-                                            <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
-                                                {cat.label}
-                                            </Link>
-                                            {cat.subcategories.map((sub) => (
-                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
-                                                    {sub}
-                                                </Link>
-                                            ))}
-                                        </>
-                                    );
-                                })()}
-                            </div>
-
-                            {/* Columna 4: Fincas, Forraje, Alimentos */}
-                            <div className="flex flex-col gap-8">
-                                {["agricultura", "servicios", "fincas", "forraje", "alimentos"].map(catId => {
-                                    const cat = CATEGORIES.find(c => c.id === catId);
-                                    if (!cat) return null;
-                                    return (
-                                        <div key={cat.id} className="flex flex-col gap-2">
-                                            <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
-                                                {cat.label}
-                                            </Link>
-                                            {cat.subcategories.map((sub) => (
-                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
-                                                    {sub}
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                        <div className="columns-1 sm:columns-2 lg:columns-4 gap-x-6 gap-y-8">
+                            {CATEGORIES.slice(0, 14).map(cat => (
+                                <div key={cat.id} className="flex flex-col gap-2 mb-8 break-inside-avoid">
+                                    <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                        {cat.label}
+                                    </Link>
+                                    {cat.subcategories.map((sub) => (
+                                        <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                            {sub}
+                                        </Link>
+                                    ))}
+                                </div>
+                            ))}
                         </div>
                     )}
 
