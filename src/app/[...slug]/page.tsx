@@ -8,6 +8,7 @@ import { LOCATIONS } from "@/constants/locations";
 import { notFound } from "next/navigation";
 import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
 import { DynamicFaqs } from "@/components/seo/DynamicFaqs";
+import { BovineRelatedLinks } from "@/components/seo/BovineRelatedLinks";
 import { generateSeoH1 } from "@/utils/h1Generator";
 
 import { headers } from "next/headers";
@@ -154,6 +155,10 @@ export default async function SearchResultsPage(props: {
 
             <Suspense fallback={<GridSkeleton />}>
                 <ListingsGrid searchParams={combinedParams} />
+            </Suspense>
+
+            <Suspense fallback={null}>
+                <BovineRelatedLinks parsedSlug={parsedSlug} />
             </Suspense>
 
             <Suspense fallback={<div className="h-48 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mt-12 rounded-2xl" />}>
