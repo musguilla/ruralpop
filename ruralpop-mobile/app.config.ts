@@ -1,8 +1,8 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
 const IS_EQUIPOP = process.env.APP_VARIANT === 'equipop' || process.env.EXPO_PUBLIC_TENANT_ID === '69d55371-2f70-4e67-b55c-4502bce305bb';
-const VERSION = '1.0.63';
-const BUILD_NUMBER = 118;
+const VERSION = '1.0.64';
+const BUILD_NUMBER = 119;
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
@@ -74,9 +74,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         "expo-build-properties",
         {
           android: {
-            compileSdkVersion: 35,
-            targetSdkVersion: 35,
-            buildToolsVersion: "35.0.0"
+            compileSdkVersion: 36,
+            targetSdkVersion: 36,
+            buildToolsVersion: "36.0.0"
           }
         }
       ],

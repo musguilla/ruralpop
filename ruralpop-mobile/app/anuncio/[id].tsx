@@ -918,7 +918,6 @@ export default function ListingDetailsScreen() {
                             latitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.1,
                             longitudeDelta: mapCoords.delta === 7.0 ? 5.0 : 0.1,
                         }}
-                        showsUserLocation={true}
                     >
                         <Circle 
                             center={{ latitude: mapCoords.lat, longitude: mapCoords.lon }} 
