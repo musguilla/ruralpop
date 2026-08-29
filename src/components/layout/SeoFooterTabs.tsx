@@ -156,10 +156,10 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                                         {["maquinaria", "recambios-maquinaria"].map(renderCategoryBlock)}
                                     </div>
                                     <div className="flex flex-col gap-8">
-                                        {["agricultura", "fincas"].map(renderCategoryBlock)}
+                                        {["equipamiento-y-material", "forraje"].map(renderCategoryBlock)}
                                     </div>
                                     <div className="flex flex-col gap-8">
-                                        {["servicios", "equipamiento-y-material", "forraje"].map(renderCategoryBlock)}
+                                        {["servicios", "agricultura", "fincas"].map(renderCategoryBlock)}
                                     </div>
                                 </div>
                             );
