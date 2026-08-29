@@ -95,7 +95,11 @@ export default function ListingDetailsScreen() {
                 if (data.location) {
                     const locStr = typeof data.location === 'object' ? (data.location as any).name : data.location;
                     if (locStr && locStr !== 'Toda España' && locStr.trim() !== '') {
-                        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locStr + ', España')}&format=json&limit=1`)
+                        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locStr + ', España')}&format=json&limit=1`, {
+                            headers: {
+                                'User-Agent': 'RuralpopMobileApp/1.0 (contacto@ruralpop.com)'
+                            }
+                        })
                             .then(res => res.json())
                             .then(json => {
                                 if (json && json.length > 0) {
@@ -580,6 +584,7 @@ export default function ListingDetailsScreen() {
                             <View pointerEvents="none" style={{ flex: 1 }}>
                                 {Platform.OS === 'ios' || process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ? (
                                     <MapView
+                                        key={`inline-map-${mapCoords.lat}-${mapCoords.lon}`}
                                         style={{ flex: 1 }}
                                         region={{
                                             latitude: mapCoords.lat,
@@ -919,6 +924,7 @@ export default function ListingDetailsScreen() {
                 <View className="flex-1 bg-white">
                     {Platform.OS === 'ios' || process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ? (
                         <MapView
+                            key={`map-${mapCoords.lat}-${mapCoords.lon}`}
                             style={{ flex: 1 }}
                             initialRegion={{
                                 latitude: mapCoords.lat,
