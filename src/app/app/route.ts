@@ -5,8 +5,8 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
     const userAgent = request.headers.get('user-agent')?.toLowerCase() || '';
 
-    // URLs por defecto (Ruralpop)
-    let redirectUrl = 'https://ruralpop.com';
+    // URLs por defecto (Ruralpop) - Redirige a la sección de la app en escritorio
+    let redirectUrl = 'https://ruralpop.com/#app';
 
     // Detección de dispositivo
     if (/android/i.test(userAgent)) {
