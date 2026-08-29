@@ -80,16 +80,6 @@ const INVERSE_SUBCATEGORY_ALIASES = Object.fromEntries(
 export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlParams, locale: string = 'es'): string {
     const parts: string[] = [];
 
-    // Keyword or base
-    if (q && q.trim()) {
-        parts.push(translateSeoSlug(slugify(q), locale));
-        if (province_id) {
-            const locSlug = locationIdMap.get(province_id);
-            if (locSlug) parts.push(locSlug);
-        }
-        return `/${parts.join('-')}`;
-    }
-
     // Category
     if (category && validCategories.has(category)) {
         parts.push(translateSeoSlug(CATEGORY_ALIASES[category] || category, locale));
@@ -99,6 +89,11 @@ export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlPar
     if (subcategory) {
         const subSlug = subcategoryIdMap.get(subcategory) || slugify(subcategory);
         parts.push(translateSeoSlug(SUBCATEGORY_ALIASES[subSlug] || subSlug, locale));
+    }
+
+    // Keyword or base
+    if (q && q.trim()) {
+        parts.push(translateSeoSlug(slugify(q), locale));
     }
 
     // Location (we usually don't translate location names)
@@ -177,10 +172,10 @@ export function parseSeoUrl(slug: string | string[]): SeoUrlParams {
         qParts = parts;
     }
 
-    // 3. Subcategory parsing (always backwards, prefer subParts but fallback to qParts)
+    // 3. Subcategory parsing (search from beginning to support /category/subcategory/keyword)
     const checkSub = (arr: string[]) => {
-        for (let i = 1; i <= arr.length; i++) {
-            const potentialSub = arr.slice(arr.length - i).join('-');
+        for (let i = arr.length; i >= 1; i--) {
+            const potentialSub = arr.slice(0, i).join('-');
             const realSubSlug = INVERSE_SUBCATEGORY_ALIASES[potentialSub] || potentialSub;
             if (subcategorySlugMap.has(realSubSlug)) {
                 return { sub: subcategorySlugMap.get(realSubSlug)!, size: i };
@@ -193,7 +188,7 @@ export function parseSeoUrl(slug: string | string[]): SeoUrlParams {
         const subMatch = checkSub(subParts);
         if (subMatch) {
             subcategory = subMatch.sub;
-            subParts = subParts.slice(0, subParts.length - subMatch.size);
+            subParts = subParts.slice(subMatch.size);
             qParts = [...qParts, ...subParts]; 
         } else {
             qParts = [...qParts, ...subParts];
@@ -202,7 +197,7 @@ export function parseSeoUrl(slug: string | string[]): SeoUrlParams {
         const subMatch = checkSub(qParts);
         if (subMatch) {
             subcategory = subMatch.sub;
-            qParts = qParts.slice(0, qParts.length - subMatch.size);
+            qParts = qParts.slice(subMatch.size);
         }
     }
 

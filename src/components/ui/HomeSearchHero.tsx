@@ -61,20 +61,14 @@ export function HomeSearchHero() {
     const handleSearch = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         
-        const useQInSlug = !category && !subcategory;
-        
         const url = buildSeoUrl({
-            q: useQInSlug ? query.trim() : undefined,
+            q: query.trim(),
             category: category,
             subcategory: subcategory,
             province_id: location
         }, locale);
         
         const params = new URLSearchParams();
-        if (query.trim() && !useQInSlug) {
-            params.set("q", query.trim());
-        }
-        
         const queryStr = params.toString();
         const fullUrl = `${url}${queryStr ? '?' + queryStr : ''}`;
         
