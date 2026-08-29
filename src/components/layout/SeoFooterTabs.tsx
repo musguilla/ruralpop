@@ -129,20 +129,41 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                     )}
 
                     {activeTab === "categories" && !isEquipop && (
-                        <div className="columns-1 sm:columns-2 lg:columns-4 gap-x-6 gap-y-8">
-                            {CATEGORIES.slice(0, 14).map(cat => (
-                                <div key={cat.id} className="flex flex-col gap-2 mb-8 break-inside-avoid">
-                                    <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
-                                        {cat.label}
-                                    </Link>
-                                    {cat.subcategories.map((sub) => (
-                                        <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
-                                            {sub}
+                        (() => {
+                            const renderCategoryBlock = (catId: string) => {
+                                const cat = CATEGORIES.find(c => c.id === catId);
+                                if (!cat) return null;
+                                return (
+                                    <div key={cat.id} className="flex flex-col gap-2">
+                                        <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
+                                            {cat.label}
                                         </Link>
-                                    ))}
+                                        {cat.subcategories.map((sub) => (
+                                            <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                {sub}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                );
+                            };
+
+                            return (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8">
+                                    <div className="flex flex-col gap-8">
+                                        {["ganaderia", "alimentos", "camiones-y-furgonetas", "coches", "atv", "motos", "genetica-y-reproduccion"].map(renderCategoryBlock)}
+                                    </div>
+                                    <div className="flex flex-col gap-8">
+                                        {["maquinaria", "recambios-maquinaria"].map(renderCategoryBlock)}
+                                    </div>
+                                    <div className="flex flex-col gap-8">
+                                        {["agricultura", "fincas"].map(renderCategoryBlock)}
+                                    </div>
+                                    <div className="flex flex-col gap-8">
+                                        {["servicios", "equipamiento-y-material", "forraje"].map(renderCategoryBlock)}
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                            );
+                        })()
                     )}
 
                     {activeTab === "popular" && isEquipop && (
