@@ -60,7 +60,7 @@ export async function HomeDirectBuySlider() {
     if (locale !== 'pt') {
         query = query.or(`and(or(province_id.lt.100,province_id.is.null),or(${tenantFilterString}))`);
     } else {
-        query = query.or(tenantFilterString);
+        query = query.gte("province_id", 100).or(tenantFilterString);
     }
     
 
