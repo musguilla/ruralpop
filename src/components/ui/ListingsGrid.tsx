@@ -172,6 +172,11 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
                     const muniId = locationFilter.substring(1);
                     query = query.eq("municipality_id", muniId);
                 }
+            } else if (locationFilter.startsWith('c-')) {
+                const community = LOCATIONS.find((l: { id: string }) => l.id === locationFilter);
+                if (community && community.provinces) {
+                    query = query.in("province_id", community.provinces);
+                }
             } else {
                 query = query.eq("province_id", locationFilter);
             }

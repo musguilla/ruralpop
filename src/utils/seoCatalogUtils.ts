@@ -27,6 +27,11 @@ export async function getCatalogSeoData(parsedSlug: any): Promise<CatalogSeoData
                 const muniId = locFilter.substring(1);
                 query = query.eq("municipality_id", muniId);
             }
+        } else if (locFilter.startsWith('c-')) {
+            const community = LOCATIONS.find((l: { id: string }) => l.id === locFilter);
+            if (community && community.provinces) {
+                query = query.in("province_id", community.provinces);
+            }
         } else {
             query = query.eq("province_id", parsedSlug.province_id);
         }

@@ -21,7 +21,7 @@ async function run() {
             created_at, 
             image_urls,
             user_id,
-            users:user_id (id, full_name, email, raw_user_meta_data)
+            users:user_id (id, name, email, raw_user_meta_data)
         `)
         .order('created_at', { ascending: false })
         .limit(20);
@@ -38,7 +38,7 @@ async function run() {
         console.log(`\n- ${item.title}`);
         console.log(`  User ID: ${item.user_id}`);
         console.log(`  User Email: ${item.users?.email}`);
-        console.log(`  User Name: ${item.users?.full_name}`);
+        console.log(`  User Name: ${item.users?.name}`);
         console.log(`  Meta: ${JSON.stringify(item.users?.raw_user_meta_data || {})}`);
     });
 }
