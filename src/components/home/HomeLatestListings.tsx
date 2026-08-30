@@ -50,7 +50,7 @@ export async function HomeLatestListings() {
         listings = data || [];
     } else {
         const limitPerCategory = 6;
-        const subcategoriesToMix = ['Equino', 'Ovino', 'Caprino', 'Bovino'];
+        const subcategoriesToMix = ['equino', 'ovino', 'caprino', 'bovino'];
         
         const queries = subcategoriesToMix.map(subcat => {
             let q = supabase
