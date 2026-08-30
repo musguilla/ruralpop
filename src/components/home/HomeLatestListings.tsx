@@ -28,7 +28,7 @@ export async function HomeLatestListings() {
         .eq("users.is_ghost", false)
         .neq("image_urls", "{}") // Only listings with photos
         .order("created_at", { ascending: false })
-        .limit(12);
+        .limit(locale === 'pt' ? 20 : 12);
 
     
     

@@ -13,6 +13,10 @@ export async function AppBanner() {
     const locale = headersList.get('x-locale') || 'es';
     const isPt = locale === 'pt';
     
+    if (isPt) {
+        return null; // Ocultar el banner verde en PT temporalmente
+    }
+
     const bgColor = isEquipop ? 'bg-blue-50' : 'bg-[#f4fcf7]';
 
     return (
