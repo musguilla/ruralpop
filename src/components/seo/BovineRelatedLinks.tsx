@@ -93,7 +93,7 @@ export async function BovineRelatedLinks({ parsedSlug }: BovineRelatedLinksProps
                     {relatedTerms.map(term => (
                         <Link 
                             key={term} 
-                            href={`/${slugify(term)}`}
+                            href={`/ganaderia/bovino/${slugify(term)}`}
                             className="text-sm bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] hover:border-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-text-muted)] px-3 py-1.5 rounded-full transition-colors"
                         >
                             {term}
