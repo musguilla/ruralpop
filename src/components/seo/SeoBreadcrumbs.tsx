@@ -73,13 +73,13 @@ export function SeoBreadcrumbs({ parsedSlug, locationName, locale, brandName = "
     }
 
     return (
-        <nav aria-label="Breadcrumb" className="mb-4 mt-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
-            <ol className="flex items-center space-x-2 text-sm text-[var(--ag-sys-color-text-muted)]">
+        <nav aria-label="Breadcrumb" className="mb-4 sm:mb-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <ol className="flex items-center text-sm text-[var(--ag-sys-color-text-muted)]">
                 {crumbs.map((crumb, index) => {
                     const isLast = index === crumbs.length - 1;
                     return (
                         <li key={index} className="flex items-center">
-                            {index > 0 && <ChevronRight className="w-4 h-4 mx-2 flex-shrink-0 opacity-50" />}
+                            {index > 0 && <ChevronRight className="w-4 h-4 mx-1.5 flex-shrink-0 opacity-50" />}
                             {isLast ? (
                                 <span className="font-bold text-[var(--ag-sys-color-text)]" aria-current="page">
                                     {crumb.name}

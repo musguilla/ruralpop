@@ -149,9 +149,9 @@ export default async function SearchResultsPage(props: {
     const brandName = isEquipop ? "Equipop" : "Ruralpop";
 
     return (
-        <div className="container mx-auto px-4 pt-0 pb-8 sm:py-8 min-h-screen">
+        <div className="container mx-auto px-4 pt-4 pb-8 sm:pt-6 sm:pb-8 min-h-screen">
             <SeoBreadcrumbs parsedSlug={parsedSlug} locationName={locationName} locale={locale} brandName={brandName} />
-            <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2 pt-2 sm:pt-0">
+            <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2">
                 {generateSeoH1(parsedSlug, locationName, locale)}
             </h1>
 
