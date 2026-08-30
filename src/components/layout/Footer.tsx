@@ -67,10 +67,10 @@ export async function Footer() {
                     <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         {t("conexion_rural")}
                     </span>
-                    <LocalizedLink href="/catalogos/tractores" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <LocalizedLink href="/catalogos/tractores" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors whitespace-nowrap">
                         {t("catalogos_tractores")}
                     </LocalizedLink>
-                    <LocalizedLink href="/magazine" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <LocalizedLink href="/magazine" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors whitespace-nowrap">
                         {t("magazine")}
                     </LocalizedLink>
                 </div>
@@ -83,10 +83,10 @@ export async function Footer() {
                     <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         {t("informacion")}
                     </span>
-                    <LocalizedLink href="/preguntas-frecuentes" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <LocalizedLink href="/preguntas-frecuentes" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors whitespace-nowrap">
                         {t("faq")}
                     </LocalizedLink>
-                    <LocalizedLink href="/empresas-profesionales-sector-rural" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                    <LocalizedLink href="/empresas-profesionales-sector-rural" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors whitespace-nowrap">
                         {t("eres_profesional")}
                     </LocalizedLink>
                 </div>
