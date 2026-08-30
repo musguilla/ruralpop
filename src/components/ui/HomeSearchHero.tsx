@@ -72,8 +72,8 @@ export function HomeSearchHero() {
         const queryStr = params.toString();
         const fullUrl = `${url}${queryStr ? '?' + queryStr : ''}`;
         
-        if (fullUrl === '/') {
-            router.push('/?sort=recent');
+        if (fullUrl === '/' || fullUrl === '/pt') {
+            router.push(getPath('/?sort=recent'));
         } else {
             router.push(getPath(fullUrl));
         }

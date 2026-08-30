@@ -102,9 +102,11 @@ export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlPar
         if (locSlug) parts.push(locSlug);
     }
 
-    if (parts.length === 0) return '/';
+    const prefix = locale === 'pt' ? '/pt' : '';
+
+    if (parts.length === 0) return prefix || '/';
     
-    return `/${parts.join('/')}`;
+    return `${prefix}/${parts.join('/')}`;
 }
 
 export function parseSeoUrl(slug: string | string[]): SeoUrlParams {
