@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { DynamicSeoBlock } from "@/components/seo/DynamicSeoBlock";
 import { DynamicFaqs } from "@/components/seo/DynamicFaqs";
 import { BovineRelatedLinks } from "@/components/seo/BovineRelatedLinks";
+import { SeoBreadcrumbs } from "@/components/seo/SeoBreadcrumbs";
 import { generateSeoH1 } from "@/utils/h1Generator";
 
 import { headers } from "next/headers";
@@ -143,8 +144,13 @@ export default async function SearchResultsPage(props: {
     if (parsedSlug.subcategory) combinedParams.subcategory = parsedSlug.subcategory;
     if (parsedSlug.province_id) combinedParams.province_id = parsedSlug.province_id;
 
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    const brandName = isEquipop ? "Equipop" : "Ruralpop";
+
     return (
         <div className="container mx-auto px-4 pt-0 pb-8 sm:py-8 min-h-screen">
+            <SeoBreadcrumbs parsedSlug={parsedSlug} locationName={locationName} locale={locale} brandName={brandName} />
             <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2 pt-2 sm:pt-0">
                 {generateSeoH1(parsedSlug, locationName, locale)}
             </h1>
