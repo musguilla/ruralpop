@@ -14,17 +14,18 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
     const [selectedTags, setSelectedTags] = useState<string[]>(initialTags || []);
     const [searchTerm, setSearchTerm] = useState("");
 
-    // Limpiar tags si cambia la categoría/subcategoría principal,
-    // salvo en el render inicial donde queremos mantener initialTags
-    const [isFirstRender, setIsFirstRender] = useState(true);
+    // Limpiar tags si cambia la categoría/subcategoría principal
+    // Solo lo hacemos si realmente ha cambiado respecto al valor inicial
+    const prevCatRef = React.useRef(category);
+    const prevSubcatRef = React.useRef(subcategory);
 
     useEffect(() => {
-        if (isFirstRender) {
-            setIsFirstRender(false);
-            return;
+        if (prevCatRef.current !== category || prevSubcatRef.current !== subcategory) {
+            setSelectedTags([]);
+            setSearchTerm("");
+            prevCatRef.current = category;
+            prevSubcatRef.current = subcategory;
         }
-        setSelectedTags([]);
-        setSearchTerm("");
     }, [category, subcategory]);
 
     // Obtener las etiquetas disponibles para la categoría/subcategoría actual
@@ -50,11 +51,6 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
                 list = PREDEFINED_TAGS[key];
                 break;
             }
-        }
-        
-        // Fallback genérico si no encuentra
-        if (list.length === 0 && PREDEFINED_TAGS["otros"]) {
-            list = PREDEFINED_TAGS["otros"];
         }
         
         return list;

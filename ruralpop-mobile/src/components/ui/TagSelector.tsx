@@ -17,16 +17,17 @@ export function TagSelector({ category, subcategory, title = "", initialTags = [
     const [selectedTags, setSelectedTags] = useState<string[]>(initialTags || []);
     const [searchTerm, setSearchTerm] = useState("");
 
-    const [isFirstRender, setIsFirstRender] = useState(true);
+    const prevCatRef = React.useRef(category);
+    const prevSubcatRef = React.useRef(subcategory);
 
     useEffect(() => {
-        if (isFirstRender) {
-            setIsFirstRender(false);
-            return;
+        if (prevCatRef.current !== category || prevSubcatRef.current !== subcategory) {
+            setSelectedTags([]);
+            setSearchTerm("");
+            onTagsChange([]);
+            prevCatRef.current = category;
+            prevSubcatRef.current = subcategory;
         }
-        setSelectedTags([]);
-        setSearchTerm("");
-        onTagsChange([]);
     }, [category, subcategory]);
 
     const availableTags = useMemo(() => {
@@ -76,14 +77,6 @@ export function TagSelector({ category, subcategory, title = "", initialTags = [
             if ((subKeyNormalized && keyNormalized === subKeyNormalized) || keyNormalized === catKeyNormalized) {
                 list = PREDEFINED_TAGS[key as keyof typeof PREDEFINED_TAGS];
                 break;
-            }
-        }
-        
-        if (list.length === 0) {
-            if (IS_EQUIPOP) {
-                list = [];
-            } else if (PREDEFINED_TAGS["otros"]) {
-                list = PREDEFINED_TAGS["otros"];
             }
         }
         
