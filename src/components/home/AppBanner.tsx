@@ -45,7 +45,7 @@ export async function AppBanner() {
                 {/* Lado derecho: Imagen unificada proporcionada por el usuario */}
                 <div className="z-10 flex items-end justify-end w-full md:w-[55%] lg:w-[55%] pt-4 md:pt-0">
                     <Image 
-                        src="/descargar-app-ruralpop.jpg" 
+                        src={isPt ? "/descargar-app-ruralpop-pt.jpg" : "/descargar-app-ruralpop.jpg"} 
                         alt={isPt ? `Lê o código para descarregar a app da ${brandName}` : `Escanea para descargar la app de ${brandName}`}
                         width={900}
                         height={600}
