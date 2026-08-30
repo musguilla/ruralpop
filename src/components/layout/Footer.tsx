@@ -82,9 +82,11 @@ export async function Footer() {
                     <LocalizedLink href="/catalogos/tractores" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors whitespace-nowrap">
                         {t("catalogos_tractores")}
                     </LocalizedLink>
-                    <LocalizedLink href="/magazine" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors whitespace-nowrap">
-                        {t("magazine")}
-                    </LocalizedLink>
+                    {locale !== 'pt' && (
+                        <LocalizedLink href="/magazine" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors whitespace-nowrap">
+                            {t("magazine")}
+                        </LocalizedLink>
+                    )}
                 </div>
 
                 {/* Vertical Divider 3 */}
