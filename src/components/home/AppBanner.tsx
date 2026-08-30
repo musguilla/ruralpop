@@ -11,7 +11,7 @@ export async function AppBanner() {
     const bgColor = isEquipop ? 'bg-blue-50' : 'bg-[#f4fcf7]';
 
     return (
-        <section id="app" className={`w-full ${bgColor} mt-4 mb-12 rounded-2xl border border-gray-100 overflow-hidden`}>
+        <section id="app" className={`w-full ${bgColor} mt-4 mb-12 rounded-2xl border border-gray-200 overflow-hidden`}>
             <div className="px-6 pt-8 md:px-12 md:pt-12 flex flex-col md:flex-row items-center md:items-end justify-between gap-8 md:gap-4">
                 
                 {/* Lado izquierdo: Textos y botones */}
