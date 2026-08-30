@@ -4,6 +4,7 @@ import { CATEGORIES } from '@/constants/categories';
 import { ChevronRight, Home } from 'lucide-react';
 import { buildSeoUrl } from '@/utils/seoUtils';
 import { LocaleCode } from '@/i18n/config';
+import { getDictionary } from '@/i18n/dictionaries';
 
 interface SeoBreadcrumbsProps {
     parsedSlug: {
@@ -17,11 +18,13 @@ interface SeoBreadcrumbsProps {
     brandName?: string;
 }
 
-export function SeoBreadcrumbs({ parsedSlug, locationName, locale, brandName = "Inicio" }: SeoBreadcrumbsProps) {
+export async function SeoBreadcrumbs({ parsedSlug, locationName, locale, brandName = "Inicio" }: SeoBreadcrumbsProps) {
     const { category, subcategory, q, province_id } = parsedSlug;
     
     // We shouldn't show breadcrumbs if there is no query at all
     if (!category && !subcategory && !q && !locationName) return null;
+
+    const dict = await getDictionary(locale);
 
     // Use "en" or "em" based on locale
     const inLoc = locale === 'pt' ? 'em' : 'en';
@@ -32,7 +35,14 @@ export function SeoBreadcrumbs({ parsedSlug, locationName, locale, brandName = "
 
     if (category) {
         const catObj = CATEGORIES.find(c => c.id === category);
-        const name = catObj ? catObj.label : (category.charAt(0).toUpperCase() + category.slice(1));
+        let name = catObj ? catObj.label : (category.charAt(0).toUpperCase() + category.slice(1));
+        
+        // Translate category
+        const dictCategory = dict.category as Record<string, string>;
+        if (dictCategory && dictCategory[category]) {
+            name = dictCategory[category];
+        }
+
         crumbs.push({ 
             name: `${name}${locSuffix}`, 
             url: buildSeoUrl({ category, province_id }, locale) 
@@ -50,6 +60,13 @@ export function SeoBreadcrumbs({ parsedSlug, locationName, locale, brandName = "
         } else {
             name = subcategory.charAt(0).toUpperCase() + subcategory.slice(1);
         }
+        
+        // Translate subcategory
+        const dictCategory = dict.category as Record<string, string>;
+        if (dictCategory && dictCategory[name]) {
+            name = dictCategory[name];
+        }
+
         crumbs.push({ 
             name: `${name}${locSuffix}`, 
             url: buildSeoUrl({ category, subcategory, province_id }, locale) 
@@ -66,8 +83,9 @@ export function SeoBreadcrumbs({ parsedSlug, locationName, locale, brandName = "
     
     // If there is ONLY a location
     if (!category && !subcategory && !q && locationName) {
+        const anunciosWord = dict.anuncios || "Anuncios";
         crumbs.push({ 
-            name: `Anuncios${locSuffix}`, 
+            name: `${anunciosWord}${locSuffix}`, 
             url: buildSeoUrl({ province_id }, locale) 
         });
     }
