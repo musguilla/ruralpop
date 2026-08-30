@@ -2,7 +2,7 @@ import React from 'react';
 import { createClient } from "@/utils/supabase/server";
 import { ListingCard, type Listing } from "@/components/ui/ListingCard";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
-import { getServerTenantFilterString } from "@/utils/tenant/server";
+import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
 import { LocalizedLink } from "@/components/ui/LocalizedLink";
 import { ArrowRight } from "lucide-react";
 import { headers } from "next/headers";
@@ -17,30 +17,91 @@ export async function HomeLatestListings() {
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
     const t = await getDictionary(locale);
     
-    // Fetch latest active listings that have images
-    let query = supabase
-        .from("listings")
-        .select(`
-            id, title, title_pt, description_pt, price, location, image_urls, created_at, category, price_type, is_featured,
-            users!inner(is_ghost)
-        `)
-        .eq("status", "active")
-        .eq("users.is_ghost", false)
-        .neq("image_urls", "{}") // Only listings with photos
-        .order("created_at", { ascending: false })
-        .limit(locale === 'pt' ? 20 : 12);
+    // Asymmetric Country filter builder
+    const applyCountryFilter = (q: any) => {
+        if (locale !== 'pt') {
+            return q.or(`and(or(province_id.lt.100,province_id.is.null),or(${tenantFilterString}))`);
+        } else {
+            return q.gte("province_id", 100).or(tenantFilterString);
+        }
+    };
 
-    
-    
-    // Asymmetric Country filter (ROBUST PostgREST syntax)
-    if (locale !== 'pt') {
-        query = query.or(`and(or(province_id.lt.100,province_id.is.null),or(${tenantFilterString}))`);
+    const tenant = await getServerTenantSlug();
+    const isEquipop = tenant === 'equipop';
+    let listings: any[] = [];
+    let error = null;
+
+    if (isEquipop) {
+        let query = supabase
+            .from("listings")
+            .select(`
+                id, title, title_pt, description_pt, price, location, image_urls, created_at, category, price_type, is_featured,
+                users!inner(is_ghost)
+            `)
+            .eq("status", "active")
+            .eq("users.is_ghost", false)
+            .neq("image_urls", "{}")
+            .order("created_at", { ascending: false })
+            .limit(locale === 'pt' ? 24 : 12);
+            
+        query = applyCountryFilter(query);
+        const { data, error: qError } = await query;
+        error = qError;
+        listings = data || [];
     } else {
-        query = query.gte("province_id", 100).or(tenantFilterString);
-    }
-    
+        const limitPerCategory = 6;
+        const subcategoriesToMix = ['Equino', 'Ovino', 'Caprino', 'Bovino'];
+        
+        const queries = subcategoriesToMix.map(subcat => {
+            let q = supabase
+                .from("listings")
+                .select(`
+                    id, title, title_pt, description_pt, price, location, image_urls, created_at, category, price_type, is_featured,
+                    users!inner(is_ghost)
+                `)
+                .eq("status", "active")
+                .eq("users.is_ghost", false)
+                .neq("image_urls", "{}")
+                .eq("subcategory", subcat)
+                .order("created_at", { ascending: false })
+                .limit(limitPerCategory);
+            return applyCountryFilter(q);
+        });
 
-    const { data: listings, error } = await query;
+        let qOthers = supabase
+            .from("listings")
+            .select(`
+                id, title, title_pt, description_pt, price, location, image_urls, created_at, category, price_type, is_featured,
+                users!inner(is_ghost)
+            `)
+            .eq("status", "active")
+            .eq("users.is_ghost", false)
+            .neq("image_urls", "{}")
+            .not("subcategory", "in", `(${subcategoriesToMix.join(',')})`)
+            .order("created_at", { ascending: false })
+            .limit(limitPerCategory);
+            
+        queries.push(applyCountryFilter(qOthers));
+
+        const results = await Promise.all(queries);
+        
+        // Verifica si hubo algún error en las peticiones
+        const err = results.find(r => r.error);
+        if (err) {
+            error = err.error;
+        } else {
+            // Interleave
+            const mixedListings = [];
+            for (let i = 0; i < limitPerCategory; i++) {
+                for (let j = 0; j < results.length; j++) {
+                    if (results[j].data && results[j].data[i]) {
+                        mixedListings.push(results[j].data[i]);
+                    }
+                }
+            }
+            listings = mixedListings.slice(0, 24); // Cap to 24 (6 rows of 4)
+        }
+    }
 
     if (error) {
         console.error("Error fetching latest listings:", error);
