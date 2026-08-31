@@ -50,7 +50,7 @@ export async function HomeLatestListings() {
         listings = data || [];
     } else {
         const limitPerCategory = 6;
-        const subcategoriesToMix = ['equino', 'ovino', 'caprino', 'bovino'];
+        const subcategoriesToMix = ['Equino', 'Ovino', 'Caprino', 'Bovino'];
         
         const queries = subcategoriesToMix.map(subcat => {
             let q = supabase
@@ -62,11 +62,14 @@ export async function HomeLatestListings() {
                 .eq("status", "active")
                 .eq("users.is_ghost", false)
                 .neq("image_urls", "{}")
-                .eq("subcategory", subcat)
+                .ilike("subcategory", subcat)
                 .order("created_at", { ascending: false })
                 .limit(limitPerCategory);
             return applyCountryFilter(q);
         });
+
+        // Ensure we exclude both capitalized and lowercase versions for the 'others' category
+        const excludedSubcats = subcategoriesToMix.flatMap(s => [s, s.toLowerCase()]);
 
         let qOthers = supabase
             .from("listings")
@@ -77,7 +80,7 @@ export async function HomeLatestListings() {
             .eq("status", "active")
             .eq("users.is_ghost", false)
             .neq("image_urls", "{}")
-            .not("subcategory", "in", `(${subcategoriesToMix.join(',')})`)
+            .not("subcategory", "in", `(${excludedSubcats.join(',')})`)
             .order("created_at", { ascending: false })
             .limit(limitPerCategory);
             
