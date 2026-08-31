@@ -8,6 +8,7 @@ export interface SeoLanding {
     subcategory?: string;
     province?: string;
     searchQuery?: string;
+    customUrl?: string;
     description: string;
     faqs: { question: string; answer: string }[];
 }
@@ -52,14 +53,14 @@ const rawLandings = [
     // --- NUEVAS CATEGORIAS HARDCODEADAS PARA SEO ---
     { title: "Quintas rústicas", category: "fincas", description: "Encontre quintas rústicas, terrenos e parcelas agrícolas para venda e arrendamento." },
     { title: "Quintas na Andaluzia", category: "fincas", province: "Sevilla" },
-    { title: "Quintas na Galiza", category: "fincas", province: "A Coruña" },
+    { title: "Vitela", category: "ganaderia", subcategory: "Bovino", customUrl: "/pt/pecuaria/bovinos/vitela" },
     { title: "Material de Apicultura", category: "ganaderia", subcategory: "Apicultura" },
     { title: "Ceifeiras-debulhadoras em segunda mão", category: "maquinaria", subcategory: "Cosechadoras" },
     { title: "Gadanheiras de ocasião", category: "maquinaria", subcategory: "Segadoras" },
     { title: "Roçadoras florestais e agrícolas", category: "maquinaria", subcategory: "Desbrozadoras" },
     { title: "Serviços de Manutenção de quintas", category: "servicios", subcategory: "Mantenimiento de fincas" },
     { title: "Vedações e cercas para quintas", category: "servicios", subcategory: "Cerramientos y vallados" },
-    { title: "Construção rural", category: "servicios", subcategory: "Construcción rural" },
+    { title: "Cordeiros", category: "ganaderia", subcategory: "Ovino", customUrl: "/pt/pecuaria/ovinos/cordeiros" },
     { title: "Serviços de Tosquiadores", category: "servicios", subcategory: "Esquiladores" },
     { title: "Serviços florestais", category: "servicios", subcategory: "Servicios forestales" },
     { title: "Reboques agrícolas usados", category: "maquinaria", subcategory: "Remolques" },

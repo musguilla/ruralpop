@@ -8,6 +8,7 @@ import { useCategories } from "@/context/CategoriesContext";
 import { buildSeoUrl } from "@/utils/seoUtils";
 
 import { SEO_LANDINGS } from "@/constants/seoLandings";
+import { SEO_LANDINGS_PT } from "@/constants/seoLandingsPt";
 import { usePathname } from "next/navigation";
 
 export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { categories: string[], subcategories: string[] } }) {
@@ -16,6 +17,8 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<"provinces" | "categories" | "popular">("popular");
     const [isEquipop, setIsEquipop] = useState(false);
+
+    const landingsToUse = locale === 'pt' ? SEO_LANDINGS_PT : SEO_LANDINGS;
 
     React.useEffect(() => {
         const isEq = window.location.hostname.includes("equipop");
@@ -174,10 +177,10 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
 
                     {activeTab === "popular" && !isEquipop && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-4 gap-x-6">
-                            {SEO_LANDINGS.map((landing) => (
+                            {landingsToUse.map((landing) => (
                                 <Link
                                     key={landing.slug}
-                                    href={`/s/${landing.slug}`}
+                                    href={landing.customUrl || `/s/${landing.slug}`}
                                     className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors"
                                 >
                                     {landing.title}

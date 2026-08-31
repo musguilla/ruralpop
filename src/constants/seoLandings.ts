@@ -8,6 +8,7 @@ export interface SeoLanding {
     subcategory?: string;
     province?: string;
     searchQuery?: string;
+    customUrl?: string;
     description: string;
     faqs: { question: string; answer: string }[];
 }
@@ -52,14 +53,14 @@ const rawLandings = [
     // --- NUEVAS CATEGORIAS HARDCODEADAS PARA SEO ---
     { title: "Fincas rústicas", category: "fincas", description: "Encuentra fincas rústicas, terrenos y parcelas agrícolas en venta y alquiler." },
     { title: "Fincas en Andalucía", category: "fincas", province: "Sevilla" },
-    { title: "Fincas en Galicia", category: "fincas", province: "A Coruña" },
+    { title: "Terneros", category: "ganaderia", subcategory: "Bovino", customUrl: "/ganaderia/bovino/terneros" },
     { title: "Material de Apicultura", category: "ganaderia", subcategory: "Apicultura" },
     { title: "Cosechadoras de segunda mano", category: "maquinaria", subcategory: "Cosechadoras" },
     { title: "Segadoras de ocasión", category: "maquinaria", subcategory: "Segadoras" },
     { title: "Desbrozadoras forestales y agrícolas", category: "maquinaria", subcategory: "Desbrozadoras" },
     { title: "Servicios de Mantenimiento de fincas", category: "servicios", subcategory: "Mantenimiento de fincas" },
     { title: "Cerramientos y vallados de fincas", category: "servicios", subcategory: "Cerramientos y vallados" },
-    { title: "Construcción rural", category: "servicios", subcategory: "Construcción rural" },
+    { title: "Corderos", category: "ganaderia", subcategory: "Ovino", customUrl: "/ganaderia/ovino/corderos" },
     { title: "Servicios de Esquiladores", category: "servicios", subcategory: "Esquiladores" },
     { title: "Servicios forestales", category: "servicios", subcategory: "Servicios forestales" },
     { title: "Remolques agrícolas usados", category: "maquinaria", subcategory: "Remolques" },
