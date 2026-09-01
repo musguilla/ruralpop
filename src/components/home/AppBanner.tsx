@@ -16,6 +16,10 @@ export async function AppBanner() {
     if (isPt) {
         return null; // Ocultar el banner verde en PT temporalmente
     }
+    
+    if (isEquipop) {
+        return null; // Ocultar el banner de descarga de la app en Equipop
+    }
 
     const bgColor = isEquipop ? 'bg-blue-50' : 'bg-[#f4fcf7]';
 
