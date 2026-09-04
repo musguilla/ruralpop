@@ -19,15 +19,28 @@ export class SieroParser {
         
         // 2. Find links to PDFs. We look for "Precios Lunes Vida", "Precio Lunes Abasto", "Precios Jueves Terneros"
         const pdfLinks: { url: string, type: string }[] = [];
+        
+        // Support old structure
         $('a').each((i, el) => {
             const href = $(el).attr('href');
             const text = $(el).text().toLowerCase();
             if (href && href.endsWith('.pdf')) {
-                if (text.includes('precio') || text.includes('cotización')) {
+                if (text.includes('precio') || text.includes('cotización') || text.includes('cotizaci')) {
                     if (text.includes('vida')) pdfLinks.push({ url: href, type: 'vida' });
                     else if (text.includes('abasto')) pdfLinks.push({ url: href, type: 'abasto' });
                     else if (text.includes('terneros') || text.includes('jueves')) pdfLinks.push({ url: href, type: 'recría' });
                 }
+            }
+        });
+
+        // Support new structure WP File Download
+        $('input.wpfd_file_preview_link_download').each((i, el) => {
+            const url = $(el).attr('value');
+            const text = ($(el).attr('data-filetitle') || '').toLowerCase();
+            if (url && (text.includes('precio') || text.includes('cotizaci'))) {
+                if (text.includes('vida')) pdfLinks.push({ url, type: 'vida' });
+                else if (text.includes('abasto')) pdfLinks.push({ url, type: 'abasto' });
+                else if (text.includes('terneros') || text.includes('jueves')) pdfLinks.push({ url, type: 'recría' });
             }
         });
         

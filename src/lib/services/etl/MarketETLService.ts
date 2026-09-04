@@ -73,11 +73,21 @@ export class MarketETLService {
                 if (existingSnapshot) {
                     console.log(`Skipping ${source.name}: Content has not changed since last successful fetch (checksum match).`);
                     
-                    // Si se ha pedido forzar (sourceId existe) lanzamos un error amigable para que la UI no marque un falso éxito nuevo.
-                    if (sourceId) {
-                        throw new Error("El archivo original en la web no ha cambiado. No hay precios nuevos que importar.");
-                    }
+                    // Update success timestamp and clear error (since the connection was successful, just no new data)
+                    await supabase
+                        .from('market_sources')
+                        .update({ 
+                            last_success_at: new Date().toISOString(),
+                            last_error_at: null 
+                        })
+                        .eq('id', source.id);
                     
+                    if (sourceId) {
+                        // Throwing here would mark it as an error in the catch block. 
+                        // Instead, we throw a special object or just log it, but the UI expects a success if nothing went technically wrong.
+                        // We will throw a specific string that the catch block can ignore from logging as a DB error.
+                        throw "UNCHANGED_NO_ERROR";
+                    }
                     continue;
                 }
                 
@@ -118,13 +128,20 @@ export class MarketETLService {
                     console.log(`Inserted up to ${result.prices.length} prices for ${source.name}`);
                 }
                 
-                // Update success timestamp
+                // Update success timestamp and clear error
                 await supabase
                     .from('market_sources')
-                    .update({ last_success_at: new Date().toISOString() })
+                    .update({ 
+                        last_success_at: new Date().toISOString(),
+                        last_error_at: null 
+                    })
                     .eq('id', source.id);
                     
             } catch (err: any) {
+                if (err === "UNCHANGED_NO_ERROR") {
+                    console.log(`Manual trigger: Content unchanged for ${source.name}`);
+                    throw new Error("El archivo original en la web no ha cambiado. No hay precios nuevos que importar.");
+                }
                 console.error(`Error processing source ${source.name}:`, err);
                 // Update error timestamp
                 await supabase

@@ -4,65 +4,34 @@ export class TalaveraParser {
     
     static async parse(source: MarketSource): Promise<ETLParserResult> {
         try {
-            // 1. Dynamic URL Discovery
-            const today = new Date();
-            const validResults: { pdfBuffer: ArrayBuffer, foundDate: Date, foundUrl: string }[] = [];
+            // 1. Dynamic URL Discovery via Scraping
+            const response = await fetch(source.source_url, { cache: 'no-store' });
+            if (!response.ok) throw new Error("Failed to load Talavera main page");
+            const html = await response.text();
             
-            const daysToTest = Array.from({ length: 9 }, (_, i) => i);
-            
-            const promises = daysToTest.map(async (i) => {
-                const targetDate = new Date(today);
-                targetDate.setDate(today.getDate() - i);
-                
-                const year = targetDate.getFullYear();
-                const month = String(targetDate.getMonth() + 1).padStart(2, '0');
-                const day = String(targetDate.getDate()).padStart(2, '0');
-                
-                const dateStr = `${year}${month}${day}`;
-                
-                // Prioritize revisions (_03, _02) before the original
-                const urlsToTest = [
-                    `https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_${dateStr}_03.pdf`,
-                    `https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_${dateStr}_02.pdf`,
-                    `https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_${dateStr}.pdf`
-                ];
-                
-                for (const url of urlsToTest) {
-                    try {
-                        const response = await fetch(url, {
-                            cache: 'no-store',
-                            headers: {
-                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-                            }
-                        });
-                        
-                        const contentType = response.headers.get('content-type');
-                        if (response.ok && contentType?.includes('application/pdf')) {
-                            const pdfBuffer = await response.arrayBuffer();
-                            return {
-                                pdfBuffer,
-                                foundDate: new Date(`${year}-${month}-${day}T12:00:00Z`),
-                                foundUrl: url
-                            };
-                        }
-                    } catch (fetchErr) {
-                        // Ignore individual fetch errors (like timeouts or 404s) and continue
-                    }
-                }
-                return null;
-            });
-            
-            const results = await Promise.all(promises);
-            for (const res of results) {
-                if (res) validResults.push(res);
+            // We use a basic regex or cheerio to find the first Mesa_Vacuno PDF
+            const match = html.match(/href="(https:\/\/www\.talavera-ferial\.com\/[^"]*Mesa_Vacuno_[^"]*\.pdf)"/i);
+            if (!match) {
+                throw new Error("No recent PDF link found on Talavera website.");
             }
             
-            // Sort descending by date (newest first)
-            validResults.sort((a, b) => b.foundDate.getTime() - a.foundDate.getTime());
+            const pdfUrl = match[1];
             
-            if (validResults.length === 0) {
-                throw new Error('Could not find any valid Talavera PDF in the last 14 days.');
+            // Extract the date from the filename (e.g. Mesa_Vacuno_20260902.pdf)
+            const dateMatch = pdfUrl.match(/Mesa_Vacuno_(\d{4})(\d{2})(\d{2})/);
+            let foundDate = new Date();
+            if (dateMatch) {
+                foundDate = new Date(`${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}T12:00:00Z`);
             }
+            
+            // Fetch the PDF
+            const pdfRes = await fetch(pdfUrl, { cache: 'no-store' });
+            if (!pdfRes.ok || !pdfRes.headers.get('content-type')?.includes('application/pdf')) {
+                throw new Error("Failed to download Talavera PDF");
+            }
+            
+            const pdfBuffer = await pdfRes.arrayBuffer();
+            const validResults = [{ pdfBuffer, foundDate, foundUrl: pdfUrl }];
             
             const prices: Omit<ETLParserResult['prices'][0], 'id' | 'market_source_id' | 'created_at' | 'updated_at'>[] = [];
             const rawContents: string[] = [];
