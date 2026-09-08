@@ -20,6 +20,59 @@ const baseStyles = `
 
 export const EMAIL_TEMPLATES: EmailTemplate[] = [
     {
+        id: "presentacion-ruralpop",
+        name: "Presentación Ruralpop",
+        description: "Email de presentación para dar a conocer Ruralpop a empresas, ganaderías y usuarios del sector.",
+        category: "Presentación",
+        subject: "Te presentamos Ruralpop: El mercado digital del campo y la ganadería 🚜",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://www.ruralpop.com/ruralpop-logo.png" alt="Ruralpop" class="logo" />
+        <h1 class="title">¡Hola! Te presentamos Ruralpop</h1>
+        <p class="text">
+            Nos ponemos en contacto contigo para darte a conocer <strong>Ruralpop</strong>, la plataforma y aplicación móvil pensada exclusivamente para agricultores, ganaderos y profesionales del sector rural en toda España.
+            <br/><br/>
+            En Ruralpop puedes comprar, vender y conectar directamente con personas y profesionales del campo:
+        </p>
+        <ul style="text-align: left; color: #4b5563; font-size: 15px; line-height: 1.8; margin-bottom: 28px; padding-left: 20px;">
+            <li><strong>Ganadería:</strong> Vacuno, ovino, caprino, porcino, avicultura, equino y más, con cotizaciones semanales de lonjas oficiales actualizadas.</li>
+            <li><strong>Maquinaria y aperos:</strong> Tractores, remolques, empacadoras y herramientas de segunda mano y ocasión.</li>
+            <li><strong>Fincas, forraje y suministros:</strong> Alfalfa, paja, semillas, pastos y fincas rústicas de forma directa.</li>
+            <li><strong>Sin intermediarios ni comisiones ocultas:</strong> Trato directo y seguro entre personas del campo.</li>
+        </ul>
+        <p class="text">
+            Tanto si buscas nuevo equipamiento para tu explotación como si quieres dar la máxima visibilidad a tus productos o animales ante miles de compradores, Ruralpop es tu espacio.
+        </p>
+
+        <!-- Banner descarga app -->
+        <div style="margin-top: 32px; margin-bottom: 24px; text-align: center;">
+            <a href="https://www.ruralpop.com/app" target="_blank" style="text-decoration: none; display: block;">
+                <img src="https://www.ruralpop.com/banner-descarga-app-email.png" alt="Descarga ahora la app de Ruralpop" style="width: 100%; max-width: 520px; height: auto; border-radius: 12px; display: block; margin: 0 auto; border: 1px solid #e5e7eb;" />
+            </a>
+        </div>
+
+        <!-- Botón entrar a la web -->
+        <div style="text-align: center; margin-top: 20px; margin-bottom: 32px;">
+            <a href="https://www.ruralpop.com" class="button" style="display: inline-block; padding: 14px 32px; background-color: #10b981; color: #ffffff !important; text-decoration: none; font-weight: bold; border-radius: 10px; font-size: 16px;">Entrar a la web de Ruralpop</a>
+        </div>
+
+        <p class="footer">
+            Recibes este correo informativo de presentación de parte del equipo de Ruralpop.<br/>
+            Si no deseas recibir más información sobre el sector, puedes responder a este email indicándolo y te daremos de baja.<br/><br/>
+            © ${new Date().getFullYear()} Ruralpop · <a href="https://www.ruralpop.com" style="color: #9ca3af; text-decoration: underline;">ruralpop.com</a>
+        </p>
+    </div>
+</body>
+</html>`
+    },
+    {
         id: "nuevo-registro",
         name: "Nuevo Registro",
         description: "Email automático de bienvenida enviado al crear cuenta.",

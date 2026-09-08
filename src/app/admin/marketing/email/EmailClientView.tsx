@@ -25,7 +25,7 @@ export default function EmailClientView({ tenant }: { tenant: string | null }) {
         if (!selectedTemplate) return;
         
         const emails = recipientsInput
-            .split(",")
+            .split(/[\n,;]+/)
             .map(e => e.trim())
             .filter(e => e.length > 0 && e.includes("@"));
 
@@ -117,13 +117,22 @@ export default function EmailClientView({ tenant }: { tenant: string | null }) {
 
                             <div className="flex flex-col sm:flex-row gap-3 items-end">
                                 <div className="flex-1 w-full">
-                                    <label className="block text-xs font-black text-[var(--ag-sys-color-text)] uppercase tracking-wider mb-2">Destinatarios (separados por coma)</label>
-                                    <input
-                                        type="text"
-                                        placeholder="ejemplo@empresa.com, otro@mail.com"
+                                    <div className="flex justify-between items-center mb-2">
+                                        <label className="block text-xs font-black text-[var(--ag-sys-color-text)] uppercase tracking-wider">
+                                            Destinatarios (separados por coma o salto de línea)
+                                        </label>
+                                        {recipientsInput.trim().length > 0 && (
+                                            <span className="text-xs font-bold text-[var(--ag-sys-color-primary)]">
+                                                {recipientsInput.split(/[\n,;]+/).filter(e => e.trim().includes("@")).length} email(s) detectado(s)
+                                            </span>
+                                        )}
+                                    </div>
+                                    <textarea
+                                        rows={2}
+                                        placeholder="ejemplo@empresa.com, ganaderia@gmail.com (puedes pegar listas enteras de Excel)"
                                         value={recipientsInput}
                                         onChange={(e) => setRecipientsInput(e.target.value)}
-                                        className="w-full px-4 py-2 border border-[var(--ag-sys-color-border)] rounded-xl bg-[var(--ag-sys-color-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/20 transition-all font-medium text-sm"
+                                        className="w-full px-4 py-2 border border-[var(--ag-sys-color-border)] rounded-xl bg-[var(--ag-sys-color-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/20 transition-all font-medium text-sm custom-scrollbar resize-y"
                                     />
                                 </div>
                                 <button
