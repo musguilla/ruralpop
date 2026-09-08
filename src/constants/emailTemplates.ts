@@ -54,7 +54,7 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
         <!-- Banner descarga app -->
         <div style="margin-top: 32px; margin-bottom: 24px; text-align: center;">
             <a href="https://www.ruralpop.com/app" target="_blank" style="text-decoration: none; display: block;">
-                <img src="https://www.ruralpop.com/banner-descarga-app-email.png" alt="Descarga ahora la app de Ruralpop" style="width: 100%; max-width: 520px; height: auto; border-radius: 12px; display: block; margin: 0 auto; border: 1px solid #e5e7eb;" />
+                <img src="https://www.ruralpop.com/banner-descarga-app-email.png" alt="Descarga ahora la app de Ruralpop" style="width: 100%; max-width: 560px; height: auto; display: block; margin: 0 auto;" />
             </a>
         </div>
 
@@ -63,9 +63,10 @@ export const EMAIL_TEMPLATES: EmailTemplate[] = [
             <a href="https://www.ruralpop.com" class="button" style="display: inline-block; padding: 14px 32px; background-color: #10b981; color: #ffffff !important; text-decoration: none; font-weight: bold; border-radius: 10px; font-size: 16px;">Entrar a la web de Ruralpop</a>
         </div>
 
-        <p class="footer">
-            Recibes este correo informativo de presentación de parte del equipo de Ruralpop.<br/>
-            Si no deseas recibir más información sobre el sector, puedes responder a este email indicándolo y te daremos de baja.<br/><br/>
+        <p class="footer" style="margin-top: 32px; font-size: 12px; color: #9ca3af; line-height: 1.6; text-align: center;">
+            Recibes este correo informativo de presentación de parte del equipo de Ruralpop dirigido a profesionales del sector agropecuario.<br/>
+            No recibirás más correos informativos ni estás incluido en ninguna lista de envío.<br/><br/>
+            Para cualquier consulta o ejercicio de derechos de privacidad (RGPD/LSSI), puedes responder directamente a este mensaje.<br/><br/>
             © ${new Date().getFullYear()} Ruralpop · <a href="https://www.ruralpop.com" style="color: #9ca3af; text-decoration: underline;">ruralpop.com</a>
         </p>
     </div>
