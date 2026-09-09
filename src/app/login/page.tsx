@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage(props: {
-    searchParams: Promise<{ error?: string; message?: string }>;
+    searchParams: Promise<{ error?: string; message?: string; redirectTo?: string }>;
 }) {
     const searchParams = await props.searchParams;
     const tenant = await getServerTenantSlug();
@@ -45,6 +45,9 @@ export default async function LoginPage(props: {
                 )}
 
                 <form className="mt-8 space-y-6" action={login}>
+                    {searchParams?.redirectTo && (
+                        <input type="hidden" name="redirectTo" value={searchParams.redirectTo} />
+                    )}
                     <div className="space-y-4">
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">

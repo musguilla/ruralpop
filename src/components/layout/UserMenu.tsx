@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { User, Heart, MessageSquare, Briefcase, HelpCircle, LogOut, ChevronDown, UserCircle2, Handshake, Tag, Wallet } from "lucide-react";
+import { User, Heart, MessageSquare, Briefcase, HelpCircle, LogOut, ChevronDown, UserCircle2, Handshake, Tag, Wallet, ShieldCheck } from "lucide-react";
 import { ChatBadge } from "@/components/chat/ChatBadge";
 import { getImageUrl } from "@/utils/mediaUtils";
 import { createClient } from "@/utils/supabase/client";
@@ -140,6 +140,20 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     <User className="w-5 h-5 text-gray-500" />
                                     <span className="font-semibold text-gray-800">Perfil</span>
                                 </LocalizedLink>
+
+                                {role === 'admin' && (
+                                    <a
+                                        href="/admin"
+                                        className="flex items-center gap-3 px-4 py-3 bg-purple-50/70 hover:bg-purple-100/80 text-purple-800 transition-colors"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <ShieldCheck className="w-5 h-5 text-purple-600" />
+                                        <div className="flex items-center justify-between flex-1">
+                                            <span className="font-bold text-sm">Panel Admin</span>
+                                            <span className="text-[9px] font-extrabold uppercase bg-purple-200 text-purple-800 px-2 py-0.5 rounded-full">ADMIN</span>
+                                        </div>
+                                    </a>
+                                )}
 
                                 <div className="my-1 border-t border-gray-100"></div>
 
