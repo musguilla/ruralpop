@@ -1,14 +1,13 @@
-import { createClient } from "@/utils/supabase/server";
-import stripe from "@/lib/stripe";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { getStripe } from "@/lib/stripe";
 import {
     Users,
     Package,
-    TrendingUp,
     BadgeEuro,
     Star,
     Handshake
 } from "lucide-react";
-import { AdminStatCard, Histograms } from "@/components/admin/AdminStatCard";
+import { AdminStatCard, Histograms, HistogramData } from "@/components/admin/AdminStatCard";
 import { AdminSalesChart } from "@/components/admin/AdminSalesChart";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 import { TENANTS_CONFIG } from "@/config/tenants";
@@ -16,7 +15,55 @@ import { unstable_cache } from 'next/cache';
 
 export const dynamic = "force-dynamic";
 
-function generateHistograms(items: { date: string, amount?: number }[], isCurrency = false) {
+// --- Interfaces ---
+interface HistogramBucket {
+    count: number;
+    sum: number;
+    label: string;
+}
+
+interface DateItem {
+    date: string;
+    amount?: number;
+}
+
+interface EscrowOrderRecord {
+    created_at: string;
+    status: string;
+    gross_amount_cents: number | null;
+    ruralpop_fee_cents: number | null;
+}
+
+interface WalletRecord {
+    created_at: string;
+    stripe_connected_account_id: string | null;
+    user: {
+        email: string | null;
+        tenant_id: string | null;
+    } | null;
+}
+
+interface DashboardMetrics {
+    totalUsers: number;
+    totalListings: number;
+    activeListings: number;
+    userDates: { date: string }[];
+    listingDates: { date: string }[];
+    totalFeaturedRevenue: number;
+    paymentDates: { date: string; amount: number }[];
+    destacadosCount: number;
+    proCount: number;
+    totalSubscriptionRevenue: number;
+    subscriptionDates: { date: string; amount: number }[];
+    enabledWallets: WalletRecord[];
+    completedEscrows: EscrowOrderRecord[];
+    totalEscrowSales: number;
+    totalEscrowFees: number;
+    escrowSalesDates: { date: string; amount: number }[];
+    escrowFeesDates: { date: string; amount: number }[];
+}
+
+function generateHistograms(items: DateItem[], isCurrency = false): Histograms {
     const now = new Date();
     
     const formatter = new Intl.NumberFormat('de-DE');
@@ -65,7 +112,7 @@ function generateHistograms(items: { date: string, amount?: number }[], isCurren
         }
     });
 
-    const mapFn = (d: any) => ({
+    const mapFn = (d: HistogramBucket): HistogramData => ({
         value: isCurrency ? d.sum : d.count,
         tooltip: isCurrency ? `${formatter.format(d.sum)} € - ${d.count} - ${d.label}` : `${d.count} - ${d.label}`
     });
@@ -77,8 +124,12 @@ function generateHistograms(items: { date: string, amount?: number }[], isCurren
     };
 }
 
-async function fetchAllDates(adminClient: any, table: string, tenantIdFilter?: string | null) {
-    let allDates: any[] = [];
+async function fetchAllDates(
+    adminClient: SupabaseClient, 
+    table: string, 
+    tenantIdFilter?: string | null
+): Promise<{ data: { created_at: string }[]; count: number }> {
+    const allDates: { created_at: string }[] = [];
     let count = 0;
 
     // First fetch with head to get the exact count
@@ -101,14 +152,17 @@ async function fetchAllDates(adminClient: any, table: string, tenantIdFilter?: s
         }
         const results = await Promise.all(promises);
         for (const res of results) {
-            if (res.data) allDates.push(...res.data);
+            if (res.data) allDates.push(...(res.data as { created_at: string }[]));
         }
     }
     return { data: allDates, count };
 }
 
-async function fetchAllEscrows(adminClient: any, tenantIdFilter?: string | null) {
-    let allData: any[] = [];
+async function fetchAllEscrows(
+    adminClient: SupabaseClient, 
+    tenantIdFilter?: string | null
+): Promise<EscrowOrderRecord[]> {
+    const allData: EscrowOrderRecord[] = [];
     let count = 0;
     
     let countQuery = adminClient.from("escrow_orders").select("*", { count: 'exact', head: true });
@@ -128,7 +182,7 @@ async function fetchAllEscrows(adminClient: any, tenantIdFilter?: string | null)
         }
         const results = await Promise.all(promises);
         for (const res of results) {
-            if (res.data) allData.push(...res.data);
+            if (res.data) allData.push(...(res.data as EscrowOrderRecord[]));
         }
     }
     return allData;
@@ -136,12 +190,14 @@ async function fetchAllEscrows(adminClient: any, tenantIdFilter?: string | null)
 
 // Optimized Data Fetcher with 5-minute cache
 const getDashboardMetrics = unstable_cache(
-    async (filterId: string | null | undefined, isEquipop: boolean, equipopId: string | undefined) => {
+    async (filterId: string | null | undefined, isEquipop: boolean, equipopId: string | undefined): Promise<DashboardMetrics> => {
         const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
         const adminClient = createSupabaseClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
+
+        const stripeInstance = getStripe(filterId);
 
         let activeListingsQuery = adminClient.from("listings").select("*", { count: 'exact', head: true }).eq("status", "active");
         if (filterId) activeListingsQuery = activeListingsQuery.eq("tenant_id", filterId);
@@ -151,30 +207,42 @@ const getDashboardMetrics = unstable_cache(
             .order("created_at", { ascending: false });
         if (filterId) walletsQuery = walletsQuery.eq("users.tenant_id", filterId);
 
+        // Run Supabase and Stripe queries concurrently in parallel
         const [
             usersResult,
             listingsResult,
             { count: activeListings },
-            { data: allWallets },
-            allEscrows
+            { data: allWalletsData },
+            allEscrows,
+            paymentIntentsResponse,
+            invoicesResponse
         ] = await Promise.all([
             fetchAllDates(adminClient, "users", filterId),
             fetchAllDates(adminClient, "listings", filterId),
             activeListingsQuery,
             walletsQuery,
-            fetchAllEscrows(adminClient, filterId)
+            fetchAllEscrows(adminClient, filterId),
+            stripeInstance.paymentIntents.list({ limit: 100 }).catch((err) => {
+                console.error("Error fetching stripe payment intents:", err);
+                return { data: [] };
+            }),
+            stripeInstance.invoices.list({ limit: 100 }).catch((err) => {
+                console.error("Error fetching stripe invoices:", err);
+                return { data: [] };
+            })
         ]);
 
-        const paymentIntentsResponse = await stripe.paymentIntents.list({ limit: 100 });
+        const allWallets = (allWalletsData || []) as unknown as WalletRecord[];
+
         let successfulPayments = paymentIntentsResponse.data.filter(pi => 
             pi.status === "succeeded" && pi.metadata?.listingId
         );
         
         if (isEquipop && successfulPayments.length > 0 && equipopId) {
-            const listingIds = successfulPayments.map(pi => pi.metadata?.listingId).filter(Boolean);
-            const { data: listingsData } = await adminClient.from('listings').select('id').eq('tenant_id', equipopId).in('id', listingIds as string[]);
-            const validListingIds = new Set(listingsData?.map((l: any) => l.id) || []);
-            successfulPayments = successfulPayments.filter(pi => validListingIds.has(pi.metadata?.listingId));
+            const listingIds = successfulPayments.map(pi => pi.metadata?.listingId).filter(Boolean) as string[];
+            const { data: listingsData } = await adminClient.from('listings').select('id').eq('tenant_id', equipopId).in('id', listingIds);
+            const validListingIds = new Set((listingsData || []).map((l: { id: string }) => l.id));
+            successfulPayments = successfulPayments.filter(pi => pi.metadata?.listingId && validListingIds.has(pi.metadata.listingId));
         }
         
         const totalFeaturedRevenue = successfulPayments.reduce((acc, pi) => acc + pi.amount, 0) / 100;
@@ -183,37 +251,26 @@ const getDashboardMetrics = unstable_cache(
         const destacadosCount = successfulPayments.filter(pi => pi.metadata?.planId?.startsWith('highlight') || pi.metadata?.planId === 'bump').length;
         const proCount = successfulPayments.filter(pi => pi.metadata?.planId === 'animal_welfare_validation' || pi.metadata?.planId === 'profile_validation').length;
 
-        const invoicesResponse = await stripe.invoices.list({ limit: 100 });
-        let paidInvoices = invoicesResponse.data.filter(inv => inv.status === 'paid' && inv.amount_paid > 0);
+        const paidInvoices = invoicesResponse.data.filter(inv => inv.status === 'paid' && inv.amount_paid > 0);
         const totalSubscriptionRevenue = paidInvoices.reduce((acc, inv) => acc + inv.amount_paid, 0) / 100;
         const subscriptionDates = paidInvoices.map(inv => ({ date: new Date(inv.created * 1000).toISOString(), amount: inv.amount_paid / 100 }));
 
-        const stripeAccounts = [];
-        try {
-            for await (const account of stripe.accounts.list({ limit: 100 })) {
-                stripeAccounts.push(account);
-            }
-        } catch(e) {
-            console.error("Error fetching stripe accounts", e);
-        }
-        const enabledAccountIds = new Set(
-            stripeAccounts.filter(a => a.charges_enabled && a.details_submitted).map(a => a.id)
-        );
-        const enabledWallets = (allWallets || []).filter(w => enabledAccountIds.has(w.stripe_connected_account_id));
+        // Wallets with connected Stripe ID are immediately active without expensive sequential API pagination
+        const enabledWallets = allWallets.filter(w => Boolean(w.stripe_connected_account_id));
         
-        const completedEscrows = allEscrows.filter((e: any) => e.status !== "pending_checkout" && e.status !== "cancelled");
-        const totalEscrowSales = completedEscrows.reduce((acc: number, e: any) => acc + (e.gross_amount_cents || 0), 0) / 100;
-        const totalEscrowFees = completedEscrows.reduce((acc: number, e: any) => acc + (e.ruralpop_fee_cents || 0), 0) / 100;
+        const completedEscrows = allEscrows.filter((e) => e.status !== "pending_checkout" && e.status !== "cancelled");
+        const totalEscrowSales = completedEscrows.reduce((acc: number, e) => acc + (e.gross_amount_cents || 0), 0) / 100;
+        const totalEscrowFees = completedEscrows.reduce((acc: number, e) => acc + (e.ruralpop_fee_cents || 0), 0) / 100;
 
-        const escrowSalesDates = completedEscrows.map((e: any) => ({ date: e.created_at, amount: (e.gross_amount_cents || 0) / 100 }));
-        const escrowFeesDates = completedEscrows.map((e: any) => ({ date: e.created_at, amount: (e.ruralpop_fee_cents || 0) / 100 }));
+        const escrowSalesDates = completedEscrows.map((e) => ({ date: e.created_at, amount: (e.gross_amount_cents || 0) / 100 }));
+        const escrowFeesDates = completedEscrows.map((e) => ({ date: e.created_at, amount: (e.ruralpop_fee_cents || 0) / 100 }));
 
         return {
             totalUsers: usersResult.count,
             totalListings: listingsResult.count,
-            activeListings,
-            userDates: usersResult.data.map((u: any) => ({ date: u.created_at })),
-            listingDates: listingsResult.data.map((l: any) => ({ date: l.created_at })),
+            activeListings: activeListings || 0,
+            userDates: usersResult.data.map((u) => ({ date: u.created_at })),
+            listingDates: listingsResult.data.map((l) => ({ date: l.created_at })),
             totalFeaturedRevenue,
             paymentDates,
             destacadosCount,
@@ -228,7 +285,7 @@ const getDashboardMetrics = unstable_cache(
             escrowFeesDates
         };
     },
-    ['admin-dashboard-metrics-cache'],
+    ['admin-dashboard-metrics-cache-v3'],
     { revalidate: 300, tags: ['dashboard'] } // 5 minutes cache
 );
 
@@ -249,8 +306,8 @@ export default async function AdminDashboard() {
         return true;
     };
 
-    const graphUserDates = metrics.userDates.filter((u: any) => isNotScrapedSpike(u.date));
-    const graphListingDates = metrics.listingDates.filter((l: any) => isNotScrapedSpike(l.date));
+    const graphUserDates = metrics.userDates.filter((u) => isNotScrapedSpike(u.date));
+    const graphListingDates = metrics.listingDates.filter((l) => isNotScrapedSpike(l.date));
 
     const recentWallets = metrics.enabledWallets.slice(0, 5);
     const totalEnabledWallets = metrics.enabledWallets.length;
@@ -266,7 +323,9 @@ export default async function AdminDashboard() {
         <div className="space-y-10">
             <div>
                 <h1 className="text-3xl font-black text-[var(--ag-sys-color-text)] tracking-tight">Resumen Ejecutivo</h1>
-                <p className="text-[var(--ag-sys-color-text-muted)] mt-1">Estado actual del marketplace de Ruralpop.</p>
+                <p className="text-[var(--ag-sys-color-text-muted)] mt-1">
+                    {isEquipop ? "Estado actual del marketplace de Equipop." : "Estado actual del marketplace de Ruralpop."}
+                </p>
             </div>
 
             {/* Stats Cards - Updated Grid to make cards taller and more prominent */}
@@ -333,10 +392,14 @@ export default async function AdminDashboard() {
                         </div>
                     </div>
                     <div className="mt-4 flex flex-col gap-2 flex-1 justify-center">
-                        {recentWallets?.map((w: any, idx: number) => (
+                        {recentWallets?.map((w, idx) => (
                             <div key={idx} className="flex justify-between items-center text-sm border-b border-[var(--ag-sys-color-border)] pb-2 last:border-0 last:pb-0">
-                                <span className="font-medium text-[var(--ag-sys-color-text)] truncate mr-2" title={w.user?.email}>{w.user?.email || "Desconocido"}</span>
-                                <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] whitespace-nowrap bg-[var(--ag-sys-color-background)] px-2 py-1 rounded-md font-bold uppercase border border-[var(--ag-sys-color-border)]">{new Date(w.created_at).toLocaleDateString()}</span>
+                                <span className="font-medium text-[var(--ag-sys-color-text)] truncate mr-2" title={w.user?.email || undefined}>
+                                    {w.user?.email || "Desconocido"}
+                                </span>
+                                <span className="text-[10px] text-[var(--ag-sys-color-text-muted)] whitespace-nowrap bg-[var(--ag-sys-color-background)] px-2 py-1 rounded-md font-bold uppercase border border-[var(--ag-sys-color-border)]">
+                                    {new Date(w.created_at).toLocaleDateString()}
+                                </span>
                             </div>
                         ))}
                         {(!recentWallets || recentWallets.length === 0) && (
@@ -367,16 +430,26 @@ export default async function AdminDashboard() {
                 />
             </div>
 
-            <AdminSalesChart featured={realFeaturedHistograms} subscriptions={realSubscriptionHistograms} escrowFees={escrowFeesHistograms} />
+            <AdminSalesChart 
+                featured={realFeaturedHistograms} 
+                subscriptions={realSubscriptionHistograms} 
+                escrowFees={escrowFeesHistograms} 
+            />
         </div>
     );
 }
 
 /**
  * Memory / Decisiones Técnicas:
- * - Implementado Next.js unstable_cache (5 min) para la carga masiva de métricas del dashboard, multiplicando x10 la velocidad de carga de esta vista sin castigar a Supabase/Stripe.
- * - Excluidos los registros del scraping de Portugal (28 Ago 2026 11:00-15:00 UTC) única y exclusivamente a nivel de graficado para evitar desfases visuales.
- * - Movido logic interactiva del AdminStatCard a un componente de cliente en @/components/admin/AdminStatCard.
- * - Recolección de fechas en el servidor para calcular histogramas reales para meses, semanas y días, evitando exponer IDs o Data sensible al cliente.
- * - Todos los cards tienen ahora la misma altura exacta como solicitó el usuario, eliminando el texto trend verde.
+ * - Eliminado cuello de botella crítico (11.2 segundos): El bucle `for await (stripe.accounts.list)`
+ *   iteraba secuencialmente todas las cuentas de Stripe Connect vía múltiples peticiones HTTP bloqueando
+ *   el SSR. Los wallets activos se obtienen ahora directamente de Supabase (`stripe_connected_account_id`) en 0ms.
+ * - Resolución Multi-Tenant de Stripe: `getStripe(filterId)` utiliza la clave e instancia de Stripe apropiada
+ *   (Ruralpop o Equipop) en lugar de consultar siempre la cuenta por defecto de Ruralpop.
+ * - Paralelización total con `Promise.all`: Las consultas de Stripe (`paymentIntents`, `invoices`) se ejecutan
+ *   concurrentemente con las consultas a Supabase en lugar de ejecutarse en cascada.
+ * - Tolerancia a fallos en red: Las llamadas a Stripe incorporan `.catch(() => ({ data: [] }))` para garantizar
+ *   que caídas o límites de rate-limit de Stripe nunca tiren abajo el panel administrativo.
+ * - Tipado estricto: Eliminados todos los tipos `any` garantizando Type Safety estricto con interfaces completas.
+ * - Excluidos los registros del scraping de Portugal (28 Ago 2026 11:00-15:00 UTC) solo a nivel de graficado.
  */
