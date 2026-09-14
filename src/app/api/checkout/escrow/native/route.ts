@@ -115,7 +115,8 @@ export async function POST(req: Request) {
                 seller_net_amount_cents: sellerNetCents,
                 stripe_payment_intent_id: paymentIntent.id,
                 stripe_connected_account_id: wallet.stripe_connected_account_id,
-                status: "pending_checkout"
+                status: "pending_checkout",
+                tenant_id: listing.tenant_id || "ea2490cc-dc33-48f3-bc7b-82b14aa70eb9"
             });
 
         if (insertError) {
