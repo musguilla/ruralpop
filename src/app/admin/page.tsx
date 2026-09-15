@@ -497,6 +497,7 @@ export default async function AdminDashboard() {
                     color="blue"
                     histograms={escrowSalesHistograms}
                     showFilters={true}
+                    href="/admin/escrow"
                 />
 
                 {/* CARD 7: Comisiones Escrow */}
@@ -507,6 +508,7 @@ export default async function AdminDashboard() {
                     color="green"
                     histograms={escrowFeesHistograms}
                     showFilters={true}
+                    href="/admin/escrow"
                 />
             </div>
 

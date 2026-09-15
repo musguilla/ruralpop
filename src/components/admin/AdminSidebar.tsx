@@ -27,6 +27,7 @@ export async function AdminSidebar() {
                 <AdminNavLink href="/admin/insights" icon={<LineChart className="w-5 h-5" />} label="Insights" />
                 <AdminNavLink href="/admin/users" icon={<Users className="w-5 h-5" />} label="Usuarios" />
                 <AdminNavLink href="/admin/listings" icon={<Package className="w-5 h-5" />} label="Anuncios" />
+                <AdminNavLink href="/admin/escrow" icon={<ShieldCheck className="w-5 h-5" />} label="Operaciones Escrow" />
 
                 <div className="pt-4 pb-2">
                     <p className="px-4 text-[10px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Marketing</p>
