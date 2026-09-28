@@ -43,7 +43,7 @@ export default function MessagesScreen() {
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [fetching, setFetching] = useState(true);
 
-    // Estado para el snackbar con Deshacer (10 segundos)
+    // Estado para el snackbar con Deshacer (5 segundos)
     const [pendingDeletion, setPendingDeletion] = useState<PendingConversationDeletion | null>(null);
     const undoTimerRef = useRef<NodeJS.Timeout | null>(null);
     const pendingDeletionRef = useRef<PendingConversationDeletion | null>(null);
@@ -176,7 +176,7 @@ export default function MessagesScreen() {
         }
     };
 
-    // Borrado directo sin alerta con opción Deshacer durante 10 segundos
+    // Borrado directo sin alerta con opción Deshacer durante 5 segundos
     const handleDeleteConversation = (item: Conversation) => {
         if (!user) return;
 
@@ -196,12 +196,12 @@ export default function MessagesScreen() {
         setConversations(prev => prev.filter(c => `${c.listing_id}_${c.other_user_id}` !== key));
         setPendingDeletion({ item, index: savedIndex });
 
-        // 2. Iniciar temporizador de 10 segundos para consolidar
+        // 2. Iniciar temporizador de 5 segundos para consolidar
         undoTimerRef.current = setTimeout(() => {
             finalizeDeleteConversation(item, user.id);
             setPendingDeletion(null);
             undoTimerRef.current = null;
-        }, 10000);
+        }, 5000);
     };
 
     // Acción para deshacer y restaurar la conversación a su posición original
@@ -385,7 +385,7 @@ export default function MessagesScreen() {
                 />
             )}
 
-            {/* Snackbar flotante estilo Wallapop: Conversación eliminada + Deshacer (10 seg) */}
+            {/* Snackbar flotante estilo Wallapop: Conversación eliminada + Deshacer (5 seg) */}
             {pendingDeletion && (
                 <View style={styles.snackbar}>
                     <Text style={styles.snackbarText}>Conversación eliminada</Text>
@@ -463,9 +463,9 @@ const styles = StyleSheet.create({
 /**
  * Memory / Decisiones Técnicas:
  * - Eliminación directa sin confirmación modal invasiva (patrón Wallapop).
- * - Notificación flotante snackbar inferior oscura con temporizador de 10 segundos.
+ * - Notificación flotante snackbar inferior oscura con temporizador de 5 segundos (unificado con Notificaciones).
  * - Botón "Deshacer" en verde ruralpop que restaura la conversación en su posición exacta al instante.
- * - Si transcurren los 10 segundos sin deshacer, se consolida la eliminación definitiva en Supabase y almacenamiento local.
+ * - Si transcurren los 5 segundos sin deshacer, se consolida la eliminación definitiva en Supabase y almacenamiento local.
  * - Compatibilidad Android / iOS: se utiliza RectButton de react-native-gesture-handler en renderRightActions
  *   para garantizar que el evento onPress de "Borrar" se capture de manera nativa sin ser interceptado o cancelado
  *   por el PanGestureHandler en Android.
