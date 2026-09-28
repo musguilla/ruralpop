@@ -91,6 +91,14 @@ export async function updateListing(listingId: string, formData: FormData) {
             .eq("id", user.id);
     }
 
+    // Obtener precio previo para detectar si hay bajada de precio
+    const { data: previousListing } = await supabase
+        .from("listings")
+        .select("price")
+        .eq("id", listingId)
+        .single();
+    const oldPrice = previousListing?.price ? Number(previousListing.price) : null;
+
     const { error } = await supabase
         .from("listings")
         .update({
@@ -114,6 +122,23 @@ export async function updateListing(listingId: string, formData: FormData) {
     if (error) {
         console.error("Error updating listing:", error);
         return { error: error.message };
+    }
+
+    // Si ha bajado de precio, notificar a los usuarios que lo tienen en favoritos
+    if (oldPrice && price && price < oldPrice) {
+        try {
+            const { notifyPriceDrop } = await import("@/lib/services/notifications");
+            await notifyPriceDrop({
+                listingId,
+                oldPrice,
+                newPrice: price,
+                listingTitle: title,
+                imageUrl: image_urls?.[0] || null,
+                sellerId: user.id
+            });
+        } catch (notifErr) {
+            console.error("Error triggering price drop notification:", notifErr);
+        }
     }
 
     revalidatePath("/dashboard");

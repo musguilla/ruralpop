@@ -33,3 +33,28 @@ export async function getServerTenantSlug(): Promise<string | null> {
     const envTenant = process.env.NEXT_PUBLIC_RURALPOP_TENANT_ID;
     return envTenant || null;
 }
+
+/**
+ * Devuelve el dominio base absoluto del tenant actual (ej. 'https://www.equipop.app' o 'https://www.ruralpop.com')
+ * para su uso en canonicals, OpenGraph, hreflang y enlaces para compartir en redes sociales y navegadores móviles.
+ * Prioriza el host real recibido en headers si pertenece al dominio del tenant (ej. 'equipop.app' o 'www.equipop.app').
+ */
+export async function getServerTenantDomain(): Promise<string> {
+    const headersList = await headers();
+    const host = headersList.get('host') || headersList.get('x-forwarded-host') || '';
+    const activeTenant = await getServerTenantSlug();
+    const isEquipop = activeTenant === 'equipop' || host.includes('equipop');
+
+    if (isEquipop) {
+        if (host.includes('equipop.app')) {
+            return `https://${host}`;
+        }
+        return process.env.NEXT_PUBLIC_EQUIPOP_URL || 'https://www.equipop.app';
+    }
+
+    if (host.includes('ruralpop.com')) {
+        return `https://${host}`;
+    }
+    return process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
+}
+

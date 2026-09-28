@@ -18,6 +18,111 @@ import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenan
 const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 2;
 
+// ============================================================================
+// Helpers de Búsqueda y Relevancia Semántica (Equipop & Ruralpop)
+// ============================================================================
+
+const SPANISH_STOPWORDS = new Set([
+    'de', 'del', 'la', 'las', 'el', 'los', 'en', 'para', 'por', 'con', 'sin',
+    'un', 'una', 'unos', 'unas', 'y', 'o', 'a', 'al', 'se', 'su', 'sus'
+]);
+
+/**
+ * Normaliza sustantivos/adjetivos en plural a su forma singular en español.
+ * Permite que una búsqueda de "sillas" encuentre anuncios titulados "silla",
+ * y al buscar "%silla%" en SQL ilike se capturan tanto singulares como plurales.
+ */
+const normalizePlural = (word: string): string => {
+    if (word.length > 4 && word.endsWith('es')) {
+        return word.slice(0, -2);
+    }
+    if (word.length > 3 && word.endsWith('s') && !word.endsWith('is')) {
+        return word.slice(0, -1);
+    }
+    return word;
+};
+
+/**
+ * Extrae y limpia los términos de búsqueda esenciales excluyendo stopwords
+ * y normalizando plurales a singular.
+ */
+const extractSearchKeywords = (queryText: string): { sanitizedQuery: string; searchTerms: string[]; primaryTerm: string } => {
+    const sanitizedQuery = queryText
+        .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '')
+        .trim()
+        .toLowerCase();
+    const rawWords = sanitizedQuery.split(/\s+/).filter(Boolean);
+
+    // 1. Filtrar stopwords a menos que la búsqueda conste únicamente de stopwords
+    let meaningfulWords = rawWords.filter(w => w.length > 2 && !SPANISH_STOPWORDS.has(w));
+    if (meaningfulWords.length === 0) {
+        meaningfulWords = rawWords.filter(w => w.length > 1);
+    }
+    if (meaningfulWords.length === 0 && rawWords.length > 0) {
+        meaningfulWords = rawWords;
+    }
+
+    // 2. Normalizar a singular
+    const searchTerms = meaningfulWords.map(normalizePlural);
+    const primaryTerm = searchTerms[0] || sanitizedQuery;
+
+    return { sanitizedQuery, searchTerms, primaryTerm };
+};
+
+/**
+ * Calcula el puntaje de relevancia para ordenar los resultados de búsqueda.
+ * Prioriza fuertemente las coincidencias en el título frente a menciones en descripción.
+ */
+const computeRelevanceScore = (listing: Listing, sanitizedQuery: string, terms: string[]): number => {
+    let score = 0;
+    const titleLower = (listing.title || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const descLower = (listing.description || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const qLower = sanitizedQuery.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const normalizedTerms = terms.map(t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+
+    // 1. Coincidencia de la frase exacta en el título (máxima relevancia: ej. "silla de montar")
+    if (qLower.length > 2 && titleLower.includes(qLower)) {
+        score += 200;
+    }
+
+    // 2. Coincidencia de todos los términos de búsqueda en el título
+    const termsInTitle = normalizedTerms.filter(t => titleLower.includes(t));
+    if (normalizedTerms.length > 0 && termsInTitle.length === normalizedTerms.length) {
+        score += 120;
+    } else {
+        score += termsInTitle.length * 35;
+    }
+
+    // 3. Coincidencia de frase exacta en descripción
+    if (qLower.length > 2 && descLower.includes(qLower)) {
+        score += 50;
+    }
+
+    // 4. Coincidencia de términos en descripción
+    const termsInDesc = normalizedTerms.filter(t => descLower.includes(t));
+    score += termsInDesc.length * 10;
+
+    // 5. Coincidencia en subcategoría (ej. "Sillas de doma")
+    const subLower = (listing.subcategory || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (normalizedTerms.some(t => subLower.includes(t))) {
+        score += 30;
+    }
+
+    // 6. Impulso a productos destacados
+    if (listing.is_featured) {
+        score += 15;
+    }
+
+    return score;
+};
+
+export type SortOptionId = 'newest' | 'price_asc' | 'price_desc';
+
+interface SortOption {
+    id: SortOptionId;
+    label: string;
+}
+
 export default function SearchScreen() {
     const router = useRouter();
     const params = useLocalSearchParams();
@@ -46,12 +151,12 @@ export default function SearchScreen() {
     const [loadingMore, setLoadingMore] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isSortModalOpen, setIsSortModalOpen] = useState(false);
-    const [sortBy, setSortBy] = useState<'newest' | 'price_asc' | 'price_desc'>('newest');
+    const [sortBy, setSortBy] = useState<SortOptionId>('newest');
 
-    const sortOptions = [
-        { id: 'newest', label: 'Novedades' },
+    const sortOptions: SortOption[] = [
+        { id: 'newest', label: 'Más recientes' },
         { id: 'price_asc', label: 'Más barato' },
-        { id: 'price_desc', label: 'Más Caro' }
+        { id: 'price_desc', label: 'Más caro' }
     ];
 
     async function performSearch(pageIndex = 0) {
@@ -72,28 +177,40 @@ export default function SearchScreen() {
           image_urls,
           created_at,
           category,
+          subcategory,
           description,
           user_id,
           status,
-          is_featured
+          is_featured,
+          users!inner(is_ghost)
         `)
                 .eq('status', 'active')
+                .eq('users.is_ghost', false)
                 .or(getDefaultTenantFilterString());
 
             if (activeQuery) {
-                const safeQuery = activeQuery.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g, '').trim();
-                const searchTerms = safeQuery.split(/\s+/).filter(Boolean);
-                
+                const { sanitizedQuery, searchTerms, primaryTerm } = extractSearchKeywords(activeQuery);
+
                 if (searchTerms.length > 0) {
-                    const orConditions: string[] = [];
-                    searchTerms.forEach(term => {
-                        orConditions.push(`title.ilike.%${term}%`);
-                        orConditions.push(`description.ilike.%${term}%`);
-                        orConditions.push(`category.ilike.%${term}%`);
-                        orConditions.push(`subcategory.ilike.%${term}%`);
-                    });
-                    
-                    supabaseQuery = supabaseQuery.or(orConditions.join(','));
+                    if (searchTerms.length === 1) {
+                        const term = searchTerms[0];
+                        supabaseQuery = supabaseQuery.or(
+                            `title.ilike.%${term}%,description.ilike.%${term}%,subcategory.ilike.%${term}%`
+                        );
+                    } else {
+                        // Lógica AND robusta estilo Web: Cada término significativo debe coincidir
+                        const andConditions = searchTerms.map(term =>
+                            `or(title.ilike.%${term}%,description.ilike.%${term}%,subcategory.ilike.%${term}%)`
+                        ).join(',');
+
+                        // Condición compuesta que previene falsos positivos de palabras comunes:
+                        // 1. Coincidencia de todos los términos (AND)
+                        // 2. O frase exacta en título o descripción
+                        // 3. O coincidencia del término principal (ej. "silla") en el título
+                        const combinedFilter = `and(${andConditions}),title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%,title.ilike.%${primaryTerm}%`;
+                        
+                        supabaseQuery = supabaseQuery.or(combinedFilter);
+                    }
                 }
             }
 
@@ -139,11 +256,24 @@ export default function SearchScreen() {
 
             if (error) throw error;
 
-            const fetchedData = data || [];
+            const fetchedData = (data as Listing[]) || [];
             if (fetchedData.length < 30) {
                 setHasMore(false);
             } else {
                 setHasMore(true);
+            }
+
+            // Ordenamiento por relevancia semántica cuando hay un término de búsqueda activo
+            if (activeQuery && sortBy === 'newest') {
+                const { sanitizedQuery, searchTerms } = extractSearchKeywords(activeQuery);
+                fetchedData.sort((a, b) => {
+                    const scoreA = computeRelevanceScore(a, sanitizedQuery, searchTerms);
+                    const scoreB = computeRelevanceScore(b, sanitizedQuery, searchTerms);
+                    if (scoreB !== scoreA) {
+                        return scoreB - scoreA;
+                    }
+                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                });
             }
 
             if (pageIndex === 0) {
@@ -283,7 +413,9 @@ export default function SearchScreen() {
                         <ArrowLeft color="#1f2937" size={26} strokeWidth={2.5} />
                     </TouchableOpacity>
                     <View className="flex-1 flex-row items-center bg-[#f2f3f5] border border-[#9ca3af] rounded-full h-[46px] px-4">
-                        <Search color="#374151" size={20} strokeWidth={2.5} />
+                        <TouchableOpacity onPress={handleSearchSubmit} activeOpacity={0.7}>
+                            <Search color="#374151" size={20} strokeWidth={2.5} />
+                        </TouchableOpacity>
                         <TextInput
                             className="flex-1 ml-2 text-base text-gray-900 font-medium"
                             style={{ paddingVertical: 0, height: '100%' }}
@@ -342,7 +474,7 @@ export default function SearchScreen() {
                         <ArrowUpDown color="#1f2937" size={18} strokeWidth={2.5} />
                         <View className="w-2" />
                         <Text className="text-[15px] font-bold text-[#1f2937]" numberOfLines={1}>
-                            {sortBy === 'newest' ? 'Novedades' : (sortOptions.find(opt => opt.id === sortBy)?.label || 'Novedades')}
+                            {sortBy === 'newest' ? 'Más recientes' : (sortOptions.find(opt => opt.id === sortBy)?.label || 'Más recientes')}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -498,7 +630,7 @@ export default function SearchScreen() {
                                 <TouchableOpacity
                                     key={option.id}
                                     onPress={() => {
-                                        setSortBy(option.id as any);
+                                        setSortBy(option.id);
                                         setIsSortModalOpen(false);
                                     }}
                                     className={`flex-row justify-between items-center p-4 rounded-xl ${sortBy === option.id ? 'bg-primary-muted border border-primary/20' : 'bg-gray-50 border border-transparent'}`}
@@ -520,3 +652,31 @@ export default function SearchScreen() {
         </SafeAreaView>
     );
 }
+
+// ============================================================================
+// Documentación de Memoria y Decisiones Técnicas (RULE[user_global])
+// ============================================================================
+/**
+ * Decisiones Técnicas & Lecciones Aprendidas:
+ * 1. Diagnóstico del Bug de Búsqueda en Equipop:
+ *    - La búsqueda anterior realizaba un split ingenuo de la consulta por espacios (`activeQuery.split(/\s+/)`) y
+ *      generaba un bloque plano de condiciones OR (`orConditions.join(',')`) sin filtrar stopwords ni normalizar términos.
+ *    - Al buscar "Silla de montar", se generaba la condición `title.ilike.%de%` o `description.ilike.%de%`. Dado que
+ *      prácticamente cualquier descripción o título en español incluye la preposición "de", el 99% del catálogo coincidía,
+ *      devolviendo anuncios recientes de cualquier índole ("Chaqueta de competición", "Cámara de vigilancia", etc.)
+ *      por encima de los productos realmente buscados.
+ * 2. Solución Semántica (Stopword Filtering & Plural Normalization):
+ *    - Se introdujo `SPANISH_STOPWORDS` para descartar preposiciones y artículos vacíos de significado ('de', 'la', 'el', 'para', etc.).
+ *    - Se implementó `normalizePlural()` para convertir sustantivos plurales a singular ("sillas" -> "silla"). Al utilizar `%silla%`
+ *      en SQL `ILIKE`, se garantiza que coincidan de forma transparente tanto títulos en singular como en plural.
+ * 3. Lógica AND Robusta estilo Web (PostgREST):
+ *    - Cuando la consulta contiene múltiples palabras ("silla", "montar"), se aplica una condición `and(or(...),or(...))` exigiendo
+ *      que cada término relevante esté presente en el título, descripción o subcategoría, o bien coincidencia con la frase exacta.
+ *    - Se excluyó la búsqueda en el slug de `category` para evitar que productos accesorios (ej. cinchas o estribos en la categoría
+ *      "sillas-de-montar-y-accesorios") contaminen la búsqueda específica de monturas / sillas.
+ * 4. Algoritmo de Relevancia Semántica (`computeRelevanceScore`):
+ *    - Los resultados obtenidos de Supabase se ordenan en memoria priorizando fuertemente coincidencias en el título (ej. frase exacta +200,
+ *      todos los términos en título +120) frente a coincidencias dispersas en la descripción (+10), utilizando la fecha de creación como desempate.
+ * 5. Type Safety estricto:
+ *    - Cero `any`. Tipado seguro con `SortOptionId`, `SortOption`, `Listing` y funciones puras de procesamiento.
+ */

@@ -27,8 +27,9 @@ export async function fetchRelevantListings(currentListing: Listing): Promise<Li
 
     // 2. Pool de candidatos
     let catQuery = supabase.from('listings')
-        .select('*, seller:users!listings_user_id_fkey(*)')
+        .select('*, users!inner(is_ghost), seller:users!listings_user_id_fkey(*)')
         .eq('status', 'active')
+        .eq('users.is_ghost', false)
         .neq('id', currentListing.id)
         .neq('user_id', currentListing.user_id)
         .or(getDefaultTenantFilterString());
@@ -44,11 +45,12 @@ export async function fetchRelevantListings(currentListing: Listing): Promise<Li
     if (stems.length > 0) {
         const orConditions = stems.map(s => `title.ilike.%${s}%,description.ilike.%${s}%`).join(',');
         let query = supabase.from('listings')
-            .select('*, seller:users!listings_user_id_fkey(*)')
+            .select('*, users!inner(is_ghost), seller:users!listings_user_id_fkey(*)')
             .eq('status', 'active')
+            .eq('users.is_ghost', false)
             .neq('id', currentListing.id)
             .neq('user_id', currentListing.user_id)
-        .or(getDefaultTenantFilterString());
+            .or(getDefaultTenantFilterString());
             
         if (currentListing.subcategory) {
             query = query.eq('subcategory', currentListing.subcategory);

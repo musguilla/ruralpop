@@ -6,12 +6,16 @@ import Link from "next/link";
 import { CompanySearchInput } from "./CompanySearchInput";
 import { getImageUrl } from "@/utils/mediaUtils";
 import { CompanyCategoriesSidebar, type CategoryWithSubcategories } from "./CompanyCategoriesSidebar";
-import { getServerTenantSlug, getServerTenantFilterString } from "@/utils/tenant/server";
+import { getServerTenantSlug, getServerTenantFilterString, getServerTenantDomain } from "@/utils/tenant/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const slug = (await params).slug;
+    const tenant = await getServerTenantSlug();
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
 
     const supabase = await createClient();
     const { data: companies } = await supabase
@@ -25,12 +29,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     });
 
     const name = company?.commercial_name || "Perfil no encontrado";
-    const rawDesc = company?.company_description || `Encuentra todos los anuncios, productos e información sobre ${name} en Ruralpop.`;
+    const rawDesc = company?.company_description || `Encuentra todos los anuncios, productos e información sobre ${name} en ${brand}.`;
     const description = rawDesc.length > 155 ? rawDesc.substring(0, 152) + "..." : rawDesc;
     
     return {
-        title: `${name} - Anuncios y Perfil Profesional | Ruralpop`,
+        title: `${name} - Anuncios y Perfil Profesional | ${brand}`,
         description: description,
+        alternates: {
+            canonical: `${currentDomain}/empresa/${slug}`
+        },
+        openGraph: {
+            title: `${name} - Anuncios y Perfil Profesional | ${brand}`,
+            description: description,
+            url: `${currentDomain}/empresa/${slug}`,
+            siteName: brand,
+        }
     };
 }
 

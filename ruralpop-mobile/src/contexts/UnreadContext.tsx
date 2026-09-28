@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
@@ -7,6 +7,8 @@ interface UnreadContextType {
     unreadNotifications: number;
     totalUnread: number;
     refreshUnread: () => Promise<void>;
+    decrementUnreadNotification: () => void;
+    incrementUnreadNotification: () => void;
 }
 
 const UnreadContext = createContext<UnreadContextType>({
@@ -14,14 +16,16 @@ const UnreadContext = createContext<UnreadContextType>({
     unreadNotifications: 0,
     totalUnread: 0,
     refreshUnread: async () => {},
+    decrementUnreadNotification: () => {},
+    incrementUnreadNotification: () => {},
 });
 
 export function UnreadProvider({ children }: { children: React.ReactNode }) {
     const { user } = useAuth();
-    const [unreadMessages, setUnreadMessages] = useState(0);
-    const [unreadNotifications, setUnreadNotifications] = useState(0);
+    const [unreadMessages, setUnreadMessages] = useState<number>(0);
+    const [unreadNotifications, setUnreadNotifications] = useState<number>(0);
 
-    const refreshUnread = async () => {
+    const refreshUnread = useCallback(async (): Promise<void> => {
         if (!user) return;
         
         // Fetch unread messages
@@ -41,7 +45,23 @@ export function UnreadProvider({ children }: { children: React.ReactNode }) {
             .eq('is_read', false);
             
         setUnreadNotifications(notifCount || 0);
-    };
+    }, [user]);
+
+    /**
+     * Decrementa optimísticamente en 1 el contador de notificaciones no leídas
+     * para reflejo inmediato en el badge globo sin esperar respuesta de red.
+     */
+    const decrementUnreadNotification = useCallback((): void => {
+        setUnreadNotifications(prev => Math.max(0, prev - 1));
+    }, []);
+
+    /**
+     * Incrementa en 1 el contador de notificaciones no leídas si el usuario
+     * pulsa "Deshacer" dentro del margen de 5 segundos.
+     */
+    const incrementUnreadNotification = useCallback((): void => {
+        setUnreadNotifications(prev => prev + 1);
+    }, []);
 
     useEffect(() => {
         if (!user) {
@@ -76,14 +96,16 @@ export function UnreadProvider({ children }: { children: React.ReactNode }) {
             supabase.removeChannel(msgChannel);
             supabase.removeChannel(notifChannel);
         };
-    }, [user]);
+    }, [user, refreshUnread]);
 
     return (
         <UnreadContext.Provider value={{
             unreadMessages,
             unreadNotifications,
             totalUnread: unreadMessages + unreadNotifications,
-            refreshUnread
+            refreshUnread,
+            decrementUnreadNotification,
+            incrementUnreadNotification,
         }}>
             {children}
         </UnreadContext.Provider>
@@ -91,3 +113,18 @@ export function UnreadProvider({ children }: { children: React.ReactNode }) {
 }
 
 export const useUnread = () => useContext(UnreadContext);
+
+// ============================================================================
+// Documentación de Memoria y Decisiones Técnicas (RULE[user_global])
+// ============================================================================
+/**
+ * Decisiones Técnicas:
+ * 1. Decremento / Incremento Optimista:
+ *    - Se proveen `decrementUnreadNotification` e `incrementUnreadNotification` para que el badge globo
+ *      de las pestañas y barra de navegación se actualice en tiempo real (0 ms de latencia) al realizar
+ *      acciones destructivas o restauraciones de notificaciones no leídas.
+ * 2. Type Safety y Reglas de Hooks:
+ *    - Uso estricto de tipos TypeScript sin 'any'.
+ *    - Todas las funciones callback (`refreshUnread`, `decrementUnreadNotification`, `incrementUnreadNotification`)
+ *      están estabilizadas con `useCallback` en el nivel superior del componente provider.
+ */

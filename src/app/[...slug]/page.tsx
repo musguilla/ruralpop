@@ -15,7 +15,7 @@ import { generateSeoH1 } from "@/utils/h1Generator";
 import { headers } from "next/headers";
 import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
 import { LocaleCode } from "@/i18n/config";
-import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getServerTenantSlug, getServerTenantDomain } from "@/utils/tenant/server";
 
 export async function generateMetadata(props: { 
     params: Promise<{ slug: string | string[] }>;
@@ -25,7 +25,9 @@ export async function generateMetadata(props: {
     const searchParams = await props.searchParams;
     const parsed = parseSeoUrl(params.slug);
     const tenant = await getServerTenantSlug();
-    const isEquipop = tenant === 'equipop';
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
+    const brand = isEquipop ? "Equipop" : "Ruralpop";
     const headersList = await headers();
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
     const slugStr = Array.isArray(params.slug) ? params.slug.join("/") : params.slug;
@@ -69,8 +71,6 @@ export async function generateMetadata(props: {
                 : ["Comprar y vender ganado", "Compraventa de animales ganaderos", "App gratis compraventa ganado", "Anuncios gratis del campo", "Mercado rural de segunda mano", "Compra venta ganadería"]);
         const charCodeSum = (Array.isArray(params.slug) ? params.slug.join("/") : params.slug).split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
         const suffix = seoVariations[charCodeSum % seoVariations.length];
-        
-        const brand = isEquipop ? "Equipop" : "Ruralpop";
         const candidateTitle = `${baseSubject} - ${suffix} | ${brand}`;
         if (candidateTitle.length > 72) {
             pageTitle = `${baseSubject} | ${brand}`;
@@ -79,7 +79,7 @@ export async function generateMetadata(props: {
         }
     }
 
-    let canonical = getCanonicalUrl(originalPathname, locale);
+    let canonical = getCanonicalUrl(originalPathname, locale, currentDomain);
     const isPaginated = searchParams.page && typeof searchParams.page === 'string' && searchParams.page !== '1';
     
     if (isPaginated) {
@@ -104,7 +104,22 @@ export async function generateMetadata(props: {
         description: descText,
         alternates: {
             canonical,
-            languages: getHreflangLinks(originalPathname)
+            languages: getHreflangLinks(originalPathname, currentDomain)
+        },
+        openGraph: {
+            title: pageTitle,
+            description: descText,
+            url: canonical,
+            siteName: brand,
+            images: [
+                {
+                    url: isEquipop ? `${currentDomain}/equipop-favicon.png` : '/opengraph-image.png',
+                    width: 512,
+                    height: 512,
+                }
+            ],
+            locale: locale === 'pt' ? 'pt_PT' : 'es_ES',
+            type: 'website'
         },
         robots: robotsRules
     };

@@ -57,7 +57,7 @@ export async function sendMessage(formData: FormData) {
                 body: JSON.stringify({
                     to: pushToken,
                     sound: 'default',
-                    title: `Nuevo mensaje de ${senderName}`,
+                    title: `💬 Mensaje de ${senderName}`,
                     body: content.trim(),
                     data: { listingId: listing_id, otherUserId: user.id },
                 }),

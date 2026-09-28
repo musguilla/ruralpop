@@ -62,6 +62,18 @@ export default function EditShippingAddressScreen() {
             });
 
             if (error) throw error;
+
+            // Synchronize with public.users table so sellers and escrow system can query delivery details
+            if (user?.id) {
+                const fullAddress = newAddress.address + (newAddress.extraInfo ? ` (${newAddress.extraInfo})` : '');
+                await supabase.from('users').update({
+                    name: newAddress.fullName,
+                    contact_phone: newAddress.phone,
+                    company_address: fullAddress,
+                    company_zip: newAddress.postalCode,
+                    location: newAddress.city
+                }).eq('id', user.id);
+            }
             
             if (isFromCheckout) {
                 Alert.alert("Dirección guardada", "Ya puedes continuar con la compra.", [
@@ -189,3 +201,18 @@ export default function EditShippingAddressScreen() {
         </SafeAreaView>
     );
 }
+
+/**
+ * DOCUMENTACIÓN DE MEMORIA / ARQUITECTURA
+ * --------------------------------------
+ * Decisión técnica:
+ * - Se almacena la dirección en `auth.users.raw_user_meta_data` (para persistencia de sesión cliente)
+ *   y simultáneamente se sincroniza en `public.users` (name, contact_phone, company_address, company_zip, location).
+ * - Esta doble sincronización permite que las relaciones relacionales de Supabase (por ejemplo,
+ *   `escrow_orders.buyer_id -> users.id`) expongan los datos de entrega al vendedor cumpliendo con las
+ *   políticas RLS estándar, evitando que los pedidos queden huérfanos sin datos de envío.
+ *
+ * Edge cases cubiertos:
+ * - Usuario que edita su dirección desde el checkout (`isFromCheckout = true`): se notifica y se redirige con `router.back()`.
+ * - Inclusión de `extraInfo` opcional entre paréntesis en `company_address` para no perder detalles de piso/puerta.
+ */

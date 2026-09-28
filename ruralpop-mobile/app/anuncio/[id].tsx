@@ -21,6 +21,8 @@ import { getDefaultTenantFilterString, IS_EQUIPOP } from '../../src/config/tenan
 import { RectangularBanner } from '../../src/components/ui/RectangularBanner';
 import { NativeAdCard } from '../../src/components/ui/NativeAdCard';
 import { FeaturedCheckoutMobile } from '../../src/components/upload/FeaturedCheckoutMobile';
+import { ShippingAddress } from '../shipping-address';
+import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,6 +37,7 @@ export default function ListingDetailsScreen() {
     const { user } = useAuth();
     const { favorites, toggleFavorite } = useFavorites();
     const insets = useSafeAreaInsets();
+    const topSpace = Math.max(insets.top, 20) + 6;
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
     const isFavorited = id ? favorites.has(id) : false;
@@ -56,6 +59,7 @@ export default function ListingDetailsScreen() {
     const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [isCheckoutSummaryVisible, setIsCheckoutSummaryVisible] = useState(false);
+    const [checkoutShippingAddress, setCheckoutShippingAddress] = useState<ShippingAddress | null>(null);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
     const [likesCount, setLikesCount] = useState<number | undefined>(undefined);
 
@@ -252,6 +256,32 @@ export default function ListingDetailsScreen() {
         setIsGalleryOpen(true);
     };
 
+    const handlePressBuy = async () => {
+        if (!user) {
+            router.push('/(auth)/login');
+            return;
+        }
+        if (user?.id === listing?.user_id) {
+            Alert.alert("Aviso", "No puedes comprar tu propio producto.");
+            return;
+        }
+
+        // Fetch fresh metadata directly to prevent stale cache
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        const address = currentUser?.user_metadata?.shipping_address as ShippingAddress | undefined;
+
+        if (!address || !address.address || !address.city || !address.postalCode || !address.phone) {
+            router.push({
+                pathname: '/edit-shipping-address',
+                params: { returnToCheckout: 'true' }
+            });
+            return;
+        }
+
+        setCheckoutShippingAddress(address);
+        setIsCheckoutSummaryVisible(true);
+    };
+
     const handleBuy = async () => {
         if (!user) {
             router.push('/(auth)/login');
@@ -262,6 +292,20 @@ export default function ListingDetailsScreen() {
             setIsCheckingOut(true);
             const { data: { session } } = await supabase.auth.getSession();
             
+            // Re-verify shipping address before payment creation
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
+            const currentShipping = checkoutShippingAddress || (currentUser?.user_metadata?.shipping_address as ShippingAddress | undefined);
+
+            if (!currentShipping || !currentShipping.address || !currentShipping.city || !currentShipping.postalCode || !currentShipping.phone) {
+                Alert.alert("Dirección requerida", "Por favor completa la dirección de entrega antes de pagar.");
+                setIsCheckoutSummaryVisible(false);
+                router.push({
+                    pathname: '/edit-shipping-address',
+                    params: { returnToCheckout: 'true' }
+                });
+                return;
+            }
+
             const siteUrl = __DEV__ && process.env.EXPO_PUBLIC_SITE_URL ? process.env.EXPO_PUBLIC_SITE_URL : 'https://www.ruralpop.com';
             
             const res = await fetch(`${siteUrl}/api/checkout/escrow/native`, {
@@ -270,7 +314,10 @@ export default function ListingDetailsScreen() {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${session?.access_token}`
                 },
-                body: JSON.stringify({ listingId: listing!.id })
+                body: JSON.stringify({ 
+                    listingId: listing!.id,
+                    shippingAddress: currentShipping
+                })
             });
 
             if (!res.ok) {
@@ -285,7 +332,14 @@ export default function ListingDetailsScreen() {
                 paymentIntentClientSecret,
                 allowsDelayedPaymentMethods: false,
                 defaultBillingDetails: {
-                    name: user.user_metadata?.name || 'Usuario Ruralpop',
+                    name: currentShipping.fullName || user.user_metadata?.name || 'Usuario Ruralpop',
+                    phone: currentShipping.phone,
+                    address: {
+                        line1: currentShipping.address,
+                        city: currentShipping.city,
+                        postalCode: currentShipping.postalCode,
+                        country: 'ES'
+                    }
                 }
             });
 
@@ -317,10 +371,49 @@ export default function ListingDetailsScreen() {
 
     return (
         <View className="flex-1 bg-surface">
+            {/* Espacio en blanco sobre la foto estilo Wallapop */}
+            <View 
+                style={{ 
+                    position: 'absolute', 
+                    top: 0, 
+                    left: 0, 
+                    right: 0, 
+                    height: topSpace, 
+                    backgroundColor: '#ffffff', 
+                    zIndex: 12 
+                }} 
+                pointerEvents="none" 
+            />
+
+            {/* Velo degradado bajo los iconos cuando no hay scroll */}
+            {!isScrolled && (
+                <View 
+                    style={{ 
+                        position: 'absolute', 
+                        top: topSpace, 
+                        left: 0, 
+                        right: 0, 
+                        height: 90, 
+                        zIndex: 9 
+                    }} 
+                    pointerEvents="none"
+                >
+                    <Svg height="100%" width="100%">
+                        <Defs>
+                            <LinearGradient id="headerGrad" x1="0" y1="0" x2="0" y2="1">
+                                <Stop offset="0%" stopColor="#000000" stopOpacity="0.4" />
+                                <Stop offset="100%" stopColor="#000000" stopOpacity="0" />
+                            </LinearGradient>
+                        </Defs>
+                        <Rect width="100%" height="100%" fill="url(#headerGrad)" />
+                    </Svg>
+                </View>
+            )}
+
             {/* Header Overlay */}
             <View 
                 className="absolute top-0 left-0 right-0 z-10" 
-                style={{ paddingTop: Math.max(insets.top, 16) }} 
+                style={{ paddingTop: topSpace + 2 }} 
                 pointerEvents="box-none"
             >
                 <View style={{ 
@@ -333,25 +426,25 @@ export default function ListingDetailsScreen() {
                 <View className="flex-row justify-between items-center px-4 py-2" pointerEvents="box-none">
                     <TouchableOpacity
                         onPress={() => router.back()}
-                        className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}
+                        className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-transparent'}`}
                     >
                         <ChevronLeft color={isScrolled ? "#111827" : "white"} size={24} />
                     </TouchableOpacity>
 
                     {isOwnListing ? (
                         <View className="flex-row items-center space-x-2 gap-2" pointerEvents="box-none">
-                            <TouchableOpacity onPress={() => router.push(`/edit/${listing.id}`)} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}>
+                            <TouchableOpacity onPress={() => router.push(`/edit/${listing.id}`)} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-transparent'}`}>
                                 <Edit3 color={isScrolled ? "#111827" : "white"} size={20} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={handleShare} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}>
+                            <TouchableOpacity onPress={handleShare} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-transparent'}`}>
                                 <ShareIcon color={isScrolled ? "#111827" : "white"} size={20} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setIsOptionsModalVisible(true)} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}>
+                            <TouchableOpacity onPress={() => setIsOptionsModalVisible(true)} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-transparent'}`}>
                                 <MoreVertical color={isScrolled ? "#111827" : "white"} size={20} />
                             </TouchableOpacity>
                         </View>
                     ) : (
-                        <TouchableOpacity onPress={handleShare} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-black/30'}`}>
+                        <TouchableOpacity onPress={handleShare} className={`w-10 h-10 rounded-full items-center justify-center ${isScrolled ? 'bg-gray-100' : 'bg-transparent'}`}>
                             <ShareIcon color={isScrolled ? "#111827" : "white"} size={20} />
                         </TouchableOpacity>
                     )}
@@ -368,8 +461,18 @@ export default function ListingDetailsScreen() {
                 }}
                 scrollEventThrottle={16}
             >
+                {/* Espacio en blanco sobre la foto como en Wallapop */}
+                <View style={{ height: topSpace, backgroundColor: '#ffffff' }} />
+
                 {/* Header Images */}
-                <View className="relative w-full aspect-square bg-surface-muted">
+                <View 
+                    className="relative w-full aspect-square bg-surface-muted"
+                    style={{
+                        borderTopLeftRadius: 16,
+                        borderTopRightRadius: 16,
+                        overflow: 'hidden',
+                    }}
+                >
                     {hasImages ? (
                         <ScrollView
                             horizontal
@@ -440,7 +543,8 @@ export default function ListingDetailsScreen() {
                                     setSoldPriceInput(listing.price ? listing.price.toString() : "");
                                     setSoldModalVisible(true);
                                 }}
-                                className="flex-1 py-3 items-center rounded-full border border-primary bg-white shadow-sm"
+                                className="flex-1 py-3.5 items-center rounded-full border-2 border-primary bg-white"
+                                style={{ elevation: 0, shadowOpacity: 0 }}
                             >
                                 <Text className="font-bold text-primary text-base">Vendido</Text>
                             </TouchableOpacity>
@@ -652,24 +756,7 @@ export default function ListingDetailsScreen() {
                     </View>
                 ) : (listing.vender_online || IS_EQUIPOP) ? (
                     <TouchableOpacity
-                        onPress={() => {
-                            if (!user) {
-                                router.push('/(auth)/login');
-                                return;
-                            }
-                            if (user?.id === listing.user_id) {
-                                Alert.alert("Aviso", "No puedes comprar tu propio producto.");
-                                return;
-                            }
-                            if (!user?.user_metadata?.shipping_address) {
-                                router.push({
-                                    pathname: '/edit-shipping-address',
-                                    params: { returnToCheckout: 'true' }
-                                });
-                                return;
-                            }
-                            setIsCheckoutSummaryVisible(true);
-                        }}
+                        onPress={handlePressBuy}
                         disabled={isCheckingOut}
                         className="w-full bg-primary py-4 rounded-full flex-row justify-center items-center shadow-sm"
                         activeOpacity={0.8}
@@ -750,6 +837,50 @@ export default function ListingDetailsScreen() {
                     </View>
 
                     <ScrollView className="flex-1 px-4 py-6">
+                        {/* Shipping Address Summary Card */}
+                        <View className="bg-white rounded-2xl border border-gray-300 p-4 mb-4">
+                            <View className="flex-row justify-between items-center mb-3">
+                                <View className="flex-row items-center">
+                                    <Truck color={IS_EQUIPOP ? "#1e3a8a" : "#059669"} size={20} />
+                                    <Text className="text-base font-bold text-text ml-2">Dirección de entrega</Text>
+                                </View>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setIsCheckoutSummaryVisible(false);
+                                        router.push({
+                                            pathname: '/edit-shipping-address',
+                                            params: { returnToCheckout: 'true' }
+                                        });
+                                    }}
+                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                >
+                                    <Text className="text-sm font-bold text-primary">Modificar</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {checkoutShippingAddress ? (
+                                <View className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                                    <Text className="text-sm font-bold text-gray-900">{checkoutShippingAddress.fullName}</Text>
+                                    <Text className="text-sm text-gray-700 mt-1">{checkoutShippingAddress.address} {checkoutShippingAddress.extraInfo ? `(${checkoutShippingAddress.extraInfo})` : ''}</Text>
+                                    <Text className="text-sm text-gray-700 mt-0.5">{checkoutShippingAddress.postalCode} {checkoutShippingAddress.city}, España</Text>
+                                    <Text className="text-xs text-gray-500 mt-1.5 font-medium">Teléfono: {checkoutShippingAddress.phone}</Text>
+                                </View>
+                            ) : (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setIsCheckoutSummaryVisible(false);
+                                        router.push({
+                                            pathname: '/edit-shipping-address',
+                                            params: { returnToCheckout: 'true' }
+                                        });
+                                    }}
+                                    className="p-3 bg-amber-50 rounded-xl border border-amber-200 items-center"
+                                >
+                                    <Text className="text-sm text-amber-800 font-semibold">Pulsa para añadir tu dirección de entrega</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+
                         <View className="bg-white rounded-2xl border border-gray-300 p-4 mb-6">
                             <Text className="text-lg font-bold text-text mb-4">Desglose del precio</Text>
                             
@@ -1014,8 +1145,13 @@ export default function ListingDetailsScreen() {
 
 /**
  * Memory / Decisiones Técnicas:
- * - Se rediseña el componente de detalle simulando UI tipo Wallapop.
+ * - Se rediseña el componente de detalle simulando UI tipo Wallapop:
+ *   1. Espacio en blanco sobre la foto (`topSpace = Math.max(insets.top, 20) + 6`) para que la barra de estado y el dynamic island queden limpios y no tapen la imagen.
+ *   2. Velo degradado (`headerGrad` con `react-native-svg`) de 90px sobre la parte superior de la imagen cuando `!isScrolled`, proporcionando alto contraste para los iconos blancos sin necesidad de burbujas oscuras individuales.
+ *   3. Transición limpia en scroll: al superar `y > width * 0.5`, se activa el header sticky blanco con fondo `bg-gray-100` e iconos oscuros `#111827`, tal como estaba solicitado.
+ *   4. Botón "Vendido" estilo Wallapop: borde de 2px `border-primary`, fondo blanco, `py-3.5` y sin ninguna sombra (`elevation: 0`, `shadowOpacity: 0`).
  * - Animación del Header: Simplificada usando ScrollView normal y un fondo blanco sólido cuando el usuario hace scroll hacia abajo para evitar conflictos/crashes entre gestos y Animated con NativeDriver falso.
  * - Componente `Modal`: Se introduce una galería a pantalla completa. Usamos `expo-image` con URLs optimizadas en vez de `RNImage` (core react-native) para evitar picos de uso de RAM que causaban Memory Crashes por imágenes gigantes (raw).
  * - Iconos/Badges: Posición absolute bottom-right para favorito (sin cuenta, shadow suave) y bottom-left contador oscuro semitransparente.
+ * - Verificación obligatoria de dirección de envío: Antes de abrir el checkout (`handlePressBuy`) y antes de crear el pago (`handleBuy`), se consulta de forma fresca `supabase.auth.getUser()` para evitar desincronizaciones de caché local. Si faltan datos postales o teléfono, se redirige a `/edit-shipping-address?returnToCheckout=true`. En el modal se muestra la dirección con botón de modificación.
  */

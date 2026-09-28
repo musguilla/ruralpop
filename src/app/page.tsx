@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { ActiveSearchBar } from "@/components/ui/ActiveSearchBar";
 import { HomeSearchHero } from "@/components/ui/HomeSearchHero";
 import { EquipopHomeSearchHero } from "@/components/ui/EquipopHomeSearchHero";
-import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getServerTenantSlug, getServerTenantDomain } from "@/utils/tenant/server";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
 import { HomeLatestListings } from "@/components/home/HomeLatestListings";
 import { HomeDirectBuySlider } from "@/components/home/HomeDirectBuySlider";
@@ -27,16 +27,43 @@ export async function generateMetadata(props: {
   const headersList = await headers();
   const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
   const originalPathname = headersList.get('x-original-pathname') || '/';
+  const tenant = await getServerTenantSlug();
+  const currentDomain = await getServerTenantDomain();
+  const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
 
-  let canonical = getCanonicalUrl(originalPathname, locale);
+  let canonical = getCanonicalUrl(originalPathname, locale, currentDomain);
   if (searchParams.page && typeof searchParams.page === 'string' && searchParams.page !== '1') {
       canonical += `?page=${searchParams.page}`;
   }
 
+  const isPt = locale === 'pt';
+  const title = isEquipop 
+    ? (isPt ? "Equipop - Vende e compra material equestre em segunda mão" : "Equipop - Vende y compra material hípico segunda mano")
+    : (isPt ? "Ruralpop - App grátis para comprar e vender gado" : "Ruralpop - App gratis para comprar y vender ganado");
+
+  const description = isEquipop
+    ? (isPt ? "App grátis para vender, comprar e pesquisar material e equipamentos equestres." : "App gratis para vender, comprar y buscar material y equipamientos hípicos.")
+    : (isPt ? "App móvel grátis para pesquisar, vender e comprar gado, máquinas, alimentação, forragem e encontrar serviços profissionais. Vacas, cavalos, ovelhas, cabras, galinhas ... de agricultores para agricultores." : "App móvil gratis para buscar, vender y comprar ganado, maquinaria, alimentación, forraje y encontrar servicios profesionales. Vacas, caballos, ovejas, cabras, gallinas ... de ganaderos para ganaderos.");
+
   return {
     alternates: {
       canonical,
-      languages: getHreflangLinks(originalPathname),
+      languages: getHreflangLinks(originalPathname, currentDomain),
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: isEquipop ? "Equipop" : "Ruralpop",
+      images: [
+        {
+          url: isEquipop ? `${currentDomain}/equipop-favicon.png` : '/opengraph-image.png',
+          width: 512,
+          height: 512,
+        }
+      ],
+      locale: locale,
+      type: 'website',
     },
   };
 }

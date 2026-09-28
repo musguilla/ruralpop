@@ -182,7 +182,7 @@ export default function ChatScreen() {
                     body: JSON.stringify({
                         to: receiverToken,
                         sound: 'default',
-                        title: `Nuevo mensaje de ${user?.user_metadata?.name || 'Alguien'}`,
+                        title: `💬 Mensaje de ${user?.user_metadata?.name || 'Alguien'}`,
                         body: content,
                         data: { listingId, otherUserId: user.id },
                     }),

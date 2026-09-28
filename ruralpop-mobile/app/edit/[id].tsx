@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
@@ -29,6 +29,7 @@ export default function EditListingScreen() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
+    const initialPriceRef = useRef<number | null>(null);
     const [priceType, setPriceType] = useState('fixed');
     const [categoryId, setCategoryId] = useState<string | null>(null);
     const [locationId, setLocationId] = useState<string | null>(null); // name of province
@@ -77,6 +78,10 @@ export default function EditListingScreen() {
                     setTitle(data.title);
                     setDescription(data.description);
                     setPrice(data.price.toString());
+                    const parsedInitialPrice = typeof data.price === 'number' ? data.price : parseFloat(data.price);
+                    if (!isNaN(parsedInitialPrice)) {
+                        initialPriceRef.current = parsedInitialPrice;
+                    }
                     setPriceType(data.price_type || 'fixed');
                     
                     if (data.vender_online) {
@@ -308,12 +313,15 @@ export default function EditListingScreen() {
                 }
             }
 
+            const newPriceVal = parseFloat(price.replace(',', '.'));
+            const oldPriceVal = initialPriceRef.current;
+
             const { error } = await supabase
                 .from('listings')
                 .update({
                     title,
                     description,
-                    price: parseFloat(price.replace(',', '.')),
+                    price: newPriceVal,
                     price_type: priceType,
                     location: fullLocationString,
                     province_id: provinceNumericId,
@@ -332,6 +340,30 @@ export default function EditListingScreen() {
 
             if (error) throw error;
 
+            // Si el precio se ha reducido, notificar a los usuarios con el producto en favoritos
+            if (oldPriceVal !== null && !isNaN(oldPriceVal) && newPriceVal < oldPriceVal) {
+                try {
+                    const ruralpopDomain = 'https://www.ruralpop.com';
+                    fetch(`${ruralpopDomain}/api/listings/price-drop`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {})
+                        },
+                        body: JSON.stringify({
+                            listingId: id,
+                            oldPrice: oldPriceVal,
+                            newPrice: newPriceVal,
+                        }),
+                    }).catch((err: unknown) => {
+                        console.warn('Error invoking price drop endpoint:', err);
+                    });
+                    initialPriceRef.current = newPriceVal;
+                } catch (priceDropErr: unknown) {
+                    console.warn('Price drop notification trigger error:', priceDropErr);
+                }
+            }
+
             if (isRestricted) {
                 setWelfareListingId(id);
                 setIsAnimalWelfareModalOpen(true);
@@ -343,8 +375,9 @@ export default function EditListingScreen() {
                 }, 2000);
             }
 
-        } catch (error: any) {
-            Alert.alert('Error', error.message || 'Error al guardar el anuncio');
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Error al guardar el anuncio';
+            Alert.alert('Error', message);
         } finally {
             setIsSubmitting(false);
         }
@@ -660,3 +693,20 @@ export default function EditListingScreen() {
         </SafeAreaView>
     );
 }
+
+// ============================================================================
+// Memoria y Decisiones Técnicas (RULE[user_global])
+// ============================================================================
+/**
+ * Decisiones Técnicas & Lecciones Aprendidas:
+ * 1. Detección de Bajada de Precio en Edición de Anuncios:
+ *    - Se utiliza `initialPriceRef` para capturar el precio previo del anuncio al cargarlo en pantalla.
+ *    - Si el usuario guarda una reducción de precio (`newPrice < oldPrice`), se invoca de inmediato
+ *      `/api/listings/price-drop` para notificar mediante Push y notificación In-App a todos los usuarios
+ *      que guardaron el anuncio en favoritos.
+ * 2. Cero duplicidades:
+ *    - `initialPriceRef.current` se sincroniza tras la edición exitosa para prevenir envíos duplicados
+ *      si el usuario permanece en la misma pantalla.
+ * 3. Type Safety & Error Handling:
+ *    - Manejo tipado de errores con `error: unknown` en lugar de `any`.
+ */

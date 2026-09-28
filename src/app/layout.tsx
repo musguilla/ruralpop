@@ -4,7 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { EquipopFooter } from "@/components/layout/EquipopFooter";
-import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getServerTenantSlug, getServerTenantDomain } from "@/utils/tenant/server";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { CategoriesProvider } from "@/context/CategoriesContext";
 import { getCategories, getActiveEquipopSubcategories } from "@/utils/categoriesFetcher";
@@ -32,9 +32,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
   const originalPathname = headersList.get('x-original-pathname') || '/';
   const tenant = await getServerTenantSlug();
-
-  const isEquipop = tenant === 'equipop';
-  const currentDomain = isEquipop ? 'https://www.equipop.app' : 'https://www.ruralpop.com';
+  const currentDomain = await getServerTenantDomain();
+  const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
 
   const isPt = locale === 'pt';
   
@@ -75,6 +74,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: title,
       description: description,
+      url: currentDomain,
       siteName: isEquipop ? "Equipop" : "Ruralpop",
       images: [
         {

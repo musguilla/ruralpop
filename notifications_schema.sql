@@ -17,6 +17,8 @@ ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view own notifications" ON public.notifications FOR SELECT USING (auth.uid() = user_id);
 -- Users can update their own notifications (e.g. mark as read)
 CREATE POLICY "Users can update own notifications" ON public.notifications FOR UPDATE USING (auth.uid() = user_id);
+-- Users can delete their own notifications
+CREATE POLICY "Users can delete own notifications" ON public.notifications FOR DELETE USING (auth.uid() = user_id);
 
 -- Webhook Trigger Function for Favorites
 CREATE OR REPLACE FUNCTION public.handle_favorite_notification()

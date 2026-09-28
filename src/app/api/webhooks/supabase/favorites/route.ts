@@ -18,10 +18,10 @@ export async function POST(req: Request) {
 
         const { listing_id, user_id: liker_id } = payload.record;
 
-        // Fetch the listing to get the owner and title
+        // Fetch the listing to get the owner, title and images
         const { data: listing, error: listingError } = await supabaseAdmin
             .from('listings')
-            .select('user_id, title')
+            .select('user_id, title, image_urls')
             .eq('id', listing_id)
             .single();
 
@@ -35,13 +35,22 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: 'Ignored self-favorite' });
         }
 
-        // Notify the listing owner
+        const imageUrl = Array.isArray(listing.image_urls) && listing.image_urls.length > 0
+            ? listing.image_urls[0]
+            : null;
+
+        // Notify the listing owner with Wallapop text, star emoji, and product image
         await sendNotification({
             userId: listing.user_id,
             type: 'favorite',
-            title: '¡A alguien le gusta tu artículo!',
-            body: `Tu artículo "${listing.title}" ha sido añadido a favoritos. ¡Podría venderse pronto!`,
-            data: { url: `/anuncio/${listing_id}` }
+            title: '⭐ Tienes un nuevo favorito',
+            body: `¡"${listing.title}" está gustando!`,
+            data: {
+                url: `/anuncio/${listing_id}`,
+                listing_id,
+                listing_title: listing.title,
+                image_url: imageUrl,
+            }
         });
 
         return NextResponse.json({ success: true });

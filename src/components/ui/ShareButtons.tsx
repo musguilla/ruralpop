@@ -2,7 +2,7 @@
 import { useTranslation } from "@/context/LocaleContext";
 
 import React from "react";
-import { Link as LinkIcon } from "lucide-react";
+import { Link as LinkIcon, Share2 } from "lucide-react";
 import { useNotification } from "@/context/NotificationContext";
 
 interface ShareButtonsProps {
@@ -13,6 +13,26 @@ interface ShareButtonsProps {
 export function ShareButtons({ title, url }: ShareButtonsProps) {
     const { t } = useTranslation();
     const { showAlert } = useNotification();
+    const [canNativeShare, setCanNativeShare] = React.useState(false);
+
+    React.useEffect(() => {
+        if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+            setCanNativeShare(true);
+        }
+    }, []);
+
+    const handleNativeShare = async () => {
+        if (typeof navigator !== 'undefined' && navigator.share) {
+            try {
+                await navigator.share({
+                    title,
+                    url
+                });
+            } catch {
+                // El usuario canceló la hoja nativa de compartir
+            }
+        }
+    };
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(url).then(() => {
@@ -41,6 +61,18 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
         <div className="mt-8 mb-6">
             <h4 className="text-lg font-bold text-[var(--ag-sys-color-text)] mb-4 px-1">{t("comparte_anuncio")}</h4>
             <div className="flex items-center gap-4 px-1">
+                {/* Compartir Nativo (Dispositivos móviles / Navegadores compatibles) */}
+                {canNativeShare && (
+                    <button
+                        onClick={handleNativeShare}
+                        className="w-12 h-12 flex items-center justify-center bg-[var(--ag-sys-color-background)] hover:bg-[var(--ag-sys-color-border)] transition-colors rounded-full"
+                        aria-label="Compartir en el dispositivo"
+                        title="Compartir"
+                    >
+                        <Share2 className="w-5 h-5 text-[var(--ag-sys-color-text)]" strokeWidth={2.2} />
+                    </button>
+                )}
+
                 {/* WhatsApp */}
                 <a
                     href={whatsappUrl}
@@ -98,8 +130,20 @@ export function ShareButtons({ title, url }: ShareButtonsProps) {
     );
 }
 
+// ============================================================================
+// Documentación de Memoria y Decisiones Técnicas (RULE[user_global])
+// ============================================================================
 /**
- * Memory / Decisiones Técnicas:
- * - Se usan SVGs crudos y luces (lucide-react) para evitar librerías pesadas adicionales.
- * - Copia en portapapeles usa el NotificationContext existente para una UX sólida con "Zero Errors".
+ * Decisiones Técnicas:
+ * 1. Web Share API (`navigator.share`):
+ *    - Se detecta de forma progresiva en el cliente mediante un efecto inicial.
+ *    - Si el navegador soporta `navigator.share` (como Safari en iOS o Chrome en Android), se presenta
+ *      el botón nativo de compartir para invocar la hoja del sistema con el título y la URL dinámica
+ *      del tenant (Equipop o Ruralpop).
+ * 2. Multi-Tenant URL Handling:
+ *    - La prop `url` se inyecta desde los Server Components utilizando `getServerTenantDomain()`, garantizando
+ *      que en la web de Equipop se compartan enlaces directos a `https://www.equipop.app` o `https://equipop.app`.
+ * 3. Diseño & Antigravity Sync:
+ *    - Tokens semánticos `var(--ag-sys-color-...)` en lugar de colores arbitrarios.
+ *    - Cero `any` en todo el flujo de tipado.
  */

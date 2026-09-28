@@ -75,6 +75,8 @@ export default function LoginScreen() {
                                 value={password}
                                 secureTextEntry={!showPassword}
                                 placeholder="••••••••"
+                                autoComplete="current-password"
+                                textContentType="password"
                                 autoCapitalize="none"
                                 placeholderTextColor="#9ca3af"
                                 style={styles.input}
@@ -90,6 +92,18 @@ export default function LoginScreen() {
                                 )}
                             </TouchableOpacity>
                         </View>
+                    </View>
+
+                    <View style={styles.forgotPasswordContainer}>
+                        <TouchableOpacity
+                            onPress={() => router.push('/(auth)/forgot-password')}
+                            style={styles.forgotPasswordButton}
+                            activeOpacity={0.7}
+                        >
+                            <Text style={[styles.forgotPasswordText, { color: primaryColor }]}>
+                                ¿Has olvidado tu contraseña?
+                            </Text>
+                        </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity
@@ -219,5 +233,18 @@ const styles = StyleSheet.create({
     },
     footerLink: {
         fontWeight: 'bold',
+    },
+    forgotPasswordContainer: {
+        alignItems: 'flex-end',
+        marginTop: -4,
+        marginBottom: 8,
+    },
+    forgotPasswordButton: {
+        paddingVertical: 6,
+        paddingHorizontal: 2,
+    },
+    forgotPasswordText: {
+        fontSize: 13,
+        fontWeight: '600',
     },
 });

@@ -51,12 +51,16 @@ export default function UserProfileScreen() {
                 // Fetch profile
                 const { data: userData } = await supabase
                     .from('users')
-                    .select('name, commercial_name, avatar_url, role, company_logo_url, created_at')
+                    .select('name, commercial_name, avatar_url, role, company_logo_url, created_at, is_ghost')
                     .eq('id', id)
                     .single();
                 
-                if (userData) {
+                if (userData && !userData.is_ghost) {
                     setProfile(userData);
+                } else {
+                    setProfile(null);
+                    setListings([]);
+                    return;
                 }
 
                 // Fetch listings

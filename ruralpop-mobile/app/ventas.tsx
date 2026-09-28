@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Modal, TextInput, Alert, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../src/contexts/AuthContext';
 import { supabase } from '../src/lib/supabase';
 import { useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { ChevronLeft, Package, Clock, CheckCircle, Tag, Edit3, Trash2, PackageOpen, Sparkles } from 'lucide-react-native';
+import { ChevronLeft, Package, Clock, CheckCircle, Tag, Edit3, Trash2, PackageOpen, Sparkles, Truck, MapPin, Phone, Mail, User as UserIcon } from 'lucide-react-native';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../src/lib/image-optimization';
 import { Listing } from '../src/types';
@@ -12,6 +12,16 @@ import { ListingCard } from '../src/components/ui/ListingCard';
 import { formatPrice } from '../src/lib/formatters';
 import { getDefaultTenantFilterString } from '../src/config/tenants';
 import { FeaturedCheckoutMobile } from '../src/components/upload/FeaturedCheckoutMobile';
+
+export interface BuyerContact {
+    id: string;
+    name: string | null;
+    email: string | null;
+    contact_phone: string | null;
+    company_address: string | null;
+    company_zip: string | null;
+    location: string | null;
+}
 
 export default function VentasScreen() {
     const { user } = useAuth();
@@ -83,7 +93,10 @@ export default function VentasScreen() {
                 .from('escrow_orders')
                 .select(`
                     id, status, seller_net_amount_cents, created_at, listing_id,
-                    listings ( title, image_urls, price, sold_price )
+                    listings ( title, image_urls, price, sold_price ),
+                    buyer:users!escrow_orders_buyer_id_fkey (
+                        id, name, email, contact_phone, company_address, company_zip, location
+                    )
                 `)
                 .eq('seller_id', user.id)
                 .neq('status', 'pending_checkout')
@@ -212,7 +225,8 @@ export default function VentasScreen() {
     const getStatusInfo = (status: string) => {
         switch (status) {
             case 'pending': return { label: 'Esperando pago', color: 'text-orange-500', bg: 'bg-orange-50', icon: Clock };
-            case 'paid_held': return { label: 'Pagado - Listo para enviar', color: 'text-blue-600', bg: 'bg-blue-50', icon: Package };
+            case 'paid_held': return { label: 'Realizar envío', color: 'text-blue-600', bg: 'bg-blue-50', icon: Package };
+            case 'awaiting_delivery': return { label: 'Realizar envío', color: 'text-blue-600', bg: 'bg-blue-50', icon: Package };
             case 'shipped': return { label: 'Enviado por ti', color: 'text-purple-600', bg: 'bg-purple-50', icon: Package };
             case 'delivered': return { label: 'Entregado - Esperando liberación', color: 'text-primary', bg: 'bg-primary-muted/20', icon: Clock };
             case 'buyer_confirmed': return { label: 'Recepción Confirmada (Procesando Pago)', color: 'text-primary', bg: 'bg-primary-muted/20', icon: CheckCircle };
@@ -246,6 +260,10 @@ export default function VentasScreen() {
         const isEscrow = item.type === 'escrow';
         const order = isEscrow ? item.data : null;
         const listing = isEscrow ? (Array.isArray(order.listings) ? order.listings[0] : order.listings) : item.data;
+        const buyer = isEscrow ? (order.buyer as BuyerContact | undefined) : null;
+        const hasAddress = !!(buyer?.company_address || buyer?.location || buyer?.company_zip);
+        const hasPhone = !!buyer?.contact_phone;
+        const hasEmail = !!buyer?.email;
         
         const imageUrl = listing?.image_urls?.[0] ? getOptimizedImageUrl(listing.image_urls[0], { width: 200, height: 200 }) : null;
         const { label, color, bg, icon: StatusIcon } = isEscrow ? getStatusInfo(order.status) : { label: 'Venta manual (sin protección)', color: 'text-gray-500', bg: 'bg-gray-100', icon: Tag };
@@ -292,17 +310,104 @@ export default function VentasScreen() {
                     </Text>
                 </View>
 
+                {/* Datos de envío del comprador directamente en la vista previa sin modal */}
+                {isEscrow && (order.status === 'paid_held' || order.status === 'awaiting_delivery' || order.status === 'delivered') && (
+                    <View className="p-4 bg-slate-50 border-t border-gray-100">
+                        <View className="flex-row items-center justify-between mb-2.5">
+                            <View className="flex-row items-center">
+                                <Truck size={17} color="#059669" />
+                                <Text className="text-sm font-bold text-gray-900 ml-2">
+                                    Datos de envío del comprador
+                                </Text>
+                            </View>
+                            <Text className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                                Destinatario
+                            </Text>
+                        </View>
+
+                        {/* Nombre del comprador */}
+                        <View className="flex-row items-center mb-2">
+                            <UserIcon size={15} color="#4b5563" />
+                            <Text className="text-sm font-bold text-gray-900 ml-2">
+                                {buyer?.name || 'Comprador Ruralpop'}
+                            </Text>
+                        </View>
+
+                        {/* Dirección de entrega */}
+                        {hasAddress ? (
+                            <View className="flex-row items-start mb-2.5">
+                                <MapPin size={15} color="#4b5563" className="mt-0.5" />
+                                <View className="ml-2 flex-1">
+                                    {buyer?.company_address && (
+                                        <Text className="text-sm text-gray-800 font-medium leading-5">
+                                            {buyer.company_address}
+                                        </Text>
+                                    )}
+                                    <Text className="text-sm text-gray-600 mt-0.5">
+                                        {[buyer?.company_zip, buyer?.location, 'España'].filter(Boolean).join(' ')}
+                                    </Text>
+                                </View>
+                            </View>
+                        ) : (
+                            <View className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-2.5">
+                                <Text className="text-xs text-amber-900 font-medium leading-4">
+                                    El comprador no tiene registrada una dirección física en su perfil. Contacta directamente para acordar la entrega:
+                                </Text>
+                            </View>
+                        )}
+
+                        {/* Acciones de contacto directas: Teléfono y Email */}
+                        <View className="flex-row flex-wrap gap-2 pt-1">
+                            {hasPhone && (
+                                <TouchableOpacity 
+                                    onPress={() => Linking.openURL(`tel:${buyer?.contact_phone}`)}
+                                    className="flex-row items-center bg-white border border-gray-200 px-3 py-2 rounded-xl active:bg-gray-100 shadow-xs"
+                                >
+                                    <Phone size={14} color="#059669" />
+                                    <Text className="text-xs font-bold text-gray-900 ml-1.5">{buyer?.contact_phone}</Text>
+                                    <Text className="text-[11px] text-primary ml-1 font-semibold">(Llamar)</Text>
+                                </TouchableOpacity>
+                            )}
+                            {hasEmail && (
+                                <TouchableOpacity 
+                                    onPress={() => Linking.openURL(`mailto:${buyer?.email}?subject=Envío de pedido Ruralpop: ${listing?.title || ''}`)}
+                                    className="flex-row items-center bg-white border border-gray-200 px-3 py-2 rounded-xl active:bg-gray-100 shadow-xs"
+                                >
+                                    <Mail size={14} color="#059669" />
+                                    <Text className="text-xs font-bold text-gray-900 ml-1.5" numberOfLines={1}>{buyer?.email}</Text>
+                                    <Text className="text-[11px] text-primary ml-1 font-semibold">(Email)</Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    </View>
+                )}
+
+                {/* Acciones de Envío */}
                 {isEscrow && order.status === 'paid_held' && (
-                    <View className="p-4 bg-blue-50/50 border-t border-blue-100">
-                        <Text className="text-sm text-blue-800 font-medium text-center">
-                            ¡El comprador ya ha pagado! Prepara el paquete para el envío. Recibirás el dinero cuando lo reciba.
+                    <View className="p-4 bg-blue-50/60 border-t border-blue-100">
+                        <Text className="text-xs text-blue-900 font-medium text-center mb-2.5">
+                            ¡El comprador ya ha pagado! Prepara el paquete para el envío y pulsa cuando lo hayas depositado.
                         </Text>
                         <TouchableOpacity
                             onPress={() => handleEscrowAction('mark_shipped', order.id)}
-                            className="bg-primary rounded-full py-3 items-center mt-3"
+                            disabled={actionLoading === `mark_shipped_${order.id}`}
+                            className="bg-primary rounded-xl py-3 items-center justify-center shadow-sm"
                         >
-                            <Text className="text-white font-bold text-[15px]">Envío realizado</Text>
+                            {actionLoading === `mark_shipped_${order.id}` ? (
+                                <ActivityIndicator color="white" size="small" />
+                            ) : (
+                                <Text className="text-white font-bold text-sm">Marcar envío realizado</Text>
+                            )}
                         </TouchableOpacity>
+                    </View>
+                )}
+
+                {isEscrow && order.status === 'awaiting_delivery' && (
+                    <View className="p-3.5 bg-emerald-50/80 border-t border-emerald-100 flex-row items-center justify-center">
+                        <CheckCircle size={16} color="#059669" />
+                        <Text className="text-xs text-emerald-900 font-bold ml-2">
+                            Envío en camino hacia el comprador
+                        </Text>
                     </View>
                 )}
 
@@ -486,3 +591,24 @@ export default function VentasScreen() {
         </SafeAreaView>
     );
 }
+
+/**
+ * DOCUMENTACIÓN DE MEMORIA / ARQUITECTURA
+ * --------------------------------------
+ * Decisión técnica:
+ * - Join relacional con compradores: Se añade `buyer:users!escrow_orders_buyer_id_fkey` para cargar
+ *   datos de contacto y entrega del comprador directamente en la consulta principal de `fetchData`.
+ * - Vista previa embebida en tarjeta: Se renderizan los datos de entrega (nombre, dirección, CP, localidad,
+ *   teléfono y email) directamente en la tarjeta de venta de la lista, evitando la fricción de navegación
+ *   a pantallas secundarias o modales para que el vendedor pueda gestionar el paquete de inmediato.
+ * - Mapeo semántico de estados: Los estados `'paid_held'` y `'awaiting_delivery'` se presentan al usuario
+ *   como 'Realizar envío' en lugar de strings crudos de base de datos en inglés.
+ * - Acciones directas de contacto: Se integran enlaces `Linking.openURL` para llamar por teléfono (`tel:`)
+ *   o redactar correo (`mailto:`) con asunto preconfigurado en un solo toque.
+ *
+ * Edge cases cubiertos:
+ * - Órdenes históricas o compradores sin dirección física registrada: Se despliega un aviso claro en color ámbar
+ *   con botones de contacto rápido para acordar el punto de entrega.
+ * - Pedidos ya marcados como enviados (`awaiting_delivery`): Muestra el badge informativo esmeralda indicando
+ *   que el paquete está en tránsito hacia el comprador a la espera de confirmación.
+ */

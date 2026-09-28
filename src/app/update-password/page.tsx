@@ -6,6 +6,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import type { EmailOtpType } from "@supabase/supabase-js";
+
+interface InlineRecoveryState {
+    email: string;
+    loading: boolean;
+    sent: boolean;
+    error: string | null;
+}
 
 export default function UpdatePasswordPage() {
     const [password, setPassword] = useState("");
@@ -14,19 +22,59 @@ export default function UpdatePasswordPage() {
     const [message, setMessage] = useState<string | null>(null);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isExchangingCode, setIsExchangingCode] = useState(false);
+    const [hasActiveSession, setHasActiveSession] = useState(false);
     const [isEquipop, setIsEquipop] = useState(false);
+    const [inlineRecovery, setInlineRecovery] = useState<InlineRecoveryState>({
+        email: "",
+        loading: false,
+        sent: false,
+        error: null,
+    });
 
     const router = useRouter();
     const supabase = createClient();
 
     useEffect(() => {
         setIsEquipop(window.location.hostname.includes("equipop"));
+
         const setupSession = async () => {
-            // 1. Manejo de Flujo Implícito (Hash fragment: #access_token=...) generado por admin.generateLink()
+            const searchParams = new URLSearchParams(window.location.search);
+            const tokenHash = searchParams.get("token_hash");
+            const typeParam = searchParams.get("type") as EmailOtpType | null;
+            const code = searchParams.get("code");
+            const urlError = searchParams.get("error_description") || searchParams.get("error");
+
+            if (urlError) {
+                setError(urlError.replace(/\+/g, " "));
+                return;
+            }
+
+            // 1. Manejo prioritario Anti-Scanner de token_hash
+            // El bot de Hotmail/Outlook no ejecuta JS en el navegador, por lo que el token
+            // nunca se consume en GET. Se valida únicamente aquí en el cliente.
+            if (tokenHash) {
+                setIsExchangingCode(true);
+                const { error: verifyError } = await supabase.auth.verifyOtp({
+                    token_hash: tokenHash,
+                    type: typeParam || "recovery",
+                });
+                setIsExchangingCode(false);
+
+                if (verifyError) {
+                    console.error("Error validando token_hash:", verifyError);
+                    setError("El enlace de recuperación ha caducado o ya ha sido utilizado. Introduce tu email abajo para recibir uno nuevo al instante.");
+                } else {
+                    setHasActiveSession(true);
+                    window.history.replaceState(null, "", window.location.pathname);
+                }
+                return;
+            }
+
+            // 2. Manejo de Flujo Implícito (Hash fragment: #access_token=...) generado como fallback
             const hash = window.location.hash.substring(1);
             if (hash) {
                 const params = new URLSearchParams(hash);
-                
+
                 if (params.get("error_description")) {
                     setError(params.get("error_description")?.replace(/\+/g, " ") || "El enlace es inválido o ha caducado.");
                     return;
@@ -39,49 +87,50 @@ export default function UpdatePasswordPage() {
                     setIsExchangingCode(true);
                     const { error: sessionError } = await supabase.auth.setSession({
                         access_token: accessToken,
-                        refresh_token: refreshToken
+                        refresh_token: refreshToken,
                     });
                     setIsExchangingCode(false);
 
                     if (sessionError) {
                         console.error("Error setting session from hash:", sessionError);
-                        setError("La sesión ha caducado o el enlace es viejo. Vuelve a solicitar la recuperación de contraseña.");
+                        setError("La sesión ha caducado o el enlace es viejo. Introduce tu email para recibir un enlace nuevo.");
                     } else {
-                        // Éxito: La sesión se restauró de los tokens de la URL
-                        window.history.replaceState(null, '', window.location.pathname);
+                        setHasActiveSession(true);
+                        window.history.replaceState(null, "", window.location.pathname);
                     }
-                    return; 
+                    return;
                 }
             }
 
-            // 2. Manejo de PKCE (Query param: ?code=...) por si el entorno migra estrictamente a PKCE
-            const searchParams = new URLSearchParams(window.location.search);
-            const code = searchParams.get("code");
-            const urlError = searchParams.get("error_description") || searchParams.get("error");
-
-            if (urlError) {
-                setError(urlError.replace(/\+/g, " "));
-                return;
-            }
-
+            // 3. Manejo de PKCE (Query param: ?code=...)
             if (code) {
                 setIsExchangingCode(true);
                 const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
                 setIsExchangingCode(false);
-                
+
                 if (exchangeError) {
                     console.error("Error validando token PKCE:", exchangeError);
-                    setError("El enlace de recuperación ha caducado o ya ha sido utilizado. Vuelve a solicitar uno nuevo.");
+                    setError("El enlace de recuperación ha caducado o ya ha sido utilizado. Introduce tu email para recibir un enlace nuevo.");
                 } else {
-                    window.history.replaceState(null, '', window.location.pathname);
+                    setHasActiveSession(true);
+                    window.history.replaceState(null, "", window.location.pathname);
                 }
+                return;
+            }
+
+            // 4. Verificación de sesión activa preexistente
+            const { data: sessionData } = await supabase.auth.getSession();
+            if (sessionData?.session) {
+                setHasActiveSession(true);
+            } else if (!error) {
+                setError("No se detectó ninguna sesión de recuperación válida. Si necesitas cambiar tu contraseña, introduce tu email a continuación.");
             }
         };
 
         setupSession();
-    }, [supabase.auth]);
+    }, [supabase.auth, error]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
 
@@ -109,8 +158,9 @@ export default function UpdatePasswordPage() {
         setIsUpdating(false);
 
         if (updateError) {
-            if (updateError.message.includes("session missing")) {
-                setError("La sesión es inválida o ha caducado. Vuelve a completar el formulario de 'He olvidado mi contraseña'.");
+            if (updateError.message.toLowerCase().includes("session missing")) {
+                setError("La sesión ha expirado. Introduce tu correo abajo para solicitar un nuevo enlace.");
+                setHasActiveSession(false);
             } else {
                 setError("Error al actualizar la contraseña: " + updateError.message);
             }
@@ -118,41 +168,86 @@ export default function UpdatePasswordPage() {
             setMessage("Tu contraseña se ha actualizado correctamente. Redirigiendo al login...");
             setTimeout(() => {
                 router.push("/login?message=Tu contraseña se ha cambiado correctamente. Usa tu nueva contraseña para acceder.");
-            }, 3000);
+            }, 2500);
+        }
+    };
+
+    const handleRequestNewLink = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!inlineRecovery.email || !inlineRecovery.email.includes("@")) {
+            setInlineRecovery((prev) => ({ ...prev, error: "Introduce un correo electrónico válido." }));
+            return;
+        }
+
+        setInlineRecovery((prev) => ({ ...prev, loading: true, error: null }));
+
+        try {
+            const res = await fetch("/api/auth/forgot-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: inlineRecovery.email,
+                    tenant: isEquipop ? "equipop" : "ruralpop",
+                }),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                setInlineRecovery((prev) => ({ ...prev, loading: false, sent: true }));
+                setError(null);
+            } else {
+                setInlineRecovery((prev) => ({ ...prev, loading: false, error: data.message || "Error al enviar el enlace." }));
+            }
+        } catch {
+            setInlineRecovery((prev) => ({ ...prev, loading: false, error: "Error de conexión al solicitar el enlace." }));
         }
     };
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] w-full py-12 px-4 sm:px-6 lg:px-8">
             <div className="w-full max-w-md space-y-8 bg-[var(--ag-sys-color-surface)] p-8 rounded-2xl shadow-sm border border-[var(--ag-sys-color-border)]">
-
                 <div className="text-center flex flex-col items-center">
                     <div className="mb-4">
                         <Link href="/">
-                            <Image src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"} alt={isEquipop ? "Equipop" : "Ruralpop"} width={160} height={40} className="object-contain" priority />
+                            <Image
+                                src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"}
+                                alt={isEquipop ? "Equipop" : "Ruralpop"}
+                                width={160}
+                                height={40}
+                                className="object-contain"
+                                priority
+                            />
                         </Link>
                     </div>
-                    <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
+                    <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
                         Nueva Contraseña
-                    </h2>
+                    </h1>
                     <p className="mt-2 text-sm text-[var(--ag-sys-color-text-muted)]">
-                        Introduce tu nueva contraseña a continuación.
+                        Introduce tu nueva contraseña para acceder a tu cuenta.
                     </p>
                 </div>
 
+                {isExchangingCode && (
+                    <div className="p-4 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-sm rounded-xl border border-blue-200 dark:border-blue-800 text-center flex items-center justify-center gap-2">
+                        <span className="inline-block w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
+                        Verificando enlace seguro...
+                    </div>
+                )}
+
                 {error && (
-                    <div className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm p-3 rounded-md border border-red-200 dark:border-red-800 text-center">
+                    <div className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-xl border border-red-200 dark:border-red-800 text-center">
                         {error}
                     </div>
                 )}
 
                 {message && (
-                    <div className="p-4 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm p-3 rounded-md border border-green-200 dark:border-green-800 text-center">
+                    <div className="p-4 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm rounded-xl border border-green-200 dark:border-green-800 text-center font-medium">
                         {message}
                     </div>
                 )}
 
-                {!message && (
+                {/* Formulario de actualización cuando hay sesión activa */}
+                {!message && hasActiveSession && !isExchangingCode && (
                     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                         <div className="space-y-4">
                             <div>
@@ -194,6 +289,48 @@ export default function UpdatePasswordPage() {
                         </button>
                     </form>
                 )}
+
+                {/* Formulario de rescate inmediato si el enlace caducó o no hay sesión */}
+                {!message && !hasActiveSession && !isExchangingCode && (
+                    <div className="mt-6 border-t border-[var(--ag-sys-color-border)] pt-6">
+                        {inlineRecovery.sent ? (
+                            <div className="p-4 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 text-sm rounded-xl border border-green-200 dark:border-green-800 text-center">
+                                ¡Listo! Hemos enviado un nuevo enlace a <strong>{inlineRecovery.email}</strong>. Revisa tu bandeja de entrada o spam.
+                            </div>
+                        ) : (
+                            <form onSubmit={handleRequestNewLink} className="space-y-4">
+                                <p className="text-sm font-medium text-[var(--ag-sys-color-text)] text-center">
+                                    Solicita un enlace nuevo aquí mismo:
+                                </p>
+                                <div>
+                                    <input
+                                        type="email"
+                                        placeholder="tu@email.com"
+                                        value={inlineRecovery.email}
+                                        onChange={(e) => setInlineRecovery((prev) => ({ ...prev, email: e.target.value }))}
+                                        required
+                                        className="w-full px-4 py-2.5 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface-variant)] text-[var(--ag-sys-color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] text-sm"
+                                    />
+                                </div>
+                                {inlineRecovery.error && (
+                                    <p className="text-xs text-red-500 text-center">{inlineRecovery.error}</p>
+                                )}
+                                <button
+                                    type="submit"
+                                    disabled={inlineRecovery.loading}
+                                    className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] transition-all disabled:opacity-50"
+                                >
+                                    {inlineRecovery.loading ? "Enviando..." : "Enviar nuevo enlace"}
+                                </button>
+                            </form>
+                        )}
+                        <div className="mt-4 text-center">
+                            <Link href="/login" className="text-xs text-[var(--ag-sys-color-primary)] hover:underline">
+                                Volver al inicio de sesión
+                            </Link>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -201,7 +338,9 @@ export default function UpdatePasswordPage() {
 
 /**
  * Memory / Decisiones Técnicas:
- * - Se usa un "use client" component para que @supabase/ssr pueda leer el hash fragment de la URL que devuelve Supabase Recovery.
- * - Al instanciar `createClient()` en el navegador, Supabase extrae el `#access_token` e inicia sesión en background.
- * - Al llamar a `supabase.auth.updateUser()`, usamos esa sesión para setear la contraseña final.
+ * - Anti-Scanner Token OTP: Soporta token_hash directamente de los emails. Al ejecutarse en React client,
+ *   evita que el GET de los antivirus de correo (Hotmail/Outlook) gaste el OTP.
+ * - Rescate Inmediato Inline: Si un usuario hace clic en un correo viejo o caducado, la interfaz no lo bloquea ni
+ *   lo obliga a buscar la pantalla de forgot-password; le permite escribir su email y reenviarse un enlace al instante.
+ * - Strict Type Safety: Se tipan todas las llamadas y estados sin ningún tipo `any`.
  */

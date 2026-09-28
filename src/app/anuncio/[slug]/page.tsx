@@ -23,7 +23,7 @@ import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
-import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
+import { getServerTenantFilterString, getServerTenantSlug, getServerTenantDomain } from "@/utils/tenant/server";
 
 import { Metadata, ResolvingMetadata } from "next";
 
@@ -71,14 +71,15 @@ export async function generateMetadata(
 
     const previousImages = (await parent).openGraph?.images || [];
     const resolvedImageUrls = (listing.image_urls || []).map((url: string) => getImageUrl(url));
-    const mainImage = resolvedImageUrls[0] || 'https://www.ruralpop.com/default-og.jpg';
-
     // SEO Dictionary fetching for metadata
     const headersList = await headers();
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
     const dict = await getDictionary(locale);
     const tenant = await getServerTenantSlug();
-    const isEquipop = tenant === 'equipop';
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
+
+    const mainImage = resolvedImageUrls[0] || (isEquipop ? `${currentDomain}/equipop-favicon.png` : 'https://www.ruralpop.com/default-og.jpg');
 
     const andWord = locale === 'pt' ? 'e' : 'y';
     
@@ -108,6 +109,7 @@ export async function generateMetadata(
     }
 
     const originalPathname = `/anuncio/${slug}`;
+    const canonical = getCanonicalUrl(originalPathname, locale, currentDomain);
 
     return {
         title: fullTitle,
@@ -116,14 +118,14 @@ export async function generateMetadata(
             title: fullTitle,
         },
         alternates: {
-            canonical: getCanonicalUrl(originalPathname, locale),
-            languages: getHreflangLinks(originalPathname),
+            canonical,
+            languages: getHreflangLinks(originalPathname, currentDomain),
         },
         openGraph: {
             title: fullTitle,
             description: optimizedDescription,
-            url: `https://www.ruralpop.com/anuncio/${slug}`,
-            siteName: 'Ruralpop',
+            url: `${currentDomain}/anuncio/${slug}`,
+            siteName: isEquipop ? 'Equipop' : 'Ruralpop',
             images: [
                 {
                     url: mainImage,
@@ -133,7 +135,7 @@ export async function generateMetadata(
                 },
                 ...previousImages,
             ],
-            locale: 'es_ES',
+            locale: locale === 'pt' ? 'pt_PT' : 'es_ES',
             type: 'website',
         },
         twitter: {
@@ -154,7 +156,9 @@ export default async function ListingDetailPage(props: Props) {
     const t = (key: keyof typeof dict.listing_detail) => dict.listing_detail[key] || key;
 
     const tenant = await getServerTenantSlug();
-    const isEquipop = tenant === 'equipop';
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
 
     // The slug format is [title]-[shortId]
     const slugParts = slug.split('-');
@@ -229,9 +233,9 @@ export default async function ListingDetailPage(props: Props) {
     const validUntilDate = new Date();
     validUntilDate.setFullYear(validUntilDate.getFullYear() + 1);
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ruralpop.com';
+    const baseUrl = currentDomain;
     const resolvedImageUrls = (listing.image_urls || []).map((url: string) => getImageUrl(url));
-    const finalImages = resolvedImageUrls.length > 0 ? resolvedImageUrls : [`${baseUrl}/opengraph-image.png`];
+    const finalImages = resolvedImageUrls.length > 0 ? resolvedImageUrls : (isEquipop ? [`${currentDomain}/equipop-favicon.png`] : [`${baseUrl}/opengraph-image.png`]);
 
     const currentTitle = locale === 'pt' && listing.title_pt ? listing.title_pt : listing.title;
     const currentDesc = locale === 'pt' && listing.description_pt ? listing.description_pt : listing.description;
@@ -241,7 +245,7 @@ export default async function ListingDetailPage(props: Props) {
         "@type": "Product",
         "name": currentTitle,
         "image": finalImages,
-        "description": currentDesc || `Anuncio de clasificados de ${currentTitle} en Ruralpop.`,
+        "description": currentDesc || `Anuncio de clasificados de ${currentTitle} en ${brand}.`,
         "sku": id,
         "brand": {
             "@type": "Brand",
@@ -509,7 +513,7 @@ export default async function ListingDetailPage(props: Props) {
                                 )}
                             </div>
                         </div>
-                        <ShareButtons title={listing.title} url={isEquipop ? `https://equipop.app/anuncio/${slug}` : `https://www.ruralpop.com/anuncio/${slug}`} />
+                        <ShareButtons title={listing.title} url={`${currentDomain}/anuncio/${slug}`} />
 
                         {/* Garantía Ruralpop Simple (Solo si no hay venta online, y solo en Ruralpop) */}
                         {!isEscrowAvailable && !isEquipop && (

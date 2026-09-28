@@ -132,7 +132,7 @@ const RURALPOP_CATEGORIES = [
 export const EQUIPOP_CATEGORIES = [
     {
         "id": "sillas-de-montar-y-accesorios",
-        "label": "Sillas de montar y accesorios",
+        "label": "Sillas de montar",
         "subcategories": [
             "Sillas de doma",
             "Sillas de salto",
@@ -147,8 +147,9 @@ export const EQUIPOP_CATEGORIES = [
     },
     {
         "id": "mantillas-y-salvacruces",
-        "label": "Mantillas y salvacruces",
+        "label": "Mantillas",
         "subcategories": [
+            "Sillines de salto",
             "Mantillas de doma",
             "Mantillas de salto",
             "Salvacruces",
@@ -325,6 +326,7 @@ export const EQUIPOP_CATEGORIES = [
         "id": "calzado-ecuestre",
         "label": "Calzado ecuestre",
         "subcategories": [
+            "Botas de montar",
             "Botas de Doma",
             "Botas de Salto",
             "Botines",

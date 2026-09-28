@@ -9,8 +9,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IS_EQUIPOP } from '../src/config/tenants';
 
 const CABALLOS_CATEGORIES = [
-    { id: 'sillas-de-montar-y-accesorios', type: 'category', label: 'Sillas de montar y accesorios', image: require('../assets/equipop/categories/sillas-de-montar-y-accesorios.jpg') },
-    { id: 'mantillas-y-salvacruces', type: 'category', label: 'Mantillas y salvacruces', image: require('../assets/equipop/categories/mantillas-y-salvacruces.jpg') },
+    { id: 'sillas-de-montar-y-accesorios', type: 'category', label: 'Sillas de montar', image: require('../assets/equipop/categories/sillas-de-montar-y-accesorios.jpg') },
+    { id: 'mantillas-y-salvacruces', type: 'category', label: 'Mantillas', image: require('../assets/equipop/categories/mantillas-y-salvacruces.jpg') },
     { id: 'cabezadas-y-riendas', type: 'category', label: 'Cabezadas y riendas', image: require('../assets/equipop/categories/cabezadas-y-riendas.jpg') },
     { id: 'bocados-y-filetes', type: 'category', label: 'Bocados y filetes', image: require('../assets/equipop/categories/bocados-y-filetes.jpg') },
     { id: 'protectores-y-vendas', type: 'category', label: 'Protectores y vendas', image: require('../assets/equipop/categories/protectores-y-vendas.jpg') },

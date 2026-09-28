@@ -165,7 +165,7 @@ export function CategoryModal({
                             {/* Category Items */}
                             {filteredCategories.map((cat) => (
                                 <React.Fragment key={cat.id}>
-                                    {isEquipop && !searchTerm && cat.label === 'Sillas de montar y accesorios' && (
+                                    {isEquipop && !searchTerm && (cat.label === 'Sillas de montar' || cat.id === 'sillas-de-montar-y-accesorios') && (
                                         <div className="px-4 py-2 mt-2 text-[14px] bg-[#f5f9ff] font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wider">
                                             Para Caballos
                                         </div>

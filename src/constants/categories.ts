@@ -128,13 +128,13 @@ export const CATEGORIES = [
     // EQUIPOP CATEGORIES (FOR SEO PARSING)
     {
         id: "sillas-de-montar-y-accesorios",
-        label: "Sillas de montar y accesorios",
+        label: "Sillas de montar",
         subcategories: ["Sillas de doma", "Sillas de salto", "Sillas mixtas / uso general", "Sillas de raid / endurance", "Cinchas y latiguillos", "Estribos", "Aciones", "Fundas y protectores de silla", "Accesorios para silla"]
     },
     {
         id: "mantillas-y-salvacruces",
-        label: "Mantillas y salvacruces",
-        subcategories: ["Mantillas de doma", "Mantillas de salto", "Salvacruces", "Otros salvacruces y pads"]
+        label: "Mantillas",
+        subcategories: ["Sillines de salto", "Mantillas de doma", "Mantillas de salto", "Salvacruces", "Otros salvacruces y pads"]
     },
     {
         id: "cabezadas-y-riendas",
@@ -209,7 +209,7 @@ export const CATEGORIES = [
     {
         id: "calzado-ecuestre",
         label: "Calzado ecuestre",
-        subcategories: ["Botas de Doma", "Botas de Salto", "Botines", "Polainas y chaps", "Calcetines", "Accesorios para calzado"]
+        subcategories: ["Botas de montar", "Botas de Doma", "Botas de Salto", "Botines", "Polainas y chaps", "Calcetines", "Accesorios para calzado"]
     },
     {
         id: "cascos-y-seguridad",

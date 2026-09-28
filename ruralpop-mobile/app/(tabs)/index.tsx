@@ -52,9 +52,10 @@ export default function Home() {
         try {
             const { data, error } = await supabase
                 .from('listings')
-                .select(`id, title, price, price_type, location, image_urls, created_at, category, description, user_id, status, is_featured`)
+                .select(`id, title, price, price_type, location, image_urls, created_at, category, description, user_id, status, is_featured, users!inner(is_ghost)`)
                 .eq('status', 'active')
                 .eq('is_featured', true)
+                .eq('users.is_ghost', false)
                 .or(getDefaultTenantFilterString())
                 .order('created_at', { ascending: false })
                 .limit(50);
@@ -89,10 +90,12 @@ export default function Home() {
                   description,
                   user_id,
                   status,
-                  is_featured
+                  is_featured,
+                  users!inner(is_ghost)
                 `)
                 .eq('status', 'active')
                 .eq('is_featured', false)
+                .eq('users.is_ghost', false)
                 .or(getDefaultTenantFilterString())
                 .order('created_at', { ascending: false })
                 .range(from, to);

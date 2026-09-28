@@ -30,10 +30,23 @@ export async function POST(req: Request) {
         );
 
         const body = await req.json();
-        const { listingId } = body;
+        const { listingId, shippingAddress } = body;
 
         if (!listingId) {
             return new NextResponse("Missing listingId", { status: 400 });
+        }
+
+        // Synchronize shipping address to users table if present
+        const effectiveShipping = shippingAddress || (user.user_metadata?.shipping_address as any);
+        if (effectiveShipping) {
+            const fullAddress = effectiveShipping.address + (effectiveShipping.extraInfo ? ` (${effectiveShipping.extraInfo})` : '');
+            await supabaseAdmin.from("users").update({
+                name: effectiveShipping.fullName || user.user_metadata?.name,
+                contact_phone: effectiveShipping.phone,
+                company_address: fullAddress,
+                company_zip: effectiveShipping.postalCode,
+                location: effectiveShipping.city
+            }).eq("id", user.id);
         }
 
         // 3. Fetch listing and verify seller
@@ -98,6 +111,9 @@ export async function POST(req: Request) {
                 listing_id: listing.id,
                 buyer_id: user.id,
                 seller_id: seller.id,
+                buyer_name: effectiveShipping?.fullName || user.user_metadata?.name || '',
+                buyer_phone: effectiveShipping?.phone || '',
+                buyer_address: effectiveShipping ? `${effectiveShipping.address}, ${effectiveShipping.postalCode} ${effectiveShipping.city}` : ''
             }
         });
 

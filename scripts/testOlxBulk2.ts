@@ -1,0 +1,17 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
+async function run() {
+    const searchRes = await fetch("https://www.olx.pt/animais/animais-de-quinta/vacas/?page=1", { headers: { "User-Agent": "Mozilla/5.0" } });
+    const searchHtml = await searchRes.text();
+    const stateMatch = searchHtml.match(/window\.__PRERENDERED_STATE__\s*=\s*"(.*?)";/);
+    if (stateMatch) {
+        const decoded = JSON.parse('"' + stateMatch[1] + '"'); 
+        const stateObj = JSON.parse(decoded);
+        const elements = stateObj?.listing?.listing?.ads;
+        if (elements) {
+            console.log(elements[0]);
+        }
+    }
+}
+run();

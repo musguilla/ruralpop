@@ -10,8 +10,43 @@ export async function POST(req: Request) {
     try {
         const payload = await req.json();
 
-        // Ensure this is an INSERT event
-        if (payload.type !== 'INSERT' || payload.table !== 'listings') {
+        if (payload.table !== 'listings') {
+            return NextResponse.json({ message: 'Ignored non-listings table' });
+        }
+
+        // ====================================================================
+        // CASO 1: UPDATE -> DETECCIÓN DE BAJADA DE PRECIO
+        // ====================================================================
+        if (payload.type === 'UPDATE') {
+            const oldRecord = payload.old_record;
+            const newRecord = payload.record;
+
+            const oldPrice = Number(oldRecord?.price);
+            const newPrice = Number(newRecord?.price);
+
+            if (oldPrice > 0 && newPrice > 0 && newPrice < oldPrice) {
+                const { notifyPriceDrop } = await import('@/lib/services/notifications');
+                const result = await notifyPriceDrop({
+                    listingId: newRecord.id,
+                    oldPrice,
+                    newPrice,
+                    listingTitle: newRecord.title,
+                    imageUrl: Array.isArray(newRecord.image_urls) && newRecord.image_urls.length > 0
+                        ? newRecord.image_urls[0]
+                        : null,
+                    sellerId: newRecord.user_id,
+                });
+
+                return NextResponse.json({ success: true, priceDrop: result });
+            }
+
+            return NextResponse.json({ message: 'Ignored update without price drop' });
+        }
+
+        // ====================================================================
+        // CASO 2: INSERT -> NUEVO ANUNCIO DE VENDEDOR SEGUIDO
+        // ====================================================================
+        if (payload.type !== 'INSERT') {
             return NextResponse.json({ message: 'Ignored' });
         }
 
@@ -63,12 +98,16 @@ export async function POST(req: Request) {
         let title = '';
         let body = '';
         
+        const imageUrl = Array.isArray(listing.image_urls) && listing.image_urls.length > 0
+            ? listing.image_urls[0]
+            : null;
+
         if (newListingsCount === 1) {
-            title = '¡Nuevo anuncio de ' + sellerName + '!';
-            body = `${sellerName} acaba de subir «${listing.title}». ¡Míralo antes de que vuele!`;
+            title = `✨ ¡Nuevo anuncio de ${sellerName}!`;
+            body = `${sellerName} acaba de publicar «${listing.title}». ¡Míralo antes de que vuele!`;
         } else {
-            title = '¡Nuevos anuncios de ' + sellerName + '!';
-            body = `${sellerName} ha subido ${newListingsCount} productos nuevos. ¡Míralo antes de que vuele!`;
+            title = `✨ ¡Nuevos anuncios de ${sellerName}!`;
+            body = `${sellerName} ha subido ${newListingsCount} productos nuevos. ¡Míralos antes de que vuelen!`;
         }
 
         const notificationsPromises = followers.map(f => 
@@ -77,7 +116,12 @@ export async function POST(req: Request) {
                 type: 'new_listing',
                 title,
                 body,
-                data: { url: `/user/${listing.user_id}` }
+                data: {
+                    url: `/anuncio/${listing.id}`,
+                    listing_id: listing.id,
+                    listing_title: listing.title,
+                    image_url: imageUrl,
+                }
             })
         );
 
