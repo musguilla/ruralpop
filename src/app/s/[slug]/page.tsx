@@ -82,7 +82,24 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
         openGraph: {
             title: pageTitle,
             description: optimizedDescription,
-            type: "website"
+            siteName: brand,
+            type: "website",
+            images: [
+                {
+                    url: isEquipop ? '/equipop-logo.png' : '/opengraph-image.png',
+                    width: 512,
+                    height: 512,
+                }
+            ]
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: pageTitle,
+            description: optimizedDescription,
+            images: [isEquipop ? '/equipop-logo.png' : '/opengraph-image.png'],
+        },
+        itunes: {
+            appId: isEquipop ? "6778118647" : "6759678666"
         }
     };
 }

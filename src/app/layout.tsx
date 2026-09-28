@@ -78,7 +78,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: isEquipop ? "Equipop" : "Ruralpop",
       images: [
         {
-          url: isEquipop ? '/equipop-favicon.png' : '/opengraph-image.png',
+          url: isEquipop ? `${currentDomain}/equipop-logo.png` : `${currentDomain}/ruralpop-logo.png`,
           width: 512,
           height: 512,
         }
@@ -86,12 +86,18 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: locale,
       type: 'website',
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: title,
+      description: description,
+      images: [isEquipop ? `${currentDomain}/equipop-logo.png` : `${currentDomain}/ruralpop-logo.png`],
+    },
     appleWebApp: {
       title: isEquipop ? "Equipop" : "Ruralpop",
       statusBarStyle: "default",
     },
     itunes: {
-      appId: "6759678666"
+      appId: isEquipop ? "6778118647" : "6759678666"
     },
     robots: {
       index: true,
@@ -198,4 +204,8 @@ export default async function RootLayout({
  * - Se cambia lang="es" ya que la aplicación es para el mercado agrícola hispanohablante.
  * - <body className="min-h-screen flex flex-col"> asegura que el Footer siempre se pegue al final incluso con poco contenido.
  * - Aliases absolutos asegurados "@/components/...".
+ * - Smart App Banner (itunes.appId): Apple iOS (Safari e iMessage/SMS) inspecciona la metaetiqueta
+ *   'apple-itunes-app' para renderizar la tarjeta de previsualización en mensajes y el banner superior de Safari.
+ *   Se aísla estrictamente el App ID: '6778118647' para Equipop y '6759678666' para Ruralpop. Si se hardcodea
+ *   Ruralpop en Equipop, iOS convierte cualquier enlace compartido en la tarjeta de la App de Ruralpop.
  */

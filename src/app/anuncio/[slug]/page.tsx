@@ -144,6 +144,10 @@ export async function generateMetadata(
             description: shortDesc,
             images: [mainImage],
         },
+        itunes: {
+            appId: isEquipop ? "6778118647" : "6759678666",
+            appArgument: `${isEquipop ? 'equipop' : 'ruralpop'}://anuncio/${id}`
+        },
     };
 }
 

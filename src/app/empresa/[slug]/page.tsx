@@ -43,6 +43,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             description: description,
             url: `${currentDomain}/empresa/${slug}`,
             siteName: brand,
+        },
+        itunes: {
+            appId: isEquipop ? "6778118647" : "6759678666"
         }
     };
 }

@@ -113,13 +113,22 @@ export async function generateMetadata(props: {
             siteName: brand,
             images: [
                 {
-                    url: isEquipop ? `${currentDomain}/equipop-favicon.png` : '/opengraph-image.png',
+                    url: isEquipop ? `${currentDomain}/equipop-logo.png` : '/opengraph-image.png',
                     width: 512,
                     height: 512,
                 }
             ],
             locale: locale === 'pt' ? 'pt_PT' : 'es_ES',
             type: 'website'
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: pageTitle,
+            description: descText,
+            images: [isEquipop ? `${currentDomain}/equipop-logo.png` : '/opengraph-image.png'],
+        },
+        itunes: {
+            appId: isEquipop ? "6778118647" : "6759678666"
         },
         robots: robotsRules
     };

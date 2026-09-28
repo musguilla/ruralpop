@@ -57,7 +57,7 @@ export async function generateMetadata(props: {
       siteName: isEquipop ? "Equipop" : "Ruralpop",
       images: [
         {
-          url: isEquipop ? `${currentDomain}/equipop-favicon.png` : '/opengraph-image.png',
+          url: isEquipop ? `${currentDomain}/equipop-logo.png` : '/opengraph-image.png',
           width: 512,
           height: 512,
         }
@@ -65,6 +65,15 @@ export async function generateMetadata(props: {
       locale: locale,
       type: 'website',
     },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [isEquipop ? `${currentDomain}/equipop-logo.png` : '/opengraph-image.png'],
+    },
+    itunes: {
+      appId: isEquipop ? "6778118647" : "6759678666"
+    }
   };
 }
 
