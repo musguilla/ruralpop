@@ -171,6 +171,45 @@ export async function POST(req: Request) {
                             });
                     }
                     console.log(`✅ Escrow order ${escrowOrderId} marked as paid_held via PaymentIntent`);
+
+                    // Send push notification to the seller for native mobile purchases
+                    try {
+                        const { data: existingNotif } = await supabaseAdmin
+                            .from('notifications')
+                            .select('id')
+                            .eq('user_id', order.seller_id)
+                            .eq('type', 'sale')
+                            .contains('data', { escrow_order_id: escrowOrderId })
+                            .maybeSingle();
+
+                        if (!existingNotif) {
+                            const { data: listing } = await supabaseAdmin
+                                .from('listings')
+                                .select('title, image_urls')
+                                .eq('id', order.listing_id)
+                                .single();
+
+                            const addressStr = paymentIntent.metadata?.buyer_address || 'Dirección especificada en el pedido';
+                            const priceEur = (order.gross_amount_cents / 100).toFixed(2);
+                            const imgUrl = Array.isArray(listing?.image_urls) && listing.image_urls.length > 0 ? listing.image_urls[0] : null;
+
+                            const { sendNotification } = await import('@/lib/services/notifications');
+                            await sendNotification({
+                                userId: order.seller_id,
+                                type: 'sale',
+                                title: '¡Has vendido un artículo!',
+                                body: `Producto: ${listing?.title || 'artículo'}\nPrecio: ${priceEur}€\nDirección de envío: ${addressStr}`,
+                                data: {
+                                    url: `/ventas`,
+                                    escrow_order_id: escrowOrderId,
+                                    image_url: imgUrl
+                                }
+                            });
+                            console.log(`✅ Notification saved and push sent to seller ${order.seller_id} for order ${escrowOrderId} via PaymentIntent`);
+                        }
+                    } catch (pushErr: unknown) {
+                        console.error("Failed to send push notification to seller via PaymentIntent:", pushErr);
+                    }
                 }
             } catch (err: unknown) {
                 console.error("DB Error processing escrow PaymentIntent:", err);
@@ -277,22 +316,37 @@ export async function POST(req: Request) {
                     }
                     console.log(`✅ Escrow order ${escrowOrderId} marked as paid_held`);
 
-                    // Send push notification to the seller using the new service
+                    // Send push notification to the seller using the notification service
                     try {
-                        const { data: listing } = await supabaseAdmin.from('listings').select('title').eq('id', order.listing_id).single();
-                        const shippingDetails = session.customer_details?.address || (session as any).shipping_details?.address;
-                        const addressStr = shippingDetails ? `${shippingDetails.line1 || ''}, ${shippingDetails.city || ''}, ${shippingDetails.postal_code || ''}`.trim().replace(/, $/, '') : 'Dirección no especificada';
-                        const priceEur = (order.gross_amount_cents / 100).toFixed(2);
+                        const { data: existingNotif } = await supabaseAdmin
+                            .from('notifications')
+                            .select('id')
+                            .eq('user_id', order.seller_id)
+                            .eq('type', 'sale')
+                            .contains('data', { escrow_order_id: escrowOrderId })
+                            .maybeSingle();
 
-                        const { sendNotification } = await import('@/lib/services/notifications');
-                        await sendNotification({
-                            userId: order.seller_id,
-                            type: 'sale',
-                            title: '¡Has vendido un artículo!',
-                            body: `Producto: ${listing?.title || 'artículo'}\nPrecio: ${priceEur}€\nDirección de envío: ${addressStr}`,
-                            data: { url: `/ventas` }
-                        });
-                        console.log(`✅ Notification saved and push sent to seller ${order.seller_id} for order ${escrowOrderId}`);
+                        if (!existingNotif) {
+                            const { data: listing } = await supabaseAdmin.from('listings').select('title, image_urls').eq('id', order.listing_id).single();
+                            const shippingDetails = session.customer_details?.address || (session as any).shipping_details?.address;
+                            const addressStr = shippingDetails ? `${shippingDetails.line1 || ''}, ${shippingDetails.city || ''}, ${shippingDetails.postal_code || ''}`.trim().replace(/, $/, '') : 'Dirección no especificada';
+                            const priceEur = (order.gross_amount_cents / 100).toFixed(2);
+                            const imgUrl = Array.isArray(listing?.image_urls) && listing.image_urls.length > 0 ? listing.image_urls[0] : null;
+
+                            const { sendNotification } = await import('@/lib/services/notifications');
+                            await sendNotification({
+                                userId: order.seller_id,
+                                type: 'sale',
+                                title: '¡Has vendido un artículo!',
+                                body: `Producto: ${listing?.title || 'artículo'}\nPrecio: ${priceEur}€\nDirección de envío: ${addressStr}`,
+                                data: {
+                                    url: `/ventas`,
+                                    escrow_order_id: escrowOrderId,
+                                    image_url: imgUrl
+                                }
+                            });
+                            console.log(`✅ Notification saved and push sent to seller ${order.seller_id} for order ${escrowOrderId}`);
+                        }
                     } catch (pushErr: unknown) {
                         console.error("Failed to send push notification to seller:", pushErr);
                     }
