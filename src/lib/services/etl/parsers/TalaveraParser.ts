@@ -5,33 +5,52 @@ export class TalaveraParser {
     static async parse(source: MarketSource): Promise<ETLParserResult> {
         try {
             // 1. Dynamic URL Discovery via Scraping
-            const response = await fetch(source.source_url, { cache: 'no-store' });
+            const response = await fetch(source.source_url, { 
+                cache: 'no-store',
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                }
+            });
             if (!response.ok) throw new Error("Failed to load Talavera main page");
             const html = await response.text();
             
-            // We use a basic regex or cheerio to find the first Mesa_Vacuno PDF
-            const match = html.match(/href="(https:\/\/www\.talavera-ferial\.com\/[^"]*Mesa_Vacuno_[^"]*\.pdf)"/i);
-            if (!match) {
+            // Find all Mesa_Vacuno PDF links on the page
+            const matches = Array.from(html.matchAll(/href="(https:\/\/www\.talavera-ferial\.com\/[^"]*Mesa_Vacuno_[^"]*\.pdf)"/gi));
+            if (!matches || matches.length === 0) {
                 throw new Error("No recent PDF link found on Talavera website.");
             }
             
-            const pdfUrl = match[1];
+            // Keep up to 8 most recent unique PDF URLs to auto-backfill missed weeks
+            const uniqueUrls = Array.from(new Set(matches.map(m => m[1]))).slice(0, 8);
             
-            // Extract the date from the filename (e.g. Mesa_Vacuno_20260902.pdf)
-            const dateMatch = pdfUrl.match(/Mesa_Vacuno_(\d{4})(\d{2})(\d{2})/);
-            let foundDate = new Date();
-            if (dateMatch) {
-                foundDate = new Date(`${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}T12:00:00Z`);
+            const validResults: { pdfBuffer: ArrayBuffer; foundDate: Date; foundUrl: string }[] = [];
+            
+            for (const pdfUrl of uniqueUrls) {
+                try {
+                    const dateMatch = pdfUrl.match(/Mesa_Vacuno_(\d{4})(\d{2})(\d{2})/);
+                    let foundDate = new Date();
+                    if (dateMatch) {
+                        foundDate = new Date(`${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}T12:00:00Z`);
+                    }
+                    
+                    const pdfRes = await fetch(pdfUrl, { 
+                        cache: 'no-store',
+                        headers: {
+                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                        }
+                    });
+                    if (pdfRes.ok && pdfRes.headers.get('content-type')?.includes('application/pdf')) {
+                        const pdfBuffer = await pdfRes.arrayBuffer();
+                        validResults.push({ pdfBuffer, foundDate, foundUrl: pdfUrl });
+                    }
+                } catch (fetchErr) {
+                    console.warn(`Failed to fetch Talavera PDF at ${pdfUrl}:`, fetchErr);
+                }
             }
             
-            // Fetch the PDF
-            const pdfRes = await fetch(pdfUrl, { cache: 'no-store' });
-            if (!pdfRes.ok || !pdfRes.headers.get('content-type')?.includes('application/pdf')) {
-                throw new Error("Failed to download Talavera PDF");
+            if (validResults.length === 0) {
+                throw new Error("No se pudo descargar ningún PDF válido de Talavera.");
             }
-            
-            const pdfBuffer = await pdfRes.arrayBuffer();
-            const validResults = [{ pdfBuffer, foundDate, foundUrl: pdfUrl }];
             
             const prices: Omit<ETLParserResult['prices'][0], 'id' | 'market_source_id' | 'created_at' | 'updated_at'>[] = [];
             const rawContents: string[] = [];
@@ -95,7 +114,9 @@ export class TalaveraParser {
                         
                         if (match) {
                             const categoryName = match[1].trim();
+                            const prevPriceRaw = match[2];
                             const rawPrice = match[3];
+                            const prevPrice = parseFloat(prevPriceRaw.replace(/\./g, '').replace(',', '.'));
                             const currentPrice = parseFloat(rawPrice.replace(/\./g, '').replace(',', '.'));
                             const unitStr = match[4].toLowerCase();
                             
@@ -133,6 +154,13 @@ export class TalaveraParser {
                                 }
                             }
                             
+                            let trend: TrendType = 'unknown';
+                            if (!isNaN(prevPrice) && !isNaN(currentPrice)) {
+                                if (currentPrice > prevPrice) trend = 'up';
+                                else if (currentPrice < prevPrice) trend = 'down';
+                                else trend = 'stable';
+                            }
+
                             if (!isNaN(currentPrice) && currentPrice > 0) {
                                 prices.push({
                                     date: foundDate, // Assigns the date of the specific PDF document
@@ -141,8 +169,9 @@ export class TalaveraParser {
                                     category_name: finalCategoryName,
                                     normalized_category: TalaveraParser.normalizeCategory(categoryName),
                                     price_avg: currentPrice,
+                                    previous_price: isNaN(prevPrice) ? undefined : prevPrice,
                                     unit: unit,
-                                    trend: 'unknown' as TrendType
+                                    trend: trend
                                 });
                             }
                         }
@@ -210,3 +239,20 @@ export class TalaveraParser {
         return 'sin_normalizar_' + lower.replace(/[^a-z0-9]/g, '_').substring(0, 30);
     }
 }
+
+/**
+ * Documentación de Memoria:
+ * 
+ * - ¿Por qué se tomó esta decisión técnica?
+ *   Se optimizó TalaveraParser para no limitarse al primer enlace PDF descubierto en el HTML, sino procesar
+ *   hasta los 8 PDFs más recientes disponibles en la página oficial (Mesa_Vacuno_YYYYMMDD.pdf).
+ *   Esto previene pérdidas de datos si el cron automático o el servidor de Talavera sufren caídas temporales,
+ *   permitiendo la auto-recuperación y relleno histórico acumulado (upsert idempotente en DB).
+ *   Asimismo, se calculan 'previous_price' y 'trend' ('up' | 'down' | 'stable') cotejando el precio anterior
+ *   y el actual impresos en las columnas oficiales del documento.
+ * 
+ * - Posibles "edge cases" cubiertos:
+ *   - Servidor web con protección básica contra bots: se incluye User-Agent de navegador moderno.
+ *   - Documentos corruptos o inaccesibles: se aíslan en bloques try/catch individuales para no abortar el lote.
+ *   - Fechas en nombre de archivo (ej. Mesa_Vacuno_20260902.pdf) parsed as ISO UTC para indexación cronológica precisa.
+ */

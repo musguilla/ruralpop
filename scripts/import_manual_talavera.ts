@@ -16,16 +16,22 @@ async function run() {
     }
 
     const urls = [
-        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260624.pdf", date: new Date("2026-06-24T12:00:00Z") },
-        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260701.pdf", date: new Date("2026-07-01T12:00:00Z") },
-        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260708.pdf", date: new Date("2026-07-08T12:00:00Z") }
+        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260826.pdf", date: "2026-08-26" },
+        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260902.pdf", date: "2026-09-02" },
+        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260909.pdf", date: "2026-09-09" },
+        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260916.pdf", date: "2026-09-16" },
+        { url: "https://www.talavera-ferial.com/editor/itfile/0/std/LONJA_AGROPECUARIA/VACUNO/Mesa_Vacuno_20260923.pdf", date: "2026-09-23" }
     ];
 
     const { TalaveraParser } = await import('../src/lib/services/etl/parsers/TalaveraParser');
 
     for (const {url, date} of urls) {
         console.log("Fetching", url);
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+        });
         const pdfBuffer = await response.arrayBuffer();
         
         let text = '';
@@ -61,7 +67,9 @@ async function run() {
             
             if (match) {
                 const categoryName = match[1].trim();
+                const prevPriceRaw = match[2];
                 const rawPrice = match[3];
+                const prevPrice = parseFloat(prevPriceRaw.replace(/\./g, '').replace(',', '.'));
                 const currentPrice = parseFloat(rawPrice.replace(/\./g, '').replace(',', '.'));
                 const unitStr = match[4].toLowerCase();
                 
@@ -87,6 +95,13 @@ async function run() {
                     else finalCategoryName = `${words[0]} - ${categoryName}`;
                 }
                 
+                let trend: TrendType = 'unknown';
+                if (!isNaN(prevPrice) && !isNaN(currentPrice)) {
+                    if (currentPrice > prevPrice) trend = 'up';
+                    else if (currentPrice < prevPrice) trend = 'down';
+                    else trend = 'stable';
+                }
+
                 if (!isNaN(currentPrice) && currentPrice > 0) {
                     prices.push({
                         date: date,
@@ -96,8 +111,9 @@ async function run() {
                         category_name: finalCategoryName,
                         normalized_category: TalaveraParser.normalizeCategory(categoryName),
                         price_avg: currentPrice,
+                        previous_price: isNaN(prevPrice) ? null : prevPrice,
                         unit: unit,
-                        trend: 'unknown'
+                        trend: trend
                     });
                 }
             }
@@ -112,9 +128,20 @@ async function run() {
             if (insertError) {
                 console.error("Error inserting prices:", insertError);
             } else {
-                console.log(`Successfully injected ${prices.length} prices for ${date.toISOString()}`);
+                console.log(`Successfully injected ${prices.length} prices for ${date}`);
             }
         }
     }
+
+    // Actualizar fecha de éxito en market_sources
+    await supabase
+        .from('market_sources')
+        .update({ 
+            last_success_at: new Date().toISOString(),
+            last_error_at: null 
+        })
+        .eq('id', source.id);
+
+    console.log("¡Completada la inserción de todas las mesas de Talavera!");
 }
 run();
