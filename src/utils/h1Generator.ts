@@ -6,7 +6,8 @@ import { CATEGORIES } from "@/constants/categories";
 export function generateSeoH1(
     parsedSlug: { q?: string, category?: string, subcategory?: string },
     locationName: string = "",
-    locale: string = "es"
+    locale: string = "es",
+    tenant?: string | null
 ) {
     const dict = locale === "pt" ? seoDictionaryPT : seoDictionaryES;
     const { q, category, subcategory } = parsedSlug;
@@ -51,7 +52,7 @@ export function generateSeoH1(
             h1 = dict.categoryAdsOf.replace('{category}', catLabel.toLowerCase());
         }
     } else {
-        h1 = dict.defaultGlobal;
+        h1 = tenant === "equipop" ? dict.defaultGlobalEquipop : dict.defaultGlobal;
     }
 
     if (h1 && h1.length > 0) {
@@ -64,3 +65,19 @@ export function generateSeoH1(
 
     return h1;
 }
+
+/**
+ * Documentación de Memoria:
+ * 
+ * - ¿Por qué se tomó esta decisión técnica?
+ *   Se extendió `generateSeoH1` con el parámetro opcional `tenant?: string`. Cuando la ruta no tiene filtro por
+ *   búsqueda (`q`), categoría ni subcategoría (por ejemplo al pulsar en 'Ver todos' o `/?sort=recent`),
+ *   el título H1 por defecto se bifurca de manera limpia:
+ *   - Si `tenant === 'equipop'`, se muestra 'Anuncios material hípico' (o 'Anúncios material hípico' en PT).
+ *   - Si es Ruralpop (o cualquier otro valor / omitido), se preserva intacto 'Anuncios clasificados del mundo rural'.
+ * 
+ * - Posibles "edge cases" cubiertos:
+ *   - Omitir `tenant` no rompe ningún llamado existente ni test unitario heredado (retrocompatibilidad garantizada).
+ *   - Se preserva la concatenación geográfica (`locationName`) produciendo 'Anuncios material hípico en [Provincia]'.
+ *   - Los diccionarios i18n ES y PT administran la traducción centralizada sin cadenas 'hardcoded' arbitrarias en la vista.
+ */

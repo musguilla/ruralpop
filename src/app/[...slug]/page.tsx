@@ -43,7 +43,8 @@ export async function generateMetadata(props: {
 
     // We can use generateSeoH1 to get a perfectly translated base subject
     // generateSeoH1 already appends the location correctly (en/em)
-    const baseSubject = generateSeoH1(parsed, locationName, locale);
+    const tenantSlug = isEquipop ? 'equipop' : 'ruralpop';
+    const baseSubject = generateSeoH1(parsed, locationName, locale, tenantSlug);
 
     const isLocationOnly = !parsed.q && !parsed.subcategory && !parsed.category && locationName !== "";
 
@@ -61,7 +62,7 @@ export async function generateMetadata(props: {
                 ? [`Pecuária em ${locationName} - Comprar e vender gado`, `Gado à venda em ${locationName} - Vender gado ${locationName}`]
                 : [`Ganadería en ${locationName} - Comprar y vender ganado`, `Ganado en venta en ${locationName} - Vender ganado ${locationName}`]);
         pageTitle = variations[charCodeSumLoc % 2];
-    } else if (baseSubject.trim() && baseSubject !== generateSeoH1({}, locationName, locale)) {
+    } else if (baseSubject.trim() && baseSubject !== generateSeoH1({}, locationName, locale, tenantSlug)) {
         const seoVariations = isEquipop
             ? (isPt 
                 ? ["Material equestre usado", "App grátis equitação", "Loja hípica segunda mão", "Artigos para cavalo", "Tudo para o seu cavalo", "Equipamento para cavaleiros"]
@@ -176,7 +177,7 @@ export default async function SearchResultsPage(props: {
         <div className="container mx-auto px-4 pt-4 pb-8 sm:pt-6 sm:pb-8 min-h-screen">
             <SeoBreadcrumbs parsedSlug={parsedSlug} locationName={locationName} locale={locale} brandName={brandName} />
             <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2">
-                {generateSeoH1(parsedSlug, locationName, locale)}
+                {generateSeoH1(parsedSlug, locationName, locale, tenant)}
             </h1>
 
             <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
@@ -224,4 +225,5 @@ function GridSkeleton() {
  * - Se utiliza una ruta dinámica `[slug]` en la raíz para capturar URLs SEO friendly (ej. /vaca-ganaderia-bovino-zamora).
  * - Se extraen los parámetros usando `parseSeoUrl` y se combinan con los `searchParams` tradicionales (para paginación, precios).
  * - Las rutas estáticas preexistentes (como /login, /dashboard) tienen prioridad en Next.js App Router, evitando colisiones graves.
+ * - H1 multitenant: se pasa `tenant` a `generateSeoH1` para asegurar la coherencia de títulos entre Equipop y Ruralpop.
  */

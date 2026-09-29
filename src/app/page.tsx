@@ -107,7 +107,7 @@ export default async function Home(props: {
       ) : (
         <>
           <h1 className="text-lg md:text-xl font-bold text-[var(--ag-sys-color-text)] mb-2 pt-2 sm:pt-0">
-            {generateSeoH1(parsedSlug, locationName, locale)}
+            {generateSeoH1(parsedSlug, locationName, locale, tenant)}
           </h1>
           <Suspense fallback={<div className="h-16 w-full animate-pulse bg-[var(--ag-sys-color-surface)] mb-6" />}>
             <ActiveSearchBar />
@@ -166,5 +166,6 @@ function GridSkeleton() {
  * - 'q' search param está pensado para enlazarse en el Header (SearchInput)
  * - `Suspense` wraps `ListingsGrid` making it extremely fast, initial HTML layout gets delivered instantly.
  * - ListingsGrid se ha extraido a su propio componente para ser reutilizado en `[slug]/page.tsx`.
+ * - H1 dinámico por tenant: se inyecta `tenant` a `generateSeoH1` para mostrar 'Anuncios material hípico' en Equipop (ej. al ver todos con `?sort=recent`) y 'Anuncios clasificados del mundo rural' en Ruralpop.
  */
 

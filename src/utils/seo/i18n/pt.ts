@@ -22,6 +22,7 @@ export const seoDictionaryPT = {
     categoryServices: 'Serviços para o mundo rural',
     categoryAdsOf: 'Anúncios de {category}',
     defaultGlobal: 'Anúncios classificados do mundo rural',
+    defaultGlobalEquipop: 'Anúncios material hípico',
     getPreposition: (location: string) => {
         const lowerLoc = location.toLowerCase();
         if (['porto', 'algarve', 'alentejo'].includes(lowerLoc)) return `no ${location}`;
@@ -50,3 +51,9 @@ export const seoDictionaryPT = {
         }).join(' ');
     }
 };
+
+/**
+ * Documentação de Memoria:
+ * - Decisão técnica: 'defaultGlobalEquipop' fornece o título padrão em português ('Anúncios material hípico') para Equipop.
+ * - Edge cases: Compatibilidade com contrações preposicionais de localização em Portugal ('no Porto', 'na Madeira', 'em Lisboa').
+ */

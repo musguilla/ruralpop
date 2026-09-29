@@ -69,4 +69,16 @@ describe('h1Generator', () => {
             expect(generateSeoH1({}, "Açores", "pt")).toBe('Anúncios classificados do mundo rural nos Açores');
         });
     });
+
+    describe('Equipop Tenant Generation', () => {
+        it('should handle default global for equipop in Spanish', () => {
+            expect(generateSeoH1({}, "", "es", "equipop")).toBe('Anuncios material hípico');
+            expect(generateSeoH1({}, "Madrid", "es", "equipop")).toBe('Anuncios material hípico en Madrid');
+        });
+
+        it('should handle default global for equipop in Portuguese', () => {
+            expect(generateSeoH1({}, "", "pt", "equipop")).toBe('Anúncios material hípico');
+            expect(generateSeoH1({}, "Porto", "pt", "equipop")).toBe('Anúncios material hípico no Porto');
+        });
+    });
 });

@@ -40,7 +40,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
         if (landing.searchQuery) combinedParams.q = landing.searchQuery;
         if (landing.category) combinedParams.category = landing.category;
         if (landing.subcategory) combinedParams.subcategory = landing.subcategory;
-        baseTitle = generateSeoH1(combinedParams, landing.province, locale);
+        baseTitle = generateSeoH1(combinedParams, landing.province, locale, tenant);
     }
 
     const isPt = locale === 'pt';
@@ -145,6 +145,8 @@ export default async function SeoLandingPage(props: {
 
     const headersList = await headers();
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const { getServerTenantSlug } = await import('@/utils/tenant/server');
+    const tenant = await getServerTenantSlug();
 
     let displayTitle = landing.title;
     let displaySubtitle = landing.subtitle || "Encuentra y compara las mejores ofertas de nuestro mercado agrícola.";
@@ -154,7 +156,7 @@ export default async function SeoLandingPage(props: {
         if (landing.searchQuery) combinedParams.q = landing.searchQuery;
         if (landing.category) combinedParams.category = landing.category;
         if (landing.subcategory) combinedParams.subcategory = landing.subcategory;
-        displayTitle = generateSeoH1(combinedParams, landing.province, locale);
+        displayTitle = generateSeoH1(combinedParams, landing.province, locale, tenant);
         displaySubtitle = "Encontre e compare as melhores ofertas do nosso mercado agrícola.";
     }
 
@@ -255,4 +257,5 @@ function GridSkeleton() {
  * - Se genera una landing SEO estática/dinámica mapeada por slug (ej: /s/venta-animales-de-granja).
  * - Injectamos la descripción larga y el bloque FAQs optimizado por la semántica HTML5 tras la paginación.
  * - Los metaetiquetas OpenGraph y title se rellenan automáticamente garantizando alta visibilidad.
+ * - H1 multitenant: se pasa `tenant` a `generateSeoH1` para coherencia entre Equipop y Ruralpop en vistas SEO dinámicas.
  */

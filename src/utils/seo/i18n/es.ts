@@ -22,6 +22,7 @@ export const seoDictionaryES = {
     categoryServices: 'Servicios para el mundo rural',
     categoryAdsOf: 'Anuncios de {category}',
     defaultGlobal: 'Anuncios clasificados del mundo rural',
+    defaultGlobalEquipop: 'Anuncios material hípico',
     getPreposition: (location: string) => `en ${location}`,
     pluralize: (text: string) => {
         if (!text) return text;
@@ -42,3 +43,9 @@ export const seoDictionaryES = {
         }).join(' ');
     }
 };
+
+/**
+ * Documentación de Memoria:
+ * - Decisión técnica: 'defaultGlobalEquipop' provee el título por defecto adaptado al nicho ecuestre de Equipop ('Anuncios material hípico') sin alterar la taxonomía existente de Ruralpop.
+ * - Edge cases: Mantiene compatibilidad con 'getPreposition' para búsquedas geográficas vacías de categoría (ej. 'Anuncios material hípico en Madrid').
+ */
