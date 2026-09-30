@@ -10,6 +10,7 @@ import { Tractor, MapPin, Tag, Clock } from "lucide-react";
 import { DashboardListingActions } from "@/components/dashboard/DashboardListingActions";
 import { UnifiedListingCard, UnifiedItem } from "@/components/dashboard/UnifiedListingCard";
 import { getServerTenantFilterString, getServerTenantSlug } from "@/utils/tenant/server";
+import { getLoginRedirectUrl } from "@/utils/authRedirect";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ type Props = {
 export default async function DashboardPage(props: Props) {
     const headersList = await headers();
     const locale = (headersList.get("x-locale") || "es") as LocaleCode;
+    const originalPathname = headersList.get("x-original-pathname") || (locale === "pt" ? "/pt/dashboard" : "/dashboard");
     const dict = await getDictionary(locale);
     const searchParams = await props.searchParams;
     const currentTabRaw = searchParams?.tab;
@@ -31,7 +33,7 @@ export default async function DashboardPage(props: Props) {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect("/login");
+        redirect(getLoginRedirectUrl(locale, originalPathname));
     }
 
     const { data: publicUser } = await supabase

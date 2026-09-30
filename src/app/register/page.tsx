@@ -1,10 +1,12 @@
-import Link from "next/link";
 import Image from "next/image";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { signup } from "./actions";
 import { Metadata } from "next";
 import { getServerTenantSlug } from "@/utils/tenant/server";
+import { headers } from "next/headers";
+import { LocalizedLink } from "@/components/ui/LocalizedLink";
+import { LocaleCode } from "@/i18n/config";
 
 export const metadata: Metadata = {
     title: "Crea una Cuenta | Ruralpop",
@@ -13,11 +15,19 @@ export const metadata: Metadata = {
 };
 
 export default async function RegisterPage(props: {
-    searchParams: Promise<{ error?: string }>;
+    searchParams: Promise<{ error?: string; redirectTo?: string }>;
 }) {
     const searchParams = await props.searchParams;
     const tenant = await getServerTenantSlug();
     const isEquipop = tenant === 'equipop';
+
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
+
+    const loginHref = searchParams?.redirectTo
+        ? `/login?redirectTo=${encodeURIComponent(searchParams.redirectTo)}`
+        : "/login";
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] w-full py-12 px-4 sm:px-6 lg:px-8">
@@ -28,43 +38,50 @@ export default async function RegisterPage(props: {
                         <Image src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"} alt={isEquipop ? "Equipop" : "Ruralpop"} width={160} height={40} className="object-contain" priority />
                     </div>
                     <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
-                        Crea una Cuenta
+                        {isPt ? "Criar Conta" : "Crea una Cuenta"}
                     </h2>
                     <p className="mt-2 text-sm text-[var(--ag-sys-color-text-muted)]">
-                        ¿Ya eres miembro?{" "}
-                        <Link
-                            href="/login"
+                        {isPt ? "Já é membro? " : "¿Ya eres miembro? "}
+                        <LocalizedLink
+                            href={loginHref}
                             className="font-medium text-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary-hover)] transition-colors"
                         >
-                            Inicia sesión aquí
-                        </Link>
+                            {isPt ? "Inicie sessão aqui" : "Inicia sesión aquí"}
+                        </LocalizedLink>
                     </p>
                 </div>
 
                 {searchParams?.error === "user_exists" ? (
-                    <div className="p-4 bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm p-3 rounded-md border border-blue-200 dark:border-blue-800 text-center">
-                        <strong>¡Ya tienes una cuenta en nuestra red!</strong><br/>
-                        Este correo electrónico ya está registrado en {isEquipop ? "Ruralpop" : "Equipop"}. Puedes usar tu contraseña habitual para{" "}
-                        <Link href="/login" className="font-bold underline hover:text-[var(--ag-sys-color-primary)]">
-                            Iniciar sesión
-                        </Link>
-                        {" "}en {isEquipop ? "Equipop" : "Ruralpop"}. Si no la recuerdas, utiliza{" "}
-                        <Link href="/forgot-password" className="font-bold underline hover:text-[var(--ag-sys-color-primary)]">
-                            Recordar contraseña
-                        </Link>
+                    <div className="p-4 bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm rounded-md border border-blue-200 dark:border-blue-800 text-center">
+                        <strong>{isPt ? "Já tem uma conta na nossa rede!" : "¡Ya tienes una cuenta en nuestra red!"}</strong><br/>
+                        {isPt 
+                            ? "Este email já está registado. Pode usar a sua palavra-passe habitual para " 
+                            : `Este correo electrónico ya está registrado en ${isEquipop ? "Ruralpop" : "Equipop"}. Puedes usar tu contraseña habitual para `}
+                        <LocalizedLink href={loginHref} className="font-bold underline hover:text-[var(--ag-sys-color-primary)]">
+                            {isPt ? "Iniciar sessão" : "Iniciar sesión"}
+                        </LocalizedLink>
+                        {isPt ? ". Se não se lembra, utilize " : ". Si no la recuerdas, utiliza "}
+                        <LocalizedLink href="/forgot-password" className="font-bold underline hover:text-[var(--ag-sys-color-primary)]">
+                            {isPt ? "Recuperar palavra-passe" : "Recordar contraseña"}
+                        </LocalizedLink>
                         .
                     </div>
                 ) : searchParams?.error ? (
-                    <div className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm p-3 rounded-md border border-red-200 dark:border-red-800 text-center">
+                    <div className="p-4 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm rounded-md border border-red-200 dark:border-red-800 text-center">
                         {searchParams.error}
                     </div>
                 ) : null}
 
                 <form className="mt-8 space-y-6" action={signup}>
+                    <input type="hidden" name="locale" value={locale} />
+                    {searchParams?.redirectTo && (
+                        <input type="hidden" name="redirectTo" value={searchParams.redirectTo} />
+                    )}
+
                     <div className="space-y-4">
                         <div>
                             <label htmlFor="name" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Nombre completo
+                                {isPt ? "Nome completo" : "Nombre completo"}
                             </label>
                             <input
                                 id="name"
@@ -73,12 +90,12 @@ export default async function RegisterPage(props: {
                                 autoComplete="name"
                                 required
                                 className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
-                                placeholder="Juan Prieto"
+                                placeholder={isPt ? "João Silva" : "Juan Prieto"}
                             />
                         </div>
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Correo electrónico
+                                {isPt ? "Email" : "Correo electrónico"}
                             </label>
                             <input
                                 id="email"
@@ -87,12 +104,12 @@ export default async function RegisterPage(props: {
                                 autoComplete="email"
                                 required
                                 className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
-                                placeholder="tu@email.com"
+                                placeholder={isPt ? "o-seu@email.com" : "tu@email.com"}
                             />
                         </div>
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Contraseña
+                                {isPt ? "Palavra-passe" : "Contraseña"}
                             </label>
                             <PasswordInput
                                 id="password"
@@ -103,7 +120,7 @@ export default async function RegisterPage(props: {
                         </div>
                         <div>
                             <label htmlFor="password_confirm" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Repite la contraseña
+                                {isPt ? "Repita a palavra-passe" : "Repite la contraseña"}
                             </label>
                             <PasswordInput
                                 id="password_confirm"
@@ -114,7 +131,7 @@ export default async function RegisterPage(props: {
                         </div>
                     </div>
 
-                    <SubmitButton label="Registrarme gratis" />
+                    <SubmitButton label={isPt ? "Registar-me grátis" : "Registrarme gratis"} />
                 </form>
             </div>
         </div>
@@ -122,7 +139,19 @@ export default async function RegisterPage(props: {
 }
 
 /**
- * Memory / Decisiones Técnicas:
- * - Se usa la metadata de Next.js (`raw_user_meta_data`) internamente pasando el 'name', para que el Trigger SQL insertará en la tabla final `public.users`.
- * - Estética simétrica con el Login.
+ * -----------------------------------------------------------------------------
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISION RECORD
+ * -----------------------------------------------------------------------------
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Internacionalización en Registro: Toda la interfaz se adapta al portugués
+ *      cuando se accede desde '/pt/register', utilizando placeholders naturales de Portugal.
+ *    - LocalizedLink para Rutas Auth: Garantiza que el paso de /register a /login o /forgot-password
+ *      no destruya el prefijo '/pt'.
+ *    - Persistencia de Redirección: Si el usuario inició el flujo en /pt/upload, se propaga el 'redirectTo'
+ *      a través del form hidden input.
+ * 
+ * 2. Posibles "edge cases" cubiertos:
+ *    - Usuario existente con cuenta unificada: Se muestra mensaje informativo localizado
+ *      con enlace directo a login preservando locale.
+ * -----------------------------------------------------------------------------
  */

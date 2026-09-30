@@ -10,17 +10,20 @@ import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 
+import { getLoginRedirectUrl } from "@/utils/authRedirect";
+
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
     const headersList = await headers();
     const locale = (headersList.get("x-locale") || "es") as LocaleCode;
+    const originalPathname = headersList.get("x-original-pathname") || (locale === "pt" ? "/pt/account" : "/account");
     const dict = await getDictionary(locale);
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect("/login");
+        redirect(getLoginRedirectUrl(locale, originalPathname));
     }
 
     const { user_metadata, email, phone } = user;

@@ -1,10 +1,13 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
 import { ArrowLeft, TrendingUp, RefreshCw, ChevronRight, ShieldCheck, Zap, ExternalLink } from "lucide-react";
 import { ProSubscriptionManager } from "@/components/dashboard/ProSubscriptionManager";
 import { slugify } from "@/utils/seoUtils";
 import { getServerTenantFilterString } from "@/utils/tenant/server";
+import { getLoginRedirectUrl } from "@/utils/authRedirect";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +16,11 @@ type Props = {
 };
 
 export default async function ProfessionalDashboardPage(props: Props) {
+    const headersList = await headers();
+    const locale = (headersList.get("x-locale") || "es") as LocaleCode;
+    const originalPathname = headersList.get("x-original-pathname") || (locale === "pt" ? "/pt/dashboard/pro" : "/dashboard/pro");
+    const isPt = locale === "pt";
+
     const searchParams = await props.searchParams;
     const currentTab = searchParams?.tab === "suscripcion" ? "subscription" : "general";
 
@@ -20,7 +28,7 @@ export default async function ProfessionalDashboardPage(props: Props) {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect("/login");
+        redirect(getLoginRedirectUrl(locale, originalPathname));
     }
 
     // Fetch user and check professional status
@@ -34,11 +42,11 @@ export default async function ProfessionalDashboardPage(props: Props) {
         .single();
 
     if (!publicUser || publicUser.role !== 'profesional') {
-        redirect("/profesionales");
+        redirect(isPt ? "/pt/profesionales" : "/profesionales");
     }
 
     if (publicUser.is_ghost) {
-        redirect("/profesionales?ghost_claim=true");
+        redirect(isPt ? "/pt/profesionales?ghost_claim=true" : "/profesionales?ghost_claim=true");
     }
 
     // Fetch some basic stats
@@ -63,11 +71,11 @@ export default async function ProfessionalDashboardPage(props: Props) {
             <div className="container mx-auto px-4 max-w-5xl">
                 <header className="mb-8">
                     <Link
-                        href="/dashboard"
+                        href={isPt ? "/pt/dashboard" : "/dashboard"}
                         className="inline-flex items-center text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors mb-4 font-medium"
                     >
                         <ArrowLeft className="w-5 h-5 mr-2" />
-                        Volver al Panel Principal
+                        {isPt ? "Voltar ao Painel Principal" : "Volver al Panel Principal"}
                     </Link>
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div className="flex items-center gap-4">
@@ -76,13 +84,13 @@ export default async function ProfessionalDashboardPage(props: Props) {
                             </div>
                             <div>
                                 <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight flex items-center gap-3">
-                                    Panel Profesional
+                                    {isPt ? "Painel Profissional" : "Panel Profesional"}
                                     <span className={`text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wider ${isProPlan ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-700'}`}>
                                         PLAN {publicUser.plan_type?.toUpperCase() || 'START'}
                                     </span>
                                 </h1>
                                 <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                                    Gestiona tus contactos, anuncios y promociones para acelerar tus ventas.
+                                    {isPt ? "Gira os seus contactos, anúncios e destaques para acelerar as suas vendas." : "Gestiona tus contactos, anuncios y promociones para acelerar tus ventas."}
                                 </p>
                             </div>
                         </div>
@@ -93,30 +101,30 @@ export default async function ProfessionalDashboardPage(props: Props) {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
                     <div className="flex gap-2 p-1 bg-gray-100/50 w-fit rounded-2xl border border-gray-100">
                         <Link
-                            href="/dashboard/pro"
+                            href={isPt ? "/pt/dashboard/pro" : "/dashboard/pro"}
                             className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${currentTab === 'general'
                                 ? 'bg-white text-[var(--ag-sys-color-text)] shadow-sm'
                                 : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]'}`}
                         >
-                            General
+                            {isPt ? "Geral" : "General"}
                         </Link>
                         <Link
-                            href="/dashboard/pro?tab=suscripcion"
+                            href={isPt ? "/pt/dashboard/pro?tab=suscripcion" : "/dashboard/pro?tab=suscripcion"}
                             className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${currentTab === 'subscription'
                                 ? 'bg-white text-[var(--ag-sys-color-text)] shadow-sm'
                                 : 'text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]'}`}
                         >
-                            Suscripción
+                            {isPt ? "Subscrição" : "Suscripción"}
                         </Link>
                     </div>
 
                     {publicUser.commercial_name && (
                         <Link
-                            href={`/empresa/${slugify(publicUser.commercial_name)}`}
+                            href={`${isPt ? "/pt" : ""}/empresa/${slugify(publicUser.commercial_name)}`}
                             target="_blank"
                             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text)] font-bold text-sm rounded-xl hover:bg-gray-50 transition-all shadow-sm group"
                         >
-                            Ver perfil de empresa
+                            {isPt ? "Ver perfil de empresa" : "Ver perfil de empresa"}
                             <ExternalLink className="w-4 h-4 text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)] transition-colors" />
                         </Link>
                     )}
@@ -222,4 +230,7 @@ export default async function ProfessionalDashboardPage(props: Props) {
  * - Se asume que el plan de base es "start" si por algún error guardan rol profesional pero no dictan el tipo.
  * - Usaremos el endpoint "/api/create-portal-session" (aún por implementar) para no ensuciar este SSR con llamadas pesadas a Stripe y gestionar la sesión on-demand.
  * - El diseño respira al emplear un look distinto si el usuario es START o PRO, aunque por ahora agrupa lógica (escalable modificando la comprobación 'isProPlan').
+ * - Preservación de Localización (/pt): Se captura el locale del header y el originalPathname para que, en caso de sesión no iniciada,
+ *   se invoque getLoginRedirectUrl(locale, originalPathname) manteniendo /pt y el parámetro redirectTo exacto.
+ * - Navegación y enlaces internos traducidos y prefijados con /pt cuando se accede desde la versión portuguesa.
  */

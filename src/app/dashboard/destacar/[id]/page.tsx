@@ -9,6 +9,8 @@ import { formatCurrency } from "@/utils/format";
 
 import { headers } from "next/headers";
 
+import { getLoginRedirectUrl } from "@/utils/authRedirect";
+
 export const dynamic = "force-dynamic";
 
 type Props = {
@@ -23,10 +25,11 @@ export default async function DestacarAnuncioPage(props: Props) {
 
     // Feature flag protection
     if (process.env.NEXT_PUBLIC_ENABLE_HIGHLIGHT_ADS !== 'true') {
-        redirect("/dashboard");
+        redirect(isPt ? "/pt/dashboard" : "/dashboard");
     }
 
     const { id: encodedId } = await props.params;
+    const originalPathname = headersList.get('x-original-pathname') || (isPt ? `/pt/dashboard/destacar/${encodedId}` : `/dashboard/destacar/${encodedId}`);
     const searchParams = await props.searchParams;
     const isNewlyPublished = searchParams?.published === "true";
     
@@ -40,7 +43,7 @@ export default async function DestacarAnuncioPage(props: Props) {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect("/login");
+        redirect(getLoginRedirectUrl(locale, originalPathname));
     }
 
     // Comprobar si el usuario es un profesional

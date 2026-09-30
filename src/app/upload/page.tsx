@@ -5,16 +5,21 @@ import UploadForm from "./UploadForm";
 import { getStripe } from "@/lib/stripe";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 import { getTenantConfig, getRuralpopDatabaseId } from "@/config/tenants";
+import { getLoginRedirectUrl } from "@/utils/authRedirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function UploadPage() {
     const tenant = await getServerTenantSlug();
     const supabase = await createClient();
+    const headersList = await headers();
+    const locale = headersList.get('x-locale') || 'es';
+    const originalPathname = headersList.get('x-original-pathname') || (locale === 'pt' ? '/pt/upload' : '/upload');
+
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect("/login");
+        redirect(getLoginRedirectUrl(locale, originalPathname));
     }
 
     // Fetch user profile to get saved phone
@@ -25,14 +30,12 @@ export default async function UploadPage() {
         .single();
 
     if (profile?.is_ghost) {
-        redirect("/profesionales?ghost_claim=true");
+        redirect(locale === 'pt' ? "/pt/profesionales?ghost_claim=true" : "/profesionales?ghost_claim=true");
     }
 
     const savedPhone = profile?.contact_phone ?? null;
 
     // Determine country from locale
-    const headersList = await headers();
-    const locale = headersList.get('x-locale') || 'es';
     const targetCountry = locale === 'pt' ? 'PT' : 'ES';
 
     // Fetch provinces to feed the first selector
@@ -76,3 +79,20 @@ export default async function UploadPage() {
 
     return <UploadForm savedPhone={savedPhone} initialProvinces={initialProvinces} userEmail={user.email} hasWalletConfigured={isStripeReady} isProfesional={isProfesional} userProfile={userProfile} activeTenantId={activeTenantId || undefined} isEquipop={tenantSlug === 'equipop'} />;
 }
+
+/**
+ * -----------------------------------------------------------------------------
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISION RECORD
+ * -----------------------------------------------------------------------------
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Preservación de Locale en /pt/upload: Si un usuario no autenticado entra a publicar
+ *      desde Portugal, se utiliza `getLoginRedirectUrl(locale, originalPathname)` para
+ *      llevarlo a `/pt/login?redirectTo=%2Fpt%2Fupload` en vez de enviarlo a la raíz española.
+ *    - Discriminación de distritos: Al alimentar `initialProvinces` según `targetCountry`,
+ *      en Portugal (/pt) se entregan los 18 distritos (IDs 101-118) y en España las 52 provincias.
+ * 
+ * 2. Posibles "edge cases" cubiertos:
+ *    - Headers ausentes o SSR sin sesión: fallback a 'es' y '/upload'.
+ *    - Perfil ghost redirigido preservando el prefijo '/pt'.
+ * -----------------------------------------------------------------------------
+ */

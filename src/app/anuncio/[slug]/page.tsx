@@ -57,7 +57,7 @@ export async function generateMetadata(
 
     const { data: listing } = await supabase
         .from("listings")
-        .select("title, description, price, image_urls, location, category, title_pt, description_pt")
+        .select("title, description, price, image_urls, location, category, title_pt, description_pt, province_id")
         .eq("id", id)
         .or(await getServerTenantFilterString())
         .single();
@@ -109,7 +109,11 @@ export async function generateMetadata(
     }
 
     const originalPathname = `/anuncio/${slug}`;
-    const canonical = getCanonicalUrl(originalPathname, locale, currentDomain);
+    const provId = listing.province_id ? Number(listing.province_id) : null;
+    const isPtListing = !isEquipop && provId !== null && provId >= 100;
+    const isEsListing = !isEquipop && provId !== null && provId > 0 && provId < 100;
+    const canonicalLocale: LocaleCode = isPtListing ? 'pt' : isEsListing ? 'es' : locale;
+    const canonical = getCanonicalUrl(originalPathname, canonicalLocale, currentDomain);
 
     return {
         title: fullTitle,
@@ -119,7 +123,11 @@ export async function generateMetadata(
         },
         alternates: {
             canonical,
-            languages: getHreflangLinks(originalPathname, currentDomain),
+            languages: isPtListing
+                ? { 'pt-PT': getCanonicalUrl(originalPathname, 'pt', currentDomain) }
+                : isEsListing
+                    ? { 'es-ES': getCanonicalUrl(originalPathname, 'es', currentDomain) }
+                    : getHreflangLinks(originalPathname, currentDomain),
         },
         openGraph: {
             title: fullTitle,
@@ -185,7 +193,7 @@ export default async function ListingDetailPage(props: Props) {
     const { error: visitErr } = await supabase.rpc('increment_listing_visits', { listing_id: id });
     if (visitErr) console.error(visitErr);
 
-    let dbClient: any = supabase;
+    let dbClient = supabase;
     
     if (user) {
         const { data: userProfile } = await supabase.from('users').select('role').eq('id', user.id).single();
@@ -194,7 +202,7 @@ export default async function ListingDetailPage(props: Props) {
             dbClient = createAdminClient(
                 process.env.NEXT_PUBLIC_SUPABASE_URL!,
                 process.env.SUPABASE_SERVICE_ROLE_KEY!
-            );
+            ) as unknown as typeof supabase;
         }
     }
 
@@ -216,7 +224,18 @@ export default async function ListingDetailPage(props: Props) {
     }
 
     if (listing.status === 'sold') {
-        permanentRedirect('/');
+        permanentRedirect(locale === 'pt' ? '/pt' : '/');
+    }
+
+    // Aislamiento de anuncios portugueses y españoles en Ruralpop
+    if (!isEquipop && listing.province_id !== null && listing.province_id !== undefined) {
+        const provId = Number(listing.province_id);
+        if (provId >= 100 && locale !== 'pt') {
+            permanentRedirect(`/pt/anuncio/${slug}`);
+        }
+        if (provId > 0 && provId < 100 && locale === 'pt') {
+            permanentRedirect(`/anuncio/${slug}`);
+        }
     }
 
     const isTestPro = true;
@@ -335,7 +354,7 @@ export default async function ListingDetailPage(props: Props) {
                 {/* Volver y Migas de pan */}
                 <div className="mb-6">
                     <Link
-                        href="/"
+                        href={locale === "pt" ? "/pt" : "/"}
                         className="inline-flex items-center gap-2 text-sm font-medium text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group"
                     >
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -374,7 +393,7 @@ export default async function ListingDetailPage(props: Props) {
                                     )}
                                     <div className="flex flex-wrap items-center gap-4 text-sm text-[var(--ag-sys-color-text-muted)]">
                                         <Link
-                                            href={buildSeoUrl({ category: slugify(listing.category || ""), province_id: listing.province_id ? String(listing.province_id) : undefined })}
+                                            href={buildSeoUrl({ category: slugify(listing.category || ""), province_id: listing.province_id ? String(listing.province_id) : undefined }, locale)}
                                             className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full hover:text-[var(--ag-sys-color-text)] transition-colors"
                                         >
                                             <MapPin className="w-4 h-4" /> {listing.location}
@@ -388,7 +407,7 @@ export default async function ListingDetailPage(props: Props) {
                                             href={buildSeoUrl({
                                                 category: slugify((isEquipop && listing.equipop_category) ? listing.equipop_category : (listing.category || "")),
                                                 subcategory: (isEquipop && listing.equipop_category) ? (listing.equipop_subcategory || undefined) : (listing.subcategory || undefined)
-                                            })}
+                                            }, locale)}
                                             className="flex items-center gap-1.5 bg-[var(--ag-sys-color-background)] px-3 py-1 rounded-full hover:text-[var(--ag-sys-color-text)] transition-colors"
                                         >
                                             {isEquipop ? <Tag className="w-4 h-4" /> : <Tractor className="w-4 h-4" />} 
@@ -473,7 +492,7 @@ export default async function ListingDetailPage(props: Props) {
                                 </div>
                                 <div>
                                     {isProfessional ? (
-                                        <Link href={`/empresa/${slugify(rawSellerName)}`} className="group">
+                                        <Link href={`${locale === 'pt' ? '/pt' : ''}/empresa/${slugify(rawSellerName)}`} className="group">
                                             <h4 className="font-bold text-lg text-[var(--ag-sys-color-text)] group-hover:text-[var(--ag-sys-color-primary)] transition-colors flex items-center gap-1.5 line-clamp-1 break-all">
                                                 {rawSellerName}
                                                 <ShieldCheck className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
@@ -541,3 +560,19 @@ export default async function ListingDetailPage(props: Props) {
         </div>
     );
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Aislamiento Geográfico de Anuncios:
+ *   Los anuncios creados en Portugal poseen `province_id >= 100` (distritos portugueses 101-118).
+ *   Si un usuario o bot intenta acceder a un anuncio portugués desde el dominio español sin prefijo `/pt`,
+ *   se ejecuta un `permanentRedirect('/pt/anuncio/' + slug)` para asegurar la permanencia en el idioma y SEO canónico.
+ *   De forma inversa, si se intenta acceder a un anuncio español (`province_id < 100`) desde `/pt`,
+ *   se redirige a la versión canónica en español `/anuncio/...`.
+ * - Hreflang y Canonical SEO:
+ *   Se ajusta dinámicamente la etiqueta canonical y los enlaces hreflang en generateMetadata para reflejar
+ *   exclusivamente el idioma nativo del anuncio, evitando penalizaciones de contenido duplicado o rutas 404.
+ * - Navegación Contextual:
+ *   El botón de volver ("volver_listado"), las rutas de migas de pan (buildSeoUrl) y el perfil comercial del vendedor
+ *   preservan el locale actual para que el usuario nunca sea expulsado de su experiencia en `/pt`.
+ */

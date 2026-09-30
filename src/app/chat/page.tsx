@@ -5,18 +5,20 @@ import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getServerTenantFilterString } from "@/utils/tenant/server";
+import { getLoginRedirectUrl } from "@/utils/authRedirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function ChatInboxPage() {
     const headersList = await headers();
     const locale = (headersList.get("x-locale") || "es") as LocaleCode;
+    const originalPathname = headersList.get("x-original-pathname") || (locale === "pt" ? "/pt/chat" : "/chat");
     const dict = await getDictionary(locale);
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect("/login");
+        redirect(getLoginRedirectUrl(locale, originalPathname));
     }
 
     const { data: messages, error } = await supabase

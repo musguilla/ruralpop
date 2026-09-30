@@ -1,7 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound, redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { ChatThread } from "@/components/chat/ChatThread";
 import { getServerTenantFilterString } from "@/utils/tenant/server";
+import { getLoginRedirectUrl } from "@/utils/authRedirect";
 
 export default async function ChatThreadPage(props: {
     params: Promise<{ listingId: string }>;
@@ -9,10 +11,13 @@ export default async function ChatThreadPage(props: {
 }) {
     const { listingId } = await props.params;
     const { u: otherUserIdParam } = await props.searchParams;
+    const headersList = await headers();
+    const locale = headersList.get("x-locale") || "es";
+    const originalPathname = headersList.get("x-original-pathname") || (locale === "pt" ? `/pt/chat/${listingId}` : `/chat/${listingId}`);
     const supabase = await createClient();
 
     const { data: { user: currentUser } } = await supabase.auth.getUser();
-    if (!currentUser) redirect("/login");
+    if (!currentUser) redirect(getLoginRedirectUrl(locale, originalPathname));
 
     // Obtener anuncio (con el cliente autenticado)
     let { data: listing } = await supabase

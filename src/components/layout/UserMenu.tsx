@@ -20,7 +20,7 @@ interface UserMenuProps {
 export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: UserMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
 
     // Cerrar al hacer click fuera
     useEffect(() => {
@@ -38,10 +38,10 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
         try {
             const supabase = createClient();
             await supabase.auth.signOut();
-            window.location.href = "/";
+            window.location.href = locale === "pt" ? "/pt" : "/";
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
-            window.location.href = "/";
+            window.location.href = locale === "pt" ? "/pt" : "/";
         }
     };
 
@@ -218,4 +218,6 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
  * Memory / Decisiones Técnicas:
  * - Menú premium basado en estados de React y estilos de Tailwind.
  * - Se aísla del Header Server Component para manejar clics (Client Component).
+ * - Cierre de sesión sensible al locale: si el usuario está en el portal portugués (/pt),
+ *   se redirige a '/pt' para no perder su contexto de idioma en Ruralpop.
  */

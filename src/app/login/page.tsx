@@ -1,10 +1,12 @@
-import Link from "next/link";
 import Image from "next/image";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { login } from "./actions";
 import { Metadata } from "next";
 import { getServerTenantSlug } from "@/utils/tenant/server";
+import { headers } from "next/headers";
+import { LocalizedLink } from "@/components/ui/LocalizedLink";
+import { LocaleCode } from "@/i18n/config";
 
 export const metadata: Metadata = {
     title: "Inicia Sesión | Ruralpop",
@@ -19,6 +21,14 @@ export default async function LoginPage(props: {
     const tenant = await getServerTenantSlug();
     const isEquipop = tenant === 'equipop';
 
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
+
+    const registerHref = searchParams?.redirectTo 
+        ? `/register?redirectTo=${encodeURIComponent(searchParams.redirectTo)}`
+        : "/register";
+
     return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-16rem)] w-full py-12 px-4 sm:px-6 lg:px-8">
             <div className="w-full max-w-md space-y-8 bg-[var(--ag-sys-color-surface)] p-8 rounded-2xl shadow-sm border border-[var(--ag-sys-color-border)]">
@@ -28,7 +38,7 @@ export default async function LoginPage(props: {
                         <Image src={isEquipop ? "/equipop-logo.png" : "/ruralpop-logo.png"} alt={isEquipop ? "Equipop" : "Ruralpop"} width={160} height={40} className="object-contain" priority />
                     </div>
                     <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
-                        Inicia Sesión
+                        {isPt ? "Iniciar Sessão" : "Inicia Sesión"}
                     </h2>
                 </div>
 
@@ -45,13 +55,14 @@ export default async function LoginPage(props: {
                 )}
 
                 <form className="mt-8 space-y-6" action={login}>
+                    <input type="hidden" name="locale" value={locale} />
                     {searchParams?.redirectTo && (
                         <input type="hidden" name="redirectTo" value={searchParams.redirectTo} />
                     )}
                     <div className="space-y-4">
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Correo electrónico
+                                {isPt ? "Email" : "Correo electrónico"}
                             </label>
                             <input
                                 id="email"
@@ -60,12 +71,12 @@ export default async function LoginPage(props: {
                                 autoComplete="email"
                                 required
                                 className="appearance-none relative block w-full px-4 py-3 border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] focus:border-transparent transition-all sm:text-sm"
-                                placeholder="tu@email.com"
+                                placeholder={isPt ? "o-seu@email.com" : "tu@email.com"}
                             />
                         </div>
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                Contraseña
+                                {isPt ? "Palavra-passe" : "Contraseña"}
                             </label>
                             <PasswordInput
                                 id="password"
@@ -75,27 +86,27 @@ export default async function LoginPage(props: {
                         </div>
                     </div>
 
-                    <SubmitButton label="Entrar" />
+                    <SubmitButton label={isPt ? "Entrar" : "Entrar"} />
 
                     <div className="text-center mt-4">
-                        <Link
+                        <LocalizedLink
                             href="/forgot-password"
                             className="text-sm font-medium text-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary-hover)] hover:underline transition-all"
                         >
-                            ¿Olvidaste tu contraseña?
-                        </Link>
+                            {isPt ? "Esqueceu-se da palavra-passe?" : "¿Olvidaste tu contraseña?"}
+                        </LocalizedLink>
                     </div>
 
                     <div className="pt-6 text-center border-t border-[var(--ag-sys-color-border)] mt-8">
                         <p className="text-sm text-[var(--ag-sys-color-text-muted)] mb-4">
-                            ¿Aún no tienes cuenta?
+                            {isPt ? "Ainda não tem conta?" : "¿Aún no tienes cuenta?"}
                         </p>
-                        <Link
-                            href="/register"
+                        <LocalizedLink
+                            href={registerHref}
                             className="group relative w-full flex justify-center py-3 px-4 border border-[var(--ag-sys-color-primary)] text-sm font-medium rounded-xl text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all shadow-sm"
                         >
-                            Regístrate gratis
-                        </Link>
+                            {isPt ? "Registe-se grátis" : "Regístrate gratis"}
+                        </LocalizedLink>
                     </div>
                 </form>
             </div>
@@ -104,8 +115,20 @@ export default async function LoginPage(props: {
 }
 
 /**
- * Memory / Decisiones Técnicas:
- * - Se usa Server Actions puros asociando `action={login}` nativo del form.
- * - Los estilos estéticos premium (`rounded-xl`, focus states) provienen de los tokens CSS unificados de Antigravity.
- * - Soporte server component seguro sin hooks del cliente (`useState`) ni dependencias superfluas.
+ * -----------------------------------------------------------------------------
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISION RECORD
+ * -----------------------------------------------------------------------------
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Enlaces Localizados en Login: Se reemplaza 'Link' por 'LocalizedLink' para que
+ *      los accesos a /register y /forgot-password mantengan automáticamente el prefijo
+ *      '/pt' cuando la navegación ocurre en el portal portugués.
+ *    - Propagación de Locale en Formulario: Se incluye un campo hidden 'locale' para que
+ *      el Server Action 'login' conozca el idioma del cliente incluso en contextos donde
+ *      ciertos navegadores no reenviaran cabeceras específicas en POST nativos.
+ * 
+ * 2. Posibles "edge cases" cubiertos:
+ *    - Preservación de 'redirectTo': El enlace hacia el registro propaga el 'redirectTo'
+ *      existente para que tras crear cuenta y validar se retome el flujo original (ej: /pt/upload).
+ *    - Traducción inmediata de etiquetas sin parpadeo (SSR).
+ * -----------------------------------------------------------------------------
  */

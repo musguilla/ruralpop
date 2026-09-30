@@ -6,6 +6,8 @@ import { decodeId } from "@/utils/idUtils";
 import { getStripe } from "@/lib/stripe";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 
+import { getLoginRedirectUrl } from "@/utils/authRedirect";
+
 export const dynamic = "force-dynamic";
 
 type Props = {
@@ -13,9 +15,12 @@ type Props = {
 };
 
 export default async function EditListingPage(props: Props) {
+    const headersList = await headers();
+    const locale = headersList.get("x-locale") || "es";
     const tenantSlug = await getServerTenantSlug();
     const isEquipop = tenantSlug === 'equipop';
     const { id: shortId } = await props.params;
+    const originalPathname = headersList.get("x-original-pathname") || (locale === "pt" ? `/pt/dashboard/edit/${shortId}` : `/dashboard/edit/${shortId}`);
     const id = decodeId(shortId);
 
     if (!id) {
@@ -26,7 +31,7 @@ export default async function EditListingPage(props: Props) {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect("/login");
+        redirect(getLoginRedirectUrl(locale, originalPathname));
     }
 
     // Fetch listing to edit
@@ -52,8 +57,6 @@ export default async function EditListingPage(props: Props) {
     const savedPhone = profile?.phone ?? null;
 
     // Determine country from locale
-    const headersList = await headers();
-    const locale = headersList.get('x-locale') || 'es';
     const targetCountry = locale === 'pt' ? 'PT' : 'ES';
 
     // Fetch provinces to feed the first selector
