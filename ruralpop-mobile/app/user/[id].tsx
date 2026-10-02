@@ -68,10 +68,11 @@ export default function UserProfileScreen() {
                     .from('listings')
                     .select(`
                         *,
-                        users (name, commercial_name, avatar_url, company_logo_url, role)
+                        users!inner (name, commercial_name, avatar_url, company_logo_url, role, is_ghost)
                     `)
                     .eq('user_id', id)
                     .eq('status', 'active')
+                    .eq('users.is_ghost', false)
                     .or(getDefaultTenantFilterString())
                     .order('created_at', { ascending: false });
 
@@ -257,3 +258,18 @@ export default function UserProfileScreen() {
         </SafeAreaView>
     );
 }
+
+/**
+ * -----------------------------------------------------------------------------
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISION RECORD
+ * -----------------------------------------------------------------------------
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Ocultación de Perfiles PRO Ghost: Las cuentas PRO en estado fantasma no deben
+ *      ser accesibles públicamente en la app móvil. Si se intenta abrir `/user/[id]`
+ *      de un usuario con `is_ghost = true`, se limpia el perfil y se presenta el
+ *      mensaje 'Usuario no encontrado'.
+ *    - Doble filtro en listados: La consulta de anuncios del usuario aplica
+ *      `users!inner(...)` con `users.is_ghost = false` para garantizar que ningún
+ *      anuncio de una cuenta ghost sea renderizado.
+ * -----------------------------------------------------------------------------
+ */

@@ -8,7 +8,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from "../../src/lib/supabase";
 import { ListingCard } from "../../src/components/ui/ListingCard";
-import { Listing } from "../../src/types";
+import { Listing, User } from "../../src/types";
 import { useFavorites } from "../../src/contexts/FavoritesContext";
 import { useFavoriteProfiles } from "../../src/hooks/useFavoriteProfiles";
 import { FavoriteProfileCard } from "../../src/components/ui/FavoriteProfileCard";
@@ -16,6 +16,8 @@ import { getDefaultTenantFilterString } from "../../src/config/tenants";
 
 const { width } = Dimensions.get('window');
 const numColumns = width > 768 ? 3 : 2;
+
+type ProfileListingItem = { id: string; user_id: string; image_urls?: string[] | null };
 
 export default function FavoritesScreen() {
     const { session, isLoading: authLoading } = useAuth();
@@ -28,14 +30,14 @@ export default function FavoritesScreen() {
     const [activeTab, setActiveTab] = useState<'products' | 'profiles'>('products');
     
     const { favoriteProfiles, loading: loadingFavProfiles, refreshFavorites } = useFavoriteProfiles();
-    const [profilesData, setProfilesData] = useState<any[]>([]);
+    const [profilesData, setProfilesData] = useState<User[]>([]);
     useFocusEffect(
         useCallback(() => {
             refreshFavorites();
         }, [refreshFavorites])
     );
 
-    const [profilesListings, setProfilesListings] = useState<Record<string, any[]>>({});
+    const [profilesListings, setProfilesListings] = useState<Record<string, ProfileListingItem[]>>({});
     const [loadingProfiles, setLoadingProfiles] = useState(false);
 
     async function fetchFavoritedProfiles() {
@@ -46,12 +48,18 @@ export default function FavoritesScreen() {
         }
         setLoadingProfiles(true);
         try {
-            const { data: users } = await supabase.from('users').select('*').in('id', favoriteProfiles);
+            const { data: users } = await supabase.from('users').select('*').in('id', favoriteProfiles).eq('is_ghost', false);
             if (users) {
-                setProfilesData(users);
-                const { data: userListings } = await supabase.from('listings').select('id, user_id, image_urls').in('user_id', favoriteProfiles).eq('status', 'active').or(getDefaultTenantFilterString());
+                setProfilesData(users as User[]);
+                const { data: userListings } = await supabase
+                    .from('listings')
+                    .select('id, user_id, image_urls, users!inner(is_ghost)')
+                    .in('user_id', favoriteProfiles)
+                    .eq('status', 'active')
+                    .eq('users.is_ghost', false)
+                    .or(getDefaultTenantFilterString());
                 if (userListings) {
-                    const grouped: Record<string, any[]> = {};
+                    const grouped: Record<string, ProfileListingItem[]> = {};
                     userListings.forEach(l => {
                         if (!grouped[l.user_id]) grouped[l.user_id] = [];
                         grouped[l.user_id].push(l);
@@ -84,9 +92,10 @@ export default function FavoritesScreen() {
         try {
             const { data, error } = await supabase
                 .from('listings')
-                .select('*')
+                .select('*, users!inner(is_ghost)')
                 .in('id', Array.from(favorites))
                 .eq('status', 'active')
+                .eq('users.is_ghost', false)
                 .or(getDefaultTenantFilterString())
                 .order('created_at', { ascending: false });
 
@@ -242,3 +251,20 @@ export default function FavoritesScreen() {
         </SafeAreaView>
     );
 }
+
+/**
+ * -----------------------------------------------------------------------------
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISION RECORD
+ * -----------------------------------------------------------------------------
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Filtro de Perfiles PRO Activados: Los perfiles marcados como 'is_ghost = true'
+ *      corresponden a empresas scrapeadas o pre-creadas no activadas. Se asegura
+ *      que ni la pestaña de perfiles favoritos ni los anuncios favoritos de dichas
+ *      cuentas se muestren en las aplicaciones móviles de Ruralpop o Equipop.
+ * 
+ * 2. Posibles "edge cases" cubiertos:
+ *    - Vendedores favoritos que son ghost no se renderizan (`eq('is_ghost', false)`).
+ *    - Anuncios guardados antes de que un perfil pasara a estado ghost o anuncios
+ *      huérfanos quedan excluidos mediante `users!inner(is_ghost)` y `.eq('users.is_ghost', false)`.
+ * -----------------------------------------------------------------------------
+ */

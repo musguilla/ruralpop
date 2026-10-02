@@ -27,7 +27,7 @@ import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 const { width, height } = Dimensions.get('window');
 
 interface ExtendedListing extends Listing {
-    seller?: User & { zoo_register_number?: string };
+    seller?: User & { zoo_register_number?: string; is_ghost?: boolean };
     tags?: string[];
 }
 
@@ -85,14 +85,19 @@ export default function ListingDetailsScreen() {
                     .from('listings')
                     .select(`
             *,
-            seller:users (id, name, avatar_url, created_at, role, commercial_name, zoo_register_number),
+            users!inner(is_ghost),
+            seller:users!listings_user_id_fkey (id, name, avatar_url, created_at, role, commercial_name, zoo_register_number, is_ghost),
             favorites (count)
           `)
                     .eq('id', id)
+                    .eq('users.is_ghost', false)
                     .or(getDefaultTenantFilterString())
                     .single();
 
-                if (error) throw error;
+                if (error || !data || (data.seller as { is_ghost?: boolean } | undefined)?.is_ghost) {
+                    setListing(null);
+                    return;
+                }
                 setListing(data as ExtendedListing);
                 
                 // Fetch coords
@@ -1154,4 +1159,5 @@ export default function ListingDetailsScreen() {
  * - Componente `Modal`: Se introduce una galería a pantalla completa. Usamos `expo-image` con URLs optimizadas en vez de `RNImage` (core react-native) para evitar picos de uso de RAM que causaban Memory Crashes por imágenes gigantes (raw).
  * - Iconos/Badges: Posición absolute bottom-right para favorito (sin cuenta, shadow suave) y bottom-left contador oscuro semitransparente.
  * - Verificación obligatoria de dirección de envío: Antes de abrir el checkout (`handlePressBuy`) y antes de crear el pago (`handleBuy`), se consulta de forma fresca `supabase.auth.getUser()` para evitar desincronizaciones de caché local. Si faltan datos postales o teléfono, se redirige a `/edit-shipping-address?returnToCheckout=true`. En el modal se muestra la dirección con botón de modificación.
+ * - Aislamiento Estricto de Perfiles PRO Ghost: Se añade `users!inner(is_ghost)` y `.eq('users.is_ghost', false)` en la consulta principal y comprobación preventiva sobre `data.seller?.is_ghost`. Si un anuncio pertenece a una cuenta PRO fantasma o no activada, no se carga y se presenta el estado de 'Anuncio no encontrado'.
  */

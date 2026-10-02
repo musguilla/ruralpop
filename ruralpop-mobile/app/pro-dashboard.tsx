@@ -31,12 +31,12 @@ export default function ProDashboardScreen() {
                 // Fetch user plan details
                 const { data: publicUser, error: userError } = await supabase
                     .from('users')
-                    .select('plan_type, available_bumps, available_featured, role')
+                    .select('plan_type, available_bumps, available_featured, role, is_ghost')
                     .eq('id', user.id)
                     .single();
 
-                if (userError || !publicUser || publicUser.role !== 'profesional') {
-                    // Redirect back if not pro or error
+                if (userError || !publicUser || publicUser.role !== 'profesional' || publicUser.is_ghost) {
+                    // Redirect back if not pro, error or ghost profile
                     router.back();
                     return;
                 }
@@ -44,15 +44,17 @@ export default function ProDashboardScreen() {
                 // Fetch counts using EXACT (head: true)
                 const { count: activeCount } = await supabase
                     .from('listings')
-                    .select('*', { count: 'exact', head: true })
+                    .select('*, users!inner(is_ghost)', { count: 'exact', head: true })
                     .eq('user_id', user.id)
                     .eq('status', 'active')
+                    .eq('users.is_ghost', false)
                     .or(getDefaultTenantFilterString());
                 
                 const { count: totalCount } = await supabase
                     .from('listings')
-                    .select('*', { count: 'exact', head: true })
+                    .select('*, users!inner(is_ghost)', { count: 'exact', head: true })
                     .eq('user_id', user.id)
+                    .eq('users.is_ghost', false)
                     .or(getDefaultTenantFilterString());
 
                 setStats({

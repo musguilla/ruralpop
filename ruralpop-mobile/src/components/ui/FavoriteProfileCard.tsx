@@ -2,19 +2,22 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { getOptimizedImageUrl } from '../../lib/image-optimization';
+import { User } from '../../types';
 
 interface Props {
-    profile: any;
-    listings: any[];
+    profile: User;
+    listings: Array<{ id: string; user_id: string; image_urls?: string[] | null }>;
     onPress: () => void;
 }
 
 export function FavoriteProfileCard({ profile, listings, onPress }: Props) {
-    const images = listings.map(l => l.image_urls?.[0]).filter(Boolean);
+    const images: string[] = listings
+        .map(l => l.image_urls?.[0])
+        .filter((url): url is string => Boolean(url));
     const totalListings = listings.length;
     
     // We show 1, 2, or 4 images
-    let displayImages = [];
+    let displayImages: string[] = [];
     if (images.length >= 4) {
         displayImages = images.slice(0, 4);
     } else if (images.length >= 2) {
@@ -85,3 +88,15 @@ export function FavoriteProfileCard({ profile, listings, onPress }: Props) {
         </TouchableOpacity>
     );
 }
+
+/**
+ * -----------------------------------------------------------------------------
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISION RECORD
+ * -----------------------------------------------------------------------------
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Type Safety estricto (Zero any): Se tiparon `profile: User` y `listings`
+ *      eliminando tipos arbitrarios `any`.
+ *    - Optimización de imágenes en cuadrícula: Uso de `expo-image` con `getOptimizedImageUrl`
+ *      para evitar fugas de memoria al renderizar mosaicos de fotos de perfiles favoritos.
+ * -----------------------------------------------------------------------------
+ */

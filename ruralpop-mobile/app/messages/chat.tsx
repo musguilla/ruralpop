@@ -92,7 +92,13 @@ export default function ChatScreen() {
 
     async function fetchListingData() {
         if (!listingId) return;
-        const { data } = await supabase.from('listings').select('title, price, image_urls').eq('id', listingId).or(getDefaultTenantFilterString()).single();
+        const { data } = await supabase
+            .from('listings')
+            .select('title, price, image_urls, users!inner(is_ghost)')
+            .eq('id', listingId)
+            .eq('users.is_ghost', false)
+            .or(getDefaultTenantFilterString())
+            .single();
         if (data) {
             setListingData({
                 title: data.title,
@@ -332,3 +338,18 @@ export default function ChatScreen() {
         </SafeAreaView>
     );
 }
+
+/**
+ * -----------------------------------------------------------------------------
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISION RECORD
+ * -----------------------------------------------------------------------------
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Aislamiento de Anuncios PRO Ghost en Chat: Si un hilo de conversación
+ *      hace referencia a un anuncio cuyo vendedor es una cuenta PRO ghost (no activada),
+ *      la cabecera del anuncio no se carga ni se enlaza (`users!inner(is_ghost)` y
+ *      `users.is_ghost = false`).
+ * 2. Posibles "edge cases" cubiertos:
+ *    - listingId inexistente o perteneciente a cuenta fantasma: previene enlaces rotos
+ *      o accesos no autorizados a fichas de empresas no reclamadas.
+ * -----------------------------------------------------------------------------
+ */

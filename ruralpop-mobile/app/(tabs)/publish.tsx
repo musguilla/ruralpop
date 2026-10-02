@@ -34,6 +34,7 @@ export default function PublishScreen() {
     const [images, setImages] = useState<string[]>([]);
     const [tags, setTags] = useState<string[]>([]);
     const [isProfesional, setIsProfesional] = useState(false);
+    const [isGhost, setIsGhost] = useState(false);
     
     // Escrow / Venta Online
     const [isStripeReady, setIsStripeReady] = useState(false);
@@ -56,16 +57,17 @@ export default function PublishScreen() {
         React.useCallback(() => {
             if (user?.id && session) {
                 async function fetchData() {
-                    // Fetch phone, role and location data
+                    // Fetch phone, role, location data and ghost status
                     const { data: userData, error: userError } = await supabase
                         .from('users')
-                        .select('contact_phone, role, location, province_id, municipality_id')
+                        .select('contact_phone, role, location, province_id, municipality_id, is_ghost')
                         .eq('id', user?.id)
                         .single();
                         
                     if (userData && !userError) {
                         if (userData.contact_phone) setPhone(userData.contact_phone);
                         setIsProfesional(userData.role === 'profesional');
+                        setIsGhost(Boolean(userData.is_ghost));
                         if (userData.location) {
                             setLocationId(userData.location);
                             setHasProfileLocation(true);
@@ -218,6 +220,14 @@ export default function PublishScreen() {
     };
 
     const handlePublish = async () => {
+        if (isGhost) {
+            Alert.alert(
+                'Perfil no activado',
+                'Tu perfil profesional todavía no ha sido activado. No puedes publicar anuncios hasta verificar y activar tu cuenta.'
+            );
+            return;
+        }
+
         if (!title || !description || !price || !locationId || !categoryId) {
             Alert.alert('Faltan datos', 'Por favor, rellena todos los campos obligatorios.');
             return;
@@ -674,3 +684,19 @@ export default function PublishScreen() {
         </SafeAreaView>
     );
 }
+
+/**
+ * -----------------------------------------------------------------------------
+ * DOCUMENTACIÓN DE MEMORIA / DECISIONES TÉCNICAS (Antigravity Protocol)
+ * -----------------------------------------------------------------------------
+ * 1. Control de Perfiles PRO Ghost (is_ghost):
+ *    - Se consulta y verifica el estado `is_ghost` de la tabla `users` al enfocar la pantalla.
+ *    - Si una cuenta profesional es "fantasma" (sin reclamar / sin suscripción activa),
+ *      se bloquea el envío del anuncio impidiendo que cuentas inactivas generen nuevos anuncios.
+ *
+ * 2. Edge Cases Cubiertos:
+ *    - Usuario particular vs profesional: Los particulares tienen `is_ghost: false` por defecto.
+ *    - Validación temprana: El alert interrumpe `handlePublish` antes de subir imágenes pesadas
+ *      o invocar Cloudflare R2 / S3 presigned URLs innecesariamente.
+ * -----------------------------------------------------------------------------
+ */

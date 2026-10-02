@@ -2,8 +2,8 @@ import { ExpoConfig, ConfigContext } from 'expo/config';
 
 const isEquipopArg = typeof process !== 'undefined' && Array.isArray(process.argv) && process.argv.some(arg => arg.toLowerCase().includes('equipop'));
 const IS_EQUIPOP = process.env.APP_VARIANT === 'equipop' || process.env.EXPO_PUBLIC_TENANT_ID === '69d55371-2f70-4e67-b55c-4502bce305bb' || isEquipopArg;
-const VERSION = '1.0.70';
-const BUILD_NUMBER = 128;
+const VERSION = '1.0.71';
+const BUILD_NUMBER = 129;
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
