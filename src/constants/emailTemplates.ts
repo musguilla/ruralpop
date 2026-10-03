@@ -552,5 +552,87 @@ export const EQUIPOP_EMAIL_TEMPLATES: EmailTemplate[] = [
     </div>
 </body>
 </html>`
+    },
+    {
+        id: "hito-10-likes-equipop",
+        name: "Hito: 10 Favoritos (Equipop)",
+        description: "Email de motivación enviado al vendedor en Equipop cuando su anuncio de material hípico llega a 10 me gustas.",
+        category: "Promocional",
+        subject: "¡Tu anuncio está triunfando! 🎉",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; background-color: #ffffff; border-radius: 12px; padding: 40px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <img src="https://www.equipop.app/equipop-logo.png" alt="Equipop" width="140" style="display: block; margin: 0 auto; width: 140px; height: auto;" />
+      </div>
+      <h2 style="color: #194152; text-align: center; font-size: 24px; margin-top: 0;">¡Tu anuncio está triunfando! 🎉</h2>
+      <p style="text-align: center; font-size: 16px; line-height: 1.6; color: #4b5563;">
+        ¡Enhorabuena! Muchos usuarios están guardando tu anuncio como favorito (ya ha alcanzado los <strong>10 likes</strong>). 
+        <br/><br/>
+        No pierdas la oportunidad de cerrar la venta hoy mismo. <strong>Destácalo</strong> para que todos estos usuarios y cientos de compradores más lo vean en primera posición.
+      </p>
+      
+      <div style="background-color: #f9f9f9; padding: 20px; border-radius: 12px; margin: 25px 0; text-align: center; border: 1px solid #eee;">
+        <img src="https://www.equipop.app/equipop-favicon.png" alt="Foto del anuncio" style="width: 150px; height: 150px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+        <h3 style="margin: 0; font-size: 18px; color: #111;">[Título de ejemplo del anuncio]</h3>
+        
+        <a href="https://www.equipop.app/dashboard" style="display: inline-block; margin-top: 20px; padding: 14px 28px; background-color: #194152; color: white; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px;">
+          Destacar mi anuncio ahora
+        </a>
+      </div>
+      
+      <p style="margin-top: 30px; font-size: 12px; color: #777; border-top: 1px solid #eee; padding-top: 15px; text-align: center;">
+        El equipo de Equipop 🐴
+      </p>
+    </div>
+</body>
+</html>`
+    },
+    {
+        id: "hito-20-likes-equipop",
+        name: "Hito: 20 Favoritos (Equipop)",
+        description: "Email de motivación enviado al vendedor en Equipop cuando su anuncio llega a 20 me gustas.",
+        category: "Promocional",
+        subject: "¡Tu anuncio lo está reventando! 🚀",
+        htmlContent: `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>${baseStyles}</style>
+</head>
+<body>
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; background-color: #ffffff; border-radius: 12px; padding: 40px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <img src="https://www.equipop.app/equipop-logo.png" alt="Equipop" width="140" style="display: block; margin: 0 auto; width: 140px; height: auto;" />
+      </div>
+      <h2 style="color: #194152; text-align: center; font-size: 24px; margin-top: 0;">¡Tu anuncio lo está reventando! 🚀</h2>
+      <p style="text-align: center; font-size: 16px; line-height: 1.6; color: #4b5563;">
+        ¡Espectacular! Tu anuncio acaba de llegar a los <strong>20 likes</strong> de usuarios interesados.
+        <br/><br/>
+        Solo te queda un empujón para acabar de venderlo al mejor precio. <strong>Destácalo</strong> ahora y llega a miles de aficionados y compradores del mundo ecuestre.
+      </p>
+      
+      <div style="background-color: #f9f9f9; padding: 20px; border-radius: 12px; margin: 25px 0; text-align: center; border: 1px solid #eee;">
+        <img src="https://www.equipop.app/equipop-favicon.png" alt="Foto del anuncio" style="width: 150px; height: 150px; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+        <h3 style="margin: 0; font-size: 18px; color: #111;">[Título de ejemplo del anuncio]</h3>
+        
+        <a href="https://www.equipop.app/dashboard" style="display: inline-block; margin-top: 20px; padding: 14px 28px; background-color: #194152; color: white; text-decoration: none; font-weight: bold; border-radius: 8px; font-size: 16px;">
+          Dar el empujón final y destacar
+        </a>
+      </div>
+      
+      <p style="margin-top: 30px; font-size: 12px; color: #777; border-top: 1px solid #eee; padding-top: 15px; text-align: center;">
+        El equipo de Equipop 🐴
+      </p>
+    </div>
+</body>
+</html>`
     }
 ];

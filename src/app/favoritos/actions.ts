@@ -2,6 +2,8 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { sendMilestoneReminderEmail } from "@/lib/email/milestone-reminder";
+import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getEquipopDatabaseId } from "@/config/tenants";
 
 export async function toggleFavorite(listingId: string) {
     const supabase = await createClient();
@@ -56,6 +58,7 @@ export async function toggleFavorite(listingId: string) {
                         title, 
                         image_urls, 
                         tags,
+                        tenant_id,
                         users ( email )
                     `)
                     .eq("id", listingId)
@@ -63,18 +66,28 @@ export async function toggleFavorite(listingId: string) {
 
                 if (listingData) {
                     const currentTags = listingData.tags || [];
-                    const sellerEmail = (listingData.users as any)?.email;
+                    const sellerEmail = (listingData.users as { email?: string } | null)?.email;
 
                     // If we haven't sent this milestone yet
                     if (!currentTags.includes(milestoneTag) && sellerEmail) {
                         const newTags = [...currentTags, milestoneTag];
 
+                        let isEquipop = false;
+                        try {
+                            const tenantSlug = await getServerTenantSlug();
+                            const equipopId = getEquipopDatabaseId();
+                            isEquipop = tenantSlug === 'equipop' || (Boolean(listingData.tenant_id) && listingData.tenant_id === equipopId);
+                        } catch (err) {
+                            console.warn("Error resolving tenant for milestone email:", err);
+                        }
+
                         // Send the email asynchronously
                         sendMilestoneReminderEmail(sellerEmail, {
                             id: listingData.id,
                             title: listingData.title,
-                            image_urls: listingData.image_urls
-                        }, favCount).catch(err => console.error("Milestone email error:", err));
+                            image_urls: listingData.image_urls,
+                            tenant_id: listingData.tenant_id
+                        }, favCount, { isEquipop }).catch(err => console.error("Milestone email error:", err));
 
                         // Update the tags in the database to prevent resending
                         await supabase
@@ -151,9 +164,27 @@ export async function getUserFavoriteIds() {
 
         if (error) throw error;
 
-        return favorites ? favorites.map((f: any) => f.listing_id) : [];
+        return favorites ? favorites.map((f: { listing_id: string }) => f.listing_id) : [];
     } catch (error) {
         console.error("Error fetching favorite ids:", error);
         return [];
     }
 }
+
+/**
+ * -----------------------------------------------------------------------------
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISION RECORD
+ * -----------------------------------------------------------------------------
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Detección de Tenant para Notificaciones de Hitos (10 / 20 Likes):
+ *      Al alcanzar el umbral de favoritos, el correo transaccional de celebración y
+ *      venta ("¡Tu anuncio está triunfando!") debe enviarse con el branding del
+ *      marketplace correspondiente (Equipop o Ruralpop).
+ *    - Se consulta `tenant_id` del anuncio y se evalúa `getServerTenantSlug()`
+ *      para pasar el flag `isEquipop` a `sendMilestoneReminderEmail`.
+ *
+ * 2. Posibles "edge cases" cubiertos:
+ *    - Anuncios de Equipop marcados como favoritos desde la web de Equipop o compartidos.
+ *    - Type safety estricto: Eliminados los castings `any` en `users` y `favorites`.
+ * -----------------------------------------------------------------------------
+ */
