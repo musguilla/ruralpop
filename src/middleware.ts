@@ -5,13 +5,21 @@ import { getInternalSpanishRoute } from "@/i18n/utils";
 export async function middleware(request: NextRequest) {
     const { pathname, search } = request.nextUrl;
 
+    // Archivos de verificación y crawler públicos que no deben bloquearse
+    if (pathname === '/ads.txt' || pathname === '/robots.txt') {
+        return NextResponse.next();
+    }
+
     // --- Anti-Scraping Basico ---
     const userAgent = request.headers.get('user-agent') || '';
     const blockedAgents = [
         'python-requests', 'curl', 'scrapy', 'bot', 'crawler', 'spider', 'wget', 'postman', 'insomnia', 'httpclient', 'urllib'
     ];
-    // Permitir Googlebot, Bingbot, etc. para SEO
-    const allowedBots = ['googlebot', 'bingbot', 'yandexbot', 'slurp', 'duckduckbot', 'baiduspider', 'twitterbot', 'facebookexternalhit'];
+    // Permitir Googlebot, AdSense bots (AdsBot, Mediapartners), Bingbot, etc. para SEO y monetización
+    const allowedBots = [
+        'googlebot', 'adsbot', 'mediapartners-google', 'google-adwords', 'google',
+        'bingbot', 'yandexbot', 'slurp', 'duckduckbot', 'baiduspider', 'twitterbot', 'facebookexternalhit'
+    ];
     
     const uaLower = userAgent.toLowerCase();
     const isBlocked = blockedAgents.some(agent => uaLower.includes(agent));
