@@ -17,21 +17,30 @@ export async function getSitemapXmlById(id: number, locale: 'es' | 'pt' = 'es'):
     // Parse ID safely
     const parsedId = Number(id) || 0;
 
-    const sitemapEntries: any[] = [];
+    interface SitemapEntry {
+        url: string;
+        lastModified: Date;
+        changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+        priority: number;
+    }
 
-    const addEntry = (path: string, priority: number = 0.8) => {
+    const sitemapEntries: SitemapEntry[] = [];
+
+    const addEntry = (path: string, priority: number = 0.8, changeFrequency: SitemapEntry['changeFrequency'] = 'daily') => {
         // Ensure path starts with / before prepending prefix
         const cleanPath = path.startsWith('/') ? path : `/${path}`;
         sitemapEntries.push({
             url: `${baseUrl}${pathPrefix}${cleanPath}`,
             lastModified: new Date(),
-            changeFrequency: 'daily',
+            changeFrequency,
             priority,
         });
     };
 
-    // 1. Home Base
+    // 1. Home Base & Páginas Institucionales Clave
     addEntry('/', 1.0);
+    addEntry('/contact', 0.8, 'monthly');
+    addEntry('/preguntas-frecuentes', 0.8, 'weekly');
 
     // 1.5 Landings SEO Long-Tail (Alta prioridad)
     const landingsToUse = locale === 'pt' ? SEO_LANDINGS_PT : SEO_LANDINGS;
@@ -163,3 +172,11 @@ export async function getSitemapXmlById(id: number, locale: 'es' | 'pt' = 'es'):
 
     return xml;
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Se añade `/contact` y `/preguntas-frecuentes` explícitamente en el sitemap de Ruralpop
+ *   para acelerar la indexación directa por Google y evitar que los usuarios lleguen a URLs
+ *   del tenant secundario (Equipop) al buscar soporte o contacto de Ruralpop.
+ * - Tipado estricto `SitemapEntry` para eliminar el uso de `any[]`.
+ */

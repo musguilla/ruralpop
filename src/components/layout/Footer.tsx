@@ -140,7 +140,7 @@ export async function Footer() {
                         <LocalizedLink href="/terms" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
                             {t("condiciones")}
                         </LocalizedLink>
-                        <LocalizedLink href="/contact" className="hover:text-[var(--ag-sys-color-primary)] transition-colors" rel="nofollow">
+                        <LocalizedLink href="/contact" className="hover:text-[var(--ag-sys-color-primary)] transition-colors">
                             {t("contacto")}
                         </LocalizedLink>
                     </div>
@@ -159,4 +159,6 @@ export async function Footer() {
  * - Footer reestructurado en 4 columnas principales (top) y una sección inferior para logo, info y legales.
  * - 'mt-auto' asegurará que el footer sea empujado hacia abajo si el main container flex es un min-h-screen.
  * - Se han incluido todas las lonjas utilizando sus slugs para mantener SEO robusto.
+ * - Enlace a `/contact` sin 'rel=nofollow' para garantizar que los motores de búsqueda indexen la página
+ *   de soporte propia de Ruralpop y no se produzcan desvíos hacia Equipop.
  */

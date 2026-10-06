@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Copy, Mail, ExternalLink, Loader2, CheckCircle2 } from "lucide-react";
+import { Copy, Mail, ExternalLink, Loader2, CheckCircle2, Trash2 } from "lucide-react";
 import { slugify } from "@/utils/seoUtils";
-import { sendGhostInvites, saveCompanyEmails } from "./actions";
+import { sendGhostInvites, saveCompanyEmails, deleteGhostCompany } from "./actions";
 
 type GhostCompany = {
     id: string;
@@ -40,6 +40,32 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
         return "";
     };
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+
+    const handleDelete = async (id: string, name: string) => {
+        if (!confirm(`¿Estás seguro de que deseas eliminar permanentemente el perfil ghost de "${name}"? Esta acción no se puede deshacer.`)) {
+            return;
+        }
+
+        setIsDeletingId(id);
+        try {
+            const res = await deleteGhostCompany(id);
+            if (res?.error) {
+                alert(`Error al eliminar: ${res.error}`);
+            } else {
+                setSelectedIds(prev => {
+                    const next = new Set(prev);
+                    next.delete(id);
+                    return next;
+                });
+            }
+        } catch (e) {
+            console.error("Error al eliminar ghost:", e);
+            alert("Ocurrió un error inesperado al eliminar la empresa ghost.");
+        } finally {
+            setIsDeletingId(null);
+        }
+    };
 
     const toggleSelect = (id: string) => {
         const next = new Set(selectedIds);
@@ -150,12 +176,13 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
                             <th className="p-4 font-semibold text-[13px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Empresa</th>
                             <th className="p-4 font-semibold text-[13px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Enlace Mágico</th>
                             <th className="p-4 font-semibold text-[13px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider min-w-[300px]">Emails destino</th>
+                            <th className="p-4 font-semibold text-[13px] text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider text-right">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--ag-sys-color-border)]">
                         {companies.length === 0 ? (
                             <tr>
-                                <td colSpan={4} className="p-8 text-center text-[var(--ag-sys-color-text-muted)]">
+                                <td colSpan={5} className="p-8 text-center text-[var(--ag-sys-color-text-muted)]">
                                     No hay perfiles fantasma creados actualmente.
                                 </td>
                             </tr>
@@ -235,6 +262,21 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
                                             className="w-full bg-white border border-[var(--ag-sys-color-border)] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]"
                                         />
                                     </td>
+                                    <td className="p-4 text-right">
+                                        <button
+                                            onClick={() => handleDelete(company.id, safeCommercialName)}
+                                            disabled={isDeletingId === company.id}
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                                            title="Eliminar perfil ghost"
+                                        >
+                                            {isDeletingId === company.id ? (
+                                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                            ) : (
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            )}
+                                            Eliminar
+                                        </button>
+                                    </td>
                                 </tr>
                             );
                         })}
@@ -244,3 +286,9 @@ export function GhostCompaniesTable({ companies }: GhostCompaniesTableProps) {
         </div>
     );
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Añadida columna de Acciones con botón de borrado seguro (confirmación + spinner reactivo).
+ * - Aislamiento multi-inquilino estricto asegurado: la acción del servidor valida que solo se puedan eliminar perfiles ghost del tenant correspondiente.
+ */

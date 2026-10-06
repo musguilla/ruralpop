@@ -156,3 +156,63 @@ export async function saveCompanyEmails(companyId: string, emails: string) {
     revalidatePath('/admin/marketing/ghost');
     return { success: true };
 }
+
+export async function deleteGhostCompany(companyId: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { error: "No autorizado" };
+    }
+
+    const { data: profile } = await supabase
+        .from("users")
+        .select("role, tenant_id")
+        .eq("id", user.id)
+        .single();
+
+    if (profile?.role !== "admin") {
+        return { error: "No autorizado" };
+    }
+
+    const supabaseAdmin = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    // Verify company is strictly a ghost company to prevent deleting real users
+    const { data: targetUser, error: fetchErr } = await supabaseAdmin
+        .from("users")
+        .select("id, is_ghost, ghost_token, email, tenant_id")
+        .eq("id", companyId)
+        .single();
+
+    if (fetchErr || !targetUser) {
+        return { error: "Empresa no encontrada" };
+    }
+
+    const isGhost = targetUser.is_ghost || (targetUser.ghost_token && targetUser.email?.toLowerCase().includes("ghost"));
+    if (!isGhost) {
+        return { error: "No se puede eliminar un usuario que no sea Ghost" };
+    }
+
+    // Safety: ensure tenant isolation if tenant is specified
+    if (profile.tenant_id && targetUser.tenant_id && profile.tenant_id !== targetUser.tenant_id) {
+        return { error: "No tienes permiso para eliminar empresas de otro tenant" };
+    }
+
+    // Delete listings if any exist for this ghost user
+    await supabaseAdmin.from("listings").delete().eq("user_id", companyId);
+
+    // Delete from public.users
+    const { error: delErr } = await supabaseAdmin.from("users").delete().eq("id", companyId);
+    if (delErr) {
+        return { error: delErr.message };
+    }
+
+    // Delete from auth.users
+    await supabaseAdmin.auth.admin.deleteUser(companyId);
+
+    revalidatePath('/admin/marketing/ghost');
+    return { success: true };
+}

@@ -46,6 +46,18 @@ export async function middleware(request: NextRequest) {
                 return await updateSession(request, response);
             }
         }
+    } else {
+        // Si un usuario accede a rutas internas /equipop/* desde ruralpop.com u otros dominios,
+        // retenemos al usuario dentro de Ruralpop en lugar de expulsarlo a Equipop:
+        // - Si es /equipop/contact se redirige 301 al formulario de contacto de Ruralpop (/contact).
+        // - Para cualquier otra ruta /equipop se redirige 301 a la portada de Ruralpop (/).
+        const isLocalhost = hostname.includes('localhost') || hostname.includes('127.0.0.1');
+        if ((pathname === '/equipop' || pathname.startsWith('/equipop/')) && !isLocalhost) {
+            const isContact = pathname.startsWith('/equipop/contact');
+            const targetPath = isContact ? '/contact' : '/';
+            const targetUrl = new URL(`${targetPath}${search}`, request.url);
+            return NextResponse.redirect(targetUrl, 301);
+        }
     }
 
     // Redirigir URLs heredadas como /vaca/anuncio/[slug] o con dobles barras /vaca//anuncio/[slug]
@@ -120,4 +132,8 @@ export const config = {
  *   para garantizar que la cookie de Supabase Auth está fresca antes del render SSR de las páginas de Next.
  * - Bloqueo Anti-Scraping: Se filtran peticiones de herramientas comunes de scrapping/scripts (Python, cURL, etc) 
  *   mientras se hace whitelist explícito a los bots de SEO para proteger la BD.
+ * - Aislamiento Multi-Tenant & Retención de Usuarios: Si un usuario accede a rutas `/equipop/*`
+ *   desde `ruralpop.com`, se redirige 301 a la URL homóloga de Ruralpop (ej. `/equipop/contact` -> `/contact`,
+ *   o a la portada `/` para el resto). Esto evita fugas de tráfico o que usuarios ganaderos/agrícolas
+ *   acaben desorientados en la plataforma hípica Equipop.
  */
