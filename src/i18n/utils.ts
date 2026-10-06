@@ -120,9 +120,25 @@ export function getHreflangLinks(pathname: string, domain: string = 'https://www
 
   const esBase = 'https://www.ruralpop.com';
   const ptBase = 'https://www.ruralpop.pt';
+
+  // Rutas exclusivas del mercado español sin réplica en Portugal
+  if (pathname.startsWith('/precios-ganado') || pathname.startsWith('/magazine')) {
+    return {
+      'es-ES': getCanonicalUrl(pathname, 'es', esBase),
+      'x-default': getCanonicalUrl(pathname, 'es', esBase),
+    };
+  }
+
   return {
     'es-ES': getCanonicalUrl(pathname, 'es', esBase),
     'pt-PT': getCanonicalUrl(pathname, 'pt', ptBase),
     'x-default': getCanonicalUrl(pathname, 'es', esBase),
   };
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - `getHreflangLinks`: Rutas como `/precios-ganado` y `/magazine` no existen en Portugal (.PT).
+ *   Generar un alternate `pt-PT` para estas URLs provocaría advertencias críticas en Google Search Console
+ *   (etiquetas hreflang apuntando a redirecciones 301 o 404). Por ello se omiten explícitamente.
+ */

@@ -34,11 +34,6 @@ export const routeTranslations: Record<string, Record<LocaleCode, string>> = {
   tractores: { es: '/tractores', pt: '/tractores' },
   magazine: { es: '/magazine', pt: '/magazine' },
   empresasProfesionales: { es: '/empresas-profesionales-sector-rural', pt: '/empresas-profissionais-setor-rural' },
-  preciosGanado: { es: '/precios-ganado/vacuno', pt: '/precios-ganado/vacuno' },
-  lonjaSalamanca: { es: '/precios-ganado/vacuno/mercados/lonja-de-salamanca', pt: '/precios-ganado/vacuno/mercados/lonja-de-salamanca' },
-  lonjaSiero: { es: '/precios-ganado/vacuno/mercados/mercado-nacional-de-ganado-de-pola-de-siero', pt: '/precios-ganado/vacuno/mercados/mercado-nacional-de-ganado-de-pola-de-siero' },
-  lonjaTalavera: { es: '/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-talavera-de-la-reina', pt: '/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-talavera-de-la-reina' },
-  lonjaLeon: { es: '/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-leon', pt: '/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-leon' },
 
   // MAIN CATEGORIES
   catGanaderia: { es: '/ganaderia', pt: '/pecuaria' },
@@ -107,10 +102,19 @@ export const routeTranslations: Record<string, Record<LocaleCode, string>> = {
 
 export const ptIndexableRoutes = Object.entries(routeTranslations)
   .filter(([key]) => {
-    // Exclude magazine and livestock prices from PT sitemap as requested ("SOLO las categorias")
-    return !key.includes('magazine') && !key.includes('preciosGanado') && !key.includes('lonja');
+    // Exclude magazine from PT sitemap as requested ("SOLO las categorias")
+    return !key.includes('magazine');
   })
   .map(([_, route]) => {
     if (route.pt === '/') return '/pt';
     return route.pt.startsWith('/pt') ? route.pt : `/pt${route.pt}`;
   });
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Se han eliminado las rutas de lonjas y mercados de ganado (`preciosGanado`, `lonjaSalamanca`, etc.)
+ *   de `routeTranslations` debido a que corresponden exclusivamente al mercado español y no tienen
+ *   correspondencia en Portugal.
+ * - En España (`ruralpop.com`), los enlaces a lonjas operan de forma directa con sus rutas fijas sin
+ *   depender de `routeTranslations`.
+ */

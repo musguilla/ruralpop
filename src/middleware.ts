@@ -85,6 +85,14 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(targetUrl, 301);
     }
 
+    // --- Bloqueo / Redirección de Lonjas y Mercados en Portugal (.PT) ---
+    // Las cotizaciones de lonjas son exclusivas del mercado español. En Portugal (.pt) estas URLs no existen ni proceden.
+    if ((isRuralpopPt && (pathname === '/precios-ganado' || pathname.startsWith('/precios-ganado/'))) ||
+        (!isRuralpopPt && (pathname === '/pt/precios-ganado' || pathname.startsWith('/pt/precios-ganado/')))) {
+        const targetUrl = new URL('/', isRuralpopPt ? request.url : (isLocalhost ? request.url : 'https://www.ruralpop.pt'));
+        return NextResponse.redirect(targetUrl, 301);
+    }
+
     // Redirigir URLs heredadas como /vaca/anuncio/[slug] o con dobles barras /vaca//anuncio/[slug]
     // hacia la nueva estructura limpia /anuncio/[slug]
     if (pathname.includes('/anuncio/')) {
@@ -168,4 +176,6 @@ export const config = {
  *   desde `ruralpop.com`, se redirige 301 a la URL homóloga de Ruralpop (ej. `/equipop/contact` -> `/contact`,
  *   o a la portada `/` para el resto). Esto evita fugas de tráfico o que usuarios ganaderos/agrícolas
  *   acaben desorientados en la plataforma hípica Equipop.
+ * - Rutas de Lonjas en Portugal: Se interceptan `/precios-ganado/*` y `/pt/precios-ganado/*` redirigiéndolas con 301 a la portada de PT,
+ *   garantizando que ninguna URL huérfana de mercados españoles quede accesible ni indexable en Portugal.
  */

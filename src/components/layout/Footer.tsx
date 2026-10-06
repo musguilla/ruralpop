@@ -41,33 +41,37 @@ export async function Footer() {
                     </>
                 )}
 
-                {/* Column 2: Lonjas y Mercados España */}
-                <div className="flex flex-col items-start gap-3 lg:w-1/3 lg:px-10">
-                    <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
-                        {t("lonjas_mercados")}
-                    </span>
-                    <LocalizedLink href="/precios-ganado/vacuno" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        {t("precios_lonjas")}
-                    </LocalizedLink>
-                    <LocalizedLink href="/precios-ganado/vacuno/mercados/lonja-de-salamanca" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        {t("lonja_salamanca")}
-                    </LocalizedLink>
-                    <LocalizedLink href="/precios-ganado/vacuno/mercados/mercado-nacional-de-ganado-de-pola-de-siero" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        {t("mercado_siero")}
-                    </LocalizedLink>
-                    <LocalizedLink href="/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-talavera-de-la-reina" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        {t("lonja_talavera")}
-                    </LocalizedLink>
-                    <LocalizedLink href="/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-leon" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        {t("lonja_leon")}
-                    </LocalizedLink>
-                </div>
+                {/* Column 2: Lonjas y Mercados España (Visible solo en España, excluido en Portugal .PT) */}
+                {locale !== 'pt' && (
+                    <>
+                        <div className="flex flex-col items-start gap-3 lg:w-1/3 lg:px-10">
+                            <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
+                                {t("lonjas_mercados")}
+                            </span>
+                            <LocalizedLink href="/precios-ganado/vacuno" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                                {t("precios_lonjas")}
+                            </LocalizedLink>
+                            <LocalizedLink href="/precios-ganado/vacuno/mercados/lonja-de-salamanca" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                                {t("lonja_salamanca")}
+                            </LocalizedLink>
+                            <LocalizedLink href="/precios-ganado/vacuno/mercados/mercado-nacional-de-ganado-de-pola-de-siero" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                                {t("mercado_siero")}
+                            </LocalizedLink>
+                            <LocalizedLink href="/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-talavera-de-la-reina" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                                {t("lonja_talavera")}
+                            </LocalizedLink>
+                            <LocalizedLink href="/precios-ganado/vacuno/mercados/lonja-agropecuaria-de-leon" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                                {t("lonja_leon")}
+                            </LocalizedLink>
+                        </div>
 
-                {/* Vertical Divider 2 */}
-                <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
+                        {/* Vertical Divider 2 */}
+                        <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
+                    </>
+                )}
 
                 {/* Column 3: Conexión Rural */}
-                <div className="flex flex-col items-start gap-3 lg:w-1/5 lg:px-10">
+                <div className={`flex flex-col items-start gap-3 ${locale === 'pt' ? 'lg:flex-1 lg:pr-10' : 'lg:w-1/5 lg:px-10'}`}>
                     <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         {t("conexion_rural")}
                     </span>
@@ -85,7 +89,7 @@ export async function Footer() {
                 <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
 
                 {/* Column 4: Información */}
-                <div className="flex flex-col items-start gap-3 lg:w-1/5 lg:pl-10">
+                <div className={`flex flex-col items-start gap-3 ${locale === 'pt' ? 'lg:flex-1 lg:pl-10' : 'lg:w-1/5 lg:pl-10'}`}>
                     <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         {t("informacion")}
                     </span>
@@ -150,9 +154,12 @@ export async function Footer() {
  * Memory / Decisiones Técnicas:
  * - Footer reestructurado en 4 columnas principales (top) y una sección inferior para logo, info y legales.
  * - 'mt-auto' asegurará que el footer sea empujado hacia abajo si el main container flex es un min-h-screen.
- * - Se han incluido todas las lonjas utilizando sus slugs para mantener SEO robusto.
  * - Enlace a `/contact` sin 'rel=nofollow' para garantizar que los motores de búsqueda indexen la página
  *   de soporte propia de Ruralpop y no se produzcan desvíos hacia Equipop.
- * - Insignias de App Store y Google Play ocultas en Portugal (`locale === 'pt'`) hasta el despliegue
- *   de versiones específicas en las tiendas locales de Portugal.
+ * - Aislamiento geográfico y contextual en Portugal (`locale === 'pt'` / `ruralpop.pt`):
+ *   1. Ocultadas las insignias de App Store y Google Play hasta el lanzamiento de las versiones portuguesas en las tiendas.
+ *   2. Ocultados los enlaces a "Lonjas y Mercados España" (`/precios-ganado/*`), dado que son cotizaciones 100% de España
+ *      que no aplican al mercado agropecuario portugués.
+ *   3. En Portugal, las columnas restantes ("Conexão Rural" e "Informação") se distribuyen equitativamente (`lg:flex-1`)
+ *      para mantener un balance visual estético y simétrico.
  */
