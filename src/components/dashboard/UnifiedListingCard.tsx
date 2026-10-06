@@ -94,10 +94,10 @@ export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = f
                             : 'bg-amber-500/90'
                     }`}>
                         {currentTab === 'active' 
-                            ? 'Activo' 
+                            ? (locale === 'pt' ? 'Ativo' : 'Activo') 
                             : currentTab === 'reserved' 
-                            ? 'En curso' 
-                            : 'Vendido'}
+                            ? (locale === 'pt' ? 'Em curso' : 'En curso') 
+                            : (locale === 'pt' ? 'Vendido' : 'Vendido')}
                     </div>
                 </div>
 
@@ -140,7 +140,7 @@ export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = f
                                 )}
                                 {listing.vender_online && (
                                     <span className="inline-flex flex-shrink-0 items-center gap-1 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-900/50">
-                                        <CheckCircle2 className="w-3.5 h-3.5" /> Venta Online
+                                        <CheckCircle2 className="w-3.5 h-3.5" /> {locale === 'pt' ? 'Venda Online' : 'Venta Online'}
                                     </span>
                                 )}
                             </div>
@@ -148,7 +148,7 @@ export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = f
 
                         {isEscrow && order && (
                             <div className="text-sm text-[var(--ag-sys-color-text-muted)] mb-3">
-                                Comprador: <span className="font-medium text-[var(--ag-sys-color-text)]">{order.buyer?.email}</span>
+                                {locale === 'pt' ? 'Comprador:' : 'Comprador:'} <span className="font-medium text-[var(--ag-sys-color-text)]">{order.buyer?.email}</span>
                             </div>
                         )}
 
@@ -164,7 +164,9 @@ export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = f
                             {(listing.vender_online || isEquipop) && (
                                 <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
                                     <ShieldCheck className="w-3.5 h-3.5" />
-                                    {listing.shipping_price ? `Envío: ${formatCurrency(listing.shipping_price)}` : 'Venta Segura'}
+                                    {listing.shipping_price 
+                                        ? `${locale === 'pt' ? 'Envio:' : 'Envío:'} ${formatCurrency(listing.shipping_price)}` 
+                                        : (locale === 'pt' ? 'Venda Segura' : 'Venta Segura')}
                                 </div>
                             )}
                             <div className="flex items-center gap-1 bg-[var(--ag-sys-color-background)] px-2 py-1 rounded-md border border-[var(--ag-sys-color-border)]">
@@ -190,19 +192,19 @@ export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = f
                                     <div className="flex items-center gap-2">
                                         {isPendingConfirmation ? (
                                             <span className="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1.5 rounded-lg">
-                                                Pendiente confirmación
+                                                {locale === 'pt' ? 'Confirmação pendente' : 'Pendiente confirmación'}
                                             </span>
                                         ) : isConfirmed ? (
                                             <span className="bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1">
-                                                <CheckCircle2 className="w-3.5 h-3.5" /> Liberado
+                                                <CheckCircle2 className="w-3.5 h-3.5" /> {locale === 'pt' ? 'Libertado' : 'Liberado'}
                                             </span>
                                         ) : order.status === "return_initiated" ? (
                                             <span className="bg-red-100 text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg">
-                                                Devolución iniciada
+                                                {locale === 'pt' ? 'Devolução iniciada' : 'Devolución iniciada'}
                                             </span>
                                         ) : order.status === "refunded" ? (
                                             <span className="bg-gray-100 text-gray-700 text-xs font-bold px-3 py-1.5 rounded-lg">
-                                                Reembolsado
+                                                {locale === 'pt' ? 'Reembolsado' : 'Reembolsado'}
                                             </span>
                                         ) : (
                                             <span className="bg-gray-100 text-gray-700 text-xs font-bold px-3 py-1.5 rounded-lg uppercase">
@@ -216,7 +218,7 @@ export function UnifiedListingCard({ item, publicUser, currentTab, isEquipop = f
                                     </div>
                                 ) : (
                                     <span className="bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text-muted)] text-xs font-medium px-3 py-1.5 rounded-lg border border-[var(--ag-sys-color-border)]">
-                                        Venta manual (sin protección)
+                                        {locale === 'pt' ? 'Venda manual (sem proteção)' : 'Venta manual (sin protección)'}
                                     </span>
                                 )}
                             </div>

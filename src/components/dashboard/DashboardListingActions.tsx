@@ -10,6 +10,7 @@ import { encodeId } from "@/utils/idUtils";
 
 import { Zap, Crown, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface DashboardListingActionsProps {
     listingId: string;
@@ -27,6 +28,8 @@ export function DashboardListingActions({
     availableBumps = 0 
 }: DashboardListingActionsProps) {
     const router = useRouter();
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
     const { showAlert, showConfirm } = useNotification();
     const [isPending, setIsPending] = useState(false);
     const [showSoldModal, setShowSoldModal] = useState(false);
@@ -34,11 +37,11 @@ export function DashboardListingActions({
 
     const handleDelete = () => {
         showConfirm({
-            title: "¿Eliminar anuncio?",
-            message: "Esta acción no se puede deshacer y el anuncio desaparecerá por completo de Ruralpop.",
+            title: isPt ? "Eliminar anúncio?" : "¿Eliminar anuncio?",
+            message: isPt ? "Esta ação não pode ser desfeita e o anúncio desaparecerá completamente da Ruralpop." : "Esta acción no se puede deshacer y el anuncio desaparecerá por completo de Ruralpop.",
             type: "warning",
-            confirmText: "Sí, eliminar",
-            cancelText: "No, mantener",
+            confirmText: isPt ? "Sim, eliminar" : "Sí, eliminar",
+            cancelText: isPt ? "Não, manter" : "No, mantener",
             onConfirm: async () => {
                 setIsPending(true);
                 try {
@@ -46,7 +49,7 @@ export function DashboardListingActions({
                 } catch (err) {
                     showAlert({
                         title: "Error",
-                        message: "No se ha podido eliminar el anuncio en este momento.",
+                        message: isPt ? "Não foi possível eliminar o anúncio neste momento." : "No se ha podido eliminar el anuncio en este momento.",
                         type: "error"
                     });
                     setIsPending(false);
@@ -70,7 +73,7 @@ export function DashboardListingActions({
         } catch (err) {
             showAlert({
                 title: "Error",
-                message: "No se ha podido actualizar el estado del anuncio.",
+                message: isPt ? "Não foi possível atualizar o estado do anúncio." : "No se ha podido actualizar el estado del anuncio.",
                 type: "error"
             });
         } finally {
@@ -90,12 +93,14 @@ export function DashboardListingActions({
 
             if (!res.ok) {
                 const txt = await res.text();
-                throw new Error(txt || "Error al activar la funcionalidad.");
+                throw new Error(txt || (isPt ? "Erro ao ativar a funcionalidade." : "Error al activar la funcionalidad."));
             }
 
             showAlert({
-                title: "¡Éxito!",
-                message: type === 'highlight' ? "Anuncio destacado 20 días." : "Anuncio subido a primera posición.",
+                title: isPt ? "Sucesso!" : "¡Éxito!",
+                message: type === 'highlight' 
+                    ? (isPt ? "Anúncio destacado 20 dias." : "Anuncio destacado 20 días.") 
+                    : (isPt ? "Anúncio promovido para a primeira posição." : "Anuncio subido a primera posición."),
                 type: "success"
             });
             
@@ -104,7 +109,7 @@ export function DashboardListingActions({
             console.error("Error activating pro feature:", error);
             showAlert({
                 title: "Error",
-                message: error instanceof Error ? error.message : "Error al procesar la solicitud.",
+                message: error instanceof Error ? error.message : (isPt ? "Erro ao processar o pedido." : "Error al procesar la solicitud."),
                 type: "error"
             });
         } finally {
@@ -140,7 +145,9 @@ export function DashboardListingActions({
                         }`}
                 >
                     {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
-                    {status === 'active' ? 'Marcar Vendido' : 'Reactivar'}
+                    {status === 'active' 
+                        ? (isPt ? 'Marcar como Vendido' : 'Marcar Vendido') 
+                        : (isPt ? 'Reativar' : 'Reactivar')}
                 </button>
 
                 {/* Eliminar (Trash2) */}
@@ -148,7 +155,7 @@ export function DashboardListingActions({
                     onClick={handleDelete}
                     disabled={isPending}
                     className="flex items-center justify-center w-[40px] h-[40px] bg-gray-50 text-gray-400 font-extrabold hover:text-red-500 hover:bg-red-50 rounded-xl transition-all disabled:opacity-50 border border-transparent"
-                    title="Eliminar anuncio"
+                    title={isPt ? "Eliminar anúncio" : "Eliminar anuncio"}
                 >
                     <Trash2 className="w-4 h-4" />
                 </button>
@@ -158,7 +165,7 @@ export function DashboardListingActions({
                     href={`/dashboard/edit/${encodeId(listingId)}`}
                     className="flex items-center justify-center px-5 py-2.5 bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] font-extrabold rounded-xl hover:bg-[var(--ag-sys-color-primary)]/20 transition-all text-sm ml-0 sm:ml-2 border border-transparent"
                 >
-                    Modificar anuncio
+                    {isPt ? "Editar anúncio" : "Modificar anuncio"}
                 </Link>
             </div>
 
@@ -173,14 +180,16 @@ export function DashboardListingActions({
                                 className="group flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-[var(--ag-sys-color-primary)] text-white font-extrabold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all text-sm shadow-lg shadow-[var(--ag-sys-color-primary)]/20"
                             >
                                 <Sparkles className="w-5 h-5" />
-                                <span>Destacar o Impulsar</span>
+                                <span>{isPt ? "Destacar ou Impulsionar" : "Destacar o Impulsar"}</span>
                                 <ChevronDown className={`w-4 h-4 transition-transform ${isProDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
 
                             {isProDropdownOpen && (
                                 <div className="absolute bottom-full mb-2 right-0 w-64 bg-white rounded-2xl shadow-2xl border border-[var(--ag-sys-color-border)] overflow-hidden z-[40] animate-in fade-in slide-in-from-bottom-2 duration-200">
                                     <div className="p-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-                                        <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Opciones Pro</span>
+                                        <span className="text-xs font-black text-gray-400 uppercase tracking-widest">
+                                            {isPt ? "Opções Pro" : "Opciones Pro"}
+                                        </span>
                                         <button onClick={() => setIsProDropdownOpen(false)} className="text-gray-400 hover:text-gray-600">
                                             <X className="w-4 h-4" />
                                         </button>
@@ -195,8 +204,12 @@ export function DashboardListingActions({
                                                 <Zap className="w-4 h-4" />
                                             </div>
                                             <div>
-                                                <div className="text-sm font-bold text-gray-800">Impulsar (Subir arriba)</div>
-                                                <div className="text-[10px] font-bold text-blue-500 uppercase">{availableBumps} disponibles</div>
+                                                <div className="text-sm font-bold text-gray-800">
+                                                    {isPt ? "Impulsionar (Subir ao topo)" : "Impulsar (Subir arriba)"}
+                                                </div>
+                                                <div className="text-[10px] font-bold text-blue-500 uppercase">
+                                                    {availableBumps} {isPt ? "disponíveis" : "disponibles"}
+                                                </div>
                                             </div>
                                         </button>
 
@@ -209,8 +222,12 @@ export function DashboardListingActions({
                                                 <Crown className="w-4 h-4" />
                                             </div>
                                             <div>
-                                                <div className="text-sm font-bold text-gray-800">Destacar 20 días</div>
-                                                <div className="text-[10px] font-bold text-amber-500 uppercase">{availableFeatured} disponibles</div>
+                                                <div className="text-sm font-bold text-gray-800">
+                                                    {isPt ? "Destacar 20 dias" : "Destacar 20 días"}
+                                                </div>
+                                                <div className="text-[10px] font-bold text-amber-500 uppercase">
+                                                    {availableFeatured} {isPt ? "disponíveis" : "disponibles"}
+                                                </div>
                                             </div>
                                         </button>
                                     </div>
@@ -224,7 +241,9 @@ export function DashboardListingActions({
                                 className="group flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-[var(--ag-sys-color-primary)] text-white font-extrabold rounded-xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all text-sm shadow-lg shadow-[var(--ag-sys-color-primary)]/20"
                             >
                                 <Sparkles className="w-5 h-5 animate-pulse text-white" />
-                                <span className="group-hover:scale-105 transition-transform">Destacar anuncio</span>
+                                <span className="group-hover:scale-105 transition-transform">
+                                    {isPt ? "Destacar anúncio" : "Destacar anuncio"}
+                                </span>
                             </Link>
                         )
                     )}

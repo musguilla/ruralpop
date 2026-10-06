@@ -8,6 +8,7 @@ import {
     Truck, Stethoscope, Anvil, MapPin
 } from "lucide-react";
 import { useCategories } from "@/context/CategoriesContext";
+import { useTranslation } from "@/context/LocaleContext";
 import Image from "next/image";
 
 // Map icons to categories and subcategories
@@ -44,6 +45,8 @@ export function CategoryModal({
     selectedSubcategory = ""
 }: CategoryModalProps) {
     const CATEGORIES = useCategories();
+    const { locale } = useTranslation();
+    const isPt = locale === "pt";
     const [searchTerm, setSearchTerm] = useState("");
     const [activeParent, setActiveParent] = useState<string | null>(null);
     const [isEquipop, setIsEquipop] = useState(false);
@@ -111,7 +114,7 @@ export function CategoryModal({
                             </button>
                         )}
                         <h2 className="text-xl font-bold text-gray-900">
-                            {activeParent ? currentParent?.label : "Categorías"}
+                            {activeParent ? currentParent?.label : (isPt ? "Categorias" : "Categorías")}
                         </h2>
                     </div>
                     <button
@@ -129,7 +132,7 @@ export function CategoryModal({
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[var(--ag-sys-color-primary)] transition-colors" />
                             <input
                                 type="text"
-                                placeholder="Buscar una categoría"
+                                placeholder={isPt ? "Pesquisar uma categoria" : "Buscar una categoría"}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-transparent focus:border-[var(--ag-sys-color-primary)] focus:bg-white rounded-xl outline-none transition-all text-gray-900"
@@ -155,7 +158,7 @@ export function CategoryModal({
                                             <List className={`w-6 h-6 ${!selectedCategory ? 'text-emerald-700' : 'text-gray-500'}`} />
                                         </div>
                                     )}
-                                    <span>Todas las categorías</span>
+                                    <span>{isPt ? "Todas as categorias" : "Todas las categorías"}</span>
                                 </div>
                                 {!selectedCategory && <Check className="w-5 h-5 text-emerald-600" />}
                             </button>
@@ -182,15 +185,15 @@ export function CategoryModal({
                                     >
                                         <div className="flex items-center gap-4">
                                             {!isEquipop && (
-                                                <>
-                                                    {CATEGORY_ICONS[cat.id] ? (
-                                                        CATEGORY_ICONS[cat.id]
-                                                    ) : (
-                                                        <div className={`w-12 h-12 flex items-center justify-center rounded-xl transition-colors ${selectedCategory === cat.id ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'}`}>
-                                                            <List className="w-6 h-6" />
-                                                        </div>
-                                                    )}
-                                                </>
+                                                 <>
+                                                     {CATEGORY_ICONS[cat.id] ? (
+                                                         CATEGORY_ICONS[cat.id]
+                                                     ) : (
+                                                         <div className={`w-12 h-12 flex items-center justify-center rounded-xl transition-colors ${selectedCategory === cat.id ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'}`}>
+                                                             <List className="w-6 h-6" />
+                                                         </div>
+                                                     )}
+                                                 </>
                                             )}
                                             <span>{cat.label}</span>
                                         </div>
@@ -228,7 +231,7 @@ export function CategoryModal({
                                 className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all group ${selectedCategory === activeParent && !selectedSubcategory ? (isEquipop ? 'bg-[#eef4f9] text-[var(--ag-sys-color-primary)] font-semibold' : 'bg-emerald-50 text-emerald-700 font-semibold') : 'hover:bg-gray-50'
                                     }`}
                             >
-                                <span>Todo en {currentParent?.label}</span>
+                                <span>{isPt ? `Tudo em ${currentParent?.label}` : `Todo en ${currentParent?.label}`}</span>
                                 {selectedCategory === activeParent && !selectedSubcategory && <Check className="w-5 h-5 text-emerald-600" />}
                             </button>
 
@@ -258,4 +261,7 @@ export function CategoryModal({
  * - Buscador integrado que filtra dinámicamente tanto categorías como subcategorías.
  * - Uso de Lucide-React para iconos, manteniendo coherencia con el resto de la aplicación.
  * - Backdrop con blur y animaciones de entrada para sensación "premium".
+ * - Internacionalización estricta PT/ES: Detección dinámica de `locale === 'pt'` con LocaleContext
+ *   para mostrar 'Categorias', 'Pesquisar uma categoria', 'Todas as categorias' y 'Tudo em ...'
+ *   exclusivamente en Portugal, manteniendo España 100% en español sin regresiones.
  */

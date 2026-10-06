@@ -20,6 +20,7 @@ export async function Header() {
 
     const headersList = await headers();
     const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
     const dict = await getDictionary(locale);
     const t = (key: keyof typeof dict): string => {
         const val = dict[key];
@@ -77,8 +78,12 @@ export async function Header() {
                         <div className="bg-white/20 rounded-full p-0.5 transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110">
                             <Plus className="w-4 h-4" />
                         </div>
-                        <span className="hidden sm:inline">{isGhost ? "Finalizar Activación" : t("vender")}</span>
-                        <span className="sm:hidden">{isGhost ? "Activar" : t("vender")}</span>
+                        <span className="hidden sm:inline">
+                            {isGhost ? (isPt ? "Finalizar Ativação" : "Finalizar Activación") : t("vender")}
+                        </span>
+                        <span className="sm:hidden">
+                            {isGhost ? (isPt ? "Ativar" : "Activar") : t("vender")}
+                        </span>
                     </LocalizedLink>
 
                     {user ? (
@@ -95,8 +100,8 @@ export async function Header() {
                                 <LocalizedLink
                                     href="/chat"
                                     className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full relative"
-                                    aria-label="Mis Mensajes"
-                                    title="Mis Mensajes"
+                                    aria-label={isPt ? "As minhas Mensagens" : "Mis Mensajes"}
+                                    title={isPt ? "As minhas Mensagens" : "Mis Mensajes"}
                                 >
                                     <ChatBadge initialCount={unreadCount || 0} userId={user.id} />
                                 </LocalizedLink>
@@ -116,8 +121,8 @@ export async function Header() {
                         <LocalizedLink
                             href="/login"
                             className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full"
-                            aria-label="Perfil o Iniciar Sesión"
-                            title="Iniciar Sesión"
+                            aria-label={isPt ? "Perfil ou Iniciar Sessão" : "Perfil o Iniciar Sesión"}
+                            title={isPt ? "Iniciar Sessão" : "Iniciar Sesión"}
                         >
                             <UserCircle className="w-8 h-8" />
                         </LocalizedLink>

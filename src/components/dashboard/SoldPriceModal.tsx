@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { X, Loader2, Euro } from "lucide-react";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface SoldPriceModalProps {
     isOpen: boolean;
@@ -10,6 +11,8 @@ interface SoldPriceModalProps {
 }
 
 export function SoldPriceModal({ isOpen, onClose, onConfirm }: SoldPriceModalProps) {
+    const { locale } = useTranslation();
+    const isPt = locale === "pt";
     const [priceStr, setPriceStr] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -47,12 +50,14 @@ export function SoldPriceModal({ isOpen, onClose, onConfirm }: SoldPriceModalPro
 
                 <form onSubmit={handleSubmit} className="p-6">
                     <p className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] mb-6">
-                        Por favor, indica el precio final de venta. Solo lo usaremos para analizar el mercado y ofrecerte mejores resultados o recomendaciones en el futuro.
+                        {isPt 
+                            ? "Por favor, indique o preço final de venda. Apenas o utilizaremos para analisar o mercado e oferecer melhores recomendações no futuro."
+                            : "Por favor, indica el precio final de venta. Solo lo usaremos para analizar el mercado y ofrecerte mejores resultados o recomendaciones en el futuro."}
                     </p>
 
                     <div className="mb-8 relative">
                         <label htmlFor="sold_price" className="block text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">
-                            Precio final de venta
+                            {isPt ? "Preço final de venda" : "Precio final de venta"}
                         </label>
                         <div className="relative">
                             <input
@@ -64,7 +69,7 @@ export function SoldPriceModal({ isOpen, onClose, onConfirm }: SoldPriceModalPro
                                 value={priceStr}
                                 onChange={(e) => setPriceStr(e.target.value)}
                                 className="w-full h-14 pl-4 pr-12 text-lg font-bold bg-[var(--ag-sys-color-background)] border-2 border-[var(--ag-sys-color-border)] rounded-2xl focus:border-[var(--ag-sys-color-primary)] focus:ring-4 focus:ring-[var(--ag-sys-color-primary)]/10 outline-none transition-all"
-                                placeholder="Ej. 1500"
+                                placeholder={isPt ? "Ex. 1500" : "Ej. 1500"}
                                 disabled={isSubmitting}
                             />
                             <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--ag-sys-color-text-muted)]">
@@ -88,7 +93,7 @@ export function SoldPriceModal({ isOpen, onClose, onConfirm }: SoldPriceModalPro
                             className="flex-1 py-4 font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center"
                             disabled={isSubmitting || !priceStr}
                         >
-                            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Confirmar Venta'}
+                            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (isPt ? 'Confirmar Venda' : 'Confirmar Venta')}
                         </button>
                     </div>
                 </form>

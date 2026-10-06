@@ -18,6 +18,7 @@ export default async function MonederoDashboardPage() {
     const { data: { user } } = await supabase.auth.getUser();
     const headersList = await headers();
     const locale = headersList.get('x-locale') || 'es';
+    const isPt = locale === 'pt';
 
     if (!user) {
         redirect("/dashboard");
@@ -59,10 +60,10 @@ export default async function MonederoDashboardPage() {
             <div className="container mx-auto px-4 max-w-6xl">
                 <header className="mb-8">
                     <h1 className="text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-                        Monedero
+                        {isPt ? "Carteira" : "Monedero"}
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                        Gestiona tu monedero profesional y saldo disponible.
+                        {isPt ? "Gira a sua carteira profissional e saldo disponível." : "Gestiona tu monedero profesional y saldo disponible."}
                     </p>
                 </header>
 
@@ -71,9 +72,13 @@ export default async function MonederoDashboardPage() {
                         <div className="flex items-start gap-4">
                             <Info className="w-6 h-6 text-amber-600 mt-0.5 flex-shrink-0" />
                             <div>
-                                <h3 className="font-bold text-amber-900 text-lg">Aún no tienes configurado tu monedero</h3>
+                                <h3 className="font-bold text-amber-900 text-lg">
+                                    {isPt ? "Ainda não tem a sua carteira configurada" : "Aún no tienes configurado tu monedero"}
+                                </h3>
                                 <p className="text-amber-800/80 mt-1">
-                                    Para poder recibir pagos seguros y vender online, necesitas configurar tu cuenta de cobros en Stripe. Es rápido y 100% seguro.
+                                    {isPt 
+                                        ? "Para poder receber pagamentos seguros e vender online, precisa de configurar a sua conta de cobranças no Stripe. É rápido e 100% seguro."
+                                        : "Para poder recibir pagos seguros y vender online, necesitas configurar tu cuenta de cobros en Stripe. Es rápido y 100% seguro."}
                                 </p>
                             </div>
                         </div>
@@ -89,46 +94,53 @@ export default async function MonederoDashboardPage() {
                                 <div className="absolute top-0 right-0 -mr-4 -mt-4 opacity-20">
                                     <Wallet className="w-24 h-24" />
                                 </div>
-                                <h3 className="text-white/80 font-medium mb-1">Saldo Disponible</h3>
+                                <h3 className="text-white/80 font-medium mb-1">
+                                    {isPt ? "Saldo Disponível" : "Saldo Disponible"}
+                                </h3>
                                 <div className="text-4xl font-extrabold mb-4">
                                     {formatCurrency(wallet.available_balance_cents / 100)}
                                 </div>
                                 <div className="text-xs text-white/80 flex items-center gap-1">
-                                    <ArrowUpRight className="w-3 h-3" /> Recibirás los fondos en 7 días en tu banco
+                                    <ArrowUpRight className="w-3 h-3" /> 
+                                    {isPt ? "Receberá os fundos em 7 dias no seu banco" : "Recibirás los fondos en 7 días en tu banco"}
                                 </div>
                             </div>
 
                             {/* Card: Pendiente */}
                             <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 shadow-sm border border-[var(--ag-sys-color-border)]">
-                                <h3 className="text-[var(--ag-sys-color-text-muted)] font-medium mb-1">Saldo Retenido</h3>
+                                <h3 className="text-[var(--ag-sys-color-text-muted)] font-medium mb-1">
+                                    {isPt ? "Saldo Retido" : "Saldo Retenido"}
+                                </h3>
                                 <div className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">
                                     {formatCurrency(wallet.pending_balance_cents / 100)}
                                 </div>
                                 {wallet.pending_balance_cents > 0 && (
                                     <div className="text-xs text-amber-600 bg-amber-50 rounded-full px-2 py-1 inline-flex items-center gap-1">
-                                        Esperando confirmación
+                                        {isPt ? "A aguardar confirmação" : "Esperando confirmación"}
                                     </div>
                                 )}
                             </div>
 
                             {/* Card: Total */}
                             <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl p-6 shadow-sm border border-[var(--ag-sys-color-border)]">
-                                <h3 className="text-[var(--ag-sys-color-text-muted)] font-medium mb-1">Total Ingresado</h3>
+                                <h3 className="text-[var(--ag-sys-color-text-muted)] font-medium mb-1">
+                                    {isPt ? "Total Recebido" : "Total Ingresado"}
+                                </h3>
                                 <div className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">
                                     {formatCurrency(wallet.total_earned_cents / 100)}
                                 </div>
                                 <div className="text-xs text-[var(--ag-sys-color-text-muted)]">
-                                    Histórico de ventas
+                                    {isPt ? "Histórico de vendas" : "Histórico de ventas"}
                                 </div>
                             </div>
-
-
                         </div>
 
                         <div className="flex justify-between items-end mb-6">
-                            <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)]">Últimas operaciones</h2>
+                            <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)]">
+                                {isPt ? "Últimas operações" : "Últimas operaciones"}
+                            </h2>
                             <Link href="/dashboard?tab=vendidos" className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline mb-1">
-                                Ver todas las ventas
+                                {isPt ? "Ver todas as vendas" : "Ver todas las ventas"}
                             </Link>
                         </div>
 
@@ -137,17 +149,25 @@ export default async function MonederoDashboardPage() {
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="bg-[var(--ag-sys-color-background)] border-b border-[var(--ag-sys-color-border)]">
-                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Fecha</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Anuncio</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Importe</th>
-                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Estado</th>
+                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">
+                                                {isPt ? "Data" : "Fecha"}
+                                            </th>
+                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">
+                                                {isPt ? "Anúncio" : "Anuncio"}
+                                            </th>
+                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">
+                                                {isPt ? "Valor" : "Importe"}
+                                            </th>
+                                            <th className="px-6 py-4 text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">
+                                                {isPt ? "Estado" : "Estado"}
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-[var(--ag-sys-color-border)]">
                                         {!orders || orders.length === 0 ? (
                                             <tr>
                                                 <td colSpan={4} className="px-6 py-12 text-center text-[var(--ag-sys-color-text-muted)]">
-                                                    No hay operaciones registradas todavía.
+                                                    {isPt ? "Ainda não existem operações registadas." : "No hay operaciones registradas todavía."}
                                                 </td>
                                             </tr>
                                         ) : (
@@ -157,7 +177,7 @@ export default async function MonederoDashboardPage() {
                                                         {formatRelativeTime(order.created_at, locale)}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-[var(--ag-sys-color-text)] max-w-[200px] truncate">
-                                                        {order.listings?.title || "Anuncio eliminado"}
+                                                        {order.listings?.title || (isPt ? "Anúncio eliminado" : "Anuncio eliminado")}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-bold text-[var(--ag-sys-color-text)]">
                                                         {formatCurrency(order.seller_net_amount_cents / 100)}
@@ -171,11 +191,11 @@ export default async function MonederoDashboardPage() {
                                                             order.status === 'buyer_confirmed' ? 'bg-blue-100 text-blue-700' :
                                                             'bg-gray-100 text-gray-700'
                                                         }`}>
-                                                            {order.status === 'paid_held' ? 'Pendiente confirmación' :
-                                                             order.status === 'return_initiated' ? 'Devolución iniciada por comprador' :
-                                                             order.status === 'refunded' ? 'Reembolsado' :
-                                                             order.status === 'buyer_confirmed' ? 'Liberando...' :
-                                                             order.status === 'paid_out' ? 'Liberado' :
+                                                            {order.status === 'paid_held' ? (isPt ? 'Confirmação pendente' : 'Pendiente confirmación') :
+                                                             order.status === 'return_initiated' ? (isPt ? 'Devolução iniciada pelo comprador' : 'Devolución iniciada por comprador') :
+                                                             order.status === 'refunded' ? (isPt ? 'Reembolsado' : 'Reembolsado') :
+                                                             order.status === 'buyer_confirmed' ? (isPt ? 'A libertar...' : 'Liberando...') :
+                                                             order.status === 'paid_out' ? (isPt ? 'Libertado' : 'Liberado') :
                                                              order.status.replace("_", " ")}
                                                         </span>
                                                         {order.status === 'return_initiated' && (
@@ -197,3 +217,10 @@ export default async function MonederoDashboardPage() {
         </div>
     );
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Panel de Monedero / Carteira con soporte de internacionalización sensible a `locale === 'pt'`.
+ * - Traducciones contextuales a portugués nativo de Portugal para saldos, alertas y tabla de operaciones.
+ * - Cero regresiones en España (`ruralpop.com`).
+ */

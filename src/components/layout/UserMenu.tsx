@@ -21,6 +21,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const { t, locale } = useTranslation();
+    const isPt = locale === "pt";
 
     // Cerrar al hacer click fuera
     useEffect(() => {
@@ -50,7 +51,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-center p-1 rounded-full text-blue-600 bg-blue-100 hover:bg-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Menú de usuario"
+                aria-label={isPt ? "Menu de utilizador" : "Menú de usuario"}
             >
                 <div className="w-9 h-9 flex items-center justify-center rounded-full bg-blue-500 text-white font-semibold text-sm overflow-hidden">
                     {avatarUrl ? (
@@ -77,7 +78,9 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     <Briefcase className="w-5 h-5 text-amber-500" />
                                     <div className="flex flex-col items-start gap-1 flex-1">
                                         <div className="flex w-full items-center justify-between">
-                                            <span className="font-semibold leading-none text-amber-600 group-hover:text-amber-700">Completar Activación</span>
+                                            <span className="font-semibold leading-none text-amber-600 group-hover:text-amber-700">
+                                                {isPt ? "Completar Ativação" : "Completar Activación"}
+                                            </span>
                                             <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse mr-1"></span>
                                         </div>
                                     </div>
@@ -86,7 +89,9 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                         ) : (
                             <>
                                 <div className="px-4 pt-3 pb-1">
-                                    <p className="text-[11px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Transacciones</p>
+                                    <p className="text-[11px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">
+                                        {isPt ? "Transações" : "Transacciones"}
+                                    </p>
                                 </div>
                                 <LocalizedLink
                                     href="/dashboard/compras"
@@ -102,7 +107,9 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <Tag className="w-5 h-5 text-gray-500" />
-                                    <span className="font-semibold text-gray-800">Ventas</span>
+                                    <span className="font-semibold text-gray-800">
+                                        {isPt ? "Vendas" : "Ventas"}
+                                    </span>
                                 </LocalizedLink>
                                 <LocalizedLink
                                     href="/dashboard/monedero"
@@ -110,11 +117,15 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <Wallet className="w-5 h-5 text-gray-500" />
-                                    <span className="font-semibold text-gray-800">Monedero</span>
+                                    <span className="font-semibold text-gray-800">
+                                        {isPt ? "Carteira" : "Monedero"}
+                                    </span>
                                 </LocalizedLink>
 
                                 <div className="px-4 pt-4 pb-1 border-t border-gray-100 mt-1">
-                                    <p className="text-[11px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">Cuenta</p>
+                                    <p className="text-[11px] font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider">
+                                        {isPt ? "Conta" : "Cuenta"}
+                                    </p>
                                 </div>
                                 <LocalizedLink
                                     href="/favoritos"
@@ -130,7 +141,9 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <MessageSquare className="w-5 h-5 text-gray-500" />
-                                    <span className="font-semibold text-gray-800">Mensajes</span>
+                                    <span className="font-semibold text-gray-800">
+                                        {isPt ? "Mensagens" : "Mensajes"}
+                                    </span>
                                 </LocalizedLink>
                                 <LocalizedLink
                                     href="/account"
@@ -149,7 +162,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     >
                                         <ShieldCheck className="w-5 h-5 text-purple-600" />
                                         <div className="flex items-center justify-between flex-1">
-                                            <span className="font-bold text-sm">Panel Admin</span>
+                                            <span className="font-bold text-sm">{isPt ? "Painel Admin" : "Panel Admin"}</span>
                                             <span className="text-[9px] font-extrabold uppercase bg-purple-200 text-purple-800 px-2 py-0.5 rounded-full">ADMIN</span>
                                         </div>
                                     </a>
@@ -167,7 +180,9 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                             <Briefcase className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
                                             <div className="flex flex-col items-start gap-1 flex-1">
                                                 <div className="flex w-full items-center justify-between">
-                                                    <span className="font-semibold leading-none text-[var(--ag-sys-color-text)] group-hover:text-[var(--ag-sys-color-primary)]">Panel Profesional</span>
+                                                    <span className="font-semibold leading-none text-[var(--ag-sys-color-text)] group-hover:text-[var(--ag-sys-color-primary)]">
+                                                        {isPt ? "Painel Profissional" : "Panel Profesional"}
+                                                    </span>
                                                     <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-1"></span>
                                                 </div>
                                             </div>
@@ -182,8 +197,12 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                         <div className="flex items-start gap-3">
                                             <Briefcase className="w-5 h-5 mt-1" />
                                             <div className="flex flex-col items-start gap-1">
-                                                <span className="text-[9px] uppercase font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full leading-none whitespace-nowrap">NUEVO</span>
-                                                <span className="font-semibold leading-none mt-1">¿Eres profesional?</span>
+                                                <span className="text-[9px] uppercase font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full leading-none whitespace-nowrap">
+                                                    {isPt ? "NOVO" : "NUEVO"}
+                                                </span>
+                                                <span className="font-semibold leading-none mt-1">
+                                                    {isPt ? "É profissional?" : "¿Eres profesional?"}
+                                                </span>
                                             </div>
                                         </div>
                                     </LocalizedLink>
@@ -195,7 +214,9 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                     onClick={() => setIsOpen(false)}
                                 >
                                     <HelpCircle className="w-5 h-5" />
-                                    <span className="font-semibold">Ayuda</span>
+                                    <span className="font-semibold">
+                                        {isPt ? "Ajuda" : "Ayuda"}
+                                    </span>
                                 </LocalizedLink>
                             </>
                         )}
@@ -220,4 +241,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
  * - Se aísla del Header Server Component para manejar clics (Client Component).
  * - Cierre de sesión sensible al locale: si el usuario está en el portal portugués (/pt),
  *   se redirige a '/pt' para no perder su contexto de idioma en Ruralpop.
+ * - Soporte bilingüe ES/PT nativo: Se traducen las secciones ('Transações', 'Vendas', 'Carteira',
+ *   'Conta', 'Mensagens', 'NOVO', 'É profissional?', 'Ajuda', etc.) únicamente cuando `locale === 'pt'`,
+ *   garantizando que la experiencia en España se mantenga 100% en castellano.
  */

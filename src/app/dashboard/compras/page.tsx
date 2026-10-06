@@ -17,6 +17,8 @@ export default async function ComprasDashboardPage() {
     const headersList = await headers();
     const locale = headersList.get('x-locale') || 'es';
 
+    const isPt = locale === 'pt';
+
     if (!user) {
         redirect("/dashboard");
     }
@@ -43,7 +45,7 @@ export default async function ComprasDashboardPage() {
                         Compras
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                        Gestiona tus compras seguras.
+                        {isPt ? "Gira as suas compras seguras." : "Gestiona tus compras seguras."}
                     </p>
                 </header>
 
@@ -54,7 +56,7 @@ export default async function ComprasDashboardPage() {
                             <Package className="w-12 h-12 opacity-20" />
                         </div>
                         <p className="text-[var(--ag-sys-color-text-muted)] font-medium">
-                            Aún no has realizado ninguna compra con pago seguro.
+                            {isPt ? "Ainda não realizou nenhuma compra com pagamento seguro." : "Aún no has realizado ninguna compra con pago seguro."}
                         </p>
                     </div>
                 ) : (
@@ -75,23 +77,25 @@ export default async function ComprasDashboardPage() {
                                             </span>
                                             {isPendingConfirmation && (
                                                 <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                                                    Pendiente confirmación
+                                                    {isPt ? "Confirmação pendente" : "Pendiente confirmación"}
                                                 </span>
                                             )}
                                             {isConfirmed && (
                                                 <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                                                    <CheckCircle2 className="w-3 h-3" /> Completado
+                                                    <CheckCircle2 className="w-3 h-3" /> {isPt ? "Concluído" : "Completado"}
                                                 </span>
                                             )}
                                         </div>
                                         <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-1">
-                                            {order.listings?.title || "Anuncio no disponible"}
+                                            {order.listings?.title || (isPt ? "Anúncio não disponível" : "Anuncio no disponible")}
                                         </h3>
                                         <div className="text-[var(--ag-sys-color-text-muted)] text-sm mb-4">
-                                            Vendedor: {order.seller_email}
+                                            {isPt ? "Vendedor:" : "Vendedor:"} {order.seller_email}
                                         </div>
                                         <div className="text-lg font-black text-[var(--ag-sys-color-primary)] flex items-center">
-                                            <span className="text-[var(--ag-sys-color-text-muted)] font-normal text-sm mr-2 uppercase tracking-wider">Pagado:</span>
+                                            <span className="text-[var(--ag-sys-color-text-muted)] font-normal text-sm mr-2 uppercase tracking-wider">
+                                                {isPt ? "Pago:" : "Pagado:"}
+                                            </span>
                                             {formatCurrency(order.gross_amount_cents / 100)}
                                         </div>
                                     </div>
@@ -105,15 +109,15 @@ export default async function ComprasDashboardPage() {
                                         ) : isConfirmed ? (
                                             <div className="text-sm text-green-600 font-bold bg-green-50 px-4 py-3 rounded-xl border border-green-100 flex items-center justify-center gap-2">
                                                 <CheckCircle2 className="w-5 h-5" />
-                                                Recepción Confirmada
+                                                {isPt ? "Receção Confirmada" : "Recepción Confirmada"}
                                             </div>
                                         ) : order.status === "return_initiated" ? (
                                             <div className="text-sm text-amber-700 font-bold bg-amber-50 px-4 py-3 rounded-xl border border-amber-100 flex items-center justify-center gap-2 text-center">
-                                                Devolución en proceso
+                                                {isPt ? "Devolução em curso" : "Devolución en proceso"}
                                             </div>
                                         ) : order.status === "refunded" ? (
                                             <div className="text-sm text-gray-700 font-bold bg-gray-50 px-4 py-3 rounded-xl border border-gray-200 flex items-center justify-center gap-2 text-center">
-                                                Reembolsado
+                                                {isPt ? "Reembolsado" : "Reembolsado"}
                                             </div>
                                         ) : (
                                             <div className="text-sm text-[var(--ag-sys-color-text-muted)] font-bold bg-[var(--ag-sys-color-background)] px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] flex items-center justify-center text-center uppercase">
@@ -130,3 +134,14 @@ export default async function ComprasDashboardPage() {
         </div>
     );
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Panel de Compras Protegidas con soporte multi-idioma nativo ES/PT.
+ * - Validación estricta de `x-locale`: los usuarios de ruralpop.pt reciben traducciones
+ *   nativas al portugués de Portugal ("Gira as suas compras seguras", "Receção Confirmada",
+ *   "Confirmação pendente", etc.), mientras que los usuarios en España conservan intacto
+ *   el texto original en castellano.
+ * - Edge Cases Cubiertos: Anuncio eliminado o inexistente renderiza fallback localizado
+ *   ("Anúncio não disponível" / "Anuncio no disponible") sin romper la vista del pedido.
+ */

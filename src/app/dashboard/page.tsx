@@ -21,6 +21,7 @@ type Props = {
 export default async function DashboardPage(props: Props) {
     const headersList = await headers();
     const locale = (headersList.get("x-locale") || "es") as LocaleCode;
+    const isPt = locale === "pt";
     const originalPathname = headersList.get("x-original-pathname") || (locale === "pt" ? "/pt/dashboard" : "/dashboard");
     const dict = await getDictionary(locale);
     const searchParams = await props.searchParams;
@@ -202,10 +203,10 @@ export default async function DashboardPage(props: Props) {
             <div className="container mx-auto px-4 max-w-6xl">
                 <header className="mb-8">
                     <h1 className="text-4xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight">
-                        Ventas
+                        {isPt ? "Vendas" : "Ventas"}
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-muted)] mt-2 text-lg">
-                        Gestiona tus anuncios publicados y su estado.
+                        {isPt ? "Gira os seus anúncios publicados e o seu estado." : "Gestiona tus anuncios publicados y su estado."}
                     </p>
                 </header>
 
@@ -217,7 +218,9 @@ export default async function DashboardPage(props: Props) {
                             </svg>
                         </div>
                         <div>
-                            <h3 className="text-green-800 font-bold text-lg mb-1">¡Pago completado con éxito!</h3>
+                            <h3 className="text-green-800 font-bold text-lg mb-1">
+                                {isPt ? "Pagamento concluído com sucesso!" : "¡Pago completado con éxito!"}
+                            </h3>
                             <p className="text-green-700">{successMessage}</p>
                         </div>
                     </div>
@@ -228,15 +231,17 @@ export default async function DashboardPage(props: Props) {
                         <div className="mx-auto w-24 h-24 bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text-muted)] rounded-3xl flex items-center justify-center mb-6">
                             <Tractor className="w-12 h-12 opacity-20" />
                         </div>
-                        <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-3">Aún no has publicado nada</h3>
+                        <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-3">
+                            {isPt ? "Ainda não publicou nada" : "Aún no has publicado nada"}
+                        </h3>
                         <p className="text-[var(--ag-sys-color-text-muted)] mb-8 max-w-md mx-auto">
-                            Empieza a vender tus productos, ganadería o maquinaria ahora mismo.
+                            {isPt ? "Comece a vender os seus produtos, gado ou máquinas agora mesmo." : "Empieza a vender tus productos, ganadería o maquinaria ahora mismo."}
                         </p>
                         <Link
                             href="/upload"
                             className="inline-flex py-4 px-8 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-lg shadow-[var(--ag-sys-color-primary)]/20"
                         >
-                            Publicar primer anuncio
+                            {isPt ? "Publicar primeiro anúncio" : "Publicar primer anuncio"}
                         </Link>
                     </div>
                 ) : (
@@ -249,7 +254,7 @@ export default async function DashboardPage(props: Props) {
                                     ? 'bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]'
                                     : 'bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]'}`}
                             >
-                                En venta
+                                {isPt ? "À venda" : "En venta"}
                             </Link>
                             <Link
                                 href="/dashboard?tab=en_curso"
@@ -257,7 +262,7 @@ export default async function DashboardPage(props: Props) {
                                     ? 'bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]'
                                     : 'bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]'}`}
                             >
-                                En curso
+                                {isPt ? "Em curso" : "En curso"}
                             </Link>
                             <Link
                                 href="/dashboard?tab=vendidos"
@@ -265,7 +270,7 @@ export default async function DashboardPage(props: Props) {
                                     ? 'bg-[var(--ag-sys-color-text)] text-[var(--ag-sys-color-background)]'
                                     : 'bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:bg-[var(--ag-sys-color-border)] border border-[var(--ag-sys-color-border)]'}`}
                             >
-                                Finalizadas
+                                {isPt ? "Finalizadas" : "Finalizadas"}
                             </Link>
                         </div>
 
@@ -274,9 +279,9 @@ export default async function DashboardPage(props: Props) {
                             <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] p-12 text-center">
                                 <p className="text-[var(--ag-sys-color-text-muted)] font-medium">
                                     {currentTab === 'sold' 
-                                        ? 'Aún no has marcado ningún anuncio como vendido.' 
+                                        ? (isPt ? 'Ainda não marcou nenhum anúncio como vendido.' : 'Aún no has marcado ningún anuncio como vendido.') 
                                         : currentTab === 'reserved'
-                                        ? 'No tienes ventas en curso en este momento.'
+                                        ? (isPt ? 'Não tem vendas em curso neste momento.' : 'No tienes ventas en curso en este momento.')
                                         : dict.dashboard.empty_active}
                                 </p>
                             </div>
@@ -310,4 +315,6 @@ export default async function DashboardPage(props: Props) {
  * - Ocultación en Venta: Para evitar duplicados y listados incoherentes, los anuncios activos que tengan un pago en custodia activo
  *   se ocultan automáticamente del tab 'active' (En venta) y reaparecen únicamente si la transacción se cancela.
  * - Soporte adaptativo para mostrar precio tachado en vendidos si existe `sold_price`.
+ * - Soporte bilingüe ES/PT: Adaptación de los encabezados ('Vendas' / 'Ventas'), pestañas ('À venda', 'Em curso', 'Finalizadas'),
+ *   estados vacíos y mensajes de confirmación respetando el dominio y cabecera `x-locale` sin alterar la experiencia de España.
  */
