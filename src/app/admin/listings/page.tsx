@@ -74,6 +74,12 @@ export default async function AdminListingsPage(props: {
         query = query.ilike('title', `%${searchParams.q}%`);
     }
 
+    if (searchParams.country === 'pt') {
+        query = query.gte('province_id', 101);
+    } else if (searchParams.country === 'es') {
+        query = query.or('province_id.lt.101,province_id.is.null');
+    }
+
     if (searchParams.category && typeof searchParams.category === 'string') {
         query = query.eq('category', searchParams.category);
     }

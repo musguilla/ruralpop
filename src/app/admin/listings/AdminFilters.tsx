@@ -12,6 +12,7 @@ export function AdminFilters() {
     const currentQ = searchParams.get("q") || "";
     const currentCategory = searchParams.get("category") || "";
     const currentSubcategory = searchParams.get("subcategory") || "";
+    const currentCountry = searchParams.get("country") || "";
 
     // Build unique select value
     let selectValue = "";
@@ -20,6 +21,17 @@ export function AdminFilters() {
     } else if (currentCategory) {
         selectValue = `cat:${currentCategory}`;
     }
+
+    const handleCountryChange = (val: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("page");
+        if (val) {
+            params.set("country", val);
+        } else {
+            params.delete("country");
+        }
+        router.push(`/admin/listings?${params.toString()}`);
+    };
 
     const handleCategoryChange = (val: string) => {
         const params = new URLSearchParams(searchParams.toString());
@@ -57,6 +69,20 @@ export function AdminFilters() {
 
     return (
         <div className="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto">
+            {/* Selector de país */}
+            <div className="relative w-full sm:w-auto">
+                <select
+                    value={currentCountry}
+                    onChange={(e) => handleCountryChange(e.target.value)}
+                    className="w-full sm:w-auto pl-4 pr-10 py-2.5 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-full text-sm outline-none focus:border-[var(--ag-sys-color-primary)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/10 font-bold text-[var(--ag-sys-color-text)] shadow-sm hover:shadow-md cursor-pointer appearance-none transition-all"
+                >
+                    <option value="">🌍 Todos (ES + PT)</option>
+                    <option value="es">🇪🇸 España</option>
+                    <option value="pt">🇵🇹 Portugal</option>
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--ag-sys-color-text-muted)] pointer-events-none" />
+            </div>
+
             <div className="relative w-full sm:w-auto">
                 <select
                     value={selectValue}

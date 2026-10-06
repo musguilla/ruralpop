@@ -52,6 +52,10 @@ export async function getServerTenantDomain(): Promise<string> {
         return process.env.NEXT_PUBLIC_EQUIPOP_URL || 'https://www.equipop.app';
     }
 
+    if (host.includes('ruralpop.pt')) {
+        return `https://${host}`;
+    }
+
     if (host.includes('ruralpop.com')) {
         return `https://${host}`;
     }
