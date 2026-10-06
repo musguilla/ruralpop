@@ -1,5 +1,7 @@
+import { headers } from 'next/headers';
 import React from 'react';
 import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getLocalizedCategoryName, getLocalizedFaqLocationText } from '@/utils/seoBlockLocalization';
 
 interface FaqProps {
     categoryQuery: string;
@@ -7,20 +9,41 @@ interface FaqProps {
 }
 
 export async function DynamicFaqs({ categoryQuery, provinceName }: FaqProps) {
+    const headersList = await headers();
+    const locale = headersList.get("x-locale") || "es";
+    const isPt = locale === "pt";
+
     const tenant = await getServerTenantSlug();
     const isEquipop = tenant === 'equipop';
     
-    const locText = provinceName ? ` en ${provinceName}` : '';
-    const category = categoryQuery.replace(/-/g, ' ').toLowerCase();
-    
-    // Capitalize category safely
-    const cTitle = category.charAt(0).toUpperCase() + category.slice(1);
+    const locText = getLocalizedFaqLocationText(provinceName, locale);
+    const category = getLocalizedCategoryName(categoryQuery, locale).toLowerCase();
 
     const brand = isEquipop ? 'Equipop' : 'Ruralpop';
-    const sellersText = isEquipop ? 'jinetes y tiendas hípicas' : 'vendedores y ganaderos';
-    const sellersText2 = isEquipop ? 'particulares que renuevan material hasta guarnicionerías' : 'particulares que liquidan maquinaria hasta criadores profesionales';
+    const sellersText = isPt
+        ? (isEquipop ? 'cavaleiros e lojas hípicas' : 'vendedores e criadores de gado')
+        : (isEquipop ? 'jinetes y tiendas hípicas' : 'vendedores y ganaderos');
 
-    const generatedFaqs = [
+    const sellersText2 = isPt
+        ? (isEquipop ? 'particulares a renovar equipamento até courelarias' : 'particulares a liquidar alfaias até criadores profissionais')
+        : (isEquipop ? 'particulares que renuevan material hasta guarnicionerías' : 'particulares que liquidan maquinaria hasta criadores profesionales');
+
+    const heading = isPt ? "Perguntas frequentes" : "Preguntas frecuentes";
+
+    const generatedFaqs = isPt ? [
+        {
+            question: `Onde posso comprar ${category}${locText}?`,
+            answer: `No ${brand} dispomos de listagens atualizadas diretamente por ${sellersText}. Pode comprar ${category}${locText} filtrando a nossa base de dados onde encontrará desde ${sellersText2} com os melhores preços diretos.`
+        },
+        {
+            question: `Qual é o preço médio de ${category}${locText}?`,
+            answer: `O preço de ${category} é livre e varia conforme o estado ou o transporte${locText}. Ao negociar sem intermediários na nossa plataforma, consegue habitualmente obter uma poupança significativa em comparação com o mercado tradicional.`
+        },
+        {
+            question: `Como posso contactar os vendedores de ${category}?`,
+            answer: `Contamos com um sistema seguro de mensagens internas. Basta escolher o anúncio de ${category} que melhor se ajusta ao seu orçamento e clicar no botão "Enviar mensagem" para falar e acertar os detalhes diretamente com o vendedor.`
+        }
+    ] : [
         {
             question: `¿Dónde puedo comprar ${category}${locText}?`,
             answer: `En ${brand} disponemos de listados actualizados directamente por ${sellersText}. Puedes comprar ${category}${locText} filtrando nuestra base de datos donde encontrarás desde ${sellersText2} con los mejores precios directos.`
@@ -54,7 +77,7 @@ export async function DynamicFaqs({ categoryQuery, provinceName }: FaqProps) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
             />
-            <h3 className="text-xl font-extrabold text-[var(--ag-sys-color-text)] mb-8">Preguntas frecuentes</h3>
+            <h3 className="text-xl font-extrabold text-[var(--ag-sys-color-text)] mb-8">{heading}</h3>
             <div className="space-y-4">
                 {generatedFaqs.map((faq, idx) => (
                     <details
@@ -76,3 +99,10 @@ export async function DynamicFaqs({ categoryQuery, provinceName }: FaqProps) {
         </div>
     );
 }
+
+/**
+ * Memory / Decisiones Técnicas:
+ * - Preguntas y respuestas generadas dinámicamente con soporte nativo de idioma (ES / PT).
+ * - En Portugal (.PT) se traduce el título ("Perguntas frequentes"), las 3 preguntas clave y sus respuestas,
+ *   así como el marcado estructurado de JSON-LD Schema.org para mejorar el SEO y los fragmentos enriquecidos en Google PT.
+ */

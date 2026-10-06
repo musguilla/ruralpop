@@ -6,6 +6,8 @@ import { slugify } from '@/utils/seoUtils';
 import { createClient } from '@/utils/supabase/server';
 import { unstable_cache } from 'next/cache';
 
+import { headers } from 'next/headers';
+
 interface BovineRelatedLinksProps {
     parsedSlug: any;
 }
@@ -36,6 +38,12 @@ const getBovinoProvinceCounts = unstable_cache(
 );
 
 export async function BovineRelatedLinks({ parsedSlug }: BovineRelatedLinksProps) {
+    const headersList = await headers();
+    const locale = headersList.get("x-locale") || "es";
+    if (locale === 'pt') {
+        return null;
+    }
+
     // Solo aplicar en ganaderia/bovino
     if (parsedSlug.category !== 'ganaderia' || parsedSlug.subcategory?.toLowerCase() !== 'bovino') {
         return null;
