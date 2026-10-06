@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useTranslation } from "@/context/LocaleContext";
 
 export function CookieBanner() {
     const [isVisible, setIsVisible] = useState(false);
+    const { locale } = useTranslation();
+    const isPt = locale === "pt";
 
     useEffect(() => {
         // Al montar verificamos si ya existe la cookie/localStorage
@@ -26,34 +28,46 @@ export function CookieBanner() {
 
     if (!isVisible) return null;
 
+    const brandName = typeof window !== "undefined" && window.location.hostname.includes("equipop") ? "Equipop" : "Ruralpop";
+
     return (
         <div className="fixed bottom-4 right-4 z-[9999] w-full max-w-sm sm:max-w-md bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl shadow-xl p-6 sm:p-8 animate-in slide-in-from-bottom-5 fade-in duration-300">
             <h3 className="text-xl font-extrabold text-[var(--ag-sys-color-text)] mb-3">
-                Privacidad
+                {isPt ? "Privacidade" : "Privacidad"}
             </h3>
             <p className="text-sm text-[var(--ag-sys-color-text-muted)] leading-relaxed mb-4">
-                En Ruralpop, tanto nosotros como nuestros socios almacenamos o accedemos a información del dispositivo, como identificadores únicos en las cookies para tratar datos personales. Puedes aceptar o administrar tus preferencias haciendo clic abajo, incluido el derecho de oposición en función de tu interés legítimo o, en cualquier momento, a través de la página de la política de privacidad. Tus preferencias se notificarán a nuestros socios y no afectarán a los datos de navegación.
+                {isPt ? (
+                    `Na ${brandName}, tanto nós como os nossos parceiros armazenamos ou acedemos a informações do dispositivo, tais como identificadores únicos em cookies para o tratamento de dados pessoais. Podes aceitar ou gerir as tuas preferências clicando abaixo, incluindo o direito de oposição com base no teu interesse legítimo ou, a qualquer momento, através da página da política de privacidade. As tuas preferências serão notificadas aos nossos parceiros e não afetarão os dados de navegação.`
+                ) : (
+                    `En ${brandName}, tanto nosotros como nuestros socios almacenamos o accedemos a información del dispositivo, como identificadores únicos en las cookies para tratar datos personales. Puedes aceptar o administrar tus preferencias haciendo clic abajo, incluido el derecho de oposición en función de tu interés legítimo o, en cualquier momento, a través de la página de la política de privacidad. Tus preferencias se notificarán a nuestros socios y no afectarán a los datos de navegación.`
+                )}
             </p>
 
             <h4 className="text-sm font-bold text-[var(--ag-sys-color-text)] mb-2">
-                ¿Para qué tratamos los datos?
+                {isPt ? "Para que finalidades tratamos os dados?" : "¿Para qué tratamos los datos?"}
             </h4>
             <p className="text-sm text-[var(--ag-sys-color-text-muted)] leading-relaxed mb-6">
-                Utilizar datos de localización geográfica precisa. Analizar activamente las características del dispositivo para su identificación. Almacenar la información en un dispositivo y/o acceder a ella. Publicidad y contenido personalizados, medición de publicidad y contenido, investigación de audiencia y desarrollo de servicios.
+                {isPt ? (
+                    "Utilizar dados de localização geográfica precisa. Analisar ativamente as características do dispositivo para identificação. Armazenar informações num dispositivo e/ou aceder às mesmas. Publicidade e conteúdos personalizados, medição de publicidade e conteúdos, estudos de audiência e desenvolvimento de serviços."
+                ) : (
+                    "Utilizar datos de localización geográfica precisa. Analizar activamente las características del dispositivo para su identificación. Almacenar la información en un dispositivo y/o acceder a ella. Publicidad y contenido personalizados, medición de publicidad y contenido, investigación de audiencia y desarrollo de servicios."
+                )}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3">
                 <button
+                    type="button"
                     onClick={handleReject}
                     className="flex-1 py-3 px-4 rounded-xl border border-[var(--ag-sys-color-border)] text-sm font-bold text-[var(--ag-sys-color-text)] hover:bg-[var(--ag-sys-color-surface-muted)] transition-colors focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none"
                 >
-                    Rechazar todo
+                    {isPt ? "Recusar tudo" : "Rechazar todo"}
                 </button>
                 <button
+                    type="button"
                     onClick={handleAccept}
                     className="flex-1 py-3 px-4 rounded-xl text-sm font-bold text-white bg-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)] outline-none"
                 >
-                    Aceptar todo
+                    {isPt ? "Aceitar tudo" : "Aceptar todo"}
                 </button>
             </div>
         </div>
@@ -65,4 +79,5 @@ export function CookieBanner() {
  * - Se asume que no renderiza hasta que el cliente evalúa `useEffect` (Server-Side Rendering safe).
  * - Uso de `localStorage` de manera básica y estricta para resolver el ciclo de vida.
  * - Posicionado `fixed` en la esquina inferior derecha con mucho z-index para solapar cualquier listado pero no interrumpir el flujo.
+ * - Internacionalización completa de los textos legales de cookies para Portugal (`locale === 'pt'`).
  */
