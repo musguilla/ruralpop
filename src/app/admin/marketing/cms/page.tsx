@@ -45,6 +45,7 @@ export default async function MarketingCMSPage() {
                 </div>
                 <Link
                     href="/admin/marketing/cms/new"
+                    data-google-vignette="false"
                     className="inline-flex items-center gap-2 bg-[var(--ag-sys-color-primary)] text-white px-6 py-3 rounded-xl font-bold hover:bg-emerald-700 transition"
                 >
                     <Plus size={20} />

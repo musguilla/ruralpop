@@ -86,6 +86,7 @@ export function AdminStatCard({
                         {href && (
                             <a 
                                 href={href}
+                                data-google-vignette="false"
                                 className={`flex items-center justify-center p-1.5 rounded-lg transition-colors ml-auto ${colorClasses.bg} ${colorClasses.text} ${colorClasses.iconHover}`}
                                 title="Ver detalles"
                             >

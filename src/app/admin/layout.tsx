@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminAdBlocker } from "@/components/admin/AdminAdBlocker";
 
 export default async function AdminLayout({
     children,
@@ -27,13 +28,18 @@ export default async function AdminLayout({
 
     return (
         <div className="flex min-h-screen w-full bg-[var(--ag-sys-color-background)]">
+            <AdminAdBlocker />
             <style>{`
                 .adsbygoogle,
                 .google-auto-placed,
                 iframe[id^="google_ads_frame"],
-                #google_esf,
+                iframe[id^="aswift_"],
                 div[id^="aswift_"],
-                ins.adsbygoogle {
+                #google_esf,
+                ins.adsbygoogle,
+                [data-google-query-id],
+                div[aria-label="Advertisement"],
+                div[aria-label="Anuncio"] {
                     display: none !important;
                     opacity: 0 !important;
                     pointer-events: none !important;

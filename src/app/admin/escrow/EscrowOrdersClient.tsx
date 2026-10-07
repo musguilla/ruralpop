@@ -269,6 +269,7 @@ export function EscrowOrdersClient({ orders, currentTenant }: EscrowOrdersClient
                     <div className="flex items-center gap-3">
                         <Link
                             href="/admin"
+                            data-google-vignette="false"
                             className="p-2 rounded-xl bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)] transition-colors"
                             title="Volver al dashboard"
                         >

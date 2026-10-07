@@ -139,6 +139,7 @@ export default function AdminEditListingForm({ listing, initialProvinces, initia
                 <div className="mb-6">
                     <Link
                         href="/admin/listings"
+                        data-google-vignette="false"
                         className="inline-flex items-center text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors mb-4 font-medium"
                     >
                         <ArrowLeft className="w-5 h-5 mr-2" />

@@ -56,6 +56,7 @@ export default async function FeaturedPaymentsPage() {
                 </div>
                 <Link 
                     href="/admin"
+                    data-google-vignette="false"
                     className="px-4 py-2 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-full text-sm font-bold hover:bg-[var(--ag-sys-color-background)] transition-colors"
                 >
                     Volver al Dashboard

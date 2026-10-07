@@ -159,6 +159,7 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
                                 {role === 'admin' && (
                                     <a
                                         href="/admin"
+                                        data-google-vignette="false"
                                         className="flex items-center gap-3 px-4 py-3 bg-purple-50/70 hover:bg-purple-100/80 text-purple-800 transition-colors"
                                         onClick={() => setIsOpen(false)}
                                     >
