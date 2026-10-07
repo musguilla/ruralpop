@@ -32,11 +32,26 @@ export async function createListing(formData: FormData) {
     if (subcategory && subcategory.toLowerCase() === "perros") {
         isRestricted = true;
     } else {
-        const restrictedKeywords = ["agaporni", "agapornis", "ninfa", "ninfas", "periquito", "periquitos", "cotorra", "cotorras", "canario", "canarios", "loro", "loros", "lorito", "loritos", "papillero", "papilleros", "papillera", "papilleras", "paloma", "palomas", "palomo", "palomos", "gato", "gatos", "gata", "gatas", "perro", "perros", "cachorro", "cachorros", "perra", "mastin", "mastina", "jilguero", "jilgueros", "camachuelo", "camachuelos", "lugano", "luganos", "pardillo", "pardillos", "verdecillo", "verdecillos", "verderones comunes", "verderon", "serrano", "serranos", "pinzones reales", "pinzones comunes", "pinzon", "diamante gold", "isabelita", "isabelitas", "isabelita japon", "chihuahua", "malinois", "gatitos", "border", "collie", "ratonero", "mastines", "pomerania", "cachorra", "cachorras", "bulldog", "perras", "cane", "corso", "pointer", "setter", "australiano", "sabueso", "sagueso", "belga", "pitbull", "persas", "podenco", "berna", "galgo", "urraca", "diamantes", "guacamaya", "cobaya", "cobayas", "rata", "ratas"];
-        const combinedText = `${lowerTitle} ${lowerDesc} ${lowerTags.join(" ")}`;
+        const restrictedKeywords = [
+            "agaporni", "agapornis", "ninfa", "ninfas", "periquito", "periquitos", "cotorra", "cotorras",
+            "canario", "canarios", "loro", "loros", "lorito", "loritos", "papillero", "papilleros", "papillera", "papilleras",
+            "paloma", "palomas", "palomo", "palomos", "gato", "gatos", "gata", "gatas", "gatitos", "gatitas",
+            "perro", "perros", "perra", "perras", "cachorro", "cachorros", "cachorra", "cachorras",
+            "mastin", "mastina", "mastines", "jilguero", "jilgueros", "camachuelo", "camachuelos",
+            "lugano", "luganos", "pardillo", "pardillos", "verdecillo", "verdecillos", "verderones", "verderon",
+            "pinzon", "pinzones", "diamante gould", "diamante gold", "isabelita", "isabelitas",
+            "chihuahua", "malinois", "border collie", "collie", "ratonero", "pomerania", "bulldog",
+            "cane corso", "pointer", "setter", "sabueso", "sagueso", "pitbull", "persas", "podenco",
+            "boyero de berna", "galgo", "urraca", "guacamaya", "guacamayo", "cobaya", "cobayas", "huron", "hurones"
+        ];
+        const combinedText = ` ${lowerTitle} ${lowerDesc} ${lowerTags.join(" ")} `;
         
         for (const word of restrictedKeywords) {
-            if (combinedText.includes(word)) {
+            // Regex con límite de palabra Unicode para evitar falsos positivos
+            // (Ej: "obligatoriamente" NO debe activar "gato", "aparato" NO debe activar "rata")
+            const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`(^|[^\\p{L}\\p{N}])${escapedWord}([^\\p{L}\\p{N}]|$)`, 'u');
+            if (regex.test(combinedText)) {
                 isRestricted = true;
                 break;
             }
