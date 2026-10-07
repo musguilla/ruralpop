@@ -40,13 +40,13 @@ export default function ContactPage({ isEquipop = false }: ContactPageProps) {
         try {
             const res = await submitContact(formData);
             if (res.success) {
-                setSuccessMsg(res.message || "Enviado con éxito");
+                setSuccessMsg(res.message || t('contact.sent_success'));
                 (e.target as HTMLFormElement).reset();
             } else {
-                setErrorMsg(res.error || "Error al enviar");
+                setErrorMsg(res.error || t('contact.sent_error'));
             }
         } catch (error) {
-            setErrorMsg("Error de conexión");
+            setErrorMsg(t('contact.connection_error'));
         } finally {
             setIsLoading(false);
         }
@@ -76,14 +76,14 @@ export default function ContactPage({ isEquipop = false }: ContactPageProps) {
                             {successMsg ? (
                                 <div className="p-6 bg-emerald-50 text-emerald-800 rounded-2xl flex flex-col items-center justify-center h-full text-center border border-emerald-200">
                                     <MessageSquare className="w-12 h-12 mb-3 text-emerald-500" />
-                                    <h3 className="text-lg font-bold mb-1">¡Mensaje Enviado!</h3>
+                                    <h3 className="text-lg font-bold mb-1">{t('contact.sent_title')}</h3>
                                     <p className="text-sm">{successMsg}</p>
                                     <button
                                         type="button"
                                         onClick={() => setSuccessMsg("")}
                                         className="mt-6 text-sm font-semibold underline text-emerald-800"
                                     >
-                                        Enviar otro mensaje
+                                        {t('contact.send_another')}
                                     </button>
                                 </div>
                             ) : (

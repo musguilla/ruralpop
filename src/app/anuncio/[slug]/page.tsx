@@ -5,6 +5,7 @@ import { formatCurrency, formatRelativeTime } from "@/utils/format";
 import { MapPin, Calendar, Phone, User, ArrowLeft, ShieldCheck, Tractor, Building2, Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { LocalizedLink } from "@/components/ui/LocalizedLink";
 import { ChatButton } from "@/components/chat/ChatButton";
 import { decodeId } from "@/utils/idUtils";
 import { getUserFavoriteIds } from "@/app/favoritos/actions";
@@ -230,11 +231,12 @@ export default async function ListingDetailPage(props: Props) {
     // Aislamiento de anuncios portugueses y españoles en Ruralpop
     if (!isEquipop && listing.province_id !== null && listing.province_id !== undefined) {
         const provId = Number(listing.province_id);
-        if (provId >= 100 && locale !== 'pt') {
-            permanentRedirect(`/pt/anuncio/${slug}`);
+        const isDomainPt = currentDomain.includes('ruralpop.pt');
+        if (provId >= 100 && !isDomainPt && locale !== 'pt') {
+            permanentRedirect(`https://www.ruralpop.pt/anuncio/${slug}`);
         }
-        if (provId > 0 && provId < 100 && locale === 'pt') {
-            permanentRedirect(`/anuncio/${slug}`);
+        if (provId > 0 && provId < 100 && (isDomainPt || locale === 'pt')) {
+            permanentRedirect(`https://www.ruralpop.com/anuncio/${slug}`);
         }
     }
 
@@ -353,13 +355,13 @@ export default async function ListingDetailPage(props: Props) {
 
                 {/* Volver y Migas de pan */}
                 <div className="mb-6">
-                    <Link
-                        href={locale === "pt" ? "/pt" : "/"}
+                    <LocalizedLink
+                        href="/"
                         className="inline-flex items-center gap-2 text-sm font-medium text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group"
                     >
                         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         {t("volver_listado")}
-                    </Link>
+                    </LocalizedLink>
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8 justify-center items-start lg:max-w-[1120px] mx-auto">

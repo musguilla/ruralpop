@@ -2,29 +2,42 @@ import Link from "next/link";
 import Image from "next/image";
 import { Check, ShieldCheck, CreditCard } from "lucide-react";
 import { ProPlanCard } from "@/components/profesionales/ProPlanCard";
-import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getServerTenantSlug, getServerTenantDomain } from "@/utils/tenant/server";
 import { headers } from "next/headers";
+import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
+import { LocaleCode } from "@/i18n/config";
 
 export async function generateMetadata() {
     const tenant = await getServerTenantSlug();
-    const isEquipop = tenant === 'equipop';
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
     const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
+    const originalPathname = headersList.get('x-original-pathname') || (isPt ? '/empresas-profissionais-setor-rural' : '/empresas-profesionales-sector-rural');
     
     return {
-        title: `Área Profesionales y Empresas | ${brand}`,
-        description: `Destaca tu empresa donde están tus clientes. Activa tu perfil profesional en ${brand}.`,
-        alternates: { canonical: isEquipop ? "/empresas-profesionales-sector-ecuestre" : "/empresas-profesionales-sector-rural" }
+        title: isPt ? `Área de Profissionais e Empresas | ${brand}` : `Área Profesionales y Empresas | ${brand}`,
+        description: isPt ? `Destaque a sua empresa onde estão os seus clientes. Ative o seu perfil profissional no ${brand}.` : `Destaca tu empresa donde están tus clientes. Activa tu perfil profesional en ${brand}.`,
+        alternates: { 
+            canonical: getCanonicalUrl(originalPathname, locale, currentDomain),
+            languages: getHreflangLinks(originalPathname, currentDomain)
+        }
     };
 }
 
 export default async function EmpresasProfesionalesPage() {
     const tenant = await getServerTenantSlug();
-    const isEquipop = tenant === 'equipop';
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
     const brand = isEquipop ? 'Equipop' : 'Ruralpop';
 
     const headersList = await headers();
-    const locale = headersList.get('x-locale') || 'es';
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
     const isPt = locale === 'pt';
+    const isPtNativeDomain = currentDomain.includes('ruralpop.pt');
+    const basePath = (isPt && !isPtNativeDomain) ? '/pt' : '';
 
     return (
         <div className="min-h-screen w-full bg-[var(--ag-sys-color-background)]">
@@ -156,7 +169,7 @@ export default async function EmpresasProfesionalesPage() {
                                 </li>
                             </ul>
 
-                            <Link href={`${isPt ? '/pt' : ''}/profesionales/checkout/start`} className="mt-auto w-full flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ag-sys-color-surface)] border-2 border-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-primary)] font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all group-hover:bg-[var(--ag-sys-color-primary)] group-hover:text-white">
+                            <Link href={`${basePath}/profesionales/checkout/start`} className="mt-auto w-full flex items-center justify-center gap-2 px-6 py-4 bg-[var(--ag-sys-color-surface)] border-2 border-[var(--ag-sys-color-primary)] text-[var(--ag-sys-color-primary)] font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary)] hover:text-white transition-all group-hover:bg-[var(--ag-sys-color-primary)] group-hover:text-white">
                                 {isPt ? "Começar agora" : "Empezar ahora"}
                             </Link>
                         </div>

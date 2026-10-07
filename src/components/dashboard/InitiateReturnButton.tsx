@@ -4,6 +4,7 @@ import { useState } from "react";
 import { handleInitiateReturn } from "@/app/dashboard/compras/actions";
 import { Undo2, Loader2, AlertTriangle, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/context/LocaleContext";
 import clsx from "clsx";
 
 interface InitiateReturnButtonProps {
@@ -12,6 +13,8 @@ interface InitiateReturnButtonProps {
 
 export function InitiateReturnButton({ orderId }: InitiateReturnButtonProps) {
     const router = useRouter();
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -23,13 +26,13 @@ export function InitiateReturnButton({ orderId }: InitiateReturnButtonProps) {
         try {
             const res = await handleInitiateReturn(orderId);
             if (!res.success) {
-                setError(res.error || "Ocurrió un error.");
+                setError(res.error || (isPt ? "Ocorreu um erro." : "Ocurrió un error."));
                 setLoading(false);
             } else {
                 router.refresh();
             }
         } catch (err: any) {
-            setError(err.message || "Error de conexión.");
+            setError(err.message || (isPt ? "Erro de ligação." : "Error de conexión."));
             setLoading(false);
         }
     };
@@ -51,12 +54,12 @@ export function InitiateReturnButton({ orderId }: InitiateReturnButtonProps) {
                     {loading ? (
                         <>
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            Procesando...
+                            {isPt ? "A processar..." : "Procesando..."}
                         </>
                     ) : (
                         <>
                             <Undo2 className="w-5 h-5" />
-                            Devolver producto
+                            {isPt ? "Devolver produto" : "Devolver producto"}
                         </>
                     )}
                 </button>
@@ -77,17 +80,19 @@ export function InitiateReturnButton({ orderId }: InitiateReturnButtonProps) {
                                 <AlertTriangle className="w-6 h-6 text-red-600" />
                             </div>
                             <h3 className="text-xl font-extrabold text-[var(--ag-sys-color-text)] mb-2 leading-tight">
-                                ¿Quieres iniciar una devolución?
+                                {isPt ? "Pretende iniciar uma devolução?" : "¿Quieres iniciar una devolución?"}
                             </h3>
                             <p className="text-[var(--ag-sys-color-text-muted)] text-sm mb-6">
-                                Al iniciar la devolución, el vendedor será notificado para revisarla. Los fondos seguirán retenidos de forma segura hasta que se procese el reembolso.
+                                {isPt 
+                                    ? "Ao iniciar a devolução, o vendedor será notificado para a rever. Os fundos continuarão retidos em segurança até à emissão do reembolso." 
+                                    : "Al iniciar la devolución, el vendedor será notificado para revisarla. Los fondos seguirán retenidos de forma segura hasta que se procese el reembolso."}
                             </p>
                             <div className="flex flex-col gap-2 mt-2">
                                 <button
                                     onClick={executeReturn}
                                     className="px-5 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 active:scale-[0.98] transition-all w-full shadow-md flex items-center justify-center gap-2"
                                 >
-                                    Sí, iniciar devolución
+                                    {isPt ? "Sim, iniciar devolução" : "Sí, iniciar devolución"}
                                 </button>
                                 <button
                                     onClick={() => setShowModal(false)}

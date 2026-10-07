@@ -1,28 +1,126 @@
 import React from 'react';
-import Link from 'next/link';
 import FAQClient from './FAQClient';
-import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getServerTenantSlug, getServerTenantDomain } from "@/utils/tenant/server";
+import { headers } from 'next/headers';
+import { getHreflangLinks, getCanonicalUrl } from '@/i18n/utils';
+import { LocaleCode } from '@/i18n/config';
 
 export async function generateMetadata() {
     const tenant = await getServerTenantSlug();
-    const isEquipop = tenant === 'equipop';
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
     const brand = isEquipop ? 'Equipop' : 'Ruralpop';
-    
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
+    const pathname = isPt ? '/perguntas-frequentes' : '/preguntas-frecuentes';
+
+    const title = isPt 
+        ? `Perguntas Frequentes - ${brand}` 
+        : `Preguntas Frecuentes - ${brand}`;
+
+    const description = isPt
+        ? `Encontra respostas às perguntas mais frequentes sobre como usar ${brand}: registo, publicar anúncios, contas profissionais e segurança.`
+        : `Encuentra respuestas a las preguntas más frecuentes sobre cómo usar ${brand}: registrarse, subir anuncios, cuentas profesionales y seguridad.`;
+
+    const canonical = getCanonicalUrl(pathname, locale, currentDomain);
+
     return {
-        title: `Preguntas Frecuentes - ${brand}`,
-        description: `Encuentra respuestas a las preguntas más frecuentes sobre cómo usar ${brand}: registrarse, subir anuncios, cuentas profesionales y seguridad.`,
-        alternates: { canonical: isEquipop ? "/equipop/preguntas-frecuentes" : "/preguntas-frecuentes" }
+        title,
+        description,
+        alternates: {
+            canonical,
+            languages: getHreflangLinks(pathname, currentDomain)
+        }
     };
 }
 
 export default async function FAQPage() {
     const tenant = await getServerTenantSlug();
-    const isEquipop = tenant === 'equipop';
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
     const brand = isEquipop ? 'Equipop' : 'Ruralpop';
-    const domain = isEquipop ? 'equipop.app' : 'ruralpop.com';
+    const domain = isEquipop ? 'equipop.app' : (currentDomain.includes('ruralpop.pt') ? 'ruralpop.pt' : 'ruralpop.com');
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
 
     // FAQ Data definition for both rendering and Schema.org
-    const faqs = [
+    const faqs = isPt ? [
+        {
+            category: 'Conta',
+            id: 'cuenta',
+            questions: [
+                {
+                    q: `Como me registo no ${brand}?`,
+                    a: '1. Clica no ícone de utilizador ou "Entrar / Registo" no canto superior direito do ecrã.\n2. Seleciona "Criar conta" ou usa diretamente a tua conta Google ou Apple para aceder rapidamente.\n3. Preenche os teus dados básicos e já está! Fazes parte da comunidade.'
+                },
+                {
+                    q: 'Como elimino a minha conta?',
+                    a: '1. Inicia sessão e acede ao teu "Perfil" no canto superior direito.\n2. Clica em "Definições".\n3. Na parte inferior, encontrarás a opção "Eliminar conta". Clica aí e segue os passos de segurança para confirmar o teu pedido.'
+                },
+                {
+                    q: 'Como contacto outro utilizador por chat?',
+                    a: `1. Encontra um anúncio do teu interesse.\n2. Na página do anúncio, clica no botão "Contactar".\n3. Escreve a tua mensagem e o utilizador irá recebê-la de imediato na sua caixa de mensagens do ${brand} e por email.`
+                },
+                {
+                    q: `É seguro usar o ${brand}?`,
+                    a: '1. Sim. Verificamos constantemente as contas profissionais.\n2. Dispomos de um sistema de denúncia em cada anúncio caso detetes algo suspeito.\n3. Mantemos a tua privacidade: os teus dados de contacto não são públicos a menos que decidas partilhá-los.'
+                },
+                {
+                    q: 'É profissional ou empresa do setor?',
+                    a: '1. Se tens uma empresa ou negócio ligado ao setor agrícola ou pecuário.\n2. Recomendamos criar diretamente uma conta Profissional para ter a tua própria montra digital e publicar anúncios sem limite.'
+                }
+            ]
+        },
+        {
+            category: 'Anúncios',
+            id: 'anuncios',
+            questions: [
+                {
+                    q: `Como publico um anúncio no ${brand}?`,
+                    a: `1. Com a sessão iniciada, clica no botão "Vender" na barra superior.\n2. Seleciona a categoria principal e subcategoria para o teu produto${isEquipop ? '' : ' ou animal'}.\n3. Carrega fotografias nítidas, define um título descritivo e o preço.\n4. Revê os dados e clica em publicar. Ficará logo visível para milhares de interessados.`
+                },
+                {
+                    q: 'Quantos anúncios posso publicar?',
+                    a: '1. Como utilizador Particular, podes publicar um número limitado de anúncios gratuitos ativos em simultâneo.\n2. Se fores Profissional ou Empresa, podes aderir a um Plano Pro e publicar tantos catálogos de produtos quantos o teu negócio necessitar.'
+                },
+                {
+                    q: 'Como posso destacar os meus anúncios?',
+                    a: '1. Acede ao teu perfil e depois a "Os meus anúncios".\n2. Junto ao anúncio que pretendes promover, clica na opção "Destacar".\n3. Estes anúncios surgem sempre no topo das pesquisas com destaque visual especial.'
+                },
+                {
+                    q: 'Como elimino um anúncio?',
+                    a: '1. Acede a "Os meus anúncios" a partir do menu de perfil.\n2. Localiza o anúncio a remover.\n3. Abre as opções (três pontos) e seleciona "Eliminar". O anúncio será imediatamente retirado do site.'
+                }
+            ]
+        },
+        {
+            category: 'Profissionais',
+            id: 'profesionales',
+            questions: [
+                {
+                    q: 'Criar conta profissional',
+                    a: '1. Acede à secção "Profissionais" na página inicial ou no menu.\n2. Seleciona e subscreve o plano mais adequado (mensal ou anual).\n3. Preenche os dados fiscais e os contactos públicos do teu negócio.'
+                },
+                {
+                    q: 'Vantagens das contas profissionais',
+                    a: `1. A tua própria página web (landing page) com o URL ${domain}/empresa/o-teu-nome.\n2. Publicação de anúncios ilimitados sem expiração.\n3. Selo de destaque nos teus anúncios que transmite maior confiança aos compradores.\n4. Estatísticas detalhadas de visualizações e contactos recebidos.`
+                }
+            ]
+        },
+        {
+            category: 'Compras',
+            id: 'compras',
+            questions: [
+                {
+                    id: 'proteccion',
+                    q: `Comprar com Proteção ${brand}`,
+                    a: `Compra e vende com tranquilidade com a Proteção ${brand}. Desfruta de transações simples e seguras sem preocupações.\n\nO que é a Proteção ${brand}?\nA Proteção ${brand} proporciona uma experiência de compra segura e sem sobressaltos através do nosso sistema de pagamento protegido.\n\nComprar com Proteção ${brand}\nAo realizar uma compra, aplicamos uma taxa de serviço através da qual:\nO teu dinheiro fica seguro connosco enquanto verificas se o artigo recebido está correto (dispões de 7 dias após a confirmação de entrega pela transportadora). Se estiver tudo conforme, efetuamos o pagamento ao vendedor.\nSe o artigo recebido não coincidir com a descrição ou apresentar defeito, podes solicitar o reembolso.\n\nVender com Proteção ${brand}\nAo realizares as tuas vendas através do ${brand}:\nGuardamos o valor em segurança até que a encomenda chegue ao comprador e este confirme que está correta, ou após decorridos os 7 dias de verificação.\nA nossa equipa de apoio ao cliente está sempre disponível para ajudar.\n\nCompra e vende com confiança, nós tratamos do resto!`
+                }
+            ]
+        }
+    ] : [
         {
             category: 'Cuenta',
             id: 'cuenta',
@@ -125,7 +223,8 @@ export default async function FAQPage() {
 
 /**
  * Memory / Decisiones Técnicas:
+ * - Soporte multilingüe completo (ES / PT): detecta locale del header inyectado por middleware.
+ * - En Portugal (.pt) muestra preguntas y respuestas en portugués europeo nativo y genera JSON-LD en PT.
  * - Implementación de un Schema JSON-LD dinámico `FAQPage` vital para SEO (Google Rich Snippets).
  * - Componente Server-side por defecto en app-router para que el indexado sea perfecto.
- * - Delegate to FAQClient for the interactive visual layout.
  */

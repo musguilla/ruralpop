@@ -75,7 +75,7 @@ export async function Footer() {
                     <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         {t("conexion_rural")}
                     </span>
-                    <LocalizedLink href="/catalogos/tractores" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors whitespace-nowrap">
+                    <LocalizedLink href="/tractores" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors whitespace-nowrap">
                         {t("catalogos_tractores")}
                     </LocalizedLink>
                     {locale !== 'pt' && (

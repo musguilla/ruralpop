@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { HelpCircle } from "lucide-react";
+import { useTranslation } from "@/context/LocaleContext";
 
 type Question = {
     id?: string;
@@ -16,6 +17,9 @@ type FAQCategory = {
 };
 
 export default function FAQClient({ faqs, brand }: { faqs: FAQCategory[], brand: string }) {
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
+
     // La categoría 1 se abre por defecto, pero ninguna pregunta está activa para mostrar el Empty State "premium".
     const [activeCategory, setActiveCategory] = useState<string | null>(faqs[0].id);
     const [activeQuestion, setActiveQuestion] = useState<number | null>(null);
@@ -53,10 +57,15 @@ export default function FAQClient({ faqs, brand }: { faqs: FAQCategory[], brand:
                         <HelpCircle className="w-8 h-8 text-[var(--ag-sys-color-primary)]" />
                     </div>
                     <h1 className="text-4xl md:text-5xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-6">
-                        Preguntas <span className="text-[var(--ag-sys-color-primary)]">Frecuentes</span>
+                        {isPt ? 'Perguntas ' : 'Preguntas '}
+                        <span className="text-[var(--ag-sys-color-primary)]">
+                            {isPt ? 'Frequentes' : 'Frecuentes'}
+                        </span>
                     </h1>
                     <p className="text-lg md:text-xl text-[var(--ag-sys-color-text-muted)] leading-relaxed max-w-2xl mx-auto">
-                        Encuentra las respuestas más rápidas y sencillas sobre cómo utilizar la plataforma {brand}.
+                        {isPt 
+                            ? `Encontra as respostas mais rápidas e simples sobre como utilizar a plataforma ${brand}.`
+                            : `Encuentra las respuestas más rápidas y sencillas sobre cómo utilizar la plataforma ${brand}.`}
                     </p>
                 </div>
             </div>
@@ -136,10 +145,12 @@ export default function FAQClient({ faqs, brand }: { faqs: FAQCategory[], brand:
                                 <HelpCircle className="w-10 h-10 text-[var(--ag-sys-color-primary)] opacity-80" />
                             </div>
                             <h2 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)] mb-4">
-                                ¿En qué podemos ayudarte?
+                                {isPt ? 'Em que podemos ajudar-te?' : '¿En qué podemos ayudarte?'}
                             </h2>
                             <p className="text-[var(--ag-sys-color-text-muted)] text-xl w-full leading-relaxed">
-                                Selecciona cualquier pregunta del menú interactivo de la izquierda para descubrir la respuesta paso a paso.
+                                {isPt 
+                                    ? 'Seleciona qualquer pergunta no menu à esquerda para ver a resposta passo a passo.'
+                                    : 'Selecciona cualquier pregunta del menú interactivo de la izquierda para descubrir la respuesta paso a paso.'}
                             </p>
                         </div>
                     ) : (

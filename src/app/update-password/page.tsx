@@ -7,6 +7,7 @@ import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import type { EmailOtpType } from "@supabase/supabase-js";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface InlineRecoveryState {
     email: string;
@@ -16,6 +17,8 @@ interface InlineRecoveryState {
 }
 
 export default function UpdatePasswordPage() {
+    const { locale } = useTranslation();
+    const isPt = locale === "pt";
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [error, setError] = useState<string | null>(null);
@@ -62,7 +65,9 @@ export default function UpdatePasswordPage() {
 
                 if (verifyError) {
                     console.error("Error validando token_hash:", verifyError);
-                    setError("El enlace de recuperación ha caducado o ya ha sido utilizado. Introduce tu email abajo para recibir uno nuevo al instante.");
+                    setError(isPt 
+                        ? "A ligação de recuperação expirou ou já foi utilizada. Introduza o seu email abaixo para receber uma nova ligação."
+                        : "El enlace de recuperación ha caducado o ya ha sido utilizado. Introduce tu email abajo para recibir uno nuevo al instante.");
                 } else {
                     setHasActiveSession(true);
                     window.history.replaceState(null, "", window.location.pathname);
@@ -135,17 +140,17 @@ export default function UpdatePasswordPage() {
         setError(null);
 
         if (isExchangingCode) {
-            setError("Por favor espera, estamos validando tu enlace seguro...");
+            setError(isPt ? "Por favor aguarde, estamos a validar a sua ligação segura..." : "Por favor espera, estamos validando tu enlace seguro...");
             return;
         }
 
         if (password !== passwordConfirm) {
-            setError("Las contraseñas no coinciden.");
+            setError(isPt ? "As palavras-passe não coincidem." : "Las contraseñas no coinciden.");
             return;
         }
 
         if (password.length < 6) {
-            setError("La contraseña debe tener al menos 6 caracteres.");
+            setError(isPt ? "A palavra-passe deve ter pelo menos 6 caracteres." : "La contraseña debe tener al menos 6 caracteres.");
             return;
         }
 
@@ -159,15 +164,16 @@ export default function UpdatePasswordPage() {
 
         if (updateError) {
             if (updateError.message.toLowerCase().includes("session missing")) {
-                setError("La sesión ha expirado. Introduce tu correo abajo para solicitar un nuevo enlace.");
+                setError(isPt ? "A sessão expirou. Introduza o seu email abaixo para solicitar uma nova ligação." : "La sesión ha expirado. Introduce tu correo abajo para solicitar un nuevo enlace.");
                 setHasActiveSession(false);
             } else {
-                setError("Error al actualizar la contraseña: " + updateError.message);
+                setError((isPt ? "Erro ao atualizar a palavra-passe: " : "Error al actualizar la contraseña: ") + updateError.message);
             }
         } else {
-            setMessage("Tu contraseña se ha actualizado correctamente. Redirigiendo al login...");
+            setMessage(isPt ? "A sua palavra-passe foi atualizada com sucesso. A redirecionar para o login..." : "Tu contraseña se ha actualizado correctamente. Redirigiendo al login...");
             setTimeout(() => {
-                router.push("/login?message=Tu contraseña se ha cambiado correctamente. Usa tu nueva contraseña para acceder.");
+                const msg = isPt ? "A sua palavra-passe foi alterada com sucesso. Utilize a sua nova palavra-passe para aceder." : "Tu contraseña se ha cambiado correctamente. Usa tu nueva contraseña para acceder.";
+                router.push(`/login?message=${encodeURIComponent(msg)}`);
             }, 2500);
         }
     };
@@ -175,7 +181,7 @@ export default function UpdatePasswordPage() {
     const handleRequestNewLink = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!inlineRecovery.email || !inlineRecovery.email.includes("@")) {
-            setInlineRecovery((prev) => ({ ...prev, error: "Introduce un correo electrónico válido." }));
+            setInlineRecovery((prev) => ({ ...prev, error: isPt ? "Introduza um endereço de email válido." : "Introduce un correo electrónico válido." }));
             return;
         }
 
@@ -196,10 +202,10 @@ export default function UpdatePasswordPage() {
                 setInlineRecovery((prev) => ({ ...prev, loading: false, sent: true }));
                 setError(null);
             } else {
-                setInlineRecovery((prev) => ({ ...prev, loading: false, error: data.message || "Error al enviar el enlace." }));
+                setInlineRecovery((prev) => ({ ...prev, loading: false, error: data.message || (isPt ? "Erro ao enviar a ligação." : "Error al enviar el enlace.") }));
             }
         } catch {
-            setInlineRecovery((prev) => ({ ...prev, loading: false, error: "Error de conexión al solicitar el enlace." }));
+            setInlineRecovery((prev) => ({ ...prev, loading: false, error: isPt ? "Erro de ligação ao solicitar a nova ligação." : "Error de conexión al solicitar el enlace." }));
         }
     };
 
@@ -220,17 +226,17 @@ export default function UpdatePasswordPage() {
                         </Link>
                     </div>
                     <h1 className="text-3xl font-extrabold text-[var(--ag-sys-color-text)]">
-                        Nueva Contraseña
+                        {isPt ? "Nova Palavra-passe" : "Nueva Contraseña"}
                     </h1>
                     <p className="mt-2 text-sm text-[var(--ag-sys-color-text-muted)]">
-                        Introduce tu nueva contraseña para acceder a tu cuenta.
+                        {isPt ? "Introduza a sua nova palavra-passe para aceder à sua conta." : "Introduce tu nueva contraseña para acceder a tu cuenta."}
                     </p>
                 </div>
 
                 {isExchangingCode && (
                     <div className="p-4 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-sm rounded-xl border border-blue-200 dark:border-blue-800 text-center flex items-center justify-center gap-2">
                         <span className="inline-block w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
-                        Verificando enlace seguro...
+                        {isPt ? "A verificar ligação segura..." : "Verificando enlace seguro..."}
                     </div>
                 )}
 
@@ -252,7 +258,7 @@ export default function UpdatePasswordPage() {
                         <div className="space-y-4">
                             <div>
                                 <label htmlFor="password" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                    Nueva Contraseña
+                                    {isPt ? "Nova Palavra-passe" : "Nueva Contraseña"}
                                 </label>
                                 <div className="relative">
                                     <PasswordInput
@@ -266,7 +272,7 @@ export default function UpdatePasswordPage() {
                             </div>
                             <div>
                                 <label htmlFor="password_confirm" className="block text-sm font-medium text-[var(--ag-sys-color-text)] mb-1">
-                                    Repite la nueva contraseña
+                                    {isPt ? "Repita a nova palavra-passe" : "Repite la nueva contraseña"}
                                 </label>
                                 <div className="relative">
                                     <PasswordInput
@@ -285,7 +291,7 @@ export default function UpdatePasswordPage() {
                             disabled={isUpdating}
                             className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ag-sys-color-primary)] transition-all shadow-sm disabled:opacity-50"
                         >
-                            {isUpdating ? "Guardando..." : "Guardar contraseña"}
+                            {isUpdating ? (isPt ? "A guardar..." : "Guardando...") : (isPt ? "Guardar palavra-passe" : "Guardar contraseña")}
                         </button>
                     </form>
                 )}
@@ -295,12 +301,16 @@ export default function UpdatePasswordPage() {
                     <div className="mt-6 border-t border-[var(--ag-sys-color-border)] pt-6">
                         {inlineRecovery.sent ? (
                             <div className="p-4 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-300 text-sm rounded-xl border border-green-200 dark:border-green-800 text-center">
-                                ¡Listo! Hemos enviado un nuevo enlace a <strong>{inlineRecovery.email}</strong>. Revisa tu bandeja de entrada o spam.
+                                {isPt ? (
+                                    <>Pronto! Enviámos uma nova ligação para <strong>{inlineRecovery.email}</strong>. Verifique a sua caixa de entrada ou spam.</>
+                                ) : (
+                                    <>¡Listo! Hemos enviado un nuevo enlace a <strong>{inlineRecovery.email}</strong>. Revisa tu bandeja de entrada o spam.</>
+                                )}
                             </div>
                         ) : (
                             <form onSubmit={handleRequestNewLink} className="space-y-4">
                                 <p className="text-sm font-medium text-[var(--ag-sys-color-text)] text-center">
-                                    Solicita un enlace nuevo aquí mismo:
+                                    {isPt ? "Solicite uma nova ligação aqui mesmo:" : "Solicita un enlace nuevo aquí mismo:"}
                                 </p>
                                 <div>
                                     <input
@@ -320,13 +330,13 @@ export default function UpdatePasswordPage() {
                                     disabled={inlineRecovery.loading}
                                     className="w-full py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary-hover)] transition-all disabled:opacity-50"
                                 >
-                                    {inlineRecovery.loading ? "Enviando..." : "Enviar nuevo enlace"}
+                                    {inlineRecovery.loading ? (isPt ? "A enviar..." : "Enviando...") : (isPt ? "Enviar nova ligação" : "Enviar nuevo enlace")}
                                 </button>
                             </form>
                         )}
                         <div className="mt-4 text-center">
                             <Link href="/login" className="text-xs text-[var(--ag-sys-color-primary)] hover:underline">
-                                Volver al inicio de sesión
+                                {isPt ? "Voltar ao início de sessão" : "Volver al inicio de sesión"}
                             </Link>
                         </div>
                     </div>

@@ -47,7 +47,7 @@ const ptSubcategoryFallback: Record<string, string> = {
     "Cosechadoras": "Ceifeiras",
     "Depósitos": "Depósitos",
     "Desbrozadoras": "Roçadoras",
-    "Empacadoras": "Enfaradadeiras",
+    "Empacadoras": "Enfardadeiras",
     "Encintadoras": "Plastificadoras",
     "Motocultores": "Motocultivadores",
     "Remolques": "Reboques",

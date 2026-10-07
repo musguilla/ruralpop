@@ -4,6 +4,7 @@ import { useState } from "react";
 import { handleConfirmReturn } from "@/app/dashboard/monedero/actions";
 import { CreditCard, Loader2, AlertTriangle, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/context/LocaleContext";
 import clsx from "clsx";
 
 interface ConfirmReturnButtonProps {
@@ -12,6 +13,8 @@ interface ConfirmReturnButtonProps {
 
 export function ConfirmReturnButton({ orderId }: ConfirmReturnButtonProps) {
     const router = useRouter();
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -23,13 +26,13 @@ export function ConfirmReturnButton({ orderId }: ConfirmReturnButtonProps) {
         try {
             const res = await handleConfirmReturn(orderId);
             if (!res.success) {
-                setError(res.error || "Ocurrió un error.");
+                setError(res.error || (isPt ? "Ocorreu um erro." : "Ocurrió un error."));
                 setLoading(false);
             } else {
                 router.refresh();
             }
         } catch (err: any) {
-            setError(err.message || "Error de conexión.");
+            setError(err.message || (isPt ? "Erro de ligação." : "Error de conexión."));
             setLoading(false);
         }
     };
@@ -50,13 +53,13 @@ export function ConfirmReturnButton({ orderId }: ConfirmReturnButtonProps) {
                 >
                     {loading ? (
                         <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Reembolsando...
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            {isPt ? "A reembolsar..." : "Reembolsando..."}
                         </>
                     ) : (
                         <>
                             <CreditCard className="w-4 h-4" />
-                            Confirmar devolución
+                            {isPt ? "Confirmar devolução" : "Confirmar devolución"}
                         </>
                     )}
                 </button>
@@ -77,17 +80,19 @@ export function ConfirmReturnButton({ orderId }: ConfirmReturnButtonProps) {
                                 <AlertTriangle className="w-6 h-6 text-red-600" />
                             </div>
                             <h3 className="text-xl font-extrabold text-[var(--ag-sys-color-text)] mb-2 leading-tight">
-                                ¿Confirmar devolución?
+                                {isPt ? "Confirmar devolução?" : "¿Confirmar devolución?"}
                             </h3>
                             <p className="text-[var(--ag-sys-color-text-muted)] text-sm mb-6">
-                                Al confirmar esta acción, los fondos retenidos se reembolsarán íntegramente a la tarjeta del comprador de forma automática. Esta acción es inmediata e irreversible.
+                                {isPt 
+                                    ? "Ao confirmar esta ação, os fundos retidos serão reembolsados integralmente no cartão do comprador de forma automática. Esta ação é imediata e irreversível." 
+                                    : "Al confirmar esta acción, los fondos retenidos se reembolsarán íntegramente a la tarjeta del comprador de forma automática. Esta acción es inmediata e irreversible."}
                             </p>
                             <div className="flex flex-col gap-2 mt-2">
                                 <button
                                     onClick={executeConfirmReturn}
                                     className="px-5 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 active:scale-[0.98] transition-all w-full shadow-md flex items-center justify-center gap-2"
                                 >
-                                    Sí, devolver fondos
+                                    {isPt ? "Sim, devolver fundos" : "Sí, devolver fondos"}
                                 </button>
                                 <button
                                     onClick={() => setShowModal(false)}

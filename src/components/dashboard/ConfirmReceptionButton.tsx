@@ -4,6 +4,7 @@ import { useState } from "react";
 import { handleConfirmReception } from "@/app/dashboard/compras/actions";
 import { CheckCircle2, Loader2, AlertTriangle, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/context/LocaleContext";
 import clsx from "clsx";
 
 interface ConfirmReceptionButtonProps {
@@ -12,6 +13,8 @@ interface ConfirmReceptionButtonProps {
 
 export function ConfirmReceptionButton({ orderId }: ConfirmReceptionButtonProps) {
     const router = useRouter();
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
@@ -23,7 +26,7 @@ export function ConfirmReceptionButton({ orderId }: ConfirmReceptionButtonProps)
         try {
             const res = await handleConfirmReception(orderId);
             if (!res.success) {
-                setError(res.error || "Ocurrió un error.");
+                setError(res.error || (isPt ? "Ocorreu um erro." : "Ocurrió un error."));
                 setLoading(false);
             } else {
                 router.refresh();
@@ -31,7 +34,7 @@ export function ConfirmReceptionButton({ orderId }: ConfirmReceptionButtonProps)
                 // and keeping it true prevents double clicks.
             }
         } catch (err: any) {
-            setError(err.message || "Error de conexión.");
+            setError(err.message || (isPt ? "Erro de ligação." : "Error de conexión."));
             setLoading(false);
         }
     };
@@ -53,17 +56,17 @@ export function ConfirmReceptionButton({ orderId }: ConfirmReceptionButtonProps)
                     {loading ? (
                         <>
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            Confirmando...
+                            {isPt ? "A confirmar..." : "Confirmando..."}
                         </>
                     ) : (
                         <>
                             <CheckCircle2 className="w-5 h-5" />
-                            Confirmar Recepción
+                            {isPt ? "Confirmar Receção" : "Confirmar Recepción"}
                         </>
                     )}
                 </button>
                 <span className="text-[10px] text-center text-[var(--ag-sys-color-text-muted)] mt-1 max-w-[200px] leading-tight">
-                    Al confirmar, liberas el pago retenido al vendedor.
+                    {isPt ? "Ao confirmar, liberta o pagamento retido ao vendedor." : "Al confirmar, liberas el pago retenido al vendedor."}
                 </span>
             </div>
 
@@ -82,17 +85,19 @@ export function ConfirmReceptionButton({ orderId }: ConfirmReceptionButtonProps)
                                 <AlertTriangle className="w-6 h-6 text-amber-600" />
                             </div>
                             <h3 className="text-xl font-extrabold text-[var(--ag-sys-color-text)] mb-2 leading-tight">
-                                ¿Has recibido el producto correctamente?
+                                {isPt ? "Recebeu o produto corretamente?" : "¿Has recibido el producto correctamente?"}
                             </h3>
                             <p className="text-[var(--ag-sys-color-text-muted)] text-sm mb-6">
-                                Al confirmar esta acción, liberaremos el pago de forma segura al vendedor. Esta acción es definitiva y no se puede deshacer.
+                                {isPt 
+                                    ? "Ao confirmar esta ação, libertaremos o pagamento com total segurança ao vendedor. Esta ação é definitiva e não pode ser revertida." 
+                                    : "Al confirmar esta acción, liberaremos el pago de forma segura al vendedor. Esta acción es definitiva y no se puede deshacer."}
                             </p>
                             <div className="flex flex-col gap-2 mt-2">
                                 <button
                                     onClick={executeConfirm}
                                     className="px-5 py-3 rounded-xl font-bold text-white bg-green-600 hover:bg-green-700 active:scale-[0.98] transition-all w-full shadow-md flex items-center justify-center gap-2"
                                 >
-                                    Sí, confirmar recepción
+                                    {isPt ? "Sim, confirmar receção" : "Sí, confirmar recepción"}
                                 </button>
                                 <button
                                     onClick={() => setShowModal(false)}

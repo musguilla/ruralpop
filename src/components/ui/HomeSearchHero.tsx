@@ -14,8 +14,8 @@ import { useLocalizedRoute } from "@/i18n/hooks";
 
 // Define a unified list for the slider
 const VISUAL_CATEGORIES = [
-    { id: "Bovino", type: "subcategory", label: "Bovino", labelPt: "Bovino", icon: <Image src="/icon-bovino.jpg" alt="Bovino" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "Equino", type: "subcategory", label: "Equino", labelPt: "Equino", icon: <Image src="/icon-equino.jpg" alt="Equino" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Bovino", type: "subcategory", label: "Bovino", labelPt: "Bovinos", icon: <Image src="/icon-bovino.jpg" alt="Bovino" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "Equino", type: "subcategory", label: "Equino", labelPt: "Cavalos", icon: <Image src="/icon-equino.jpg" alt="Equino" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "Caprino", type: "subcategory", label: "Caprino", labelPt: "Caprinos", icon: <Image src="/icon-caprino.jpg" alt="Caprino" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "Ovino", type: "subcategory", label: "Ovino", labelPt: "Ovinos", icon: <Image src="/icon-ovino.jpg" alt="Ovino" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "Porcino", type: "subcategory", label: "Porcino", labelPt: "Suínos", icon: <Image src="/icon-porcino.jpg" alt="Porcino" width={76} height={76} className="object-cover rounded-xl" /> },
@@ -26,12 +26,12 @@ const VISUAL_CATEGORIES = [
     { id: "recambios-maquinaria", type: "category", label: "Recambios", labelPt: "Peças", icon: <Image src="/icon-repuestos.jpg" alt="Recambios" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "equipamiento-y-material", type: "category", label: "Equipamiento", labelPt: "Equipamento", icon: <Image src="/icon-equipamiento.jpg" alt="Equipamiento" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "agricultura", type: "category", label: "Agricultura", labelPt: "Agricultura", icon: <Image src="/icon-agricultura.jpg" alt="Agricultura" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "fincas", type: "category", label: "Fincas", labelPt: "Fazendas", icon: <Image src="/icon-fincas.jpg" alt="Fincas" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "fincas", type: "category", label: "Fincas", labelPt: "Quintas", icon: <Image src="/icon-fincas.jpg" alt="Fincas" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "forraje", type: "category", label: "Forraje", labelPt: "Forragem", icon: <Image src="/icon-forraje.jpg" alt="Forraje" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "alimentos", type: "category", label: "Km0", labelPt: "Km0", icon: <Image src="/icon-alimentoskm0.jpeg" alt="Km0" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "camiones-y-furgonetas", type: "category", label: "Camiones", labelPt: "Camiões", icon: <Image src="/icon-camiones.jpg" alt="Camiones y furgonetas" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "coches", type: "category", label: "Coches", labelPt: "Carros", icon: <Image src="/icon-coches.jpg" alt="Coches" width={76} height={76} className="object-cover rounded-xl" /> },
-    { id: "atv", type: "category", label: "ATV", labelPt: "ATV", icon: <Image src="/icon-atv.jpg" alt="ATV" width={76} height={76} className="object-cover rounded-xl" /> },
+    { id: "atv", type: "category", label: "ATV", labelPt: "Moto4", icon: <Image src="/icon-atv.jpg" alt="ATV" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "motos", type: "category", label: "Motos", labelPt: "Motos", icon: <Image src="/icon-motos.jpg" alt="Motos" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "genetica-y-reproduccion", type: "category", label: "Genética", labelPt: "Genética", icon: <Image src="/icon-genetica.jpg" alt="Genética" width={76} height={76} className="object-cover rounded-xl" /> },
     { id: "Transporte", type: "subcategory", label: "Transporte", labelPt: "Transporte", icon: <Image src="/icon-transporte.jpg" alt="Transporte" width={76} height={76} className="object-cover rounded-xl" /> },

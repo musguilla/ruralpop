@@ -2,17 +2,33 @@ import Image from "next/image";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { login } from "./actions";
-import { Metadata } from "next";
-import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getServerTenantSlug, getServerTenantDomain } from "@/utils/tenant/server";
 import { headers } from "next/headers";
 import { LocalizedLink } from "@/components/ui/LocalizedLink";
 import { LocaleCode } from "@/i18n/config";
+import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
 
-export const metadata: Metadata = {
-    title: "Inicia Sesión | Ruralpop",
-    description: "Inicia sesión en tu cuenta de Ruralpop para publicar y gestionar tus anuncios.",
-    alternates: { canonical: "/login" }
-};
+export async function generateMetadata() {
+    const tenant = await getServerTenantSlug();
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
+    const originalPathname = headersList.get('x-original-pathname') || '/login';
+
+    return {
+        title: isPt ? `Iniciar Sessão | ${brand}` : `Inicia Sesión | ${brand}`,
+        description: isPt 
+            ? `Inicie sessão na sua conta da ${brand} para publicar e gerir os seus anúncios.` 
+            : `Inicia sesión en tu cuenta de ${brand} para publicar y gestionar tus anuncios.`,
+        alternates: {
+            canonical: getCanonicalUrl(originalPathname, locale, currentDomain),
+            languages: getHreflangLinks(originalPathname, currentDomain)
+        }
+    };
+}
 
 export default async function LoginPage(props: {
     searchParams: Promise<{ error?: string; message?: string; redirectTo?: string }>;

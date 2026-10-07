@@ -8,10 +8,18 @@ import { headers } from "next/headers";
 import { LocaleCode } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 
-export const metadata = {
-    title: "{dict.favorites.title} | Ruralpop",
-    description: "Tus anuncios y animales guardados favoritos en Ruralpop",
-};
+import { getLoginRedirectUrl } from "@/utils/authRedirect";
+
+export async function generateMetadata() {
+    const headersList = await headers();
+    const locale = (headersList.get("x-locale") || "es") as LocaleCode;
+    const isPt = locale === 'pt';
+    const dict = await getDictionary(locale);
+    return {
+        title: `${dict.favorites.title} | Ruralpop`,
+        description: isPt ? "Os teus anúncios e animais favoritos guardados na Ruralpop" : "Tus anuncios y animales guardados favoritos en Ruralpop",
+    };
+}
 
 export default async function FavoritosPage() {
     const headersList = await headers();
@@ -21,7 +29,7 @@ export default async function FavoritosPage() {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect("/login?redirectTo=/favoritos");
+        redirect(getLoginRedirectUrl(locale, "/favoritos"));
     }
 
     const { favorites, error } = await getUserFavorites();

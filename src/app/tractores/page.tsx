@@ -1,5 +1,7 @@
 import React from "react";
-import Link from "next/link";
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
+import { LocalizedLink } from "@/components/ui/LocalizedLink";
 import { BookOpen, Tractor, ChevronRight } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 
@@ -35,13 +37,17 @@ const DEFAULT_STYLE = {
 };
 
 export default async function TractoresIndexPage() {
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
+
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
 
     // Fetch brands
-    const { data: brandsData, error } = await supabase
+    const { data: brandsData } = await supabase
         .from('tractor_brands')
         .select('*')
         .eq('is_active', true)
@@ -49,7 +55,6 @@ export default async function TractoresIndexPage() {
         
     const brands = brandsData || [];
 
-    // Render logic
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)] py-12 px-4 sm:px-6">
             <div className="max-w-6xl mx-auto">
@@ -58,10 +63,12 @@ export default async function TractoresIndexPage() {
                         <BookOpen className="w-8 h-8 text-[var(--ag-sys-color-primary)]" />
                     </div>
                     <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--ag-sys-color-text)] tracking-tight mb-4">
-                        Catálogos de Tractores
+                        {isPt ? "Catálogos de Tratores" : "Catálogos de Tractores"}
                     </h1>
                     <p className="text-lg text-[var(--ag-sys-color-text-muted)] leading-relaxed">
-                        Explora nuestra biblioteca documental exclusiva. Accede a todos los catálogos oficiales, fichas técnicas y manuales en PDF de las mejores marcas de maquinaria agrícola del mercado.
+                        {isPt
+                            ? "Explore a nossa biblioteca documental exclusiva. Aceda a todos os catálogos oficiais, fichas técnicas e manuais em PDF das melhores marcas de maquinaria agrícola do mercado."
+                            : "Explora nuestra biblioteca documental exclusiva. Accede a todos los catálogos oficiales, fichas técnicas y manuales en PDF de las mejores marcas de maquinaria agrícola del mercado."}
                     </p>
                 </div>
 
@@ -69,7 +76,7 @@ export default async function TractoresIndexPage() {
                     {brands.map((brand) => {
                         const style = BRAND_STYLES[brand.slug] || DEFAULT_STYLE;
                         return (
-                        <Link 
+                        <LocalizedLink 
                             key={brand.id} 
                             href={`/tractores/${brand.slug}`}
                             className={`group flex items-center p-6 bg-white rounded-3xl border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${style.border} ${style.hoverBorder} overflow-hidden relative`}
@@ -85,43 +92,51 @@ export default async function TractoresIndexPage() {
                                     {brand.name}
                                 </h2>
                                 <p className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] mt-0.5">
-                                    Ver modelos y catálogos
+                                    {isPt ? "Ver modelos e catálogos" : "Ver modelos y catálogos"}
                                 </p>
                             </div>
 
                             <div className={`w-10 h-10 rounded-full bg-white border ${style.border} flex items-center justify-center text-[var(--ag-sys-color-text-muted)] transition-colors group-hover:${style.color} group-hover:text-white group-hover:border-transparent opacity-0 -translate-x-4 group-hover:translate-x-0 group-hover:opacity-100`}>
                                 <ChevronRight className="w-5 h-5 ml-0.5" />
                             </div>
-                        </Link>
+                        </LocalizedLink>
                     )})}
                 </div>
                 
                 <div className="mt-20 bg-gradient-to-br from-[var(--ag-sys-color-surface)] to-green-50/50 rounded-[2rem] p-8 sm:p-12 border border-[var(--ag-sys-color-border)] flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
                     <div className="max-w-xl text-center md:text-left">
                         <h3 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-2">
-                            ¿Buscas tractores de segunda mano?
+                            {isPt ? "Procura tratores em segunda mão?" : "¿Buscas tractores de segunda mano?"}
                         </h3>
                         <p className="text-[var(--ag-sys-color-text-muted)]">
-                            Además de catálogos técnicos, en Ruralpop encontrarás miles de anuncios de tractores y maquinaria agrícola de ocasión cerca de ti.
+                            {isPt
+                                ? "Para além de catálogos técnicos, no Ruralpop encontrará milhares de anúncios de tratores e maquinaria agrícola de ocasião perto de si."
+                                : "Además de catálogos técnicos, en Ruralpop encontrarás miles de anuncios de tractores y maquinaria agrícola de ocasión cerca de ti."}
                         </p>
                     </div>
-                    <Link 
+                    <LocalizedLink 
                         href="/s/tractores-segunda-mano" 
                         className="px-8 py-4 bg-[var(--ag-sys-color-primary)] text-white font-bold rounded-2xl hover:bg-[var(--ag-sys-color-primary-hover)] transition-all shadow-md shadow-[var(--ag-sys-color-primary)]/20 whitespace-nowrap"
                     >
-                        Buscar Tractores
-                    </Link>
+                        {isPt ? "Pesquisar Tratores" : "Buscar Tractores"}
+                    </LocalizedLink>
                 </div>
                 
                 {/* Bloque SEO Inferior */}
                 <div className="mt-16 max-w-4xl mx-auto py-12 border-t border-[var(--ag-sys-color-border)]">
-                    <h2 className="text-3xl font-bold text-[var(--ag-sys-color-text)] mb-6">Encuentra el tractor perfecto para tu explotación</h2>
+                    <h2 className="text-3xl font-bold text-[var(--ag-sys-color-text)] mb-6">
+                        {isPt ? "Encontre o trator perfeito para a sua exploração" : "Encuentra el tractor perfecto para tu explotación"}
+                    </h2>
                     <div className="prose prose-lg text-[var(--ag-sys-color-text-muted)]">
                         <p>
-                            En Ruralpop hemos creado el catálogo técnico más completo de tractores agrícolas. Tanto si buscas un tractor frutero compacto, como si necesitas la máxima potencia para labores de tiro pesado, aquí encontrarás todas las especificaciones detalladas: potencia en CV, tipo de transmisión, capacidad del depósito, dimensiones, y más.
+                            {isPt
+                                ? "No Ruralpop criámos o catálogo técnico mais completo de tratores agrícolas. Quer procure um trator vinhateiro/pomar compacto, quer necessite da máxima potência para trabalhos pesados, aqui encontrará todas as especificações detalhadas: potência em CV, tipo de transmissão, capacidade do depósito, dimensões e muito mais."
+                                : "En Ruralpop hemos creado el catálogo técnico más completo de tractores agrícolas. Tanto si buscas un tractor frutero compacto, como si necesitas la máxima potencia para labores de tiro pesado, aquí encontrarás todas las especificaciones detalladas: potencia en CV, tipo de transmisión, capacidad del depósito, dimensiones, y más."}
                         </p>
                         <p>
-                            Disponemos de las marcas líderes del mercado como <strong>John Deere, New Holland, Case IH, Fendt, Massey Ferguson, y Kubota</strong>, entre muchas otras. Puedes explorar por marca, revisar los distintos modelos lanzados en las últimas décadas, e incluso descargar los manuales oficiales y catálogos en PDF directamente a tu dispositivo.
+                            {isPt
+                                ? "Dispomos das marcas líderes do mercado como John Deere, New Holland, Case IH, Fendt, Massey Ferguson e Kubota, entre muitas outras. Pode explorar por marca, rever os diferentes modelos lançados nas últimas décadas e até descarregar os manuais oficiais e catálogos em PDF diretamente para o seu dispositivo."
+                                : "Disponemos de las marcas líderes del mercado como John Deere, New Holland, Case IH, Fendt, Massey Ferguson, y Kubota, entre muchas otras. Puedes explorar por marca, revisar los distintos modelos lanzados en las últimas décadas, e incluso descargar los manuales oficiales y catálogos en PDF directamente a tu dispositivo."}
                         </p>
                     </div>
                 </div>

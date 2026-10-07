@@ -167,7 +167,7 @@ export function ChatInboxList({ initialThreads, userId }: ChatInboxListProps) {
                                     )}
                                 </div>
                                 <span className="text-xs font-semibold text-[var(--ag-sys-color-text-muted)]">
-                                    {thread.otherUser?.name || "Usuario"}
+                                    {thread.otherUser?.name || (locale === 'pt' ? "Utilizador" : "Usuario")}
                                 </span>
                             </div>
 

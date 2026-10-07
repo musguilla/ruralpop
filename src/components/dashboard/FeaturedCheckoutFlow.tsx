@@ -110,17 +110,22 @@ export function FeaturedCheckoutFlow({
                 throw new Error(txt || "Error al activar la funcionalidad.");
             }
 
-            router.push(`${isPt ? '/pt' : ''}/dashboard?success=activated`);
+            const isPtNative = typeof window !== 'undefined' && window.location.hostname.includes('ruralpop.pt');
+            const dashboardUrl = isPt ? (isPtNative ? "/dashboard" : "/pt/dashboard") : "/dashboard";
+            router.push(`${dashboardUrl}?success=activated`);
             router.refresh();
         } catch (error) {
             console.error("Error activating feature:", error);
-            alert(error instanceof Error ? error.message : "Error al procesar la solicitud.");
+            alert(error instanceof Error ? error.message : (isPt ? "Erro ao processar o pedido." : "Error al procesar la solicitud."));
         } finally {
             setIsActivating(false);
         }
     };
 
     if (isProfesional) {
+        const isPtNative = typeof window !== 'undefined' && window.location.hostname.includes('ruralpop.pt');
+        const dashboardUrl = isPt ? (isPtNative ? "/dashboard" : "/pt/dashboard") : "/dashboard";
+
         return (
             <div className="space-y-8 mb-16">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -129,15 +134,17 @@ export function FeaturedCheckoutFlow({
                         <div className="w-16 h-16 rounded-3xl bg-[var(--ag-sys-color-primary)] text-white flex items-center justify-center mb-6 shadow-lg shadow-[var(--ag-sys-color-primary)]/20">
                             <Crown className="w-8 h-8" />
                         </div>
-                        <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] mb-3">Destacar 20 días</h3>
+                        <h3 className="text-xl font-black text-[var(--ag-sys-color-text)] mb-3">
+                            {isPt ? "Destacar 20 dias" : "Destacar 20 días"}
+                        </h3>
                         <p className="text-sm text-[var(--ag-sys-color-text-muted)] mb-8 max-w-[240px]">
-                            Tu anuncio aparecerá en primeras posiciones durante los próximos 20 días.
+                            {isPt ? "O seu anúncio aparecerá nas primeiras posições durante os próximos 20 dias." : "Tu anuncio aparecerá en primeras posiciones durante los próximos 20 días."}
                         </p>
                         
                         <div className="mt-auto w-full">
                             <div className="flex items-center justify-center gap-2 mb-6 text-[var(--ag-sys-color-primary)] font-bold text-sm">
                                 <span className="px-3 py-1 bg-[var(--ag-sys-color-primary)]/10 rounded-full border border-[var(--ag-sys-color-primary)]/10">
-                                    {availableFeatured} disponibles
+                                    {availableFeatured} {isPt ? "disponíveis" : "disponibles"}
                                 </span>
                             </div>
 
@@ -146,7 +153,7 @@ export function FeaturedCheckoutFlow({
                                 disabled={availableFeatured <= 0 || isActivating}
                                 className="w-full py-4 bg-[var(--ag-sys-color-primary)] text-white font-black rounded-2xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-[var(--ag-sys-color-primary)]/10"
                             >
-                                {isActivating ? 'Activando...' : 'Destacar ahora'}
+                                {isActivating ? (isPt ? 'A ativar...' : 'Activando...') : (isPt ? 'Destacar agora' : 'Destacar ahora')}
                             </button>
                         </div>
                     </div>
@@ -156,9 +163,11 @@ export function FeaturedCheckoutFlow({
                         <div className="w-16 h-16 rounded-3xl bg-gray-50 text-gray-400 flex items-center justify-center mb-6 border border-gray-100">
                             <ArrowUpCircle className="w-8 h-8" />
                         </div>
-                        <h3 className="text-xl font-bold text-gray-400 mb-3">Subir anuncio (Bump)</h3>
+                        <h3 className="text-xl font-bold text-gray-400 mb-3">
+                            {isPt ? "Subir anúncio (Bump)" : "Subir anuncio (Bump)"}
+                        </h3>
                         <p className="text-sm text-gray-400 mb-8 max-w-[240px]">
-                            Usa tus impulsos disponibles para colocar tu anuncio arriba del todo.
+                            {isPt ? "Use os seus impulsos disponíveis para colocar o seu anúncio no topo." : "Usa tus impulsos disponibles para colocar tu anuncio arriba del todo."}
                         </p>
                         <div className="mt-auto w-full">
                             <div className="flex items-center justify-center gap-2 mb-6 text-gray-400 font-bold text-sm">
@@ -179,11 +188,11 @@ export function FeaturedCheckoutFlow({
 
                 <div className="pt-8 border-t border-[var(--ag-sys-color-border)] flex flex-col items-center">
                     <button
-                        onClick={() => router.push(`${isPt ? '/pt' : ''}/dashboard`)}
+                        onClick={() => router.push(dashboardUrl)}
                         className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] font-bold text-sm flex items-center gap-2 transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        {isPt ? "Não desejo destacar agora, voltar ao meu painel" : "No deseo destacarlo ahora, volver a mi panel"}
+                        {isPt ? "Não pretendo destacar agora, voltar ao meu painel" : "No deseo destacarlo ahora, volver a mi panel"}
                     </button>
                 </div>
             </div>

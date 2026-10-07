@@ -4,12 +4,15 @@ import React, { useRef } from "react";
 import { Search } from "lucide-react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface CompanySearchInputProps {
     initialSearchTerm?: string;
 }
 
 export function CompanySearchInput({ initialSearchTerm = "" }: CompanySearchInputProps) {
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -38,9 +41,9 @@ export function CompanySearchInput({ initialSearchTerm = "" }: CompanySearchInpu
                 name="q"
                 defaultValue={initialSearchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
-                placeholder="Buscar en esta tienda..." 
+                placeholder={isPt ? "Pesquisar nesta loja..." : "Buscar en esta tienda..."} 
                 className="w-full pl-10 pr-4 py-2.5 bg-white border border-[var(--ag-sys-color-border)] rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] shadow-sm"
-                aria-label="Caja de búsqueda de tienda"
+                aria-label={isPt ? "Caixa de pesquisa da loja" : "Caja de búsqueda de tienda"}
             />
         </div>
     );

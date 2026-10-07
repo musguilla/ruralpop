@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      { source: '/catalogos/tractores', destination: '/tractores', permanent: true },
       { source: '/tractores/use/:slug*', destination: '/tractores/uso/:slug*', permanent: true },
       { source: '/tractores/crop/:slug*', destination: '/tractores/cultivo/:slug*', permanent: true },
       { source: '/tractores/weight/:slug*', destination: '/tractores/peso/:slug*', permanent: true },

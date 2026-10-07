@@ -149,8 +149,8 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
         } catch (err) {
             console.error(err);
             showAlert({
-                title: "Error al enviar",
-                message: "No se ha podido enviar tu mensaje. Revisa tu conexión e inténtalo de nuevo.",
+                title: locale === 'pt' ? "Erro ao enviar" : "Error al enviar",
+                message: locale === 'pt' ? "Não foi possível enviar a tua mensagem. Verifica a tua ligação e tenta novamente." : "No se ha podido enviar tu mensaje. Revisa tu conexión e inténtalo de nuevo.",
                 type: "error"
             });
             setContent(tempContent);
@@ -178,7 +178,8 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
                             {listing.title}
                         </h3>
                         <p className="text-xs text-[var(--ag-sys-color-text-muted)] font-medium">
-                            Hablando con <span className="text-[var(--ag-sys-color-primary)]">{otherUser.name}</span>
+                            {locale === 'pt' ? "A conversar com " : "Hablando con "}
+                            <span className="text-[var(--ag-sys-color-primary)]">{otherUser.name}</span>
                         </p>
                     </div>
                 </div>
@@ -197,7 +198,9 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
                         <div className="w-16 h-16 bg-[var(--ag-sys-color-surface)] rounded-2xl flex items-center justify-center mb-4 border border-[var(--ag-sys-color-border)]">
                             <Tractor className="w-8 h-8" />
                         </div>
-                        <p className="text-sm font-medium">Inicia la conversación preguntando algo sobre el anuncio.</p>
+                        <p className="text-sm font-medium">
+                            {locale === 'pt' ? "Inicia a conversa perguntando algo sobre o anúncio." : "Inicia la conversación preguntando algo sobre el anuncio."}
+                        </p>
                     </div>
                 ) : (
                     messages.map((msg) => {
@@ -229,7 +232,7 @@ export function ChatThread({ listing, initialMessages, currentUser, otherUser }:
                         type="text"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        placeholder="Escribe tu mensaje..."
+                        placeholder={locale === 'pt' ? "Escreve a tua mensagem..." : "Escribe tu mensaje..."}
                         className="w-full h-12 pl-5 pr-12 rounded-2xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] text-[var(--ag-sys-color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] transition-all font-medium"
                     />
                     <button

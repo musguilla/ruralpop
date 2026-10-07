@@ -36,13 +36,15 @@ export function UserMenu({ userFullName, userId, avatarUrl, role, isGhost }: Use
     }, []);
 
     const handleLogout = async () => {
+        const isPtNative = typeof window !== 'undefined' && window.location.hostname.includes('ruralpop.pt');
+        const redirectUrl = locale === "pt" ? (isPtNative ? "/" : "/pt") : "/";
         try {
             const supabase = createClient();
             await supabase.auth.signOut();
-            window.location.href = locale === "pt" ? "/pt" : "/";
+            window.location.href = redirectUrl;
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
-            window.location.href = locale === "pt" ? "/pt" : "/";
+            window.location.href = redirectUrl;
         }
     };
 

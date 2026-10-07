@@ -1,7 +1,9 @@
 import React from "react";
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
+import { LocalizedLink } from "@/components/ui/LocalizedLink";
 import Image from "next/image";
 import { ArrowLeft, Download, FileText, Tractor, ChevronRight } from "lucide-react";
 import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
@@ -62,6 +64,10 @@ export async function generateMetadata(props: Props) {
 }
 
 export default async function BrandCatalogPage(props: Props) {
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
+
     const { brand: brandSlug } = await props.params;
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
     
@@ -77,7 +83,7 @@ export default async function BrandCatalogPage(props: Props) {
     }
     
     // Fetch models from Supabase
-    const { data: modelsData, error: modelsError } = await supabase
+    const { data: modelsData } = await supabase
         .from('tractor_models')
         .select('*, tractor_model_aliases(slug)')
         .eq('brand_id', brandData.id)
@@ -137,40 +143,38 @@ export default async function BrandCatalogPage(props: Props) {
         }
     }
 
-    // Merge S3 data with DB models
-    // Since some legacy S3 files might not have matched a DB model perfectly, we display DB models first.
-    // If we want to show PDFs that don't match any DB model, we can append them.
-    
     return (
         <div className="min-h-screen bg-[var(--ag-sys-color-background)] py-12 px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-                    <Link
+                    <LocalizedLink
                         href="/tractores"
                         className="inline-flex items-center gap-2 text-sm font-bold text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors group"
                     >
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                        Volver a marcas
-                    </Link>
+                        {isPt ? "Voltar às marcas" : "Volver a marcas"}
+                    </LocalizedLink>
                 </div>
 
                 {/* Brand Header */}
                 <div className={`relative overflow-hidden rounded-[2.5rem] ${style.bgLight} border border-black/5 p-8 sm:p-10 mb-12 flex flex-col md:flex-row items-center justify-between gap-8`}>
                     <div className="relative z-10 text-center md:text-left flex-1">
                         <h1 className={`text-4xl sm:text-6xl font-black ${style.textColor} tracking-tight mb-4`}>
-                            Tractores {brandData.name}
+                            {isPt ? "Tratores" : "Tractores"} {brandData.name}
                         </h1>
                         <p className="text-[var(--ag-sys-color-text-muted)] sm:text-lg max-w-3xl leading-relaxed mx-auto md:mx-0">
-                            {brandData.short_description || `Colección completa de fichas técnicas, características y catálogos en PDF. Descubre todos los detalles, potencia y tecnología de los tractores ${brandData.name}.`}
+                            {brandData.short_description || (isPt
+                                ? `Coleção completa de fichas técnicas, características e catálogos em PDF. Descubra todos os detalhes, potência e tecnologia dos tratores ${brandData.name}.`
+                                : `Colección completa de fichas técnicas, características y catálogos en PDF. Descubre todos los detalles, potencia y tecnología de los tractores ${brandData.name}.`)}
                         </p>
                         
                         <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
                             <div className="bg-white/60 px-4 py-2 rounded-xl text-sm font-bold text-gray-700 shadow-sm border border-white/40">
-                                {models.length} modelos documentados
+                                {models.length} {isPt ? "modelos documentados" : "modelos documentados"}
                             </div>
                             {brandData.founded_year && (
                                 <div className="bg-white/60 px-4 py-2 rounded-xl text-sm font-bold text-gray-700 shadow-sm border border-white/40">
-                                    Fundada en {brandData.founded_year}
+                                    {isPt ? `Fundada em ${brandData.founded_year}` : `Fundada en ${brandData.founded_year}`}
                                 </div>
                             )}
                         </div>
@@ -185,13 +189,17 @@ export default async function BrandCatalogPage(props: Props) {
                 {/* Models Grid */}
                 <div className="mb-12">
                     <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-6">
-                        Modelos y Series {brandData.name}
+                        {isPt ? `Modelos e Séries ${brandData.name}` : `Modelos y Series ${brandData.name}`}
                     </h2>
 
                     {models.length === 0 ? (
                         <div className="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-12 text-center text-[var(--ag-sys-color-text-muted)]">
                             <FileText className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                            <p className="text-lg font-bold">Aún no hay modelos sincronizados para {brandData.name}</p>
+                            <p className="text-lg font-bold">
+                                {isPt
+                                    ? `Ainda não existem modelos sincronizados para ${brandData.name}`
+                                    : `Aún no hay modelos sincronizados para ${brandData.name}`}
+                            </p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
@@ -209,7 +217,7 @@ export default async function BrandCatalogPage(props: Props) {
                                 }
                                 
                                 return (
-                                <Link 
+                                <LocalizedLink 
                                     key={model.id}
                                     href={`/tractores/${brandSlug}/${model.slug}`}
                                     className="group flex flex-col bg-white rounded-3xl border border-[var(--ag-sys-color-border)] overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block h-full focus:outline-none focus:ring-4 focus:ring-[var(--ag-sys-color-primary)]/20"
@@ -219,7 +227,7 @@ export default async function BrandCatalogPage(props: Props) {
                                         <div className="flex justify-between items-start z-10">
                                             <div>
                                                 <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-white/50 px-2 py-1 rounded-lg">
-                                                    {model.series || "Tractor"}
+                                                    {model.series || (isPt ? "Trator" : "Tractor")}
                                                 </span>
                                             </div>
                                             {s3Media?.pdfUrl && (
@@ -241,7 +249,9 @@ export default async function BrandCatalogPage(props: Props) {
                                         <div className="space-y-3 mb-4">
                                             {model.power_hp_min ? (
                                                 <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-500 font-medium">Potencia</span>
+                                                    <span className="text-gray-500 font-medium">
+                                                        {isPt ? "Potência" : "Potencia"}
+                                                    </span>
                                                     <span className="font-bold text-gray-800">
                                                         {model.power_hp_min} {model.power_hp_max && model.power_hp_max !== model.power_hp_min ? `- ${model.power_hp_max}` : ''} CV
                                                     </span>
@@ -255,7 +265,9 @@ export default async function BrandCatalogPage(props: Props) {
                                             ) : null}
                                             {model.transmission ? (
                                                 <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-500 font-medium">Transmisión</span>
+                                                    <span className="text-gray-500 font-medium">
+                                                        {isPt ? "Transmissão" : "Transmisión"}
+                                                    </span>
                                                     <span className="font-bold text-gray-800 line-clamp-1 text-right max-w-[60%]">{model.transmission}</span>
                                                 </div>
                                             ) : null}
@@ -263,12 +275,12 @@ export default async function BrandCatalogPage(props: Props) {
                                         
                                         <div className="mt-4 pt-4 border-t border-[var(--ag-sys-color-border)] flex items-center justify-between">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-[var(--ag-sys-color-primary)] bg-[var(--ag-sys-color-primary)]/10 py-1 px-2 rounded-lg">
-                                                Ver Ficha
+                                                {isPt ? "Ver Ficha" : "Ver Ficha"}
                                             </span>
                                             <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[var(--ag-sys-color-primary)] transition-colors" />
                                         </div>
                                     </div>
-                                </Link>
+                                </LocalizedLink>
                                 );
                             })}
                         </div>
@@ -279,7 +291,7 @@ export default async function BrandCatalogPage(props: Props) {
                 {brandData.long_description && (
                     <div className="mt-8 mb-12 py-12 border-t border-[var(--ag-sys-color-border)] max-w-4xl">
                         <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)] mb-4">
-                            Acerca de los tractores {brandData.name}
+                            {isPt ? `Sobre os tratores ${brandData.name}` : `Acerca de los tractores ${brandData.name}`}
                         </h2>
                         <div className="prose prose-lg text-[var(--ag-sys-color-text-muted)] leading-relaxed">
                             <p>{brandData.long_description}</p>

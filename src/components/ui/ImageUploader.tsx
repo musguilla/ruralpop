@@ -15,7 +15,8 @@ interface ImageUploaderProps {
 }
 
 export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [], onUploadingStateChange }: ImageUploaderProps) {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
+    const isPt = locale === 'pt';
     const { showAlert } = useNotification();
     const [files, setFiles] = useState<{ id: string; url: string; preview?: string; uploading: boolean }[]>(() => {
         return initialImages.map(url => ({
@@ -87,8 +88,8 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
         } catch (error) {
             console.error("Error uploading image:", error);
             showAlert({
-                title: "Error de subida",
-                message: "No se ha podido subir la imagen. Inténtalo con un archivo más pequeño o de otro formato.",
+                title: isPt ? "Erro ao carregar" : "Error de subida",
+                message: isPt ? "Não foi possível carregar a imagem. Tenta com um ficheiro mais pequeno ou noutro formato." : "No se ha podido subir la imagen. Inténtalo con un archivo más pequeño o de otro formato.",
                 type: "error"
             });
             setFiles((prev) => prev.filter(f => f.id !== tempId));
@@ -101,8 +102,8 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
 
         if (files.length + newFiles.length > maxFiles) {
             showAlert({
-                title: "Límite alcanzado",
-                message: `Solo puedes subir un máximo de ${maxFiles} imágenes por anuncio.`,
+                title: isPt ? "Limite atingido" : "Límite alcanzado",
+                message: isPt ? `Só podes carregar no máximo ${maxFiles} imagens por anúncio.` : `Solo puedes subir un máximo de ${maxFiles} imágenes por anuncio.`,
                 type: "warning"
             });
             return;
@@ -128,7 +129,7 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
                         {fileObj.uploading ? (
                             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5">
                                 <Loader2 className="w-6 h-6 animate-spin text-[var(--ag-sys-color-primary)]" />
-                                <span className="text-[10px] mt-1 font-medium text-[var(--ag-sys-color-text-muted)]">Subiendo...</span>
+                                <span className="text-[10px] mt-1 font-medium text-[var(--ag-sys-color-text-muted)]">{isPt ? "A carregar..." : "Subiendo..."}</span>
                             </div>
                         ) : (
                             <img src={fileObj.preview || fileObj.url} alt="Preview" className="w-full h-full object-cover" />
@@ -147,7 +148,7 @@ export function ImageUploader({ onImagesChange, maxFiles = 10, initialImages = [
                     <label className="aspect-square rounded-xl border-2 border-dashed border-[var(--ag-sys-color-border)] hover:border-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-primary)]/5 transition-all cursor-pointer flex flex-col items-center justify-center gap-2 group">
                         <input type="file" multiple accept="image/*" onChange={onFileChange} className="hidden" />
                         <Upload className="w-6 h-6 text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)]" />
-                        <span className="text-[10px] font-medium text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)]">{t('upload.photos_title_short') || 'Añadir Fotos'}</span>
+                        <span className="text-[10px] font-medium text-[var(--ag-sys-color-text-muted)] group-hover:text-[var(--ag-sys-color-primary)]">{t('upload.photos_title_short') || (isPt ? 'Adicionar Fotos' : 'Añadir Fotos')}</span>
                     </label>
                 )}
             </div>

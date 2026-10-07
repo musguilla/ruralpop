@@ -169,7 +169,8 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                     setShowWelfareModal(true);
                 } else {
                     // Redirect to highlight flow after successful publish
-                    const basePath = locale === 'pt' ? '/pt' : '';
+                    const isPtNativeDomain = typeof window !== 'undefined' && window.location.hostname.includes('ruralpop.pt');
+                    const basePath = (locale === 'pt' && !isPtNativeDomain) ? '/pt' : '';
                     router.push(`${basePath}/dashboard/destacar/${res.listingId}?published=true`);
                     router.refresh();
                 }
@@ -238,9 +239,9 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                 required
                                 value={selectedCategory}
                                 onChange={(val) => setSelectedCategory(val as string)}
-                                options={CATEGORIES.map(c => ({ id: c.id, name: c.label }))}
+                                options={CATEGORIES.map(c => ({ id: c.id, name: t(`category.${c.id}`) || c.label }))}
                                 placeholder={t('upload.category_placeholder')}
-                                searchPlaceholder={locale === 'pt' ? "Buscar categoria..." : "Buscar categoría..."}
+                                searchPlaceholder={locale === 'pt' ? "Pesquisar categoria..." : "Buscar categoría..."}
                             />
                         </div>
 
@@ -250,14 +251,14 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                 <SearchableSelect
                                     name="subcategory"
                                     required
-                                    options={categoryData.subcategories.map(s => ({ id: s, name: s }))}
+                                    options={categoryData.subcategories.map(s => ({ id: s, name: t(`category.${s}`) || s }))}
                                     value={formDataState.subcategory}
                                     onChange={(val) => {
                                         const subcat = val as string;
                                         setFormDataState(prev => ({ ...prev, subcategory: subcat }));
                                     }}
                                     placeholder={t('upload.subcategory_placeholder')}
-                                    searchPlaceholder={locale === 'pt' ? "Buscar subcategoria..." : "Buscar subcategoría..."}
+                                    searchPlaceholder={locale === 'pt' ? "Pesquisar subcategoria..." : "Buscar subcategoría..."}
                                 />
                             </div>
                         )}
@@ -373,7 +374,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                             <p className="text-sm font-medium text-amber-900">
                                                 {isEquipop ? t("configura_monedero_pagos") : t("has_activado_online")}
                                             </p>
-                                            <a href="/dashboard/monedero" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline mt-1 inline-block">
+                                            <a href={(locale === 'pt' && (typeof window !== 'undefined' && !window.location.hostname.includes('ruralpop.pt'))) ? "/pt/dashboard/monedero" : "/dashboard/monedero"} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline mt-1 inline-block">
                                                 {t("configurar_mi_monedero_flecha")}
                                             </a>
                                         </div>
@@ -433,7 +434,7 @@ export default function UploadForm({ savedPhone, initialProvinces, userEmail, ha
                                     type="tel"
                                     // El valor guardado en el perfil se precarga automáticamente
                                     defaultValue={savedPhone ?? ""}
-                                    placeholder="600 000 000"
+                                    placeholder={locale === 'pt' ? "910 000 000" : "600 000 000"}
                                     className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
                                 />
                             </div>

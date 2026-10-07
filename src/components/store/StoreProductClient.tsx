@@ -5,6 +5,7 @@ import { useCartStore } from '@/stores/cartStore';
 import { Minus, Plus, ShoppingCart, Check, X, Ruler, Truck } from 'lucide-react';
 import Image from 'next/image';
 import { getImageUrl, MediaObject } from '@/utils/mediaUtils';
+import { useTranslation } from '@/context/LocaleContext';
 
 interface StoreProductClientProps {
   product: {
@@ -19,6 +20,8 @@ interface StoreProductClientProps {
 }
 
 export function StoreProductClient({ product }: StoreProductClientProps) {
+  const { locale } = useTranslation();
+  const isPt = locale === 'pt';
   const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
@@ -37,14 +40,14 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
 
   const handleAddToCart = () => {
     if (isTshirt && !size) {
-        alert('Por favor, selecciona una talla antes de añadir a la cesta.');
+        alert(isPt ? 'Por favor, selecione um tamanho antes de adicionar ao cesto.' : 'Por favor, selecciona una talla antes de añadir a la cesta.');
         return;
     }
 
     addItem({
       id: isTshirt ? `${product.id}-${size}` : product.id,
       slug: product.slug,
-      title: isTshirt ? `${product.title} (Talla ${size})` : product.title,
+      title: isTshirt ? `${product.title} (${isPt ? 'Tamanho' : 'Talla'} ${size})` : product.title,
       price: product.price,
       imageUrl: resolvedImages[0] || '/default-og.jpg',
       quantity,
@@ -90,7 +93,7 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
         <div className="mb-6">
           <p className="text-3xl font-extrabold text-[var(--ag-sys-color-primary)]">{product.price.toFixed(2)}€</p>
           <p className="text-sm font-bold text-[var(--ag-sys-color-primary)] uppercase tracking-wide mt-1 opacity-90 inline-flex items-center gap-1">
-            <Truck className="w-4 h-4" /> Envío gratis
+            <Truck className="w-4 h-4" /> {isPt ? "Envio grátis" : "Envío gratis"}
           </p>
         </div>
         
@@ -104,12 +107,12 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
           {isTshirt ? (
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
-                  <span className="font-semibold text-[var(--ag-sys-color-text)]">Talla</span>
+                  <span className="font-semibold text-[var(--ag-sys-color-text)]">{isPt ? "Tamanho" : "Talla"}</span>
                   <button 
                     onClick={() => setIsSizeGuideOpen(!isSizeGuideOpen)}
                     className="text-sm text-[var(--ag-sys-color-primary)] hover:underline flex items-center gap-1 font-medium"
                   >
-                    <Ruler className="w-4 h-4" /> Guía de tallas
+                    <Ruler className="w-4 h-4" /> {isPt ? "Guia de tamanhos" : "Guía de tallas"}
                   </button>
               </div>
 
@@ -118,7 +121,7 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
                    <div className="relative w-full h-[200px] sm:h-[300px]">
                       <Image 
                           src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/products/tallas-camisetas.jpg" 
-                          alt="Guía de tallas" 
+                          alt={isPt ? "Guia de tamanhos" : "Guía de tallas"} 
                           fill 
                           className="object-contain"
                       />
@@ -141,13 +144,13 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
           ) : (
             <div className="mb-6">
                 <span className="inline-block px-3 py-1 bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-md text-sm font-semibold text-[var(--ag-sys-color-text-muted)]">
-                    Talla única
+                    {isPt ? "Tamanho único" : "Talla única"}
                 </span>
             </div>
           )}
 
           <div className="flex items-center gap-6 mb-6">
-            <span className="font-semibold text-[var(--ag-sys-color-text)]">Cantidad</span>
+            <span className="font-semibold text-[var(--ag-sys-color-text)]">{isPt ? "Quantidade" : "Cantidad"}</span>
             <div className="flex items-center border border-[var(--ag-sys-color-border)] rounded-xl bg-[var(--ag-sys-color-background)]">
               <button 
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -171,11 +174,11 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
           >
             {added ? (
               <>
-                <Check className="w-6 h-6" /> Añadido a la cesta
+                <Check className="w-6 h-6" /> {isPt ? "Adicionado ao cesto" : "Añadido a la cesta"}
               </>
             ) : (
               <>
-                <ShoppingCart className="w-6 h-6" /> Añadir a la cesta
+                <ShoppingCart className="w-6 h-6" /> {isPt ? "Adicionar ao cesto" : "Añadir a la cesta"}
               </>
             )}
           </button>

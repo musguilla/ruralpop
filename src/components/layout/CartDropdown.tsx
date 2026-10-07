@@ -5,8 +5,11 @@ import { ShoppingBasket, X, Plus, Minus } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCartStore } from '@/stores/cartStore';
+import { useTranslation } from '@/context/LocaleContext';
 
 export function CartDropdown() {
+  const { locale } = useTranslation();
+  const isPt = locale === 'pt';
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
@@ -36,7 +39,7 @@ export function CartDropdown() {
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 p-2 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] rounded-full relative"
-        aria-label="Cesta de Compra"
+        aria-label={isPt ? "Cesto de Compras" : "Cesta de Compra"}
       >
         <ShoppingBasket className="w-6 h-6" />
         {count > 0 && (
@@ -49,7 +52,9 @@ export function CartDropdown() {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-80 bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] shadow-xl rounded-2xl overflow-hidden z-50 transform origin-top-right transition-all">
           <div className="p-4 border-b border-[var(--ag-sys-color-border)] flex justify-between items-center bg-[var(--ag-sys-color-background)]">
-            <h3 className="font-bold text-[var(--ag-sys-color-text)]">Cesta {count > 0 && `(${count})`}</h3>
+            <h3 className="font-bold text-[var(--ag-sys-color-text)]">
+              {isPt ? "Cesto" : "Cesta"} {count > 0 && `(${count})`}
+            </h3>
             <button onClick={() => setIsOpen(false)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]">
               <X className="w-5 h-5" />
             </button>
@@ -59,13 +64,13 @@ export function CartDropdown() {
             {items.length === 0 ? (
               <div className="text-center py-6 text-[var(--ag-sys-color-text-muted)]">
                 <ShoppingBasket className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                <p>Tu cesta está vacía</p>
+                <p>{isPt ? "O seu cesto está vazio" : "Tu cesta está vacía"}</p>
                 <Link 
                   href="/tienda" 
                   onClick={() => setIsOpen(false)}
                   className="text-[var(--ag-sys-color-primary)] font-semibold mt-2 inline-block hover:underline"
                 >
-                  Ir a la Tienda
+                  {isPt ? "Ir para a Loja" : "Ir a la Tienda"}
                 </Link>
               </div>
             ) : (
@@ -98,7 +103,7 @@ export function CartDropdown() {
                          onClick={() => removeItem(item.id)}
                          className="text-xs text-red-500 hover:text-red-600 underline"
                       >
-                        Eliminar
+                        {isPt ? "Remover" : "Eliminar"}
                       </button>
                     </div>
                   </div>

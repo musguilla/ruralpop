@@ -90,7 +90,7 @@ export default async function AccountPage() {
                                 label={dict.account.name}
                                 icon={<User className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                 initialValue={fullName}
-                                placeholder="Tu nombre..."
+                                placeholder={locale === 'pt' ? "O seu nome..." : "Tu nombre..."}
                             />
 
                             <EditableField
@@ -99,7 +99,7 @@ export default async function AccountPage() {
                                 icon={<Phone className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                 type="tel"
                                 initialValue={userPhone}
-                                placeholder="Tu teléfono..."
+                                placeholder={locale === 'pt' ? "O seu telefone..." : "Tu teléfono..."}
                             />
 
                             <EditableField
@@ -108,7 +108,7 @@ export default async function AccountPage() {
                                 icon={<Mail className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                 type="email"
                                 initialValue={userEmail}
-                                placeholder="Tu correo electrónico..."
+                                placeholder={locale === 'pt' ? "O seu email..." : "Tu correo electrónico..."}
                             />
 
                             <EditableLocation
@@ -123,61 +123,65 @@ export default async function AccountPage() {
                         <div className="p-8 border-b border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-primary)]/5">
                             <div className="flex items-center gap-3 mb-6">
                                 <Building2 className="w-6 h-6 text-[var(--ag-sys-color-primary)]" />
-                                <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">Datos de la Empresa</h2>
+                                <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)]">
+                                    {locale === 'pt' ? "Dados da Empresa" : "Datos de la Empresa"}
+                                </h2>
                             </div>
                             <p className="text-sm text-[var(--ag-sys-color-text-muted)] mb-8">
-                                Esta información será pública y aparecerá en el perfil de tu empresa y en tus anuncios.
+                                {locale === 'pt'
+                                    ? "Esta informação será pública e aparecerá no perfil da sua empresa e nos seus anúncios."
+                                    : "Esta información será pública y aparecerá en el perfil de tu empresa y en tus anuncios."}
                             </p>
                             <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12">
                                 <EditableField
                                     field="commercial_name"
-                                    label="Nombre Comercial"
+                                    label={locale === 'pt' ? "Nome Comercial" : "Nombre Comercial"}
                                     icon={<Building2 className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                     initialValue={publicUser.commercial_name || ""}
-                                    placeholder="Ej: Tractores Pérez"
+                                    placeholder={locale === 'pt' ? "Ex: Tratores Silva" : "Ej: Tractores Pérez"}
                                 />
 
                                 <EditableField
                                     field="company_country"
-                                    label="País"
+                                    label={locale === 'pt' ? "País" : "País"}
                                     icon={<Globe className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                     initialValue={publicUser.company_country || ""}
-                                    placeholder="Ej: España"
+                                    placeholder={locale === 'pt' ? "Ex: Portugal" : "Ej: España"}
                                 />
 
                                 <EditableField
                                     field="company_website"
-                                    label="Sitio Web (Opcional)"
+                                    label={locale === 'pt' ? "Website (Opcional)" : "Sitio Web (Opcional)"}
                                     icon={<Globe className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                     initialValue={publicUser.company_website || ""}
-                                    placeholder="Ej: https://www.transconcar.es"
+                                    placeholder="Ej: https://www.ruralpop.com"
                                     type="url"
                                 />
 
                                 <EditableField
                                     field="company_address"
-                                    label="Dirección de la empresa"
+                                    label={locale === 'pt' ? "Morada da empresa" : "Dirección de la empresa"}
                                     icon={<MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                     initialValue={publicUser.company_address || ""}
-                                    placeholder="Ej: Polígono Industrial Sur, Nave 4"
+                                    placeholder={locale === 'pt' ? "Ex: Zona Industrial, Lote 4" : "Ej: Polígono Industrial Sur, Nave 4"}
                                 />
 
                                 <EditableField
                                     field="company_zip"
-                                    label="Código Postal"
+                                    label={locale === 'pt' ? "Código Postal" : "Código Postal"}
                                     icon={<MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                     initialValue={publicUser.company_zip || ""}
-                                    placeholder="Ej: 28001"
+                                    placeholder={locale === 'pt' ? "Ex: 4000-001" : "Ej: 28001"}
                                 />
                                 
                                 <div className="md:col-span-2">
                                     <EditableField
                                         field="company_description"
-                                        label="Descripción de la empresa"
+                                        label={locale === 'pt' ? "Descrição da empresa" : "Descripción de la empresa"}
                                         icon={<FileText className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />}
                                         initialValue={publicUser.company_description || ""}
-                                        placeholder="Describe tu negocio, años de experiencia, especialidades..."
-                                        type="text" // Ideally this would use a textarea, but we map to EditableField for now
+                                        placeholder={locale === 'pt' ? "Descreva o seu negócio, anos de experiência, especialidades..." : "Describe tu negocio, años de experiencia, especialidades..."}
+                                        type="text"
                                     />
                                 </div>
 
@@ -185,11 +189,11 @@ export default async function AccountPage() {
                                     <div className="md:col-span-2 p-6 bg-white rounded-2xl border border-[var(--ag-sys-color-border)]">
                                         <dt className="flex items-center gap-2 text-sm font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider mb-3">
                                             <ExternalLink className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                                            Acceso a tu perfil de empresa
+                                            {locale === 'pt' ? "Acesso ao perfil da empresa" : "Acceso a tu perfil de empresa"}
                                         </dt>
                                         <dd className="flex items-center justify-between gap-4">
                                             <div className="text-[var(--ag-sys-color-primary)] font-bold break-all">
-                                                https://www.ruralpop.com/empresa/{slugify(publicUser.commercial_name)}
+                                                {locale === 'pt' ? 'https://www.ruralpop.pt/empresa/' : 'https://www.ruralpop.com/empresa/'}{slugify(publicUser.commercial_name)}
                                             </div>
                                             <Link 
                                                 href={`/empresa/${slugify(publicUser.commercial_name)}`}
@@ -207,12 +211,14 @@ export default async function AccountPage() {
                     )}
 
                     <div className="p-8 bg-gray-50/50">
-                        <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">Seguridad</h2>
+                        <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-6">
+                            {locale === 'pt' ? "Segurança" : "Seguridad"}
+                        </h2>
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <div className="flex flex-col">
                                 <dt className="flex items-center gap-2 text-sm font-semibold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider mb-2">
                                     <KeyRound className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                                    Contraseña
+                                    {locale === 'pt' ? "Palavra-passe" : "Contraseña"}
                                 </dt>
                                 <dd className="text-lg font-bold text-[var(--ag-sys-color-text)] tracking-[0.2em]">
                                     ••••••••
@@ -222,7 +228,7 @@ export default async function AccountPage() {
                                 href="/forgot-password"
                                 className="inline-flex py-3 px-6 bg-white text-[var(--ag-sys-color-text)] border border-[var(--ag-sys-color-border)] font-bold rounded-xl hover:bg-gray-50 transition-all shadow-sm"
                             >
-                                Cambiar contraseña
+                                {locale === 'pt' ? "Alterar palavra-passe" : "Cambiar contraseña"}
                             </Link>
                         </div>
                     </div>

@@ -2,17 +2,33 @@ import Image from "next/image";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { signup } from "./actions";
-import { Metadata } from "next";
-import { getServerTenantSlug } from "@/utils/tenant/server";
+import { getServerTenantSlug, getServerTenantDomain } from "@/utils/tenant/server";
 import { headers } from "next/headers";
 import { LocalizedLink } from "@/components/ui/LocalizedLink";
 import { LocaleCode } from "@/i18n/config";
+import { getHreflangLinks, getCanonicalUrl } from "@/i18n/utils";
 
-export const metadata: Metadata = {
-    title: "Crea una Cuenta | Ruralpop",
-    description: "Únete a Ruralpop y empieza a comprar y vender en el mercado agrícola y ganadero.",
-    alternates: { canonical: "/register" }
-};
+export async function generateMetadata() {
+    const tenant = await getServerTenantSlug();
+    const currentDomain = await getServerTenantDomain();
+    const isEquipop = tenant === 'equipop' || currentDomain.includes('equipop');
+    const brand = isEquipop ? 'Equipop' : 'Ruralpop';
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
+    const originalPathname = headersList.get('x-original-pathname') || '/register';
+
+    return {
+        title: isPt ? `Criar Conta | ${brand}` : `Crea una Cuenta | ${brand}`,
+        description: isPt 
+            ? `Junte-se ao ${brand} e comece a comprar e vender no mercado agrícola e pecuário.` 
+            : `Únete a ${brand} y empieza a comprar y vender en el mercado agrícola y ganadero.`,
+        alternates: {
+            canonical: getCanonicalUrl(originalPathname, locale, currentDomain),
+            languages: getHreflangLinks(originalPathname, currentDomain)
+        }
+    };
+}
 
 export default async function RegisterPage(props: {
     searchParams: Promise<{ error?: string; redirectTo?: string }>;

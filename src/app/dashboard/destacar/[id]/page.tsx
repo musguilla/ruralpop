@@ -109,7 +109,7 @@ export default async function DestacarAnuncioPage(props: Props) {
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-xs text-center p-2">
-                                    Sin foto
+                                    {isPt ? "Sem fotografia" : "Sin foto"}
                                 </div>
                             )}
                         </div>
@@ -142,7 +142,7 @@ export default async function DestacarAnuncioPage(props: Props) {
                             {isPt ? "Ver o meu anúncio publicado" : "Ver mi anuncio publicado"}
                         </Link>
                         <p className="text-sm font-medium text-[var(--ag-sys-color-text-muted)] mt-5 flex items-center gap-2">
-                            Si no deseas destacarlo ahora, puedes hacerlo más adelante desde tu panel.
+                            {isPt ? "Se não pretender destacar agora, pode fazê-lo mais tarde no seu painel." : "Si no deseas destacarlo ahora, puedes hacerlo más adelante desde tu panel."}
                         </p>
                     </div>
                 )}

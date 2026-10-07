@@ -3,12 +3,15 @@
 import React from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCategories } from "@/context/CategoriesContext";
+import { useTranslation } from "@/context/LocaleContext";
 
 export function FiltersBar() {
     const CATEGORIES = useCategories();
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
+    const { t, locale } = useTranslation();
+    const isPt = locale === "pt";
 
     const currentCategory = searchParams.get("category");
     const currentSubcategory = searchParams.get("subcategory");
@@ -55,7 +58,7 @@ export function FiltersBar() {
                         : "border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text)] hover:border-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary)]"
                         }`}
                 >
-                    Todo
+                    {isPt ? "Tudo" : "Todo"}
                 </button>
 
                 {CATEGORIES.map((category) => (
@@ -67,7 +70,7 @@ export function FiltersBar() {
                             : "border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text)] hover:border-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary)]"
                             }`}
                     >
-                        {category.label}
+                        {t(`category.${category.id}`) || category.label}
                     </button>
                 ))}
             </div>
@@ -76,7 +79,7 @@ export function FiltersBar() {
             {categoryData && categoryData.subcategories.length > 0 && (
                 <div className="w-full flex pb-2 overflow-x-auto hide-scrollbar gap-2 animate-in fade-in slide-in-from-left-4 duration-300">
                     <div className="flex items-center text-xs font-bold text-[var(--ag-sys-color-text-muted)] uppercase tracking-wider pr-2 border-r border-[var(--ag-sys-color-border)] mr-1">
-                        Subcategorías
+                        {isPt ? "Subcategorias" : "Subcategorías"}
                     </div>
                     {categoryData.subcategories.map((sub) => (
                         <button
@@ -87,7 +90,7 @@ export function FiltersBar() {
                                 : "border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] text-[var(--ag-sys-color-text-muted)] hover:border-[var(--ag-sys-color-primary)] hover:text-[var(--ag-sys-color-primary)]"
                                 }`}
                         >
-                            {sub}
+                            {t(`category.${sub}`) || sub}
                         </button>
                     ))}
                 </div>

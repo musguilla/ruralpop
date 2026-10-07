@@ -8,7 +8,8 @@ import { getImageUrl } from "@/utils/mediaUtils";
 import { CompanyCategoriesSidebar, type CategoryWithSubcategories } from "./CompanyCategoriesSidebar";
 import { getServerTenantSlug, getServerTenantFilterString, getServerTenantDomain } from "@/utils/tenant/server";
 import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
-
+import { headers } from "next/headers";
+import { LocaleCode } from "@/i18n/config";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const slug = (await params).slug;
@@ -58,6 +59,10 @@ export default async function CompanyProfilePage({ params, searchParams }: {
     const slug = (await params).slug;
     const searchTerm = typeof sp.q === 'string' ? sp.q : '';
     const token = typeof sp.token === 'string' ? sp.token : null;
+
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const isPt = locale === 'pt';
 
     const supabase = await createClient();
 
@@ -148,11 +153,17 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <h2 className="text-xl font-bold">¡Esta es la demostración de tu escaparate profesional!</h2>
-                                        <span className="bg-white/20 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider hidden sm:inline-block">Solo visible para ti</span>
+                                        <h2 className="text-xl font-bold">
+                                            {isPt ? "Esta é a demonstração da sua montra profissional!" : "¡Esta es la demostración de tu escaparate profesional!"}
+                                        </h2>
+                                        <span className="bg-white/20 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider hidden sm:inline-block">
+                                            {isPt ? "Apenas visível para si" : "Solo visible para ti"}
+                                        </span>
                                     </div>
                                     <p className="text-indigo-100 font-medium text-sm max-w-2xl">
-                                        Hemos creado este perfil pre-configurado para ti. Reclámalo ahora, activa tu plan profesional y empieza a vender a nivel nacional.
+                                        {isPt 
+                                            ? "Criámos este perfil pré-configurado para si. Reclame-o agora, ative o seu plano profissional e comece a vender a nível nacional." 
+                                            : "Hemos creado este perfil pre-configurado para ti. Reclámalo ahora, activa tu plan profesional y empieza a vender a nivel nacional."}
                                     </p>
                                 </div>
                             </div>
@@ -160,7 +171,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                                 href={`/profesionales/reclamar?token=${token}`}
                                 className="w-full md:w-auto bg-white text-indigo-700 hover:bg-gray-50 font-black px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 whitespace-nowrap flex items-center justify-center gap-2"
                             >
-                                Reclamar Perfil y Activar
+                                {isPt ? "Reclamar Perfil e Ativar" : "Reclamar Perfil y Activar"}
                                 <ArrowRight className="w-5 h-5" />
                             </Link>
                         </div>
@@ -185,7 +196,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                                 </div>
                                 
                                 {company.plan_type === 'pro' && (
-                                    <div className="absolute -bottom-[6px] -right-[6px] bg-white rounded-full shadow-sm z-10 flex items-center justify-center pointer-events-none" title="Perfil Profesional Verificado">
+                                    <div className="absolute -bottom-[6px] -right-[6px] bg-white rounded-full shadow-sm z-10 flex items-center justify-center pointer-events-none" title={isPt ? "Perfil Profissional Verificado" : "Perfil Profesional Verificado"}>
                                         <BadgeCheck className="w-8 h-8 text-white fill-blue-500" />
                                     </div>
                                 )}
@@ -199,7 +210,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                                     </h1>
                                     <span className="bg-[var(--ag-sys-color-primary)]/10 text-[var(--ag-sys-color-primary)] text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
                                         <ShieldCheck className="w-3 h-3" />
-                                        Profesional
+                                        {isPt ? "Profissional" : "Profesional"}
                                     </span>
                                 </div>
                                 
@@ -221,7 +232,7 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                                             className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:opacity-80 transition-opacity flex items-center gap-1.5"
                                         >
                                             <Globe className="w-4 h-4" />
-                                            Sitio web
+                                            {isPt ? "Website" : "Sitio web"}
                                         </Link>
                                     </div>
                                 )}
@@ -245,10 +256,10 @@ export default async function CompanyProfilePage({ params, searchParams }: {
                     <div className="w-full lg:flex-1 lg:order-1 order-2 min-w-0">
                         <div className="mb-8">
                             <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)]">
-                                Catálogo de Anuncios
+                                {isPt ? "Catálogo de Anúncios" : "Catálogo de Anuncios"}
                             </h2>
                             <p className="text-[var(--ag-sys-color-text-muted)] font-medium mt-1">
-                                Explora todos los productos de este vendedor
+                                {isPt ? "Explore todos os produtos deste vendedor" : "Explora todos los productos de este vendedor"}
                             </p>
                         </div>
                         <ListingsGrid searchParams={gridSearchParams} disableInFeedAds={true} hideAdsSidebar={true} />

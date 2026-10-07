@@ -137,29 +137,37 @@ export default async function ProfessionalDashboardPage(props: Props) {
                             <div className="bg-[var(--ag-sys-color-surface)] rounded-3xl border border-[var(--ag-sys-color-border)] shadow-sm p-6 sm:p-10">
                                 <h2 className="text-xl font-bold text-[var(--ag-sys-color-text)] mb-8 flex items-center gap-2">
                                     <TrendingUp className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
-                                    Resumen del Negocio
+                                    {isPt ? "Resumo do Negócio" : "Resumen del Negocio"}
                                 </h2>
                                 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
-                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Anuncios Activos</h3>
+                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
+                                            {isPt ? "Anúncios Ativos" : "Anuncios Activos"}
+                                        </h3>
                                         <div className="flex items-end gap-3">
                                             <span className="text-5xl font-black text-[var(--ag-sys-color-text)]">{activeListings || 0}</span>
                                             <span className="text-sm text-gray-400 mb-2 font-bold">/ {isStartPlan ? '15' : isProPlan ? '50' : '∞'}</span>
                                         </div>
                                         <Link 
-                                            href={totalListings && totalListings > 0 ? "/dashboard" : "/upload"} 
+                                            href={totalListings && totalListings > 0 ? (isPt ? "/dashboard" : "/dashboard") : (isPt ? "/upload" : "/upload")} 
                                             className="mt-6 inline-flex items-center gap-2 text-sm text-[var(--ag-sys-color-primary)] font-black hover:gap-3 transition-all"
                                         >
-                                            {totalListings && totalListings > 0 ? "Gestionar inventario" : "Añade tu primer producto"}
+                                            {totalListings && totalListings > 0 
+                                                ? (isPt ? "Gerir inventário" : "Gestionar inventario") 
+                                                : (isPt ? "Adicione o seu primeiro produto" : "Añade tu primer producto")}
                                             <ChevronRight className="w-4 h-4" />
                                         </Link>
                                     </div>
                                     <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
-                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Anuncios Totales</h3>
+                                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">
+                                            {isPt ? "Anúncios Totais" : "Anuncios Totales"}
+                                        </h3>
                                         <div className="flex items-end gap-3">
                                             <span className="text-5xl font-black text-[var(--ag-sys-color-text)]">{totalListings || 0}</span>
-                                            <span className="text-sm text-gray-400 mb-2 font-bold">históricos</span>
+                                            <span className="text-sm text-gray-400 mb-2 font-bold">
+                                                {isPt ? "históricos" : "históricos"}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -170,10 +178,12 @@ export default async function ProfessionalDashboardPage(props: Props) {
                                 <div className="p-8 border-b border-[var(--ag-sys-color-border)] bg-gradient-to-r from-green-50 to-emerald-50/20">
                                     <h2 className="text-xl font-bold text-green-800 mb-1 flex items-center gap-2">
                                         <Zap className="w-5 h-5 text-green-600 fill-green-600" />
-                                        Tus Promociones Mensuales
+                                        {isPt ? "As suas Promoções Mensais" : "Tus Promociones Mensuales"}
                                     </h2>
                                     <p className="text-sm text-green-700/70 font-medium">
-                                        Beneficios incluidos para aumentar tu visibilidad. Se renuevan cada mes.
+                                        {isPt 
+                                            ? "Vantagens incluídas para aumentar a sua visibilidade. Renovam-se todos os meses." 
+                                            : "Beneficios incluidos para aumentar tu visibilidad. Se renuevan cada mes."}
                                     </p>
                                 </div>
                                 
@@ -184,13 +194,21 @@ export default async function ProfessionalDashboardPage(props: Props) {
                                                 <RefreshCw className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-[var(--ag-sys-color-text)] text-xl">Impulsos para subir anuncio</h4>
-                                                <p className="text-sm text-[var(--ag-sys-color-text-muted)] font-medium max-w-xs">Coloca tus anuncios de nuevo en las primeras páginas rápidamente.</p>
+                                                <h4 className="font-bold text-[var(--ag-sys-color-text)] text-xl">
+                                                    {isPt ? "Impulsos para subir anúncio" : "Impulsos para subir anuncio"}
+                                                </h4>
+                                                <p className="text-sm text-[var(--ag-sys-color-text-muted)] font-medium max-w-xs">
+                                                    {isPt 
+                                                        ? "Coloque os seus anúncios de novo nas primeiras posições rapidamente." 
+                                                        : "Coloca tus anuncios de nuevo en las primeras páginas rápidamente."}
+                                                </p>
                                             </div>
                                         </div>
                                         <div className="bg-green-50 border border-green-100 rounded-2xl px-6 py-4 text-center min-w-[140px]">
                                             <div className="text-3xl font-black text-green-700">{publicUser.available_bumps || 0}</div>
-                                            <div className="text-[10px] text-green-600 font-bold uppercase tracking-wider">Disponibles</div>
+                                            <div className="text-[10px] text-green-600 font-bold uppercase tracking-wider">
+                                                {isPt ? "Disponíveis" : "Disponibles"}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -200,13 +218,21 @@ export default async function ProfessionalDashboardPage(props: Props) {
                                                 <ShieldCheck className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-[var(--ag-sys-color-text)] text-xl">Anuncios Destacados</h4>
-                                                <p className="text-sm text-[var(--ag-sys-color-text-muted)] font-medium max-w-xs">Tus anuncios en lugares preferentes de la categoría.</p>
+                                                <h4 className="font-bold text-[var(--ag-sys-color-text)] text-xl">
+                                                    {isPt ? "Anúncios Destacados" : "Anuncios Destacados"}
+                                                </h4>
+                                                <p className="text-sm text-[var(--ag-sys-color-text-muted)] font-medium max-w-xs">
+                                                    {isPt 
+                                                        ? "Os seus anúncios em locais de destaque na categoria." 
+                                                        : "Tus anuncios en lugares preferentes de la categoría."}
+                                                </p>
                                             </div>
                                         </div>
                                         <div className="bg-amber-50 border border-amber-100 rounded-2xl px-6 py-4 text-center min-w-[140px]">
                                             <div className="text-3xl font-black text-amber-700">{publicUser.available_featured || 0}</div>
-                                            <div className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Disponibles</div>
+                                            <div className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">
+                                                {isPt ? "Disponíveis" : "Disponibles"}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

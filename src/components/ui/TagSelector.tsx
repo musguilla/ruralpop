@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Tag, X, Search, Check } from "lucide-react";
 import { PREDEFINED_TAGS } from "@/constants/predefinedTags";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface TagSelectorProps {
     category: string;
@@ -11,6 +12,8 @@ interface TagSelectorProps {
 }
 
 export function TagSelector({ category, subcategory, initialTags = [] }: TagSelectorProps) {
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
     const [selectedTags, setSelectedTags] = useState<string[]>(initialTags || []);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -83,9 +86,9 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
         <div className="space-y-4">
             <label className="block text-sm font-medium flex items-center gap-2">
                 <Tag className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                Etiquetas
+                {isPt ? "Etiquetas" : "Etiquetas"}
                 <span className="text-xs text-[var(--ag-sys-color-text-muted)] font-normal ml-2">
-                    Ayuda a los compradores a encontrarte (Máx 10)
+                    {isPt ? "Ajuda os compradores a encontrar-te (Máx 10)" : "Ayuda a los compradores a encontrarte (Máx 10)"}
                 </span>
             </label>
 
@@ -101,7 +104,7 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder={category ? "Busca etiquetas" : "Selecciona una categoría primero para ver etiquetas..."}
+                    placeholder={category ? (isPt ? "Pesquisa etiquetas" : "Busca etiquetas") : (isPt ? "Seleciona primeiro uma categoria para ver etiquetas..." : "Selecciona una categoría primero para ver etiquetas...")}
                     disabled={!category}
                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 />
@@ -122,7 +125,7 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
                     ))}
                     {filteredTags.length > 11 && (
                         <span className="inline-flex items-center px-2 py-1.5 text-sm text-gray-400">
-                            +{filteredTags.length - 11} más...
+                            +{filteredTags.length - 11} {isPt ? "mais..." : "más..."}
                         </span>
                     )}
                 </div>
@@ -132,7 +135,7 @@ export function TagSelector({ category, subcategory, initialTags = [] }: TagSele
             {selectedTags.length > 0 && (
                 <div className="p-4 bg-[var(--ag-sys-color-primary)]/5 rounded-xl border border-[var(--ag-sys-color-primary)]/20 mt-4">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--ag-sys-color-primary)] mb-3 flex items-center gap-1">
-                        <Check className="w-3 h-3" /> Etiquetas elegidas ({selectedTags.length}/10)
+                        <Check className="w-3 h-3" /> {isPt ? "Etiquetas escolhidas" : "Etiquetas elegidas"} ({selectedTags.length}/10)
                     </h4>
                     <div className="flex flex-wrap gap-2">
                         {selectedTags.map((tag) => (

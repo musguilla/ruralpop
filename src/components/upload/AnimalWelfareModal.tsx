@@ -5,6 +5,7 @@ import { ShieldCheck, Loader2 } from "lucide-react";
 import { getStripeClient } from "@/lib/stripe-client";
 import { Elements } from "@stripe/react-stripe-js";
 import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
+import { useTranslation } from "@/context/LocaleContext";
 
 interface AnimalWelfareModalProps {
     isOpen: boolean;
@@ -20,6 +21,8 @@ interface AnimalWelfareModalProps {
 }
 
 export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, initialData }: AnimalWelfareModalProps) {
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
     const stripePromise = getStripeClient();
     const [step, setStep] = useState<'info' | 'form' | 'payment'>('info');
     
@@ -40,7 +43,7 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
         e.preventDefault();
         
         if (!name || !nif || !phone || !zooRegister) {
-            setError("Por favor, rellena todos los campos obligatorios.");
+            setError(isPt ? "Por favor, preencha todos os campos obrigatórios." : "Por favor, rellena todos los campos obligatorios.");
             return;
         }
 
@@ -89,24 +92,30 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                             </div>
                             
                             <h3 className="text-2xl font-black text-[var(--ag-sys-color-text)] leading-tight">
-                                Anuncios para profesionales
+                                {isPt ? "Anúncios para profissionais" : "Anuncios para profesionales"}
                             </h3>
                             
                             <div className="text-sm text-[var(--ag-sys-color-text-muted)] space-y-4">
                                 <p>
-                                    La Ley de Bienestar Animal (Ley 7/2023) en España limita la publicación de anuncios de determinados animales de compañía por parte de usuarios particulares en plataformas online.
+                                    {isPt
+                                        ? "A regulamentação em vigor limita a publicação de anúncios de determinados animais de companhia por parte de utilizadores particulares em plataformas online."
+                                        : "La Ley de Bienestar Animal (Ley 7/2023) en España limita la publicación de anuncios de determinados animales de compañía por parte de usuarios particulares en plataformas online."}
                                 </p>
                                 <p>
-                                    Para publicar anuncios de perros, aves de compañía y otros animales regulados, es necesario disponer de un perfil profesional verificado donde debes introducir número de registro de núcleo zoológico, explotación o criadero.
+                                    {isPt
+                                        ? "Para publicar anúncios de cães, aves de companhia e outros animais regulamentados, é necessário dispor de um perfil profissional verificado com o número de registo de criador, exploração ou núcleo zoológico."
+                                        : "Para publicar anuncios de perros, aves de compañía y otros animales regulados, es necesario disponer de un perfil profesional verificado donde debes introducir número de registro de núcleo zoológico, explotación o criadero."}
                                 </p>
                                 <p>
-                                    En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Anuncio Pro por solo 1,99€</strong>, lo que te permitirá:
+                                    {isPt
+                                        ? <>No Ruralpop pode fazê-lo de forma simples ativando <strong>um Anúncio Pro por apenas 1,99€</strong>, o que lhe permitirá:</>
+                                        : <>En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Anuncio Pro por solo 1,99€</strong>, lo que te permitirá:</>}
                                 </p>
                                 <ul className="list-disc pl-5 space-y-1 font-semibold text-[var(--ag-sys-color-text)]">
-                                    <li>Publicar este anuncio autorizado</li>
-                                    <li>Mostrar tu perfil como profesional verificado</li>
-                                    <li>Cumplir con la normativa vigente</li>
-                                    <li>Generar mayor confianza a los compradores</li>
+                                    <li>{isPt ? "Publicar este anúncio autorizado" : "Publicar este anuncio autorizado"}</li>
+                                    <li>{isPt ? "Apresentar o seu perfil como profissional verificado" : "Mostrar tu perfil como profesional verificado"}</li>
+                                    <li>{isPt ? "Cumprir a regulamentação vigente" : "Cumplir con la normativa vigente"}</li>
+                                    <li>{isPt ? "Gerar maior confiança aos compradores" : "Generar mayor confianza a los compradores"}</li>
                                 </ul>
                             </div>
 
@@ -115,13 +124,13 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                                     onClick={() => setStep('form')}
                                     className="w-full py-4 bg-[var(--ag-sys-color-primary)] text-white font-black rounded-2xl hover:opacity-90 transition-opacity"
                                 >
-                                    Activar Anuncio Pro · 1,99€
+                                    {isPt ? "Ativar Anúncio Pro · 1,99€" : "Activar Anuncio Pro · 1,99€"}
                                 </button>
                                 <button
                                     onClick={onClose}
                                     className="w-full py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-colors"
                                 >
-                                    Cerrar
+                                    {isPt ? "Fechar" : "Cerrar"}
                                 </button>
                             </div>
                         </div>
@@ -130,10 +139,12 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                     {step === 'form' && (
                         <div className="space-y-6">
                             <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)]">
-                                Datos del Profesional / Criador
+                                {isPt ? "Dados do Profissional / Criador" : "Datos del Profesional / Criador"}
                             </h3>
                             <p className="text-sm text-[var(--ag-sys-color-text-muted)]">
-                                Completa tus datos fiscales para poder validar el anuncio. Esta información se guardará en tu perfil.
+                                {isPt
+                                    ? "Preencha os seus dados fiscais para poder validar o anúncio. Esta informação será guardada no seu perfil."
+                                    : "Completa tus datos fiscales para poder validar el anuncio. Esta información se guardará en tu perfil."}
                             </p>
 
                             <form onSubmit={handleProceedToPayment} className="space-y-4">
@@ -145,7 +156,7 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                                 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Nombre</label>
+                                        <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">{isPt ? "Nome" : "Nombre"}</label>
                                         <input 
                                             type="text" 
                                             value={name} 
@@ -155,7 +166,7 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Apellidos</label>
+                                        <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">{isPt ? "Apelidos" : "Apellidos"}</label>
                                         <input 
                                             type="text" 
                                             value={lastName} 
@@ -166,7 +177,7 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                                 </div>
                                 
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">NIF / CIF</label>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">{isPt ? "NIF" : "NIF / CIF"}</label>
                                     <input 
                                         type="text" 
                                         value={nif} 
@@ -177,7 +188,7 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Teléfono de Contacto</label>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">{isPt ? "Telefone de Contacto" : "Teléfono de Contacto"}</label>
                                     <input 
                                         type="tel" 
                                         value={phone} 
@@ -189,7 +200,7 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
 
                                 <div>
                                     <label className="block text-xs font-bold text-[var(--ag-sys-color-primary)] mb-1 uppercase tracking-wider">
-                                        Nº Reg. Núcleo Zoológico / Explotación / Criadero
+                                        {isPt ? "Nº Reg. Registo Criador / Exploração / Núcleo Zoológico" : "Nº Reg. Núcleo Zoológico / Explotación / Criadero"}
                                     </label>
                                     <input 
                                         type="text" 
@@ -197,7 +208,7 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                                         onChange={(e) => setZooRegister(e.target.value)}
                                         required
                                         className="w-full bg-[var(--ag-sys-color-primary)]/5 border-2 border-[var(--ag-sys-color-primary)]/20 rounded-xl px-4 py-3 text-sm focus:border-[var(--ag-sys-color-primary)] focus:ring-0 outline-none transition-all"
-                                        placeholder="Ej: ES123456789"
+                                        placeholder={isPt ? "Ex: PT123456789" : "Ej: ES123456789"}
                                     />
                                 </div>
 
@@ -208,14 +219,14 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                                         className="w-full flex items-center justify-center gap-2 py-4 bg-[var(--ag-sys-color-primary)] text-white font-black rounded-2xl hover:opacity-90 transition-opacity disabled:opacity-50"
                                     >
                                         {isCreatingIntent && <Loader2 className="w-5 h-5 animate-spin" />}
-                                        Continuar al pago (1,99€)
+                                        {isPt ? "Continuar para o pagamento (1,99€)" : "Continuar al pago (1,99€)"}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setStep('info')}
                                         className="w-full py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-colors"
                                     >
-                                        Volver
+                                        {isPt ? "Voltar" : "Volver"}
                                     </button>
                                 </div>
                             </form>
@@ -225,19 +236,16 @@ export function AnimalWelfareModal({ isOpen, onClose, listingId, listingSlug, in
                     {step === 'payment' && clientSecret && (
                         <div className="space-y-6">
                             <h3 className="text-xl font-bold text-[var(--ag-sys-color-text)]">
-                                Validar anuncio
+                                {isPt ? "Validar anúncio" : "Validar anuncio"}
                             </h3>
                             <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
-                                {/* We reuse CheckoutForm. It redirects to dashboard with featured_success=true. 
-                                    We might want to pass a different return_url, but we'll stick to the existing component logic for simplicity,
-                                    or the user can see it in dashboard as active. */}
                                 <CheckoutForm planId="animal_welfare_validation" listingId={listingId} />
                             </Elements>
                             <button
                                 onClick={() => setStep('form')}
                                 className="w-full mt-4 py-3 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-colors"
                             >
-                                Cancelar y volver
+                                {isPt ? "Cancelar e voltar" : "Cancelar y volver"}
                             </button>
                         </div>
                     )}

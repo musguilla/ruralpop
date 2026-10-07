@@ -161,7 +161,7 @@ export function ActiveSearchBar() {
         const catObj = CATEGORIES.find(c => c.id === category);
         activeBadges.push({ type: 'category', label: catObj ? catObj.label : category });
     }
-    if (location && location.trim() !== "" && location !== "all" && location !== "Toda España") {
+    if (location && location.trim() !== "" && location !== "all" && location !== "Toda España" && location !== "Todo o Portugal") {
         const locObj = LOCATIONS.find(l => l.id === location);
         activeBadges.push({ type: 'location', label: locObj ? locObj.name : location });
     }
@@ -313,7 +313,7 @@ export function ActiveSearchBar() {
                             <div className="space-y-2 flex flex-col">
                                 <label className="flex items-center gap-1.5 cursor-pointer w-full text-left py-2 hover:opacity-80">
                                     <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" />
-                                    <span className="font-semibold text-gray-900 text-sm">Localización</span>
+                                    <span className="font-semibold text-gray-900 text-sm">{locale === 'pt' ? 'Localização' : 'Localización'}</span>
                                 </label>
                                 <SearchableSelect
                                     name="modalLocation"
@@ -327,7 +327,7 @@ export function ActiveSearchBar() {
                                             return locale === 'pt' ? [...ptLocs, ...esLocs] : [...esLocs, ...ptLocs];
                                         })()
                                     ]}
-                                    placeholder={t("toda_espana")}
+                                    placeholder={locale === 'pt' ? 'Todo o Portugal' : t("toda_espana")}
                                     searchPlaceholder={t("search.buscar_provincia")}
                                 />
                             </div>

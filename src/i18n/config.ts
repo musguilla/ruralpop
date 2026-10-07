@@ -34,6 +34,7 @@ export const routeTranslations: Record<string, Record<LocaleCode, string>> = {
   tractores: { es: '/tractores', pt: '/tractores' },
   magazine: { es: '/magazine', pt: '/magazine' },
   empresasProfesionales: { es: '/empresas-profesionales-sector-rural', pt: '/empresas-profissionais-setor-rural' },
+  preguntasFrecuentes: { es: '/preguntas-frecuentes', pt: '/perguntas-frequentes' },
 
   // MAIN CATEGORIES
   catGanaderia: { es: '/ganaderia', pt: '/pecuaria' },
@@ -70,7 +71,7 @@ export const routeTranslations: Record<string, Record<LocaleCode, string>> = {
   subCosechadoras: { es: '/cosechadoras', pt: '/ceifeiras' },
   subDesbrozadoras: { es: '/desbrozadoras', pt: '/rocadoras' },
   subEncintadoras: { es: '/encintadoras', pt: '/plastificadoras' },
-  subEmpacadoras: { es: '/empacadoras', pt: '/enfaradadeiras' },
+  subEmpacadoras: { es: '/empacadoras', pt: '/enfardadeiras' },
   subMotocultores: { es: '/motocultores', pt: '/motocultivadores' },
   subRemolques: { es: '/remolques', pt: '/reboques' },
   subSembradoras: { es: '/sembradoras', pt: '/semeadores' },

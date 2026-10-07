@@ -239,7 +239,12 @@
     "box1_title": "Atención Garantizada",
     "box1_desc": "Nuestro equipo revisa todos los formularios. Para posibles estafas o contenido fraudulento, indícalo directamente en el asunto para darle máxima prioridad.",
     "box2_title": "Feedback de la comunidad",
-    "box2_desc": "Constantemente implementamos mejoras que nos sugerís. Si echas en falta alguna categoría, subcategoría o utilidad, no dudes en escribirnos un correo."
+    "box2_desc": "Constantemente implementamos mejoras que nos sugerís. Si echas en falta alguna categoría, subcategoría o utilidad, no dudes en escribirnos un correo.",
+    "sent_title": "¡Mensaje Enviado!",
+    "send_another": "Enviar otro mensaje",
+    "sent_success": "Enviado con éxito",
+    "sent_error": "Error al enviar",
+    "connection_error": "Error de conexión"
   },
   "home": {
     "latest_listings": "Últimos anuncios publicados",

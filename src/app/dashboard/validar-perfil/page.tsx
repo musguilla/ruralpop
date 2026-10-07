@@ -8,8 +8,11 @@ import { CheckoutForm } from "@/components/dashboard/CheckoutForm";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useTranslation } from "@/context/LocaleContext";
 
 function ValidarPerfilContent() {
+    const { locale } = useTranslation();
+    const isPt = locale === "pt";
     const stripePromise = getStripeClient();
     const searchParams = useSearchParams();
     const listingId = searchParams.get('listingId');
@@ -30,7 +33,7 @@ function ValidarPerfilContent() {
         e.preventDefault();
         
         if (!name || !nif || !phone || !zooRegister) {
-            setError("Por favor, rellena todos los campos obligatorios.");
+            setError(isPt ? "Por favor, preencha todos os campos obrigatórios." : "Por favor, rellena todos los campos obligatorios.");
             return;
         }
 
@@ -53,14 +56,14 @@ function ValidarPerfilContent() {
                 }),
             });
 
-            if (!res.ok) throw new Error("Error creando el pago");
+            if (!res.ok) throw new Error(isPt ? "Erro ao criar o pagamento" : "Error creando el pago");
 
             const data = await res.json();
             setClientSecret(data.clientSecret);
             setStep('payment');
         } catch (error) {
             console.error("Error al inicializar el pago:", error);
-            setError("Ha ocurrido un error al conectar con el procesador de pagos.");
+            setError(isPt ? "Ocorreu um erro ao ligar ao processador de pagamentos." : "Ha ocurrido un error al conectar con el procesador de pagos.");
         } finally {
             setIsCreatingIntent(false);
         }
@@ -68,9 +71,9 @@ function ValidarPerfilContent() {
 
     return (
         <div className="max-w-3xl mx-auto p-4 md:p-8">
-            <Link href="/dashboard" className="inline-flex items-center text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)] mb-6 transition-colors">
+            <Link href={isPt ? "/dashboard" : "/dashboard"} className="inline-flex items-center text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)] mb-6 transition-colors">
                 <ArrowLeft className="w-5 h-5 mr-2" />
-                Volver al Panel
+                {isPt ? "Voltar ao Painel" : "Volver al Panel"}
             </Link>
 
             <div className="bg-[var(--ag-sys-color-surface)] w-full rounded-3xl overflow-hidden shadow-sm border border-[var(--ag-sys-color-border)]">
@@ -83,24 +86,32 @@ function ValidarPerfilContent() {
                             </div>
                             
                             <h1 className="text-3xl font-black text-[var(--ag-sys-color-text)] leading-tight">
-                                Activa tu Perfil Profesional
+                                {isPt ? "Ative o seu Perfil Profissional" : "Activa tu Perfil Profesional"}
                             </h1>
                             
                             <div className="text-[var(--ag-sys-color-text-muted)] space-y-4 text-lg">
                                 <p>
-                                    La Ley de Bienestar Animal (Ley 7/2023) en España limita la publicación de anuncios de determinados animales de compañía por parte de usuarios particulares en plataformas online.
+                                    {isPt 
+                                        ? "A regulamentação sobre bem-estar animal limita a publicação de anúncios de determinados animais de companhia por particulares em plataformas online."
+                                        : "La Ley de Bienestar Animal (Ley 7/2023) en España limita la publicación de anuncios de determinados animales de compañía por parte de usuarios particulares en plataformas online."}
                                 </p>
                                 <p>
-                                    Para publicar anuncios de perros, aves de compañía y otros animales regulados, es necesario disponer de un perfil verificado donde debes introducir número de registro de núcleo zoológico, explotación o criadero.
+                                    {isPt 
+                                        ? "Para publicar anúncios de cães, aves e outros animais regulamentados, é necessário dispor de um perfil verificado onde deve introduzir o número de registo oficial (DGAV, exploração ou criador)."
+                                        : "Para publicar anuncios de perros, aves de compañía y otros animales regulados, es necesario disponer de un perfil verificado donde debes introducir número de registro de núcleo zoológico, explotación o criadero."}
                                 </p>
                                 <p>
-                                    En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Perfil Pro por solo 1,99€</strong>, lo que te permitirá:
+                                    {isPt ? (
+                                        <>No Ruralpop pode fazê-lo de forma simples ativando <strong>um Perfil Pro por apenas 1,99€</strong>, o que lhe permitirá:</>
+                                    ) : (
+                                        <>En Ruralpop puedes hacerlo de forma sencilla activando <strong>un Perfil Pro por solo 1,99€</strong>, lo que te permitirá:</>
+                                    )}
                                 </p>
                                 <ul className="list-disc pl-6 space-y-2 font-semibold text-[var(--ag-sys-color-text)]">
-                                    <li>Publicar este anuncio autorizado</li>
-                                    <li>Mostrar tu perfil como profesional verificado</li>
-                                    <li>Cumplir con la normativa vigente</li>
-                                    <li>Generar mayor confianza a los compradores</li>
+                                    <li>{isPt ? "Publicar este anúncio autorizado" : "Publicar este anuncio autorizado"}</li>
+                                    <li>{isPt ? "Apresentar o seu perfil como profissional verificado" : "Mostrar tu perfil como profesional verificado"}</li>
+                                    <li>{isPt ? "Cumprir a regulamentação em vigor" : "Cumplir con la normativa vigente"}</li>
+                                    <li>{isPt ? "Gerar maior confiança aos compradores" : "Generar mayor confianza a los compradores"}</li>
                                 </ul>
                             </div>
 
@@ -109,7 +120,7 @@ function ValidarPerfilContent() {
                                     onClick={() => setStep('form')}
                                     className="w-full py-4 bg-[var(--ag-sys-color-primary)] text-white font-black rounded-2xl hover:opacity-90 transition-opacity text-lg"
                                 >
-                                    Comenzar Verificación
+                                    {isPt ? "Começar Verificação" : "Comenzar Verificación"}
                                 </button>
                             </div>
                         </div>
@@ -119,10 +130,12 @@ function ValidarPerfilContent() {
                         <div className="space-y-8 max-w-xl mx-auto">
                             <div>
                                 <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)]">
-                                    Datos del Profesional / Criador
+                                    {isPt ? "Dados do Profissional / Criador" : "Datos del Profesional / Criador"}
                                 </h2>
                                 <p className="text-[var(--ag-sys-color-text-muted)] mt-2">
-                                    Completa tus datos fiscales para poder validar tu perfil. Esta información se guardará de forma segura.
+                                    {isPt 
+                                        ? "Preencha os seus dados fiscais para validar o seu perfil. Esta informação será guardada em segurança." 
+                                        : "Completa tus datos fiscales para poder validar tu perfil. Esta información se guardará de forma segura."}
                                 </p>
                             </div>
 
@@ -135,7 +148,9 @@ function ValidarPerfilContent() {
                                 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Nombre *</label>
+                                        <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">
+                                            {isPt ? "Nome *" : "Nombre *"}
+                                        </label>
                                         <input 
                                             type="text" 
                                             value={name} 
@@ -145,7 +160,9 @@ function ValidarPerfilContent() {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Apellidos</label>
+                                        <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">
+                                            {isPt ? "Apelidos" : "Apellidos"}
+                                        </label>
                                         <input 
                                             type="text" 
                                             value={lastName} 
@@ -156,7 +173,9 @@ function ValidarPerfilContent() {
                                 </div>
                                 
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">NIF / CIF *</label>
+                                    <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">
+                                        {isPt ? "NIF / NIPC *" : "NIF / CIF *"}
+                                    </label>
                                     <input 
                                         type="text" 
                                         value={nif} 
@@ -167,7 +186,9 @@ function ValidarPerfilContent() {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Teléfono de Contacto *</label>
+                                    <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">
+                                        {isPt ? "Telefone de Contacto *" : "Teléfono de Contacto *"}
+                                    </label>
                                     <input 
                                         type="tel" 
                                         value={phone} 
@@ -179,7 +200,9 @@ function ValidarPerfilContent() {
 
                                 <div>
                                     <label className="block text-xs font-bold text-[var(--ag-sys-color-primary)] mb-2 uppercase tracking-wider">
-                                        Nº Reg. Núcleo Zoológico / Explotación / Criadero *
+                                        {isPt 
+                                            ? "Nº Reg. DGAV / Exploração / Criador *" 
+                                            : "Nº Reg. Núcleo Zoológico / Explotación / Criadero *"}
                                     </label>
                                     <input 
                                         type="text" 
@@ -187,7 +210,7 @@ function ValidarPerfilContent() {
                                         onChange={(e) => setZooRegister(e.target.value)}
                                         required
                                         className="w-full bg-[var(--ag-sys-color-primary)]/5 border-2 border-[var(--ag-sys-color-primary)]/20 rounded-xl px-4 py-3 focus:border-[var(--ag-sys-color-primary)] focus:ring-0 outline-none transition-all"
-                                        placeholder="Ej: ES123456789"
+                                        placeholder={isPt ? "Ex: PT123456789" : "Ej: ES123456789"}
                                     />
                                 </div>
 
@@ -198,14 +221,14 @@ function ValidarPerfilContent() {
                                         className="w-full flex items-center justify-center gap-2 py-4 bg-[var(--ag-sys-color-primary)] text-white font-black rounded-2xl hover:opacity-90 transition-opacity disabled:opacity-50 text-lg"
                                     >
                                         {isCreatingIntent && <Loader2 className="w-5 h-5 animate-spin" />}
-                                        Continuar al pago (1,99€)
+                                        {isPt ? "Continuar para o pagamento (1,99€)" : "Continuar al pago (1,99€)"}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setStep('info')}
                                         className="w-full py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-colors"
                                     >
-                                        Volver atrás
+                                        {isPt ? "Voltar atrás" : "Volver atrás"}
                                     </button>
                                 </div>
                             </form>
@@ -215,7 +238,7 @@ function ValidarPerfilContent() {
                     {step === 'payment' && clientSecret && (
                         <div className="space-y-8 max-w-xl mx-auto">
                             <h2 className="text-2xl font-bold text-[var(--ag-sys-color-text)]">
-                                Pago Seguro
+                                {isPt ? "Pagamento Seguro" : "Pago Seguro"}
                             </h2>
                             <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
                                 <CheckoutForm planId="animal_welfare_validation" listingId={listingId || "profile"} />
@@ -224,7 +247,7 @@ function ValidarPerfilContent() {
                                 onClick={() => setStep('form')}
                                 className="w-full mt-6 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-colors"
                             >
-                                Cancelar y editar datos
+                                {isPt ? "Cancelar e editar dados" : "Cancelar y editar datos"}
                             </button>
                         </div>
                     )}

@@ -26,7 +26,8 @@ interface EditListingFormProps {
 }
 
 export default function EditListingForm({ listing, savedPhone, initialProvinces, initialMunicipalities, userEmail, hasWalletConfigured = false, isEquipop = false }: EditListingFormProps) {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
+    const isPt = locale === "pt";
     const CATEGORIES = useCategories();
     const router = useRouter();
     const { showAlert } = useNotification();
@@ -104,7 +105,11 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
         setIsPending(true);
 
         if (imageUrls.length === 0) {
-            showAlert({ title: "Campo requerido", message: "Tu anuncio debe tener al menos una fotografía.", type: "error" });
+            showAlert({ 
+                title: isPt ? "Campo obrigatório" : "Campo requerido", 
+                message: isPt ? "O seu anúncio deve ter pelo menos uma fotografia." : "Tu anuncio debe tener al menos una fotografía.", 
+                type: "error" 
+            });
             setIsPending(false);
             return;
         }
@@ -121,25 +126,27 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
             const res = await updateListing(listing.id, formData);
             if (res?.error) {
                 showAlert({
-                    title: "Error al modificar",
+                    title: isPt ? "Erro ao modificar" : "Error al modificar",
                     message: res.error,
                     type: "error"
                 });
                 setIsPending(false);
             } else if (res?.success) {
                 showAlert({
-                    title: "Anuncio modificado",
-                    message: "Los cambios se han guardado correctamente.",
+                    title: isPt ? "Anúncio modificado" : "Anuncio modificado",
+                    message: isPt ? "As alterações foram guardadas com sucesso." : "Los cambios se han guardado correctamente.",
                     type: "success"
                 });
-                router.push("/dashboard");
+                const isPtNative = typeof window !== 'undefined' && window.location.hostname.includes('ruralpop.pt');
+                const dashboardUrl = isPt ? (isPtNative ? "/dashboard" : "/pt/dashboard") : "/dashboard";
+                router.push(dashboardUrl);
                 router.refresh();
             }
         } catch (err) {
             console.error(err);
             showAlert({
-                title: "Error inesperado",
-                message: "Hubo un problema al conectar con el servidor. Inténtalo de nuevo.",
+                title: isPt ? "Erro inesperado" : "Error inesperado",
+                message: isPt ? "Ocorreu um erro ao ligar ao servidor. Tente novamente." : "Hubo un problema al conectar con el servidor. Inténtalo de nuevo.",
                 type: "error"
             });
             setIsPending(false);
@@ -156,7 +163,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                         className="inline-flex items-center text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] transition-colors mb-4 font-medium"
                     >
                         <ArrowLeft className="w-5 h-5 mr-2" />
-                        Volver a Mi Panel
+                        {isPt ? "Voltar ao Meu Painel" : "Volver a Mi Panel"}
                     </Link>
                 </div>
 
@@ -167,10 +174,10 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                         ) : (
                             <Tractor className="text-[var(--ag-sys-color-primary)] w-8 h-8" />
                         )}
-                        Modificar anuncio
+                        {isPt ? "Modificar anúncio" : "Modificar anuncio"}
                     </h1>
                     <p className="text-[var(--ag-sys-color-text-secondary)] text-sm sm:text-base mt-2">
-                        Haz cambios en tu anuncio. Recuerda que fotos de buena calidad atraen más compradores.
+                        {isPt ? "Faça alterações no seu anúncio. Lembre-se de que fotos com boa qualidade atraem mais compradores." : "Haz cambios en tu anuncio. Recuerda que fotos de buena calidad atraen más compradores."}
                     </p>
                 </div>
 
@@ -179,7 +186,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                     <section className="bg-[var(--ag-sys-color-surface)] p-6 rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm">
                         <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                             <Info className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
-                            Fotografías del anuncio
+                            {isPt ? "Fotografias do anúncio" : "Fotografías del anuncio"}
                         </h3>
                         <ImageUploader
                             onImagesChange={setImageUrls}
@@ -191,57 +198,57 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                     <section className="bg-[var(--ag-sys-color-surface)] p-6 rounded-2xl border border-[var(--ag-sys-color-border)] shadow-sm space-y-6">
                         <h3 className="text-lg font-bold flex items-center gap-2">
                             <Info className="w-5 h-5 text-[var(--ag-sys-color-primary)]" />
-                            Información general
+                            {isPt ? "Informação geral" : "Información general"}
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="col-span-1 md:col-span-2">
-                                <label className="block text-sm font-medium mb-1.5">Título del anuncio *</label>
+                                <label className="block text-sm font-medium mb-1.5">{isPt ? "Título do anúncio *" : "Título del anuncio *"}</label>
                                 <input
                                     name="title"
                                     required
                                     defaultValue={listing.title}
-                                    placeholder="Ej: Tractor John Deere 6120M o Terneros Limousin"
+                                    placeholder={isPt ? "Ex: Trator John Deere 6120M ou Novilhos Limousin" : "Ej: Tractor John Deere 6120M o Terneros Limousin"}
                                     className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Categoría *</label>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">{isPt ? "Categoria *" : "Categoría *"}</label>
                                 <SearchableSelect
                                     name="category"
                                     required
                                     value={selectedCategory}
                                     onChange={(val) => setSelectedCategory(val as string)}
-                                    options={CATEGORIES.map(c => ({ id: c.id, name: c.label }))}
-                                    placeholder="Selecciona categoría..."
-                                    searchPlaceholder="Buscar categoría..."
+                                    options={CATEGORIES.map(c => ({ id: c.id, name: t('category.' + c.id) || c.label }))}
+                                    placeholder={isPt ? "Selecione a categoria..." : "Selecciona categoría..."}
+                                    searchPlaceholder={isPt ? "Pesquisar categoria..." : "Buscar categoría..."}
                                 />
                             </div>
 
                             {categoryData && categoryData.subcategories.length > 0 && (
                                 <div>
-                                    <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Subcategoría *</label>
+                                    <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">{isPt ? "Subcategoria *" : "Subcategoría *"}</label>
                                     <SearchableSelect
                                         name="subcategory"
                                         required
-                                        options={categoryData.subcategories.map(s => ({ id: s, name: s }))}
+                                        options={categoryData.subcategories.map(s => ({ id: s, name: t('category.' + s) || s }))}
                                         value={formDataState.subcategory}
                                         onChange={(val) => setFormDataState(prev => ({ ...prev, subcategory: val as string }))}
-                                        placeholder="Selecciona subcategoría..."
-                                        searchPlaceholder="Buscar subcategoría..."
+                                        placeholder={isPt ? "Selecione a subcategoria..." : "Selecciona subcategoría..."}
+                                        searchPlaceholder={isPt ? "Pesquisar subcategoria..." : "Buscar subcategoría..."}
                                     />
                                 </div>
                             )}
 
                             <div className="col-span-1 md:col-span-2">
-                                <label className="block text-sm font-medium mb-1.5">Descripción detallada *</label>
+                                <label className="block text-sm font-medium mb-1.5">{isPt ? "Descrição detalhada *" : "Descripción detallada *"}</label>
                                 <textarea
                                     name="description"
                                     required
                                     defaultValue={listing.description}
                                     rows={5}
-                                    placeholder="Describe el estado, años, mantenimiento, raza, peso..."
+                                    placeholder={isPt ? "Descreva o estado, anos, manutenção, raça, peso..." : "Describe el estado, años, mantenimiento, raza, peso..."}
                                     className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all resize-none"
                                 />
                             </div>
@@ -261,7 +268,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                         <div className={isEquipop ? "flex flex-col gap-6" : "grid grid-cols-1 md:grid-cols-2 gap-6"}>
                             <div>
                                 <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
-                                    <Euro className="w-4 h-4" /> Precio (€) *
+                                    <Euro className="w-4 h-4" /> {isPt ? "Preço (€) *" : "Precio (€) *"}
                                 </label>
                                 <input
                                     name="price"
@@ -275,7 +282,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
 
                             {!isEquipop && (
                                 <div>
-                                <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">Tipo de precio</label>
+                                <label className="block text-sm font-medium mb-1.5 text-[var(--ag-sys-color-text)]">{isPt ? "Tipo de preço" : "Tipo de precio"}</label>
                                 <div className="flex items-center gap-4">
                                     <div className="flex-1 min-w-0">
                                         <SearchableSelect
@@ -283,9 +290,9 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                             value={formDataState.priceType}
                                             onChange={(val) => setFormDataState(prev => ({ ...prev, priceType: val as string }))}
                                             options={PRICE_TYPES.map(type => ({
-...type, label: t(type.id === "fixed" ? "precio_fijo" : type.id === "negotiable" ? "precio_negociable" : "precio_a_convenir") || type.label
-})).map(p => ({ id: p.id, name: p.label }))}
-                                            placeholder="Selecciona tipo..."
+                                                ...type, label: t(type.id === "fixed" ? "precio_fijo" : type.id === "negotiable" ? "precio_negociable" : "precio_a_convenir") || type.label
+                                            })).map(p => ({ id: p.id, name: p.label }))}
+                                            placeholder={isPt ? "Selecione o tipo..." : "Selecciona tipo..."}
                                             disabled={sellOnline}
                                         />
                                     </div>
@@ -347,7 +354,9 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                             <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                                             <div>
                                                 <p className="text-sm font-medium text-amber-900">
-                                                    Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos.
+                                                    {isPt 
+                                                        ? "Ativou a venda online mas ainda não configurou a sua carteira para receber os pagamentos."
+                                                        : "Has activado la venta online pero aún no has configurado tu monedero para recibir los pagos."}
                                                 </p>
                                                 <a href="/dashboard/monedero" target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-[var(--ag-sys-color-primary)] hover:underline mt-1 inline-block">
                                                     {t("configurar_mi_monedero_flecha")}
@@ -360,7 +369,7 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
 
                             <div>
                                 <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
-                                    <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Provincia *
+                                    <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> {isPt ? "Distrito / Região *" : "Provincia *"}
                                 </label>
                                 <SearchableSelect
                                     name="province_id"
@@ -368,14 +377,14 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                     value={selectedProvince}
                                     onChange={(val) => setSelectedProvince(val as number | "")}
                                     options={initialProvinces}
-                                    placeholder="Selecciona provincia..."
-                                    searchPlaceholder="Ej: Salamanca, Asturias..."
+                                    placeholder={isPt ? "Selecione o distrito..." : "Selecciona provincia..."}
+                                    searchPlaceholder={isPt ? "Ex: Porto, Coimbra, Santarém..." : "Ej: Salamanca, Asturias..."}
                                 />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5 text-[var(--ag-sys-color-text)]">
-                                    <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> Localidad *
+                                    <MapPin className="w-4 h-4 text-[var(--ag-sys-color-primary)]" /> {isPt ? "Concelho / Localidade *" : "Localidad *"}
                                 </label>
                                 <SearchableSelect
                                     name="municipality_id"
@@ -383,8 +392,8 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                                     value={selectedMunicipality}
                                     onChange={(val) => setSelectedMunicipality(val as number | "")}
                                     options={municipalities}
-                                    placeholder={selectedProvince === "" ? "Selecciona primero provincia" : "Selecciona localidad..."}
-                                    searchPlaceholder="Ej: Suances, Tineo..."
+                                    placeholder={selectedProvince === "" ? (isPt ? "Selecione primeiro o distrito" : "Selecciona primero provincia") : (isPt ? "Selecione a localidade..." : "Selecciona localidad...")}
+                                    searchPlaceholder={isPt ? "Ex: Sintra, Guimarães..." : "Ej: Suances, Tineo..."}
                                     disabled={selectedProvince === ""}
                                     isLoading={isLoadingMunicipalities}
                                 />
@@ -393,17 +402,17 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                             <div className="col-span-1 md:col-span-2">
                                 <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5">
                                     <Phone className="w-4 h-4" />
-                                    Teléfono de contacto
+                                    {isPt ? "Telefone de contacto" : "Teléfono de contacto"}
                                 </label>
                                 <input
                                     name="contact_phone"
                                     type="tel"
                                     defaultValue={listing.contact_phone || savedPhone || ""}
-                                    placeholder="Ej: 600 000 000"
+                                    placeholder={isPt ? "Ex: 910 000 000" : "Ej: 600 000 000"}
                                     className="w-full px-4 py-3 rounded-xl border border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-background)] focus:ring-2 focus:ring-[var(--ag-sys-color-primary)] outline-none transition-all"
                                 />
                                 <p className="text-xs text-[var(--ag-sys-color-text-muted)] mt-1.5">
-                                    Este es el número que verán los compradores.
+                                    {isPt ? "Este é o número que os compradores verão." : "Este es el número que verán los compradores."}
                                 </p>
                             </div>
                         </div>
@@ -418,9 +427,9 @@ export default function EditListingForm({ listing, savedPhone, initialProvinces,
                             {isPending ? (
                                 <>
                                     <Loader2 className="w-5 h-5 animate-spin" />
-                                    Guardando cambios...
+                                    {isPt ? "A guardar alterações..." : "Guardando cambios..."}
                                 </>
-                            ) : "Guardar Cambios"}
+                            ) : (isPt ? "Guardar Alterações" : "Guardar Cambios")}
                         </button>
                     </div>
                 </form>

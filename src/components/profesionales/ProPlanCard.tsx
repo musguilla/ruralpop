@@ -120,7 +120,10 @@ export function ProPlanCard({ isGhostClaim, isEquipop = false }: { isGhostClaim:
                 </li>
             </ul>
 
-            <Link href={`${isPt ? '/pt' : ''}/profesionales/checkout/pro?${isGhostClaim ? 'ghost_claim=true&' : ''}${isAnnual ? 'interval=year' : 'interval=month'}`} className="mt-auto relative z-10 w-full flex items-center justify-center gap-2 px-6 py-4 bg-white text-[var(--ag-sys-color-primary)] font-black rounded-2xl hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5">
+            <Link 
+                href={`${(isPt && typeof window !== 'undefined' && !window.location.hostname.includes('ruralpop.pt')) ? '/pt' : ''}/profesionales/checkout/pro?${isGhostClaim ? 'ghost_claim=true&' : ''}${isAnnual ? 'interval=year' : 'interval=month'}`} 
+                className="mt-auto relative z-10 w-full flex items-center justify-center gap-2 px-6 py-4 bg-white text-[var(--ag-sys-color-primary)] font-black rounded-2xl hover:bg-gray-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+            >
                 <Zap className="w-5 h-5" />
                 {isGhostClaim ? (isPt ? 'Ativar Plano PRO' : 'Activar Plan PRO') : (isPt ? 'Quero o PRO' : 'Quiero el PRO')}
             </Link>

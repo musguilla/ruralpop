@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { ChevronRight, ChevronDown } from "lucide-react";
+import { useTranslation } from "@/context/LocaleContext";
 import clsx from "clsx";
 
 export interface Subcategory {
@@ -21,6 +22,8 @@ interface Props {
 }
 
 export function CompanyCategoriesSidebar({ categories }: Props) {
+    const { locale } = useTranslation();
+    const isPt = locale === 'pt';
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -88,13 +91,15 @@ export function CompanyCategoriesSidebar({ categories }: Props) {
     return (
         <div className="bg-[var(--ag-sys-color-surface)] border border-[var(--ag-sys-color-border)] rounded-2xl overflow-hidden flex flex-col">
             <div className="p-4 border-b border-[var(--ag-sys-color-border)] flex items-center justify-between">
-                <h3 className="font-bold text-[var(--ag-sys-color-text)]">Categorías</h3>
+                <h3 className="font-bold text-[var(--ag-sys-color-text)]">
+                    {isPt ? "Categorias" : "Categorías"}
+                </h3>
                 {hasFilters && (
                     <button 
                         onClick={handleClearFilters}
                         className="text-xs font-semibold text-[var(--ag-sys-color-primary)] hover:underline"
                     >
-                        Limpiar
+                        {isPt ? "Limpar" : "Limpiar"}
                     </button>
                 )}
             </div>
