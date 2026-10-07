@@ -57,6 +57,12 @@ export function UserRow({ user, adsCount }: UserRowProps) {
         }
     };
 
+    const isPt = Boolean(
+        (user.province_id && Number(user.province_id) >= 101) ||
+        (user.contact_phone && user.contact_phone.includes('+351')) ||
+        (user.company_country && user.company_country.toUpperCase() === 'PT')
+    );
+
     return (
         <>
             <tr className="hover:bg-[var(--ag-sys-color-background)]/50 transition-colors group">
@@ -72,9 +78,16 @@ export function UserRow({ user, adsCount }: UserRowProps) {
                             )}
                         </div>
                         <div>
-                            <p className="font-bold text-[var(--ag-sys-color-text)] leading-tight">
-                                {user.name || user.email?.split('@')[0] || 'Usuario'}
-                            </p>
+                            <div className="flex items-center gap-2">
+                                <p className="font-bold text-[var(--ag-sys-color-text)] leading-tight">
+                                    {user.name || user.email?.split('@')[0] || 'Usuario'}
+                                </p>
+                                {user.role === 'admin' && (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-700 border border-purple-200">
+                                        <Shield className="w-2.5 h-2.5" /> Admin
+                                    </span>
+                                )}
+                            </div>
                             <span className="text-xs text-[var(--ag-sys-color-text-muted)]">{user.email}</span>
                         </div>
                     </div>
@@ -85,23 +98,25 @@ export function UserRow({ user, adsCount }: UserRowProps) {
                         {user.location || 'No definida'}
                     </div>
                 </td>
-                <td className="px-6 py-5">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${user.role === 'admin'
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'bg-blue-100 text-blue-700'
-                        }`}>
-                        {user.role === 'admin' ? <Shield className="w-3 h-3" /> : null}
-                        {user.role}
-                    </span>
+                <td className="px-6 py-5 whitespace-nowrap">
+                    {isPt ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
+                            <span className="text-sm">🇵🇹</span> Portugal
+                        </span>
+                    ) : (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 shadow-sm">
+                            <span className="text-sm">🇪🇸</span> España
+                        </span>
+                    )}
                 </td>
-                <td className="px-6 py-5">
+                <td className="px-6 py-5 whitespace-nowrap">
                     <Link
                         href={`/admin/listings?userId=${user.id}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ag-sys-color-background)] rounded-lg hover:bg-[var(--ag-sys-color-border)] hover:text-[var(--ag-sys-color-primary)] font-bold transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ag-sys-color-background)] rounded-lg hover:bg-[var(--ag-sys-color-border)] hover:text-[var(--ag-sys-color-primary)] font-bold text-xs transition-colors whitespace-nowrap"
                         title="Ver anuncios del usuario"
                     >
-                        <Package className="w-3.5 h-3.5" />
-                        {adsCount} {adsCount === 1 ? 'anuncio' : 'anuncios'}
+                        <Package className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span className="whitespace-nowrap">{adsCount} {adsCount === 1 ? 'anuncio' : 'anuncios'}</span>
                     </Link>
                 </td>
                 <td className="px-6 py-5">
@@ -181,9 +196,16 @@ export function UserRow({ user, adsCount }: UserRowProps) {
                                         className="w-full bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--ag-sys-color-primary)]/50 appearance-none"
                                     >
                                         <option value="">Cualquiera</option>
-                                        {LOCATIONS.filter(l => l.type === 'province').map(p => (
-                                            <option key={p.id} value={p.id}>{p.name}</option>
-                                        ))}
+                                        <optgroup label="🇪🇸 España">
+                                            {LOCATIONS.filter(l => l.type === 'province' && Number(l.id) < 100).map(p => (
+                                                <option key={p.id} value={p.id}>{p.name}</option>
+                                            ))}
+                                        </optgroup>
+                                        <optgroup label="🇵🇹 Portugal">
+                                            {LOCATIONS.filter(l => l.type === 'province' && Number(l.id) >= 100).map(p => (
+                                                <option key={p.id} value={p.id}>{p.name}</option>
+                                            ))}
+                                        </optgroup>
                                     </select>
                                 </div>
                                 <div>

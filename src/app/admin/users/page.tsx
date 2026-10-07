@@ -19,6 +19,7 @@ export default async function AdminUsersPage(props: Props) {
     const page = parseInt(searchParams.page as string) || 1;
     const limit = 100;
     const search = searchParams.search as string || "";
+    const country = searchParams.country as string || "";
 
     let query = supabase
         .from("users")
@@ -30,6 +31,12 @@ export default async function AdminUsersPage(props: Props) {
 
     if (search) {
         query = query.or(`name.ilike.*${search}*,email.ilike.*${search}*,contact_phone.ilike.*${search}*`);
+    }
+
+    if (country === 'pt') {
+        query = query.gte('province_id', 101);
+    } else if (country === 'es') {
+        query = query.or('province_id.lt.101,province_id.is.null');
     }
 
     const { data: users, count, error } = await query
@@ -79,8 +86,8 @@ export default async function AdminUsersPage(props: Props) {
                         <tr className="bg-[var(--ag-sys-color-background)]/50 border-b border-[var(--ag-sys-color-border)]">
                             <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Usuario</th>
                             <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Ubicación</th>
-                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Rol</th>
-                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Anuncios</th>
+                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest whitespace-nowrap">País</th>
+                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest whitespace-nowrap">Anuncios</th>
                             <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Registro</th>
                             <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest text-right">Acciones</th>
                         </tr>
