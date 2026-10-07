@@ -13,7 +13,6 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
             },
             sitemap: [
                 'https://www.ruralpop.pt/sitemap_index.xml',
-                'https://www.ruralpop.pt/sitemap_pt_index.xml',
             ],
         };
     }
