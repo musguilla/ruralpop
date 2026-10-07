@@ -77,7 +77,7 @@ const INVERSE_SUBCATEGORY_ALIASES = Object.fromEntries(
     Object.entries(SUBCATEGORY_ALIASES).map(([k, v]) => [v, k])
 );
 
-export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlParams, locale: string = 'es'): string {
+export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlParams, locale: string = 'es', isDomainPt?: boolean): string {
     const parts: string[] = [];
 
     // Category
@@ -102,7 +102,8 @@ export function buildSeoUrl({ q, category, subcategory, province_id }: SeoUrlPar
         if (locSlug) parts.push(locSlug);
     }
 
-    const prefix = locale === 'pt' ? '/pt' : '';
+    const isPtOnNativeDomain = isDomainPt ?? (typeof window !== 'undefined' && window.location.hostname.includes('ruralpop.pt'));
+    const prefix = (locale === 'pt' && !isPtOnNativeDomain) ? '/pt' : '';
 
     if (parts.length === 0) return prefix || '/';
     
