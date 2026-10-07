@@ -129,10 +129,16 @@ export default async function RootLayout({
   const headersList = await headers();
   const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
   const originalPathname = headersList.get('x-original-pathname') || '';
+  const host = headersList.get('host') || headersList.get('x-forwarded-host') || '';
   const isAdmin = originalPathname.startsWith('/admin');
   const dictionary = await getDictionary(locale);
   const tenant = await getServerTenantSlug();
   const categories = await getCategories(tenant || 'ruralpop', locale);
+  
+  const isPt = locale === 'pt' || host.includes('ruralpop.pt');
+  const gaId = isPt 
+    ? (process.env.NEXT_PUBLIC_GA_PT_ID || 'G-RCFLZ0JRZ4') 
+    : (process.env.NEXT_PUBLIC_GA_ID || 'G-RTTVCPX0XQ');
   
   // Fetch active subcategories for Equipop SEO tabs
   let activeEquipopData: { categories: string[], subcategories: string[] } = { categories: [], subcategories: [] };
@@ -161,7 +167,7 @@ export default async function RootLayout({
         {/* Google Analytics */}
         <Script
           async
-          src="https://www.googletagmanager.com/gtag/js?id=G-RTTVCPX0XQ"
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -170,7 +176,7 @@ export default async function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-RTTVCPX0XQ');
+            gtag('config', '${gaId}');
           `}
         </Script>
         {/* Google AdSense */}
