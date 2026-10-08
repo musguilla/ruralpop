@@ -27,12 +27,12 @@ export async function Footer() {
                         <div className="flex flex-row lg:flex-col items-center lg:items-start justify-center gap-4 lg:w-1/5 lg:pr-10">
                             {/* Google Play Native SVG Badge */}
                             <a href="https://play.google.com/store/apps/details?id=com.ruralpop.app" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer" title={t("descargar_google")}>
-                                <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/google-play-logo.svg" alt={t("descargar_google")} className="h-[55px] w-auto" />
+                                <img src="/google-play-logo.svg" alt={t("descargar_google")} className="h-[55px] w-auto" />
                             </a>
 
                             {/* Apple App Store Native SVG Badge */}
                             <a href="https://apps.apple.com/es/app/ruralpop/id6759678666" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-all cursor-pointer" title={t("descargar_apple")}>
-                                <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/app-store-logo.svg" alt={t("descargar_apple")} className="h-[55px] w-auto" />
+                                <img src="/app-store-logo.svg" alt={t("descargar_apple")} className="h-[55px] w-auto" />
                             </a>
                         </div>
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import * as cheerio from "cheerio";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export async function POST(req: Request) {
     try {
@@ -89,25 +90,40 @@ export async function POST(req: Request) {
         // Modificamos la descripción para inyectar datos del vendedor
         const finalDescription = `${description}\n\n---\n**Datos de Contacto Milanuncios**\nVendedor: ${sellerName}\n${phone ? `Teléfono: ${phone}` : 'Teléfono no disponible (Comprueba las peticiones y cookies).'}`;
 
-        // 5. Descarga y Subida de Imágenes a Supabase
+        // 5. Descarga y Subida de Imágenes a Cloudflare R2
+        const accountId = process.env.R2_ACCOUNT_ID;
+        const accessKeyId = process.env.R2_ACCESS_KEY_ID;
+        const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+        const bucketName = process.env.R2_BUCKET_NAME || "ruralpop";
+        const r2BaseUrl = (process.env.NEXT_PUBLIC_R2_URL || "https://media.ruralpop.com").replace(/\/+$/, '');
+
+        const s3Client = (accountId && accessKeyId && secretAccessKey) ? new S3Client({
+            region: "auto",
+            endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+            credentials: { accessKeyId, secretAccessKey },
+        }) : null;
+
         const uploadTasks = imageUrls.slice(0, 5).map(async (imgUrl) => { // Limitado a 5 fotos para velocidad
             try {
                 const imgRes = await fetch(imgUrl);
                 const arrayBuffer = await imgRes.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
                 const fileName = `import_${adId || Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+                const key = `listings/${fileName}`;
 
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from('listings')
-                    .upload(fileName, arrayBuffer, { contentType: 'image/jpeg', upsert: true });
-
-                if (uploadError) {
-                    console.error("Storage upload error:", uploadError);
-                    return null;
+                if (s3Client) {
+                    await s3Client.send(new PutObjectCommand({
+                        Bucket: bucketName,
+                        Key: key,
+                        ContentType: "image/jpeg",
+                        Body: buffer,
+                    }));
+                    return `${r2BaseUrl}/${key}`;
                 }
 
-                return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/listings/${fileName}`;
+                return null;
             } catch (err) {
-                console.error("Error procesando imagen:", imgUrl, err);
+                console.error("Error procesando imagen para R2:", imgUrl, err);
                 return null;
             }
         });

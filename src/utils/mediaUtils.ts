@@ -31,6 +31,12 @@ export function getImageUrl(image: string | MediaObject | null | undefined): str
             return image.replace('https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev', 'https://media.ruralpop.com');
         }
 
+        // Sustituir URLs residuales de Supabase Storage por Cloudflare R2
+        if (image.includes('supabase.co/storage/v1/object/public/')) {
+            const r2BaseUrl = process.env.NEXT_PUBLIC_R2_URL || 'https://media.ruralpop.com';
+            return image.replace(/https:\/\/[^/]+\/storage\/v1\/object\/public\//, `${r2BaseUrl.replace(/\/+$/, '')}/`);
+        }
+
         // Corrección de seguridad: Si la app móvil subió la URL literal con un enviroment fallido
         if (image.startsWith('undefined/')) {
             const cleanPath = image.substring(10); // Quita 'undefined/'
@@ -44,10 +50,14 @@ export function getImageUrl(image: string | MediaObject | null | undefined): str
     const { storage_provider, storage_path, public_url } = image;
 
     // Si guardaron de antemano la public_url literal, le damos maxima prioridad.
-    // Pero si contiene el dominio antiguo capado, lo sustituimos al vuelo
+    // Pero si contiene el dominio antiguo capado o supabase, lo sustituimos al vuelo
     if (public_url) {
         if (public_url.includes('pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev')) {
             return public_url.replace('https://pub-d5e9ba1c275e41eb8458dc0c7fe5f525.r2.dev', 'https://media.ruralpop.com');
+        }
+        if (public_url.includes('supabase.co/storage/v1/object/public/')) {
+            const r2BaseUrl = process.env.NEXT_PUBLIC_R2_URL || 'https://media.ruralpop.com';
+            return public_url.replace(/https:\/\/[^/]+\/storage\/v1\/object\/public\//, `${r2BaseUrl.replace(/\/+$/, '')}/`);
         }
         return public_url;
     }
@@ -69,13 +79,18 @@ export function getImageUrl(image: string | MediaObject | null | undefined): str
         return `${cleanBase}/${cleanPath}`;
     }
 
-    // Redirección directa originada desde storage_path Supabase viejo en objeto json
+    // Redirección originada desde storage_path Supabase viejo en objeto json -> trasladar a R2
     if (storage_provider === 'supabase') {
-        const supabaseBase = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-        // Asumiendo que storage path guarda la subruta "listings/xx"
-        // Si no la guarda y guarda completa también saltaría por arriba, pero protegemos aquí:
-        if(storage_path.startsWith('http')) return storage_path;
-        return `${supabaseBase}/storage/v1/object/public/${storage_path}`;
+        const r2BaseUrl = process.env.NEXT_PUBLIC_R2_URL || 'https://media.ruralpop.com';
+        if (storage_path.startsWith('http')) {
+            if (storage_path.includes('supabase.co/storage/v1/object/public/')) {
+                return storage_path.replace(/https:\/\/[^/]+\/storage\/v1\/object\/public\//, `${r2BaseUrl.replace(/\/+$/, '')}/`);
+            }
+            return storage_path;
+        }
+        const cleanBase = r2BaseUrl.replace(/\/+$/, '');
+        const cleanPath = storage_path.replace(/^\/+/, '');
+        return `${cleanBase}/${cleanPath}`;
     }
 
     // Fallback absoluto

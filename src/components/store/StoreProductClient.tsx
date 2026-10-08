@@ -120,7 +120,7 @@ export function StoreProductClient({ product }: StoreProductClientProps) {
                 <div className="w-full relative bg-white border border-[var(--ag-sys-color-border)] rounded-xl overflow-hidden mb-4 p-2 transition-all">
                    <div className="relative w-full h-[200px] sm:h-[300px]">
                       <Image 
-                          src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/products/tallas-camisetas.jpg" 
+                          src="/tallas-camisetas.jpg" 
                           alt={isPt ? "Guia de tamanhos" : "Guía de tallas"} 
                           fill 
                           className="object-contain"

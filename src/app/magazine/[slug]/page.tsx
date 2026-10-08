@@ -207,10 +207,10 @@ export default async function MagazineArticlePage({ params }: { params: Promise<
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <a href="https://play.google.com/store/apps/details?id=com.ruralpop.app" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 hover:scale-105 transition-all duration-300 shadow-lg rounded-xl">
-                                <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/google-play-logo.svg" alt="Descargar en Google Play" className="h-[60px] w-auto" />
+                                <img src="/google-play-logo.svg" alt="Descargar en Google Play" className="h-[60px] w-auto" />
                             </a>
                             <a href="https://apps.apple.com/es/app/ruralpop/id6759678666" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 hover:scale-105 transition-all duration-300 shadow-lg rounded-xl">
-                                <img src="https://zrpucbuvojskcwrhwevv.supabase.co/storage/v1/object/public/wpublic/app-store-logo.svg" alt="Descargar en el App Store" className="h-[60px] w-auto" />
+                                <img src="/app-store-logo.svg" alt="Descargar en el App Store" className="h-[60px] w-auto" />
                             </a>
                         </div>
                     </div>
