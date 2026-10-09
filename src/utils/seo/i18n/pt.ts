@@ -26,7 +26,7 @@ export const seoDictionaryPT = {
     getPreposition: (location: string) => {
         const lowerLoc = location.toLowerCase();
         if (['porto', 'algarve', 'alentejo'].includes(lowerLoc)) return `no ${location}`;
-        if (['madeira', 'galiza'].includes(lowerLoc)) return `na ${location}`;
+        if (['madeira', 'guarda', 'galiza'].includes(lowerLoc)) return `na ${location}`;
         if (['açores'].includes(lowerLoc)) return `nos ${location}`;
         return `em ${location}`;
     },

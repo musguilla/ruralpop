@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { SEO_LANDINGS } from "@/constants/seoLandings";
+import { SEO_LANDINGS_PT } from "@/constants/seoLandingsPt";
 import { LOCATIONS } from "@/constants/locations";
 import { Suspense } from "react";
 import { ListingsGrid } from "@/components/ui/ListingsGrid";
@@ -15,7 +16,11 @@ import { generateSeoH1 } from "@/utils/h1Generator";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const params = await props.params;
-    const landing = SEO_LANDINGS.find(l => l.slug === params.slug);
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const landing = (locale === 'pt' ? SEO_LANDINGS_PT.find(l => l.slug === params.slug) : null)
+        || SEO_LANDINGS.find(l => l.slug === params.slug)
+        || SEO_LANDINGS_PT.find(l => l.slug === params.slug);
 
     if (!landing) return {};
 
@@ -28,8 +33,6 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
         "Compra venta ganadería"
     ];
 
-    const headersList = await headers();
-    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
     const { getServerTenantSlug } = await import('@/utils/tenant/server');
     const tenant = await getServerTenantSlug();
     const isEquipop = tenant === 'equipop';
@@ -111,7 +114,15 @@ export default async function SeoLandingPage(props: {
     const params = await props.params;
     const searchParams = await props.searchParams;
 
-    const landing = SEO_LANDINGS.find(l => l.slug === params.slug);
+    const headersList = await headers();
+    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
+    const { getServerTenantSlug } = await import('@/utils/tenant/server');
+    const tenant = await getServerTenantSlug();
+
+    const landing = (locale === 'pt' ? SEO_LANDINGS_PT.find(l => l.slug === params.slug) : null)
+        || SEO_LANDINGS.find(l => l.slug === params.slug)
+        || SEO_LANDINGS_PT.find(l => l.slug === params.slug);
+
     if (!landing) {
         return notFound();
     }
@@ -125,8 +136,8 @@ export default async function SeoLandingPage(props: {
     if (landing.subcategory) combinedParams.subcategory = landing.subcategory;
 
     if (landing.province) {
-        // Fallback temporal para llenar las nuevas landings con el inventario completo de tractores
-        const isTemporaryFallback = [
+        // Fallback temporal para llenar las nuevas landings con el inventario completo de tractores en ES
+        const isTemporaryFallback = locale !== 'pt' && [
             "tractores-segunda-mano-asturias", 
             "tractores-segunda-mano-galicia", 
             "tractores-usados-madrid", 
@@ -136,28 +147,22 @@ export default async function SeoLandingPage(props: {
 
         if (!isTemporaryFallback) {
             // Find the province ID
-            const prov = LOCATIONS.find(l => l.name === landing.province && l.type === 'province');
+            const prov = LOCATIONS.find(l => l.name.toLowerCase() === landing.province?.toLowerCase() && l.type === 'province');
             if (prov) {
                 combinedParams.province_id = prov.id;
             }
         }
     }
 
-    const headersList = await headers();
-    const locale = (headersList.get('x-locale') || 'es') as LocaleCode;
-    const { getServerTenantSlug } = await import('@/utils/tenant/server');
-    const tenant = await getServerTenantSlug();
-
     let displayTitle = landing.title;
-    let displaySubtitle = landing.subtitle || "Encuentra y compara las mejores ofertas de nuestro mercado agrícola.";
+    let displaySubtitle = landing.subtitle || (locale === 'pt' ? "Encontre e compare as melhores ofertas do nosso mercado agrícola." : "Encuentra y compara las mejores ofertas de nuestro mercado agrícola.");
 
-    if (locale === 'pt') {
+    if (locale === 'pt' && !landing.title) {
         const combinedParams: any = {};
         if (landing.searchQuery) combinedParams.q = landing.searchQuery;
         if (landing.category) combinedParams.category = landing.category;
         if (landing.subcategory) combinedParams.subcategory = landing.subcategory;
         displayTitle = generateSeoH1(combinedParams, landing.province, locale, tenant);
-        displaySubtitle = "Encontre e compare as melhores ofertas do nosso mercado agrícola.";
     }
 
     return (
@@ -191,7 +196,7 @@ export default async function SeoLandingPage(props: {
             </Suspense>
 
             {/* Related Searches for Tractores and Machinery */}
-            {["tractores-segunda-mano", "segunda-mano-tractores", "comprar-maquinaria-agricola", "tractores-segunda-mano-asturias", "tractores-segunda-mano-galicia", "tractores-usados-madrid", "tractor-segunda-mano-bilbao", "tractor-usado-valencia"].includes(params.slug) && (
+            {locale !== 'pt' && ["tractores-segunda-mano", "segunda-mano-tractores", "comprar-maquinaria-agricola", "tractores-segunda-mano-asturias", "tractores-segunda-mano-galicia", "tractores-usados-madrid", "tractor-segunda-mano-bilbao", "tractor-usado-valencia"].includes(params.slug) && (
                 <div className="mt-10 px-2 sm:px-4 flex flex-col sm:flex-row items-center sm:justify-start gap-4 text-center sm:text-left">
                     <span className="font-bold text-[var(--ag-sys-color-text)]">Más buscado</span>
                     <div className="flex flex-wrap gap-2 justify-center sm:justify-start">

@@ -12,7 +12,7 @@ import { SEO_LANDINGS_PT } from "@/constants/seoLandingsPt";
 import { usePathname } from "next/navigation";
 
 export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { categories: string[], subcategories: string[] } }) {
-    const { locale } = useTranslation();
+    const { locale, t } = useTranslation();
     const CATEGORIES = useCategories();
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<"provinces" | "categories" | "popular">("popular");
@@ -31,8 +31,12 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
     // Ocultar si no estamos en la portada
     if (pathname !== "/") return null;
 
-    // Filtrar solo las provincias para la primera pestaña
-    const provinces = LOCATIONS.filter(l => l.type === "province").sort((a, b) => a.province.localeCompare(b.province));
+    const isPt = locale === 'pt';
+
+    // Filtrar distritos para Portugal (IDs >= 100) o provincias para España (IDs < 100)
+    const provinces = LOCATIONS
+        .filter(l => l.type === "province" && (isPt ? Number(l.id) >= 100 : Number(l.id) < 100))
+        .sort((a, b) => a.name.localeCompare(b.name, isPt ? 'pt' : 'es'));
 
     const ALWAYS_SHOW_CATEGORIES = new Set([
         "sillas-de-montar-y-accesorios",
@@ -138,16 +142,20 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                             const renderCategoryBlock = (catId: string) => {
                                 const cat = CATEGORIES.find(c => c.id === catId);
                                 if (!cat) return null;
+                                const catLabel = t(`category.${cat.id}`) || cat.label;
                                 return (
                                     <div key={cat.id} className="flex flex-col gap-2">
                                         <Link href={buildSeoUrl({ category: cat.id }, locale)} className="font-bold text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] hover:underline transition-colors mb-2">
-                                            {cat.label}
+                                            {catLabel}
                                         </Link>
-                                        {cat.subcategories.map((sub) => (
-                                            <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
-                                                {sub}
-                                            </Link>
-                                        ))}
+                                        {cat.subcategories.map((sub) => {
+                                            const subLabel = t(`category.${sub}`) || sub;
+                                            return (
+                                                <Link key={sub} href={buildSeoUrl({ category: cat.id, subcategory: sub }, locale)} className="text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:underline truncate transition-colors">
+                                                    {subLabel}
+                                                </Link>
+                                            );
+                                        })}
                                     </div>
                                 );
                             };

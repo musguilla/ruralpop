@@ -78,7 +78,7 @@ export async function HomePopularListings() {
         <section className="my-16 pt-12 border-t border-[var(--ag-sys-color-border)]">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
                 <h2 className="text-2xl md:text-3xl font-extrabold text-[var(--ag-sys-color-text)] flex items-center justify-center sm:justify-start gap-2">
-                    ❤️ A mucha gente le gustan
+                    {locale === 'pt' ? '❤️ Mais populares' : '❤️ A mucha gente le gustan'}
                 </h2>
             </div>
 

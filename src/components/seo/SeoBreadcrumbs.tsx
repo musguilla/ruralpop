@@ -5,6 +5,7 @@ import { ChevronRight, Home } from 'lucide-react';
 import { buildSeoUrl } from '@/utils/seoUtils';
 import { LocaleCode } from '@/i18n/config';
 import { getDictionary } from '@/i18n/dictionaries';
+import { seoDictionaryPT } from '@/utils/seo/i18n/pt';
 
 interface SeoBreadcrumbsProps {
     parsedSlug: {
@@ -26,9 +27,10 @@ export async function SeoBreadcrumbs({ parsedSlug, locationName, locale, brandNa
 
     const dict = await getDictionary(locale);
 
-    // Use "en" or "em" based on locale
-    const inLoc = locale === 'pt' ? 'em' : 'en';
-    const locSuffix = locationName ? ` ${inLoc} ${locationName}` : '';
+    // Use correct localized preposition (e.g., 'no Porto', 'na Guarda', 'em Lisboa', 'en Madrid')
+    const locSuffix = locationName 
+        ? (locale === 'pt' ? ` ${seoDictionaryPT.getPreposition(locationName)}` : ` en ${locationName}`)
+        : '';
 
     const crumbs = [];
     crumbs.push({ name: brandName, url: '/' });

@@ -161,7 +161,7 @@ export function ActiveSearchBar() {
         const catObj = CATEGORIES.find(c => c.id === category);
         activeBadges.push({ type: 'category', label: catObj ? catObj.label : category });
     }
-    if (location && location.trim() !== "" && location !== "all" && location !== "Toda España" && location !== "Todo o Portugal") {
+    if (location && location.trim() !== "" && location !== "all" && location !== "Toda España" && location !== "Todo o Portugal" && location !== "Todo Portugal") {
         const locObj = LOCATIONS.find(l => l.id === location);
         activeBadges.push({ type: 'location', label: locObj ? locObj.name : location });
     }
@@ -322,9 +322,11 @@ export function ActiveSearchBar() {
                                     options={[
                                         { id: "", name: locale === 'pt' ? 'Todo o Portugal' : t("toda_espana") },
                                         ...(() => {
-                                            const ptLocs = LOCATIONS.filter(l => !isNaN(Number(l.id)) && Number(l.id) >= 100 && l.type === 'province').map(l => ({ id: l.id, name: l.name }));
-                                            const esLocs = LOCATIONS.filter(l => (isNaN(Number(l.id)) || Number(l.id) < 100) && l.type === 'province').map(l => ({ id: l.id, name: l.name }));
-                                            return locale === 'pt' ? [...ptLocs, ...esLocs] : [...esLocs, ...ptLocs];
+                                            const isPt = locale === 'pt';
+                                            return LOCATIONS
+                                                .filter(l => l.type === 'province' && (isPt ? Number(l.id) >= 100 : Number(l.id) < 100))
+                                                .sort((a, b) => a.name.localeCompare(b.name, isPt ? 'pt' : 'es'))
+                                                .map(l => ({ id: l.id, name: l.name }));
                                         })()
                                     ]}
                                     placeholder={locale === 'pt' ? 'Todo o Portugal' : t("toda_espana")}
