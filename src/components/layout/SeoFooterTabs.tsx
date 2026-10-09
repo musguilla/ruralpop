@@ -57,7 +57,9 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
         <div className="bg-[var(--ag-sys-color-surface)] border-t border-[var(--ag-sys-color-border)] py-12 pb-24">
             <div className="container mx-auto px-4 max-w-7xl">
                 <h2 className="text-2xl font-extrabold text-[var(--ag-sys-color-text)] mb-8">
-                    {isEquipop ? "Lo más buscado en Equipop" : "Lo más buscado en Ruralpop"}
+                    {isEquipop
+                        ? (locale === 'pt' ? "O mais procurado no Equipop" : "Lo más buscado en Equipop")
+                        : (locale === 'pt' ? "O mais procurado no Ruralpop" : "Lo más buscado en Ruralpop")}
                 </h2>
 
                 {/* Tabs */}
@@ -69,7 +71,7 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                             : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
                             }`}
                     >
-                        Lo más buscado
+                        {locale === 'pt' ? "Mais procurados" : "Lo más buscado"}
                     </button>
                     {!isEquipop && (
                         <button
@@ -79,7 +81,7 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                                 : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
                                 }`}
                         >
-                            Por provincias
+                            {locale === 'pt' ? "Por distritos" : "Por provincias"}
                         </button>
                     )}
                     <button
@@ -89,7 +91,7 @@ export function SeoFooterTabs({ activeEquipopData }: { activeEquipopData?: { cat
                             : "text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-text)]"
                             }`}
                     >
-                        Por categorías
+                        {locale === 'pt' ? "Por categorias" : "Por categorías"}
                     </button>
                 </div>
 
