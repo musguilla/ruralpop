@@ -8,9 +8,10 @@ interface ListingSliderProps {
     title: string;
     listings: Listing[];
     userFavs: string[];
+    hideTime?: boolean;
 }
 
-export function ListingSlider({ title, listings, userFavs }: ListingSliderProps) {
+export function ListingSlider({ title, listings, userFavs, hideTime = false }: ListingSliderProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
@@ -97,6 +98,7 @@ export function ListingSlider({ title, listings, userFavs }: ListingSliderProps)
                         <ListingCard 
                             listing={listing} 
                             isFavorited={userFavs.includes(listing.id)}
+                            hideTime={hideTime}
                         />
                     </div>
                 ))}

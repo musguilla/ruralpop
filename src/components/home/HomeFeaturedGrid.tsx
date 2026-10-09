@@ -121,6 +121,7 @@ export async function HomeFeaturedGrid() {
                                 key={item.id}
                                 listing={item.data as Listing} 
                                 isFavorited={userFavs.includes(item.id)} 
+                                hideTime={locale === 'pt'}
                             />
                         );
                     }

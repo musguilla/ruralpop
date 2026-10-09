@@ -29,7 +29,19 @@ export interface Listing {
     description_pt?: string | null;
 }
 
-export function ListingCard({ listing, isFavorited = false, isGhostPreview = false }: { listing: Listing; isFavorited?: boolean; isGhostPreview?: boolean }) {
+export interface ListingCardProps {
+    listing: Listing;
+    isFavorited?: boolean;
+    isGhostPreview?: boolean;
+    hideTime?: boolean;
+}
+
+export function ListingCard({
+    listing,
+    isFavorited = false,
+    isGhostPreview = false,
+    hideTime = false,
+}: ListingCardProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [showGhostPopup, setShowGhostPopup] = useState(false);
     const { t, locale } = useTranslation();
@@ -185,13 +197,15 @@ export function ListingCard({ listing, isFavorited = false, isGhostPreview = fal
 
                 {/* Meta: Location & Time */}
                 <div className="mt-4 pt-4 border-t border-[var(--ag-sys-color-border)] flex items-center justify-between text-xs text-[var(--ag-sys-color-text-muted)]">
-                    <div className="flex items-center gap-1.5 truncate max-w-[60%]">
+                    <div className={`flex items-center gap-1.5 truncate ${hideTime ? 'w-full' : 'max-w-[60%]'}`}>
                         <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                         <span className="truncate">{listing.location}</span>
                     </div>
-                    <span className="flex-shrink-0 whitespace-nowrap">
-                        {formatRelativeTime(listing.created_at, locale)}
-                    </span>
+                    {!hideTime && (
+                        <span className="flex-shrink-0 whitespace-nowrap">
+                            {formatRelativeTime(listing.created_at, locale)}
+                        </span>
+                    )}
                 </div>
             </div>
         </article>
@@ -234,3 +248,21 @@ export function ListingCardSkeleton() {
         </article>
     );
 }
+
+/**
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISIONS & EDGE CASES:
+ * 
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Se incorporó la prop opcional `hideTime?: boolean` en `ListingCard` para permitir
+ *      a la home de Portugal (`ruralpop.pt`) y otros contextos selectos ocultar la marca
+ *      temporal relativa ("há 1 hora", etc.) sin alterar el layout de España ni el de
+ *      páginas de búsqueda donde la frescura del anuncio sí aporta valor.
+ *    - Cuando `hideTime` es true, el contenedor de la ubicación (`location`) expande su
+ *      ancho al 100% (`w-full`) en lugar del 60% (`max-w-[60%]`), mejorando la legibilidad
+ *      del municipio y distrito sin causar overflow ni saltos de línea indeseados.
+ * 
+ * 2. Posibles edge cases cubiertos:
+ *    - Títulos largos o ubicaciones largas en pantallas móviles reducidas: truncate previene desbordamiento.
+ *    - Anuncios destacados o con tipos de precio especial se mantienen visualmente equilibrados.
+ */
+

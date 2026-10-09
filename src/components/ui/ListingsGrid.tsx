@@ -439,7 +439,13 @@ export async function ListingsGrid({ searchParams, isHome = false, disableInFeed
             gridItems.push(<AdSenseInFeed key={`ad-${listing.id}-${index}`} />);
         }
         gridItems.push(
-            <ListingCard key={listing.id} listing={listing} isFavorited={userFavs.includes(listing.id)} isGhostPreview={isGhostProfile} />
+            <ListingCard 
+                key={listing.id} 
+                listing={listing} 
+                isFavorited={userFavs.includes(listing.id)} 
+                isGhostPreview={isGhostProfile} 
+                hideTime={isHome && locale === 'pt'}
+            />
         );
     });
 

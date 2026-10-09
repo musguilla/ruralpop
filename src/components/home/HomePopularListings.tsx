@@ -88,6 +88,7 @@ export async function HomePopularListings() {
                         key={listing.id}
                         listing={listing as Listing} 
                         isFavorited={userFavs.includes(listing.id)} 
+                        hideTime={locale === 'pt'}
                     />
                 ))}
             </div>

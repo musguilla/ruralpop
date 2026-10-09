@@ -153,6 +153,7 @@ export async function HomeDirectBuySlider() {
             title={t.home.direct_buy}
             listings={finalListings as Listing[]}
             userFavs={userFavs}
+            hideTime={locale === 'pt'}
         />
     );
 }
