@@ -66,20 +66,20 @@ export function UserRow({ user, adsCount }: UserRowProps) {
     return (
         <>
             <tr className="hover:bg-[var(--ag-sys-color-background)]/50 transition-colors group">
-                <td className="px-6 py-5">
-                    <div className="flex items-center gap-4">
-                        <div className="relative w-11 h-11 rounded-xl bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] overflow-hidden flex-shrink-0">
+                <td className="px-6 py-3">
+                    <div className="flex items-center gap-3">
+                        <div className="relative w-9 h-9 rounded-lg bg-[var(--ag-sys-color-background)] border border-[var(--ag-sys-color-border)] overflow-hidden flex-shrink-0">
                             {user.avatar_url ? (
                                 <Image src={user.avatar_url} alt={user.name || ''} fill className="object-cover" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-[var(--ag-sys-color-primary)] font-bold text-lg">
+                                <div className="w-full h-full flex items-center justify-center text-[var(--ag-sys-color-primary)] font-bold text-sm">
                                     {(user.name?.[0] || user.email?.[0] || 'U').toUpperCase()}
                                 </div>
                             )}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                                <p className="font-bold text-[var(--ag-sys-color-text)] leading-tight">
+                                <p className="font-bold text-[var(--ag-sys-color-text)] leading-tight text-sm truncate">
                                     {user.name || user.email?.split('@')[0] || 'Usuario'}
                                 </p>
                                 {user.role === 'admin' && (
@@ -88,58 +88,58 @@ export function UserRow({ user, adsCount }: UserRowProps) {
                                     </span>
                                 )}
                             </div>
-                            <span className="text-xs text-[var(--ag-sys-color-text-muted)]">{user.email}</span>
+                            <span className="text-xs text-[var(--ag-sys-color-text-muted)] block truncate">{user.email}</span>
                         </div>
                     </div>
                 </td>
-                <td className="px-6 py-5">
-                    <div className="flex items-center gap-2 text-[var(--ag-sys-color-text-muted)] font-medium">
-                        <MapPin className="w-3.5 h-3.5" />
-                        {user.location || 'No definida'}
+                <td className="px-6 py-3">
+                    <div className="flex items-center gap-1.5 text-[var(--ag-sys-color-text-muted)] font-medium text-xs">
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span className="truncate">{user.location || 'No definida'}</span>
                     </div>
                 </td>
-                <td className="px-6 py-5 whitespace-nowrap">
+                <td className="px-6 py-3 whitespace-nowrap">
                     {isPt ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm">
-                            <span className="text-sm">🇵🇹</span> Portugal
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700">
+                            <span className="text-base leading-none">🇵🇹</span> Portugal
                         </span>
                     ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 shadow-sm">
-                            <span className="text-sm">🇪🇸</span> España
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-800">
+                            <span className="text-base leading-none">🇪🇸</span> España
                         </span>
                     )}
                 </td>
-                <td className="px-6 py-5 whitespace-nowrap">
+                <td className="px-6 py-3 whitespace-nowrap">
                     <Link
                         href={`/admin/listings?userId=${user.id}`}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ag-sys-color-background)] rounded-lg hover:bg-[var(--ag-sys-color-border)] hover:text-[var(--ag-sys-color-primary)] font-bold text-xs transition-colors whitespace-nowrap"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--ag-sys-color-background)] rounded-lg hover:bg-[var(--ag-sys-color-border)] hover:text-[var(--ag-sys-color-primary)] font-bold text-xs transition-colors whitespace-nowrap"
                         title="Ver anuncios del usuario"
                     >
                         <Package className="w-3.5 h-3.5 flex-shrink-0" />
                         <span className="whitespace-nowrap">{adsCount} {adsCount === 1 ? 'anuncio' : 'anuncios'}</span>
                     </Link>
                 </td>
-                <td className="px-6 py-5">
-                    <div className="flex items-center gap-2 text-[var(--ag-sys-color-text-muted)] font-medium">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {formatRelativeTime(user.created_at)}
+                <td className="px-6 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-1.5 text-[var(--ag-sys-color-text-muted)] font-medium text-xs whitespace-nowrap">
+                        <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span className="whitespace-nowrap">{formatRelativeTime(user.created_at)}</span>
                     </div>
                 </td>
-                <td className="px-6 py-5 text-right">
-                    <div className="flex items-center justify-end gap-2 transition-opacity opacity-0 group-hover:opacity-100">
+                <td className="px-6 py-3 text-right whitespace-nowrap">
+                    <div className="flex items-center justify-end gap-1 transition-opacity opacity-0 group-hover:opacity-100">
                         <button
                             onClick={() => setIsEditing(true)}
-                            className="p-2.5 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-background)] rounded-xl transition-all"
+                            className="p-1.5 text-[var(--ag-sys-color-text-muted)] hover:text-[var(--ag-sys-color-primary)] hover:bg-[var(--ag-sys-color-background)] rounded-lg transition-all"
                             title="Editar Datos"
                         >
-                            <Edit2 className="w-4 h-4" />
+                            <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                             onClick={() => setIsDeleting(true)}
-                            className="p-2.5 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                            className="p-1.5 text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
                             title="Eliminar y Banear Usuario"
                         >
-                            <UserX className="w-4 h-4" />
+                            <UserX className="w-3.5 h-3.5" />
                         </button>
                     </div>
                 </td>
@@ -296,3 +296,20 @@ export function UserRow({ user, adsCount }: UserRowProps) {
         </>
     );
 }
+
+/**
+ * DOCUMENTACIÓN DE MEMORIA / TECHNICAL DECISIONS & EDGE CASES:
+ * 
+ * 1. ¿Por qué se tomó esta decisión técnica?
+ *    - Altura compacta de fila (`py-3` en lugar de `py-5`) y avatar `w-9 h-9` optimizan la densidad de información
+ *      en la tabla de administración sin perder legibilidad ni accesibilidad.
+ *    - Columna 'Registro' con `whitespace-nowrap` y `flex-shrink-0` en icono asegura que nunca salte a dos líneas
+ *      incluso en pantallas con resoluciones reducidas o paneles laterales abiertos.
+ *    - Columna 'País' muestra bandera nativa + texto con color semántico (`text-emerald-700` y `text-amber-800`),
+ *      eliminando el contenedor badge para una apariencia visual más limpia y estilizada.
+ * 
+ * 2. Posibles edge cases cubiertos:
+ *    - Nombres y correos largos truncados correctamente (`truncate`) previniendo desbordamientos del layout.
+ *    - Iconos con `flex-shrink-0` para prevenir aplastamiento en layouts reducidos.
+ */
+

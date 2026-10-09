@@ -84,12 +84,12 @@ export default async function AdminUsersPage(props: Props) {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-[var(--ag-sys-color-background)]/50 border-b border-[var(--ag-sys-color-border)]">
-                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Usuario</th>
-                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Ubicación</th>
-                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest whitespace-nowrap">País</th>
-                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest whitespace-nowrap">Anuncios</th>
-                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Registro</th>
-                            <th className="px-6 py-5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest text-right">Acciones</th>
+                            <th className="px-6 py-3.5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Usuario</th>
+                            <th className="px-6 py-3.5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest">Ubicación</th>
+                            <th className="px-6 py-3.5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest whitespace-nowrap">País</th>
+                            <th className="px-6 py-3.5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest whitespace-nowrap">Anuncios</th>
+                            <th className="px-6 py-3.5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest whitespace-nowrap">Registro</th>
+                            <th className="px-6 py-3.5 text-xs font-black text-[var(--ag-sys-color-text-muted)] uppercase tracking-widest text-right whitespace-nowrap">Acciones</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--ag-sys-color-border)] text-sm">
