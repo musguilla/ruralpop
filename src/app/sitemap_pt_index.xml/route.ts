@@ -24,6 +24,9 @@ export async function GET() {
     <sitemap>
         <loc>${baseUrl}${sitemapPrefix}/sitemap_pt_4.xml</loc>
     </sitemap>
+    <sitemap>
+        <loc>${baseUrl}${sitemapPrefix}/sitemap_tags.xml</loc>
+    </sitemap>
 </sitemapindex>`.trim();
 
     return new Response(xml, {

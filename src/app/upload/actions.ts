@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getRuralpopDatabaseId, getTenantConfig } from "@/config/tenants";
 import { getServerTenantSlug } from "@/utils/tenant/server";
 import { sendWelfareReminderEmail } from "@/lib/email/welfare-reminder";
+import { ensureMinimumTags } from "@/utils/tagUtils";
 
 export async function createListing(formData: FormData) {
     const supabase = await createClient();
@@ -22,7 +23,14 @@ export async function createListing(formData: FormData) {
     const location = formData.get("location") as string;
 
     const tagsStr = formData.get("tags") as string;
-    const tags = tagsStr ? JSON.parse(tagsStr) : [];
+    const parsedTags = tagsStr ? JSON.parse(tagsStr) : [];
+    const tags = ensureMinimumTags({
+        title,
+        description,
+        category,
+        subcategory,
+        existingTags: Array.isArray(parsedTags) ? parsedTags : []
+    });
 
     let isRestricted = false;
     const lowerTitle = title.toLowerCase();

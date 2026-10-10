@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import * as cheerio from "cheerio";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { ensureMinimumTags } from "@/utils/tagUtils";
 
 export async function POST(req: Request) {
     try {
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
         }
 
         // Simular headers
-        const headers: any = {
+        const headers: Record<string, string> = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
             "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
@@ -142,6 +143,12 @@ export async function POST(req: Request) {
                 subcategory: subcategory || null,
                 price_type: "fixed",
                 image_urls: finalImageUrls,
+                tags: ensureMinimumTags({
+                    title,
+                    description: finalDescription,
+                    category: category || "Importados",
+                    subcategory: subcategory || null
+                }),
                 user_id: user.id, // Asignar al admin que importa
                 status: "moderated" // Por defecto en moderación para revisarlos
             })
