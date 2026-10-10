@@ -18,48 +18,37 @@ export async function EquipopFooter() {
 
     return (
         <footer className="w-full border-t border-[var(--ag-sys-color-border)] bg-[var(--ag-sys-color-surface)] py-12 mt-auto">
-            {/* Top Section: 3 Columns with Dividers */}
-            <div className="container mx-auto px-4 flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-4 mb-12">
+            {/* Top Section: 2 Columns with Divider */}
+            <div className="container mx-auto px-4 flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-8 mb-12">
                 
-                {/* Column 1: Conexión Equipop */}
-                <div className="flex flex-col items-start gap-3 lg:w-1/3">
-                    <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
-                        Conexión Equipop
-                    </span>
-                    <LocalizedLink href="/tienda" className="text-base font-medium text-[var(--ag-sys-color-primary)] hover:opacity-80 transition-opacity">
-                        Tienda Equipop
-                    </LocalizedLink>
-                </div>
-
-                {/* Vertical Divider 1 */}
-                <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
-
-                {/* Column 2: Información */}
-                <div className="flex flex-col items-start gap-3 lg:w-1/3 lg:pl-10">
+                {/* Column 1: Información */}
+                <div className="flex flex-col items-start gap-3 lg:w-2/3">
                     <span className="text-[13px] text-[var(--ag-sys-color-text)] font-semibold uppercase tracking-wider mb-1">
                         {t("informacion")}
                     </span>
-                    <LocalizedLink href="/como-comprar" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        ¿Cómo comprar?
-                    </LocalizedLink>
-                    <LocalizedLink href="/como-vender" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        ¿Cómo vender?
-                    </LocalizedLink>
-                    <LocalizedLink href="/pago-seguro" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Cómo funciona Pago Seguro
-                    </LocalizedLink>
-                    <LocalizedLink href="/quienes-somos" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Quiénes somos
-                    </LocalizedLink>
-                    <LocalizedLink href="/preguntas-frecuentes" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        {t("faq")}
-                    </LocalizedLink>
-                    <LocalizedLink href="/empresas-profesionales-sector-ecuestre" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
-                        Equipop PRO
-                    </LocalizedLink>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-3 w-full">
+                        <LocalizedLink href="/como-comprar" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            ¿Cómo comprar?
+                        </LocalizedLink>
+                        <LocalizedLink href="/como-vender" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            ¿Cómo vender?
+                        </LocalizedLink>
+                        <LocalizedLink href="/pago-seguro" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            Cómo funciona Pago Seguro
+                        </LocalizedLink>
+                        <LocalizedLink href="/quienes-somos" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            Quiénes somos
+                        </LocalizedLink>
+                        <LocalizedLink href="/preguntas-frecuentes" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            {t("faq")}
+                        </LocalizedLink>
+                        <LocalizedLink href="/empresas-profesionales-sector-ecuestre" className="text-base font-medium text-[var(--ag-sys-color-text)] hover:text-[var(--ag-sys-color-primary)] transition-colors">
+                            Equipop PRO
+                        </LocalizedLink>
+                    </div>
                 </div>
 
-                {/* Vertical Divider 2 */}
+                {/* Vertical Divider */}
                 <div className="hidden lg:block w-px h-auto self-stretch bg-[var(--ag-sys-color-border)] shrink-0"></div>
 
                 {/* Column 3: App Store / Google Play */}

@@ -105,7 +105,7 @@ export async function Header() {
                                 >
                                     <ChatBadge initialCount={unreadCount || 0} userId={user.id} />
                                 </LocalizedLink>
-                                <CartDropdown />
+                                {!isEquipop && <CartDropdown />}
                             </div>
 
                             {/* Componente Cliente para el Menú Desplegable */}
@@ -128,8 +128,8 @@ export async function Header() {
                         </LocalizedLink>
                     )}
                     
-                    {/* Para usuarios anónimos mostramos la cesta también */}
-                    {!user && <CartDropdown />}
+                    {/* Para usuarios anónimos mostramos la cesta también (solo en Ruralpop) */}
+                    {!user && !isEquipop && <CartDropdown />}
                 </nav>
             </div>
 

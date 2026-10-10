@@ -35,6 +35,11 @@ export async function middleware(request: NextRequest) {
     const isEquipop = hostname.includes('equipop');
     const isRuralpopPt = hostname.includes('ruralpop.pt') || hostname.includes('pt.localhost');
 
+    // Equipop no tiene tienda ni merchandising: eliminar completamente /tienda redirigiendo con 301 a la home
+    if (isEquipop && (pathname === '/tienda' || pathname.startsWith('/tienda/') || pathname === '/equipop/tienda' || pathname.startsWith('/equipop/tienda/'))) {
+        return NextResponse.redirect(new URL('/', request.url), 301);
+    }
+
     // Reconocemos equipop.app, www.equipop.app, o entornos locales como equipop.localhost:3000
     if (isEquipop) {
         // Evitamos bucles y también ignoramos rutas de API estáticas

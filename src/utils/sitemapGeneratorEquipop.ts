@@ -33,7 +33,6 @@ export async function getEquipopSitemapXmlById(id: number): Promise<string> {
         '/cookies',
         '/quienes-somos',
         '/profesionales',
-        '/tienda',
     ];
 
     mainPages.forEach(page => {
