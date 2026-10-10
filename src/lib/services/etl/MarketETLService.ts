@@ -17,7 +17,7 @@ const getAdminClient = () => {
 
 export class MarketETLService {
     
-    static async run(sourceId?: string) {
+    static async run(sourceId?: string): Promise<{ success: boolean; unchanged?: boolean; message?: string }> {
         console.log('Starting Market ETL Service...');
         const supabase = getAdminClient();
         
@@ -32,7 +32,7 @@ export class MarketETLService {
             
         if (error || !sources) {
             console.error('Error fetching market sources:', error);
-            return;
+            return { success: false, message: 'Error consultando fuentes de lonjas' };
         }
         
         console.log(`Found ${sources.length} active sources.`);
@@ -83,10 +83,11 @@ export class MarketETLService {
                         .eq('id', source.id);
                     
                     if (sourceId) {
-                        // Throwing here would mark it as an error in the catch block. 
-                        // Instead, we throw a special object or just log it, but the UI expects a success if nothing went technically wrong.
-                        // We will throw a specific string that the catch block can ignore from logging as a DB error.
-                        throw "UNCHANGED_NO_ERROR";
+                        return {
+                            success: true,
+                            unchanged: true,
+                            message: `La ${source.name} ya está sincronizada con la última sesión oficial disponible.`
+                        };
                     }
                     continue;
                 }
@@ -137,11 +138,15 @@ export class MarketETLService {
                     })
                     .eq('id', source.id);
                     
-            } catch (err: any) {
-                if (err === "UNCHANGED_NO_ERROR") {
-                    console.log(`Manual trigger: Content unchanged for ${source.name}`);
-                    throw new Error("El archivo original en la web no ha cambiado. No hay precios nuevos que importar.");
+                if (sourceId) {
+                    return {
+                        success: true,
+                        unchanged: false,
+                        message: `Sincronización exitosa: Se han importado ${result.prices.length} cotizaciones de ${source.name}.`
+                    };
                 }
+                    
+            } catch (err: any) {
                 console.error(`Error processing source ${source.name}:`, err);
                 // Update error timestamp
                 await supabase
@@ -157,5 +162,9 @@ export class MarketETLService {
         }
         
         console.log('Market ETL Service finished.');
+        return {
+            success: true,
+            message: 'Sincronización de todas las lonjas completada correctamente.'
+        };
     }
 }

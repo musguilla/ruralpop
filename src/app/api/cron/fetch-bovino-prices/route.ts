@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { MarketETLService } from '@/lib/services/etl/MarketETLService';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 300; // 5 minutes max duration on Vercel Pro for cron jobs
 
 export async function GET(request: Request) {
     try {

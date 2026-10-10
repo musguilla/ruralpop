@@ -32,6 +32,8 @@ export function LonjasClient({ sources }: LonjasClientProps) {
             
             if (!result.success) {
                 alert(`Hubo un error al procesar: ${result.error}`);
+            } else if (result.message) {
+                alert(`✓ ${result.message}`);
             }
             router.refresh(); // Force Next.js to re-fetch Server Components (update table timestamps)
         } catch (error) {

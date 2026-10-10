@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+export const maxDuration = 120; // 2 minutes max execution duration on Vercel
+
 export async function POST(request: Request) {
     try {
         let body = {};
@@ -21,11 +24,9 @@ export async function POST(request: Request) {
         // Importación dinámica para aislar posibles crashes del empaquetador (Webpack) o Vercel Serverless
         const { MarketETLService } = await import('@/lib/services/etl/MarketETLService');
 
-        await MarketETLService.run(sourceId);
+        const result = await MarketETLService.run(sourceId);
         
-        // Devolvemos 200 siempre. Vercel intercepta 500s en endpoints API a veces y tira HTML, 
-        // lo que rompe el JSON.parse del cliente. 
-        return NextResponse.json({ success: true });
+        return NextResponse.json(result);
     } catch (error: any) {
         console.error('ETL API Route Error:', error);
         return NextResponse.json({ success: false, error: error.message || 'Error desconocido procesando la lonja' });
