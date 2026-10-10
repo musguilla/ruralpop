@@ -13,13 +13,14 @@ export async function GET(request: Request) {
             return new NextResponse('Unauthorized', { status: 401 });
         }
 
-        // Run ETL async (don't await fully if it takes longer than Vercel's timeout,
-        // though Vercel Pro allows up to 5 mins. For safety, we can await it as it shouldn't take more than 30s)
-        await MarketETLService.run();
+        // Execute Market ETL pipeline across all active market sources concurrently
+        const result = await MarketETLService.run();
 
-        return NextResponse.json({ success: true, message: 'Market ETL executed successfully' });
-    } catch (error: any) {
+        return NextResponse.json({ success: true, message: 'Market ETL executed successfully', result });
+    } catch (error: unknown) {
         console.error('Cron ETL Error:', error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error during market ETL';
+        return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
     }
 }
+
